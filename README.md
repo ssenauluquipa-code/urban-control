@@ -1,27 +1,46 @@
-# XtremeAdminAngularLite
+# 🌆 Urban Control - Sistema de Gestión Inmobiliaria
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.1.
+**Urban Control** es una plataforma moderna diseñada para la gestión integral de proyectos de urbanización y control inmobiliario. Construida con Angular 17+, ofrece una interfaz intuitiva, robusta y eficiente para la administración de lotes, clientes, ventas y configuraciones empresariales.
 
-## Development server
+## 🚀 Características Principales
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Dashboard Interactivo**: Visualización de métricas clave mediante gráficos avanzados (ApexCharts).
+- **Gestión de Lotes**: Control detallado del inventario de terrenos, estados de venta y ubicación.
+- **Administración de Empresas**: Configuración personalizada de datos fiscales, logotipos y parámetros del sistema.
+- **Sistema de Permisos**: Control de acceso granular para usuarios y roles específicos.
+- **Diseño Atómico**: Arquitectura de componentes reutilizables basada en principios de Atomic Design.
+- **Modales Arrastrables**: UX mejorada con directivas personalizadas para una mayor flexibilidad en la interfaz.
 
-## Code scaffolding
+## 🛠️ Stack Tecnológico
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **Framework**: Angular 17.3+ (Standalone Components & Signals ready).
+- **UI Libraries**: 
+  - [Bootstrap 5](https://getbootstrap.com/)
+  - [NG-Zorro Ant Design](https://ng.ant.design/)
+  - [NG-Select](https://github.com/ng-select/ng-select)
+- **Charts**: [ApexCharts](https://apexcharts.com/)
+- **Data Grid**: [AG-Grid](https://www.ag-grid.com/)
+- **Styling**: SCSS (Arquitectura modular).
 
-## Build
+## 📦 Instalación y Uso
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+1. **Clonar el repositorio**:
+    ```bash
+    git clone https://github.com/ssenauluquipa-code/urban-control.git
+    cd urban-control
+    ```
 
-## Running unit tests
+2. **Instalar dependencias**:
+    ```bash
+    npm install
+    ```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+3. **Servidor de desarrollo**:
+    Ejecuta `ng serve` para iniciar el servidor. Navega a `http://localhost:4200/`. La aplicación se recargará automáticamente al detectar cambios.
 
-## Running end-to-end tests
+## 🏗️ Construcción (Build)
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Para generar el bundle de producción:
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+```bash
+ng build
