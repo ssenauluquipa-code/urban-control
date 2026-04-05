@@ -1,0 +1,79 @@
+<div class="sub-header">
+  
+  <!-- Izquierda: Atrás y Título -->
+  <div class="sub-header__left" style="display:flex; gap:16px; align-items:center; flex:1; min-width:0;">
+    @if (canShowBack) {
+      <button nz-button nzType="default" (click)="emitAction(A.BACK)" class="btn-back">
+        <span nz-icon nzType="arrow-left"></span> <span class="btn-text">Atrás</span>
+      </button>
+    }
+    <h2 class="sub-header__title" style="margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" [title]="title">{{ title }}</h2>
+  </div>
+
+  <!-- Derecha: Botones CRUD e íconos -->
+  <div class="sub-header__right">
+    
+    <div class="custom-actions-wrapper">
+      <ng-content select="[custom-actions]"></ng-content>
+    </div>
+
+    <!-- Botones Secundarios: Ocultar en tablet(<=1024px) y mobile(<=768px) -->
+    <div class="secondary-actions">
+      @if (canShowCancel) {
+        <button nz-button nzType="default" (click)="emitAction(A.CANCEL)">
+          <span nz-icon nzType="close-circle"></span> Cancelar
+        </button>
+      }
+      @if (canShowDelete) {
+        <button nz-button nzDanger nzType="default" (click)="emitAction(A.DELETE)">
+          <span nz-icon nzType="delete"></span> Eliminar
+        </button>
+      }
+      @if (canShowEdit) {
+        <button nz-button nzType="default" (click)="emitAction(A.EDIT)">
+          <span nz-icon nzType="edit"></span> Editar
+        </button>
+      }
+      @if (canShowUpdate) {
+        <button nz-button nzType="default" (click)="emitAction(A.UPDATE)">
+          <span nz-icon nzType="sync"></span> Actualizar
+        </button>
+      }
+    </div>
+
+    <!-- Botones Primarios: Ocultar en mobile (<=768px) -->
+    <div class="primary-actions">
+      @if (canShowSend) {
+        <button nz-button nzType="primary" (click)="emitAction(A.SEND)">
+          <span nz-icon nzType="send"></span> Enviar
+        </button>
+      }
+      @if (canShowSave) {
+        <button nz-button nzType="primary" (click)="emitAction(A.SAVE)">
+          <span nz-icon nzType="save"></span> Guardar
+        </button>
+      }
+      @if (canShowNew) {
+        <button nz-button nzType="primary" (click)="emitAction(A.NEW)">
+          <span nz-icon nzType="plus"></span> Nuevo
+        </button>
+      }
+    </div>
+
+    <!-- Menú desplegable para reportes, importaciones, etc. Siempre visible si showOptions -->
+    @if (canShowOptions) {
+      <button nz-button nzType="default" nz-dropdown [nzDropdownMenu]="optionsMenu" nzTrigger="click" class="btn-options" style="padding: 0 8px;">
+        <span nz-icon nzType="more" style="font-size: 20px; vertical-align: middle;"></span>
+      </button>
+      <nz-dropdown-menu #optionsMenu="nzDropdownMenu">
+        <ul nz-menu>
+          @if (canShowExportExcel) { <li nz-menu-item (click)="emitAction(M.EXPORT_EXCEL)"><span nz-icon nzType="file-excel"></span> Exportar a Excel</li> }
+          @if (canShowExportPdf) { <li nz-menu-item (click)="emitAction(M.EXPORT_PDF)"><span nz-icon nzType="file-pdf"></span> Exportar a PDF</li> }
+          @if (canShowImportExcel) { <li nz-menu-item (click)="emitAction(M.IMPORT_EXCEL)"><span nz-icon nzType="upload"></span> Importar Excel</li> }
+          @if (canShowPrint) { <li nz-menu-item (click)="emitAction(M.PRINT)"><span nz-icon nzType="printer"></span> Imprimir Vista</li> }
+          @if (canShowLog) { <li nz-menu-item (click)="emitAction(M.LOG)"><span nz-icon nzType="history"></span> Ver Bitácora</li> }
+        </ul>
+      </nz-dropdown-menu>
+    }
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<button
+  nz-button
+  [nzType]="nzType"
+  [nzLoading]="loading"
+  [nzBlock]="block"
+  [nzSize]="size"
+  [nzGhost]="ghost"
+  (click)="handleAction($event)"
+  [disabled]="disabled"
+>
+  <span *ngIf="icon" nz-icon [nzType]="icon" nzTheme="outline"></span>
+  <ng-content></ng-content>
+</button>
+
+

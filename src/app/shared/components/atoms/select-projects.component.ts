@@ -1,0 +1,49 @@
+import { Component, EventEmitter, Input, Output, ChangeDetectorRef } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
+import { SelectDataComponent } from './select-data.component';
+
+@Component({
+  selector: 'app-select-projects',
+  standalone: true,
+  imports: [SelectDataComponent, ReactiveFormsModule],
+  template: `
+    <app-select-data
+      [itemList]="projectList"
+      [inputControl]="inputControl"
+      [placeholder]="placeholder"
+      [bindValue]="'id'"
+      [bindLabel]="'name'"
+      (onChangeValue)="onSelect($event)">
+    </app-select-data>
+  `,
+  styles: ``
+})
+export class SelectProjectsComponent {
+
+  @Input() inputControl = new FormControl();
+  @Input() placeholder = 'Seleccionar Proyecto...';
+  @Output() onChange = new EventEmitter<any>();
+
+  public projectList: any[] = [];
+
+  constructor(
+    private proyectoService: ProyectoService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.proyectoService.getProyectosLookup().subscribe({
+      next: (data) => {
+        this.projectList = [...data];
+        console.log("this lista ", this.projectList);
+        this.cdr.detectChanges(); // Forzamos actualización visual de Angular
+      },
+      error: (error) => console.error('Error al cargar proyectos', error)
+    });
+  }
+
+  onSelect(event: any) {
+    this.onChange.emit(event);
+  }
+}

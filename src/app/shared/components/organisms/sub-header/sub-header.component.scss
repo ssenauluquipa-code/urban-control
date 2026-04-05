@@ -1,0 +1,101 @@
+.sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #fff;
+  border-bottom: 1px solid #e8e8e8;
+  gap: 1rem;
+
+  /* Centrar automáticamente el texto y el icono en todos los botones */
+  button[nz-button] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Espacio entre icono y texto */
+
+    & > span[nz-icon] {
+      margin-right: 0 !important; /* Desactivar margen de nz-icon nativo */
+      vertical-align: middle;
+    }
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow: hidden; /* For truncation to work */
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+}
+
+.custom-actions-wrapper {
+  display: contents;
+}
+
+.primary-actions, .secondary-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.mobile-actions-dropdown {
+  display: none; // Hidden by default on desktop/tablet
+}
+
+// Media Queries 
+// Tablet (768px - 1024px): Hide secondary
+@media (max-width: 1024px) {
+  .secondary-actions {
+    display: none;
+  }
+}
+
+// Mobile (< 768px): Hide individuals, show grouped dropdown
+@media (max-width: 767px) {
+  .sub-header__left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .sub-header__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1rem;
+  }
+
+  .btn-options {
+    width: 32px !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+    display: inline-flex !important;
+  }
+
+  /* ocultar: Editar, Eliminar, Cancelar, Actualizar */
+  .sub-header__right button[nzDanger],
+  .sub-header__right button:not([nzType="primary"]):not(.btn-options) {
+    display: none;
+  }
+
+  .btn-back {
+    .btn-text {
+      display: none;
+    }
+  }
+}

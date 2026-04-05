@@ -1,0 +1,468 @@
+.pc-sidebar {
+  background: var(--pc-sidebar-background);
+  width: $sidebar-width;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 1026;
+  box-shadow: var(--pc-sidebar-shadow);
+  display: block;
+  height: 100vh;
+  color: var(--pc-sidebar-color);
+  border-right: 1px solid #e5e7eb;
+
+  a {
+    color: var(--pc-sidebar-color);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: var(--pc-sidebar-active-color);
+      text-decoration: none;
+    }
+  }
+
+  .navbar-wrapper {
+    width: 100%;
+    height: 100%;
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+
+  .m-header {
+    height: $header-height;
+    display: flex;
+    align-items: center;
+    padding: 16px 24px;
+    position: relative;
+
+    .b-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-main {
+      width: auto;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .brand-name {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--pc-sidebar-color);
+      white-space: nowrap;
+    }
+  }
+
+  .user-profile-section {
+    padding: 10px 24px;
+    border-top: 2px solid rgb(240, 240, 240);
+
+    .dropdown-toggle::after {
+      display: none;
+    }
+
+    .user-images {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      border-radius: 50%;
+      overflow: hidden;
+      width: 46px;
+      height: 46px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        object-fit: cover;
+        color: transparent;
+        text-indent: 10000px;
+      }
+    }
+  }
+
+  // Estilos del contenido del menú
+  .navbar-content {
+    padding: 12px 0;
+  }
+
+  .coded-inner-navbar {
+    flex-direction: column;
+
+    app-nav-item>li.active:after {
+      top: 0 !important;
+      height: 100% !important;
+    }
+
+    li {
+      &.coded-hasmenu {
+        position: relative;
+        padding-bottom: 2px;
+
+        >a {
+          &:after {
+            content: '\e844';
+            font-family: 'feather';
+            font-size: 15px;
+            border: none;
+            position: absolute;
+            top: 11px;
+            right: 20px;
+            transition: 0.3s ease-in-out;
+          }
+        }
+
+        .coded-submenu {
+          opacity: 0;
+          visibility: hidden;
+          transform-origin: 50% 50%;
+          transition:
+            transform 0.3s,
+            opacity 0.3s;
+          transform-style: preserve-3d;
+          transform: rotateX(-90deg);
+          position: absolute;
+          display: block;
+
+          >app-nav-item li {
+            >a {
+              text-align: left;
+              padding: 12px 30px 12px 55px;
+              margin: 0;
+              display: block;
+
+              &:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 2px;
+                height: 100%;
+              }
+            }
+          }
+
+          >app-nav-collapse li {
+            >a {
+              text-align: left;
+              padding: 12px 30px 12px 55px;
+              margin: 0;
+              display: block;
+            }
+
+            .coded-submenu>app-nav-item li {
+              >a {
+                padding: 12px 30px 12px 75px;
+              }
+            }
+          }
+        }
+
+        &.coded-trigger {
+          >a {
+            &:after {
+              transform: rotate(90deg);
+            }
+          }
+
+          >.coded-submenu {
+            position: relative;
+            opacity: 1;
+            visibility: visible;
+            transform: rotateX(0deg);
+          }
+        }
+      }
+
+      &.coded-menu-caption {
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 12px 24px 12px;
+        text-transform: capitalize;
+        position: relative;
+        color: $gray-600;
+
+        &.first-group {
+          padding: 0px 24px 12px;
+        }
+      }
+
+      >a {
+        padding: 12px 16px 12px 28px;
+        display: flex;
+        align-items: center;
+        border-radius: 5px;
+        position: relative;
+
+        .coded-mtext {
+          position: relative;
+        }
+
+        >.coded-micon {
+          font-size: 16px;
+          margin-right: 8px;
+          height: 16px;
+          display: inline-block;
+          text-align: center;
+
+          i {
+            display: flex;
+          }
+
+          +.coded-mtext {
+            position: relative;
+            vertical-align: middle;
+            text-align: center;
+          }
+        }
+      }
+    }
+
+    app-nav-item {
+      li {
+        >a {
+          >.coded-micon {
+            margin-right: 12px;
+          }
+        }
+      }
+    }
+
+    >app-nav-group>app-nav-item {
+      li {
+        position: relative;
+
+        &:before {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 2px;
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  .version {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 16px;
+    cursor: pointer;
+
+    label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-left: 8px;
+      padding-right: 8px;
+      white-space: nowrap;
+      background-color: rgb(250, 250, 250);
+      color: rgb(158, 158, 158);
+      border-radius: 16px;
+    }
+  }
+}
+
+
+/* =============================================
+   ✅ DESKTOP: >1024px → modo compacto
+   ============================================= */
+@media (min-width: 1025px) {
+  .pc-sidebar {
+    ~.pc-container {
+      margin-left: $sidebar-width;
+      transition: margin-left 0.25s ease;
+    }
+
+    ~app-nav-bar .pc-header {
+      left: $sidebar-width;
+      transition: left 0.25s ease;
+    }
+
+    ~.pc-footer {
+      margin-left: $sidebar-width;
+      transition: margin-left 0.25s ease;
+    }
+  }
+
+  .pc-sidebar.navbar-collapsed {
+    width: 60px;
+
+    ~.pc-container {
+      margin-left: 60px;
+    }
+
+    ~app-nav-bar .pc-header {
+      left: 60px;
+    }
+
+    ~.pc-footer {
+      margin-left: 60px;
+    }
+
+    // Ocultar texto
+    .coded-mtext,
+    .coded-menu-caption,
+    .nav-card,
+    .version,
+    .user-profile-section {
+      display: none !important;
+    }
+
+    // Centrar íconos
+    .coded-inner-navbar li>a {
+      justify-content: center;
+      padding: 12px 0;
+    }
+
+    .coded-micon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0 !important;
+
+      i {
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    // Cerrar submenús
+    .coded-hasmenu .coded-submenu {
+      display: none !important;
+    }
+
+    // Ajustar logo
+    .m-header {
+      padding: 12px 0;
+      justify-content: center;
+
+      .b-brand {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .logo-main {
+        height: 28px;
+      }
+
+      .brand-name {
+        display: none !important;
+      }
+    }
+  }
+}
+
+/* =============================================
+   ✅ TABLET Y MÓVIL: ≤1024px → modo overlay
+   ============================================= */
+@media (max-width: 1024px) {
+  .pc-sidebar {
+    left: -#{$sidebar-width};
+    box-shadow: none;
+    top: 0;
+    transition: all 0.15s ease-in-out;
+
+    &.mob-open {
+      left: 0;
+
+      .navbar-wrapper {
+        position: relative;
+        z-index: 5;
+        background: inherit;
+      }
+
+      ~.pc-container .pc-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1025;
+      }
+    }
+  }
+
+  // Asegurar que en tablet/móvil el contenido no tenga margen
+  .pc-container {
+    margin-left: 0 !important;
+  }
+
+  .pc-header {
+    left: 0 !important;
+  }
+
+  .pc-footer {
+    margin-left: 0 !important;
+  }
+
+  // Ocultar el botón de compacto (opcional, si tu nav-bar lo muestra)
+  .pc-header .pc-h-item.pc-sidebar-collapse {
+    display: block; // o none si quieres ocultarlo
+  }
+}
+
+//scroll de menu
+
+#nav-ps-urban-control {
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  /* Scroll suave */
+
+  /* Scrollbar moderna y profesional */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin: 8px 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #dee2e6 0%, #adb5bd 100%);
+    border-radius: 10px;
+    border: 2px solid #f8f9fa;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #adb5bd 0%, #6c757d 100%);
+    transform: scale(1.05);
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #6c757d 0%, #495057 100%);
+  }
+
+  /* Para Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #adb5bd #f8f9fa;
+
+  /* Mejorar rendimiento del scroll */
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+}

@@ -1,0 +1,164 @@
+$accent: #534AB7;
+$accent-light: rgba($accent, 0.06);
+$accent-border: rgba($accent, 0.2);
+$danger: #ff4d4f;
+$radius: 12px;
+$transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ─── Input oculto ───────────────────────────────────────
+.hidden-input {
+  display: none;
+}
+
+.image-display-wrapper {
+  width: 100%;
+}
+
+// ─── Contenedor con imagen ──────────────────────────────
+.image-container {
+  position: relative;
+  border-radius: $radius;
+  overflow: hidden;
+  border: 2px solid $accent-border;
+  background: #fff;
+  transition: border-color $transition, box-shadow $transition;
+
+  &.is-editable {
+    cursor: pointer;
+
+    &:hover {
+      border-color: $accent;
+      box-shadow: 0 2px 12px rgba($accent, 0.12);
+
+      .image-overlay {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.display-image {
+  display: block;
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  padding: 16px;
+  background: #fafafa;
+}
+
+// ─── Overlay de acciones ────────────────────────────────
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  opacity: 0;
+  transition: opacity $transition;
+}
+
+.overlay-btn {
+  width: 42px !important;
+  height: 42px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform $transition;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &.edit-btn {
+    background: $accent !important;
+    border-color: $accent !important;
+  }
+}
+
+// ─── Badge del nombre ───────────────────────────────────
+.image-name-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+// ─── Estado vacío ───────────────────────────────────────
+.empty-container {
+  border: 2px dashed $accent-border;
+  border-radius: $radius;
+  background: $accent-light;
+  padding: 32px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all $transition;
+
+  &.is-editable {
+    cursor: pointer;
+
+    &:hover {
+      border-color: $accent;
+      background: rgba($accent, 0.1);
+
+      .empty-icon {
+        transform: scale(1.08);
+        background: linear-gradient(135deg, $accent, lighten($accent, 10%));
+      }
+    }
+  }
+}
+
+.empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba($accent, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  transition: all $transition;
+
+  span[nz-icon] {
+    font-size: 22px;
+    color: $accent;
+  }
+
+  .is-editable:hover & span[nz-icon] {
+    color: #fff;
+  }
+}
+
+.empty-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3d3d4a;
+  margin: 0;
+}
+
+.empty-hint {
+  font-size: 12px;
+  color: #8c8c9a;
+  margin: 0;
+}

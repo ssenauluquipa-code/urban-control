@@ -1,0 +1,14 @@
+<header class="pc-header">
+  <div class="header-wrapper">
+    <div class="pc-mob-drp">
+      <app-nav-left
+      [navCollapsed]="navCollapsed"
+      [isMobOpen]="isMobOpen"
+      (NavCollapse)="NavCollapse.emit()"
+      (NavCollapsedMob)="NavCollapsedMob.emit()"></app-nav-left>
+    </div>
+    <div>
+      <app-nav-right />
+    </div>
+  </div>
+</header>

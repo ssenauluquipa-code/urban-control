@@ -1,0 +1,34 @@
+<div class="permissions-layout">
+
+  <aside class="sidebar-modules">
+    <div class="sidebar-header">Módulos</div>
+    <ul>
+      <li *ngFor="let mod of matriz"
+          [class.active]="moduloSeleccionado?.moduloId === mod.moduloId"
+          (click)="seleccionarModulo(mod)">
+        <i [class]="mod?.icono"></i>
+        <span>{{ mod.moduloNombre }}</span>
+      </li>
+    </ul>
+  </aside>
+
+  <main class="content-table">
+    <div class="table-header" *ngIf="moduloSeleccionado; else noSelection">
+      <h2>Permisos de: {{ moduloSeleccionado.moduloNombre }}</h2>
+      <button (click)="enviarDatos()" class="btn-save">Guardar Cambios del Módulo</button>
+    </div>
+
+    <ng-template #noSelection>
+      <div class="empty-state">Seleccione un módulo para gestionar sus permisos</div>
+    </ng-template>
+
+    <ag-grid-angular
+      *ngIf="moduloSeleccionado"
+      style="width: 100%; height: calc(100vh - 220px);"
+      class="ag-theme-alpine"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      (gridReady)="onGridReady($event)">
+    </ag-grid-angular>
+  </main>
+</div>

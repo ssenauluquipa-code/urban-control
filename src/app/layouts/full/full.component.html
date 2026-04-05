@@ -1,0 +1,15 @@
+<app-navigation class="pc-sidebar" [ngClass]="{
+    'navbar-collapsed': navCollapsed,
+    'mob-open': navCollapsedMob
+  }" (NavCollapse)="toggleCompactMode()" (NavCollapsedMob)="navMobClick()" />
+
+<app-nav-bar [isMobOpen]="navCollapsedMob" (NavCollapsedMob)="navMobClick()" (NavCollapse)="toggleCompactMode()" />
+
+<div class="pc-container">
+  <div class="coded-wrapper">
+    <div class="coded-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <div class="pc-menu-overlay" (click)="closeMenu()" (keydown)="handleKeyDown($event)" tabindex="0"></div>
+</div>

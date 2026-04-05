@@ -1,0 +1,80 @@
+:root {
+    //=============================================================
+    //================ CONFIGURACIÓN GENERAL ==================
+    //=============================================================
+
+    // Color Primario de toda la aplicación [Botones], enlaces, entre otros...
+    --color_primary: #092c52;
+    // Hover que se aplica a los Botones, enlaces, entre otros... (primarios)
+    --color_primary_hover: #00216b;
+
+    //=============================================================
+    //================ CONFIGURACIÓN DEL SIDEBAR ==================
+    //=============================================================
+    // Color principal del Sidebar
+    //--sidebar_background_color: #09295A;
+
+    // Fuente de texto del Sidebar
+    // Para agregar nueva Fuente ingrese a https://fonts.google.com/
+    // Seleccione la nueva fuente y pegue el enlace en la sección de fuentes en el archivo index.html
+    --sidebar_text_font: "Roboto"; // Disponibles: Roboto | Roboto Condensed | Manrope | Nunito | Poppins | Dosis | Inter
+
+    // Tamaño de la fuente de los items del Sidebar
+    --sidebar_text_font_size: 14.5px;
+
+    // Color del texto de los items del Sidebar
+    //--sidebar_item_text_color: #cfcfcf;
+
+    // Grosor del texto de los items del Sidebar
+    --sidebar_text_font_weight: 300;
+
+    // Color del fondo de los items seleccionados en el Sidebar
+    //--sidebar_item_active_background_color: rgba(255, 255, 255, 0.06);
+    ;
+
+    // Color del texto de los items seleccionados del Sidebar
+    //--sidebar_item_active_text_color: #fff;
+
+    //=============================================================
+    //================ CONFIGURACIÓN SUB-HEADER ===================
+    //=============================================================
+    // Fuente de texto del titulo principal
+    // Para agregar nueva Fuente ingrese a https://fonts.google.com/
+    // Seleccione la nueva fuente y pegue el enlace en la sección de fuentes en el archivo index.html
+    --sub_header_text_font: "Roboto"; // Disponibles: Roboto | Roboto Condensed | Manrope | Nunito | Poppins | Dosis | Inter
+
+    // Tamaño de la fuente del titulo principal
+    --sub_header_text_font_size: 22px;
+
+    // Color del texto del titulo principal
+    --sub_header_title_color: #333;
+
+    /* === SIDEBAR === */
+    --sidebar_background_color: #ffffff;
+    /* Fondo blanco */
+    --sidebar_item_text_color: #2d3748;
+    /* Texto oscuro */
+    --sidebar_item_active_background_color: #e8f6f8;
+    /* Fondo claro para activo */
+    --sidebar_item_active_text_color: #17a2b8;
+    /* Azul acuarela para activo */
+    --company_title_color: #17a2b8;
+    /* Logo en azul */
+
+    //=============================================================
+    //============ CONFIGURACIÓN NOMBRE DE EMPRESA ================
+    //=============================================================
+    // Fuente de texto del nombre de la empresa
+    // Para agregar nueva Fuente ingrese a https://fonts.google.com/
+    // Seleccione la nueva fuente y pegue el enlace en la sección de fuentes en el archivo index.html
+    --company_text_font: "Inter"; // Disponibles: Roboto | Roboto Condensed | Manrope | Nunito | Poppins | Dosis | Inter
+
+    // Tamaño de la fuente del titulo principal
+    --company_text_font_size: 12px;
+
+    // Color del texto del titulo principal
+    //--company_title_color: #f6f6f6;
+
+    // Grosor del texto del nombre de la empresa
+    --company_text_font_weight: 500;
+}

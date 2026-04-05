@@ -1,0 +1,167 @@
+$accent: #534AB7;
+$accent-light: rgba($accent, 0.08);
+$accent-border: rgba($accent, 0.25);
+$radius: 12px;
+$transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+.image-uploader-wrapper {
+  width: 100%;
+}
+
+// ─── Zona de Upload (drag & drop) ───────────────────────
+:host ::ng-deep .upload-drop-zone {
+  .ant-upload-drag {
+    border: 2px dashed $accent-border;
+    border-radius: $radius;
+    background: $accent-light;
+    transition: all $transition;
+    padding: 0;
+
+    &:hover {
+      border-color: $accent;
+      background: rgba($accent, 0.12);
+    }
+  }
+
+  .ant-upload-btn {
+    padding: 32px 16px !important;
+  }
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.upload-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $accent, lighten($accent, 12%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  transition: transform $transition;
+
+  span[nz-icon] {
+    font-size: 24px;
+    color: #fff;
+  }
+
+  .upload-content:hover & {
+    transform: scale(1.08);
+  }
+}
+
+.upload-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d2d3a;
+  margin: 0;
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: #8c8c9a;
+  margin: 0;
+}
+
+// ─── Progreso ───────────────────────────────────────────
+.progress-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px;
+}
+
+.progress-text {
+  font-size: 13px;
+  color: $accent;
+  font-weight: 500;
+  margin: 0;
+}
+
+// ─── Preview ────────────────────────────────────────────
+.preview-container {
+  position: relative;
+  border-radius: $radius;
+  overflow: hidden;
+  border: 2px solid $accent-border;
+  background: #fafafa;
+  transition: border-color $transition;
+
+  &:hover {
+    border-color: $accent;
+
+    .preview-overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.preview-image {
+  display: block;
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  padding: 16px;
+  background: #fff;
+}
+
+.preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity $transition;
+}
+
+.overlay-btn {
+  width: 40px !important;
+  height: 40px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+
+  &.replace-btn {
+    background: $accent !important;
+    border-color: $accent !important;
+  }
+}
+
+.file-name-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── Acciones ───────────────────────────────────────────
+.action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}

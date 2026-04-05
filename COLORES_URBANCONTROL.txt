@@ -1,0 +1,92 @@
+================================================================================
+                    COLORES DEL PROYECTO URBANCONTROL
+================================================================================
+
+Archivo principal de configuración: src/assets/scss/_variable.scss
+
+--------------------------------------------------------------------------------
+COLORES PRINCIPALES (Theme Colors)
+--------------------------------------------------------------------------------
+
+Primary (Azul)      : #2962ff
+Secondary (Gris)   : #6c757d
+Success (Verde)    : #0bb7af
+Danger (Rojo)      : #f64e60
+Warning (Amarillo) : #ee9d01
+Info (Azul claro)  : #3699ff
+
+--------------------------------------------------------------------------------
+VARIANTES DEL TEMA (Theme Skins)
+--------------------------------------------------------------------------------
+
+Skin 1 (Azul)       : #2962ff
+Skin 2 (Naranja)    : #fe5419
+Skin 3 (Cyan)       : #00b0ff
+Skin 4 (Púrpura)    : #6659f7
+Skin 5 (Gris oscuro): #414755
+Skin 6 (Blanco)     : #fff
+
+--------------------------------------------------------------------------------
+COLORES DE FONDO Y TEXTO
+--------------------------------------------------------------------------------
+
+Background principal  : #fff (blanco)
+Background body      : #eef5f9 (azul muy claro)
+Texto body           : #3e5569
+Text muted           : #757e85
+Heading color        : #1e2a35
+
+--------------------------------------------------------------------------------
+ESCALA DE GRISES
+--------------------------------------------------------------------------------
+
+Gray 100 : #f8f9fa
+Gray 200 : #e9ecef
+Gray 300 : #dee2e6
+Gray 400 : #ced4da
+Gray 500 : #a1aab2
+Gray 600 : #6c757d
+Gray 700 : #4f5467
+Gray 800 : #343a40
+Gray 900 : #212529
+
+--------------------------------------------------------------------------------
+COLORES CLAROS (Light Variants)
+--------------------------------------------------------------------------------
+
+light-primary  : #d3edfa
+light-success  : #d5f3f2
+light-danger   : #f8dddd
+light-warning  : #f8ecdc
+light-info     : #e1f0ff
+
+--------------------------------------------------------------------------------
+OTROS COLORES DEFINIDOS
+--------------------------------------------------------------------------------
+
+Indigo : #3699ff
+Purple : #7460ee
+Pink   : #e83e8c
+Orange : #fb8c00
+Teal   : #20c997
+Cyan   : #4fc3f7
+Yellow : #ee9d01
+Black  : #000
+White  : #fff
+
+--------------------------------------------------------------------------------
+CÓMO CAMBIAR LOS COLORES
+--------------------------------------------------------------------------------
+
+Para modificar los colores del sistema, edita el archivo:
+src/assets/scss/_variable.scss
+
+Cambia los valores de las variables Sass. Ejemplo para color primario:
+
+  $primary: #2962ff;
+  $themecolor: #2962ff;
+
+Después de guardar, recompila el proyecto para ver los cambios.
+
+================================================================================
+

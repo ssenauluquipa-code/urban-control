@@ -1,0 +1,53 @@
+.urban-modal-wrapper {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+.modal-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #edf2f7;
+  padding: 1.25rem 1.5rem;
+  //border-top: 4px solid #17a2b8; // Color cian de tu proyecto
+
+  .modal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #2d3748;
+  }
+}
+
+.btn-close-custom {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #a0aec0;
+  transition: color 0.2s;
+  &:hover { color: #e53e3e; }
+}
+
+.modal-body {
+  padding: 1.5rem;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #edf2f7;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.bg-light-gray { background-color: #f8fafc; }
+
+// Estilos globales de botones para UrbanControl
+.btn-rounded {
+  border-radius: 8px !important;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}

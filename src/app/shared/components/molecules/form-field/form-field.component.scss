@@ -1,0 +1,49 @@
+@import 'src/assets/scss/variable';
+
+.form-field-wrapper {
+  margin-bottom: 16px;
+
+  nz-form-item {
+    margin-bottom: 0;
+  }
+
+  nz-form-label {
+    font-weight: 600;
+    color: $gray-700;
+
+    label {
+      font-weight: 600;
+    }
+  }
+
+  nz-form-control {
+    .ant-form-item-explain-error {
+      color: $danger;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  }
+
+  &.vertical {
+    nz-form-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    nz-form-control {
+      width: 100%;
+    }
+  }
+
+  &.horizontal {
+    nz-form-item {
+      display: flex;
+      align-items: center;
+    }
+
+    nz-form-label {
+      padding-bottom: 0;
+    }
+  }
+}

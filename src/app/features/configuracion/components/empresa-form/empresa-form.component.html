@@ -1,0 +1,95 @@
+<app-page-container
+    title="Configuración de Empresa"
+    permissionScope="empresa"
+    [showSave]="true"
+    [showBack]="true"
+    [showOptions]="false"
+    (onSave)="onSubmit()"
+    (onBack)="goBack()"
+    >
+<form [formGroup]="form" class="empresa-form">
+  <div class="form-grid">
+
+    <fieldset class="form-section">
+      <legend>Información Institucional</legend>
+
+      <app-form-field label="Nombre Comercial" forId="nombreComercial" [required]="true">
+        <app-input-text 
+            [input_control]="getControl('nombreComercial')" 
+            input_placeholder="Nombre Comercial"
+            prefix_icon="shop">
+        </app-input-text>
+      </app-form-field>
+
+      <app-form-field label="Razón Social" forId="razonSocial">
+        <app-input-text 
+            [input_control]="getControl('razonSocial')" 
+            input_placeholder="Razón Social"
+            prefix_icon="idcard">
+        </app-input-text>
+      </app-form-field>
+
+      <app-form-field label="NIT" forId="nit">
+        <app-input-text 
+            [input_control]="getControl('nit')" 
+            input_placeholder="NIT"
+            prefix_icon="number">
+        </app-input-text>
+      </app-form-field>
+    </fieldset>
+
+    <fieldset class="form-section">
+      <legend>Contacto</legend>
+
+      <app-form-field label="Correo Electrónico" forId="email">
+        <app-input-text 
+            [input_control]="getControl('email')" 
+            input_placeholder="Email"
+            input_type="email"
+            prefix_icon="mail">
+        </app-input-text>
+      </app-form-field>
+
+      <app-form-field label="Teléfono / WhatsApp" forId="telefono">
+        <app-input-text 
+            [input_control]="getControl('telefono')" 
+            input_placeholder="Teléfono"
+            prefix_icon="phone">
+        </app-input-text>
+      </app-form-field>
+
+      <app-form-field label="Dirección Física" forId="direccion" class="full-width">
+        <app-input-textarea 
+            [input_control]="getControl('direccion')" 
+            input_placeholder="Dirección"
+            [input_rows]="2">
+        </app-input-textarea>
+      </app-form-field>
+    </fieldset>
+
+    <fieldset class="form-section">
+      <legend>Configuración de Ventas</legend>
+
+      <app-form-field label="Días Vencimiento Reserva" forId="diasReservaVencimiento">
+        <app-input-number 
+            [input_control]="getControl('diasReservaVencimiento')" 
+            input_placeholder="Días"
+            help_text="Plazo máximo para que un lote reservado vuelva a 'Disponible'."
+            prefix_icon="calendar">
+        </app-input-number>
+      </app-form-field>
+
+      <app-form-field label="Moneda del Sistema" forId="monedaSimbolo">
+        <app-select-data
+            [inputControl]="getControl('monedaSimbolo')"
+            [itemList]="currenciesList"
+            bindLabel="label"
+            bindValue="value"
+            placeholder="Seleccionar moneda">
+        </app-select-data>
+      </app-form-field>
+    </fieldset>
+
+  </div>
+</form>
+</app-page-container>

@@ -1,0 +1,65 @@
+<!-- Estado: Con imagen preview -->
+<div class="image-uploader-wrapper">
+  @if (previewUrl()) {
+    <div class="preview-container">
+      <img [src]="previewUrl()!" [alt]="fileName()" class="preview-image" />
+      
+      <div class="preview-overlay">
+        <button nz-button nzShape="circle" nzType="primary" 
+                class="overlay-btn replace-btn" type="button"
+                (click)="clearImage()">
+          <span nz-icon nzType="swap" nzTheme="outline"></span>
+        </button>
+      </div>
+
+      <div class="file-name-badge" *ngIf="fileName()">
+        <span nz-icon nzType="file-image" nzTheme="outline"></span>
+        {{ fileName() }}
+      </div>
+    </div>
+
+    <!-- Botones de acción bajo la imagen -->
+    <div class="action-bar">
+      <button nz-button nzType="default" nzSize="small" nzDanger type="button"
+              (click)="clearImage()">
+        <span nz-icon nzType="delete" nzTheme="outline"></span>
+        Quitar imagen
+      </button>
+    </div>
+  }
+
+  <!-- Estado: Sin imagen (zona de upload) -->
+  @if (!previewUrl()) {
+    <nz-upload
+      nzType="drag"
+      [nzMultiple]="false"
+      [nzAccept]="acceptTypes"
+      [nzBeforeUpload]="beforeUpload"
+      [(nzFileList)]="fileList"
+      [nzShowUploadList]="false"
+      class="upload-drop-zone">
+      
+      @if (uploadProgress() > 0 && uploadProgress() < 100) {
+        <!-- Progreso de carga -->
+        <div class="progress-area">
+          <nz-progress 
+            [nzPercent]="uploadProgress()" 
+            nzType="circle" 
+            [nzWidth]="64"
+            nzStatus="active">
+          </nz-progress>
+          <p class="progress-text">Procesando imagen...</p>
+        </div>
+      } @else {
+        <!-- Zona de arrastrar -->
+        <div class="upload-content">
+          <div class="upload-icon-wrapper">
+            <span nz-icon [nzType]="uploadIcon" nzTheme="outline"></span>
+          </div>
+          <p class="upload-title">{{ uploadTitle }}</p>
+          <p class="upload-hint">{{ uploadHint }}</p>
+        </div>
+      }
+    </nz-upload>
+  }
+</div>

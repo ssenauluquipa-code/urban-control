@@ -1,0 +1,13 @@
+@import 'src/assets/scss/variable';
+
+.badge-estado {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-block;
+
+  &.disponible { background: #e6fffa; color: #38b2ac; border: 1px solid #b2f5ea; }
+  &.vendido { background: #fff5f5; color: #e53e3e; border: 1px solid #feb2b2; }
+  &.reservado { background: #fffaf0; color: #dd6b20; border: 1px solid #fbd38d; }
+}
+

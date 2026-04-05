@@ -1,0 +1,55 @@
+<ul class="list-unstyled">
+  <!-- ✅ Botón para Desktop (≥768px): modo compacto -->
+  <li class="pc-h-item pc-sidebar-collapse d-none d-md-inline-flex">
+    <a
+      href="javascript:"
+      title="Click to collapse menu"
+      class="pc-head-link ms-0"
+      (click)="navCollapse()"
+    >
+      @if (navCollapsed) {
+         <span nz-icon nzType="menu-unfold"></span>
+      } @else {
+        <span nz-icon nzType="menu-fold"></span>
+      }
+    </a>
+  </li>
+
+  <!-- ✅ Botón para Móvil/Tablet (<768px): modo overlay -->
+  <li class="pc-h-item pc-sidebar-popup d-inline-flex d-md-none">
+    <a
+      href="javascript:"
+      class="pc-head-link ms-0"
+      (click)="NavCollapsedMob.emit()"
+    >
+      @if (isMobOpen) {
+        <span nz-icon nzType="menu-unfold"></span>
+      } @else {
+        <span nz-icon nzType="menu-fold"></span>
+      }
+    </a>
+  </li>
+
+  <!-- Búsqueda móvil -->
+  <li class="dropdown pc-h-item d-inline-flex d-md-none" ngbDropdown>
+    <a href="javascript:" class="pc-head-link dropdown-toggle arrow-none m-0" ngbDropdownToggle>
+      <i class="ti ti-search"></i>
+    </a>
+    <div class="dropdown-menu dropdowm-menu-end pc-h-dropdown drp-search" ngbDropdownMenu>
+      <form class="px-3">
+        <div class="form-group mb-0 d-flex align-items-center">
+           <span nz-icon nzType="search" class="search f-12"></span>
+          <input type="search" class="form-control border-0 shadow-none" placeholder="Ctrl + K" />
+        </div>
+      </form>
+    </div>
+  </li>
+
+  <!-- Búsqueda desktop -->
+  <li class="pc-h-item d-none d-md-inline-flex">
+    <form class="header-search">
+      <span nz-icon nzType="search" class="search f-12"></span>
+      <input type="search" class="form-control" placeholder="Ctrl + K" />
+    </form>
+  </li>
+</ul>

@@ -1,0 +1,108 @@
+.page-header-container{
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  border-radius: $border-radius;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+/* .page-header {
+  display: flex;
+  align-items: center;
+  top: $header-height;
+  left: $sidebar-width;
+  right: 0;
+  z-index: 1023;
+  min-height: 55px;
+  padding: 0px 0px 13px 0px;
+  background: transparent;
+  border-radius: $border-radius;
+  color: red;
+
+  .page-block {
+    width: 100%;
+  }
+
+  .page-header-title {
+    display: inline-block;
+    h2{
+      margin-bottom: 0;
+      font-size: 18px;
+      color: #1f2937;
+    }
+  }
+
+  h5 {
+    margin-bottom: 0;
+    margin-right: 8px;
+    padding-right: 8px;
+    font-weight: 500;
+  }
+
+  .breadcrumb {
+    padding: 0;
+    display: inline-flex;
+    margin-bottom: 0;
+    background: transparent;
+    font-size: 13px;
+
+    a {
+      color: var(--pc-sidebar-color);
+    }
+
+    .breadcrumb-item {
+       display: inline-flex;
+      align-items: center;
+
+      // Separador: usa un ícono o barra más moderna
+      + .breadcrumb-item::before {
+        // feather icon "chevron-right"
+        font-family: 'feather';
+        font-size: 14px;
+        color: #9ca3af; // gris medio
+        padding: 0 8px;
+        position: static; // anula posiciones anteriores
+      }
+      .home {
+        color: $gray-600;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+      }
+
+       a {
+        color: #4f46e5; // color primario (ajusta según tu tema)
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+
+        &:hover {
+          color: #4338ca; // primario oscuro
+        }
+      }
+
+      + .breadcrumb-item::before {
+        position: relative;
+        top: 2px;
+      }
+
+      // Último elemento (activo)
+      &:last-child {
+        opacity: 1;
+        color: #374151; // gris oscuro
+        font-weight: 600;
+
+        a {
+          color: inherit;
+          pointer-events: none;
+        }
+      }
+    }
+
+    svg {
+      width: 14px;
+      height: 14px;
+      vertical-align: baseline;
+    }
+  }
+} */

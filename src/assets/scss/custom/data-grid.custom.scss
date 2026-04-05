@@ -1,0 +1,185 @@
+:root {
+    --header_background_color: #f9f9fb;
+    --header_text_color: #6c7388;
+    --header_text_font: "Inter";
+    --header_font_size: 12.5px;
+    // Color de fondo las filas alternadas
+    --row_alternative_background_color: #f9f9fb;
+    // Color de fondo las filas alternadas en modo HOVER
+    --row_alternative_background_hover_color: #e9edfb;
+}
+
+.custom-data-grid {
+    max-height: 70vh;
+    min-height: 45vh;
+    .dx-datagrid .dx-row > td {
+        font-family: var(--header_text_font), sans-serif;
+        font-weight: 400;
+    }
+    // Filas alternadas
+    .dx-datagrid .dx-row-alt > td {
+        // background-color: #e9edfb;
+        background-color: var(--row_alternative_background_color);
+    }
+    // Filas distintas al header
+    .dx-datagrid .dx-row-lines > td {
+        font-size: 13px;
+        vertical-align: middle;
+        line-height: 15px;
+    }
+    // Color del hover de las filas
+    .dx-datagrid-table
+        .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row):not(
+            .dx-row-focused
+        )
+        > td:not(.dx-focused) {
+        background-color: var(--row_alternative_background_hover_color);
+    }
+    // Color de fondo del header
+    .dx-datagrid .dx-datagrid-headers .dx-header-row > td {
+        background-color: var(--header_background_color);
+        font-size: var(--header_font_size);
+        color: var(--header_text_color);
+        text-transform: uppercase;
+        font-weight: 600 !important;
+    }
+    // Fila seleccionada
+    .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused).dx-row-lines > td,
+    .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused).dx-row-lines > tr > td,
+    .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover.dx-row-lines > td,
+    .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover.dx-row-lines > tr > td {
+        background-color: #accbe5;
+        color: #333;
+    }
+    .dx-datagrid-rowsview .dx-row-focused.dx-data-row .dx-command-edit:not(.dx-focused) .dx-link,
+    .dx-datagrid-rowsview .dx-row-focused.dx-data-row > td:not(.dx-focused),
+    .dx-datagrid-rowsview .dx-row-focused.dx-data-row > tr > td:not(.dx-focused) {
+        background-color: #accbe5;
+        color: #333;
+    }
+    // Seleccionados en el paginado
+    .dx-pager .dx-page-sizes .dx-selection,
+    .dx-pager .dx-pages .dx-selection {
+        background-color: #283851;
+        color: #f6f6f6;
+    }
+    // Scroll-bar
+    .dx-scrollable-scroll-content {
+        background-color: #ced2dd;
+    }
+    .dx-scrollbar-hoverable.dx-scrollable-scrollbar-active .dx-scrollable-scroll-content {
+        background-color: #374769;
+    }
+    // Calendario del filtro
+    .dx-calendar-cell.dx-calendar-selected-date span {
+        background-color: #283851;
+    }
+}
+
+.custom-tree-list {
+    max-height: 70vh;
+    .dx-row > td {
+        font-family: var(--header_text_font), sans-serif;
+        font-weight: 400;
+    }
+    // Filas alternadas
+    .dx-row-alt > td {
+        background-color: var(--row_alternative_background_color);
+    }
+    // Filas distintas al header
+    .dx-row-lines > td {
+        font-size: 13px;
+    }
+    // Color del hover de las filas
+    .dx-treelist-table
+        .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row):not(
+            .dx-row-focused
+        )
+        > td:not(.dx-focused) {
+        background-color: var(--row_alternative_background_hover_color);
+    }
+    // Color de fondo del header
+    .dx-header-row > td {
+        background-color: var(--header_background_color);
+        font-size: var(--header_font_size);
+        color: var(--header_text_color);
+        text-transform: uppercase;
+        font-weight: 600 !important;
+    }
+    // Calendario del filtro
+    .dx-calendar-cell.dx-calendar-selected-date span {
+        background-color: #283851;
+    }
+}
+
+.menu-cell {
+    padding: 0 !important;
+    vertical-align: middle !important;
+}
+
+// Agrega salto de linea al contenido de una celda
+.wrap-column {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.edition-grid {
+    max-height: 50vh;
+    min-height: 30vh;
+    .dx-datagrid .dx-row > td {
+        font-size: 12px;
+        font-weight: 400;
+    }
+    // Fila del header
+    .dx-datagrid .dx-datagrid-headers .dx-header-row > td {
+        font-size: 12px;
+        font-weight: 500 !important;
+    }
+}
+
+// Cambiar el color de los bordes de edición
+.dx-datagrid-focus-overlay {
+    border: none;
+}
+.dx-datagrid-rowsview .dx-data-row .dx-cell-modified.dx-cell-modified::after,
+.dx-datagrid-rowsview .dx-data-row .dx-cell-modified.dx-datagrid-invalid::after {
+    border: 1px solid #ddd;
+}
+
+// ======================== Icono de eliminar una fila ========================
+.delete-row-icon {
+    // color: #374769 !important;
+    color: var(--color_primary) !important;
+    font-size: 19px !important;
+}
+.delete-row-icon:hover {
+    color: var(--danger_color) !important;
+}
+
+// ======================== Fondo de los overlays ========================
+.dx-overlay-shader {
+    background-color: rgb(221 215 215 / 22%);
+}
+
+.dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-list-item-selected {
+    background-color: #e6f7ff !important;
+    color: #222526;
+    font-weight: 500;
+}
+.dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-state-active {
+    background-color: #e6f7ff !important;
+    color: #222526;
+}
+
+.dx-datagrid-adaptive-more::before {
+    content: "\f001";
+}
+
+/*nuevo diseño para la tabla*/
+.data-grid-wrapper{
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+    font-family: 'Inter', 'Roboto', sans-serif;
+}

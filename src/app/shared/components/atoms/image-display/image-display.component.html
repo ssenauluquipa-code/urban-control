@@ -1,0 +1,58 @@
+<!-- Input oculto para seleccionar archivos -->
+<input 
+  #fileInput
+  type="file" 
+  [accept]="acceptTypes" 
+  class="hidden-input"
+  (change)="onFileSelected($event)" />
+
+<div class="image-display-wrapper">
+
+  <!-- Estado: Con imagen -->
+  @if (displayUrl) {
+    <div class="image-container" [class.is-editable]="editable">
+      <img [src]="displayUrl" [alt]="imageName" class="display-image" />
+
+      <!-- Overlay de acciones (solo si es editable) -->
+      @if (editable) {
+        <div class="image-overlay">
+          <button nz-button nzShape="circle" nzType="primary"
+                  class="overlay-btn edit-btn" type="button"
+                  nz-tooltip nzTooltipTitle="Reemplazar imagen"
+                  (click)="triggerUpload($event)">
+            <span nz-icon nzType="edit" nzTheme="outline"></span>
+          </button>
+
+          <button nz-button nzShape="circle" nzDanger
+                  class="overlay-btn delete-btn" type="button"
+                  nz-tooltip nzTooltipTitle="Eliminar imagen"
+                  (click)="deleteImage($event)">
+            <span nz-icon nzType="delete" nzTheme="outline"></span>
+          </button>
+        </div>
+      }
+
+      <!-- Badge con nombre -->
+      <div class="image-name-badge">
+        <span nz-icon nzType="file-image" nzTheme="outline"></span>
+        {{ imageName }}
+      </div>
+    </div>
+  }
+
+  <!-- Estado: Sin imagen -->
+  @if (!displayUrl) {
+    <div class="empty-container" 
+         [class.is-editable]="editable"
+         (click)="onEmptyClick()">
+      <div class="empty-icon">
+        <span nz-icon [nzType]="emptyIcon" nzTheme="outline"></span>
+      </div>
+      <p class="empty-text">{{ emptyText }}</p>
+      @if (editable) {
+        <p class="empty-hint">{{ emptyHint }}</p>
+      }
+    </div>
+  }
+
+</div>

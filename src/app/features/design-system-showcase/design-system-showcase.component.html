@@ -1,0 +1,234 @@
+<div class="showcase-container">
+  <div class="showcase-header">
+    <h1>UrbanControl - Design System</h1>
+    <p>Componentes Atomic Design para el sistema de gestión de ventas</p>
+  </div>
+
+  <!-- ATOMS Section -->
+  <div class="showcase-section">
+    <h2>Atoms (Átomos)</h2>
+
+    <!-- Badge Estado -->
+    <div class="component-card">
+      <h3>Badge Estado</h3>
+      <p>Estados de lote: DISPONIBLE, VENDIDO, RESERVADO</p>
+      <div class="demo-area">
+        <app-badge-estado estado="DISPONIBLE"></app-badge-estado>
+        <app-badge-estado estado="VENDIDO"></app-badge-estado>
+        <app-badge-estado estado="RESERVADO"></app-badge-estado>
+      </div>
+    </div>
+
+    <!-- Button Action -->
+    <div class="component-card">
+      <h3>Button Action</h3>
+      <p>Botones con soporte para loading state</p>
+      <div class="demo-area">
+        <app-button-action (action)="onClick($event)">Primary</app-button-action>
+        <app-button-action nzType="default" (action)="onClick($event)">Default</app-button-action>
+        <app-button-action [loading]="true">Loading</app-button-action>
+      </div>
+    </div>
+
+    <!-- Currency Label -->
+    <div class="component-card">
+      <h3>Currency Label</h3>
+      <p>Formateo de moneda Boliviana (BS) y dólares (USD)</p>
+      <div class="demo-area">
+        <app-currency-label [value]="50000" currency="BS"></app-currency-label>
+        <app-currency-label [value]="1500.50" currency="USD"></app-currency-label>
+        <app-currency-label [value]="75000" currency="BS"></app-currency-label>
+      </div>
+    </div>
+
+    <!-- Input Text -->
+    <div class="component-card">
+      <h3>Input Text</h3>
+      <p>Campo de texto con validaciones y máscaras</p>
+      <div class="demo-area" style="flex-direction: column; align-items: stretch; gap: 16px;">
+        <app-input-text [input_control]="textControl" input_placeholder="Ingrese su nombre" prefix_icon="user"
+          help_text="Mínimo 3 caracteres" [input_minlength]="3">
+        </app-input-text>
+      </div>
+    </div>
+
+    <!-- Input Number -->
+    <div class="component-card">
+      <h3>Input Number</h3>
+      <p>Campo numérico con máscara (solo números enteros o decimales)</p>
+      <div class="demo-area" style="flex-direction: column; align-items: stretch; gap: 16px;">
+        <app-input-number [input_control]="numberControl" input_placeholder="Ingrese un número entero"
+          prefix_icon="number" help_text="Solo números enteros" [input_maxlength]="10">
+        </app-input-number>
+        <app-input-number [input_control]="decimalControl" input_placeholder="Ingrese un número decimal"
+          prefix_icon="dollar" [allow_decimals]="true" decimal_separator="." help_text="Permite decimales con punto"
+          [input_maxlength]="15">
+        </app-input-number>
+      </div>
+    </div>
+
+    <!-- Input Textarea -->
+    <div class="component-card">
+      <h3>Input Textarea</h3>
+      <p>Área de texto con contador de caracteres</p>
+      <div class="demo-area" style="flex-direction: column; align-items: stretch; gap: 16px;">
+        <app-input-textarea [input_control]="textareaControl" input_placeholder="Ingrese una descripción..."
+          [input_rows]="4" [input_maxlength]="200" [show_character_count]="true">
+        </app-input-textarea>
+      </div>
+    </div>
+
+    <!-- Select Data -->
+    <div class="component-card">
+      <h3>Select Data (ng-select)</h3>
+      <p>Selector con búsqueda y soporte para objetos complejos</p>
+      <div class="demo-area" style="flex-direction: column; align-items: stretch;">
+        <app-select-data 
+          [inputControl]="selectControl" 
+          [itemList]="sampleProjects" 
+          bindLabel="Name" 
+          bindValue="Id" 
+          label="Proyecto" 
+          placeholder="Seleccione un proyecto...">
+        </app-select-data>
+      </div>
+    </div>
+
+    <!-- Input Text Info -->
+    <div class="component-card">
+      <h3>Input Text Info</h3>
+      <p>Vista de datos en modo lectura (ReadOnly)</p>
+      <div class="demo-area" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%;">
+        <app-input-text-info label="Razón Social" value="URBAN CONTROL REAL ESTATE S.A."></app-input-text-info>
+        <app-input-text-info label="NIT" value="1020304050" [showCopy]="true"></app-input-text-info>
+        <app-input-text-info label="Fecha Registro" value="2024-03-15" [bold]="true"></app-input-text-info>
+        <app-input-text-info label="Estado" value="" emptyText="Pendiente" [hasError]="true"></app-input-text-info>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOLECULES Section -->
+  <div class="showcase-section">
+    <h2>Molecules (Moléculas)</h2>
+
+    <!-- Form Field -->
+    <div class="component-card">
+      <h3>Form Field</h3>
+      <p>Campo de formulario con label, input y validación de NG-ZORRO</p>
+      <div class="demo-area" style="flex-direction: column; align-items: stretch;">
+        <app-form-field label="Nombre completo" placeholder="Ingrese su nombre"
+          errorMessage="El nombre es requerido"></app-form-field>
+
+        <app-form-field label="Monto del Lote (BS)"[required]="true">
+          <app-input-number [input_control]="decimalControl">
+          </app-input-number>
+        </app-form-field>
+      </div>
+    </div>
+
+    <!-- Cliente Selector -->
+    <div class="component-card">
+      <h3>Cliente Selector</h3>
+      <p>Selector de cliente con búsqueda en dropdown</p>
+      <div class="demo-area" style="flex-direction: column; align-items: stretch;">
+        <app-cliente-selector [options]="clientes" (searchChange)="onSearchCliente($event)"></app-cliente-selector>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORGANISMS Section -->
+  <div class="showcase-section">
+    <h2>Organisms (Organismos)</h2>
+
+    <!-- Data Grid -->
+    <div class="component-card">
+      <h3>Data Grid</h3>
+      <p>Configuración base de AG Grid en español para UrbanControl</p>
+      <div class="demo-area grid-demo">
+<app-data-table [rowData]="gridData" [columnDefs]="gridColumns" [actions]="[]" height="400px"></app-data-table>
+      </div>
+    </div>
+
+    <!-- Page Header -->
+    <div class="component-card">
+      <h3>Page Header</h3>
+      <p>Encabezado de página con título, botón atrás, botón nuevo y menú de exportación</p>
+
+      <div class="demo-area" style="flex-direction: column; gap: 16px;">
+        <!-- Variante completa -->
+        <div>
+          <small style="color: #888; display:block; margin-bottom: 8px;">Completo (showBack + showNew + showOptions)</small>
+          <app-page-container
+            title="Listado de Lotes"
+            [showBack]="true"
+            [showNew]="true"
+            [showOptions]="true"
+            (onBack)="onHeaderBack()"
+            (onAddNew)="onHeaderNew()"
+            (onMenuExportExcel)="onHeaderExportExcel()"
+            (onMenuExportPDF)="onHeaderExportPdf()">
+            <div style="padding: 10px; background: #f5f5f5; border: 1px dashed #ccc;">Contenido protegido por app-page-container</div>
+          </app-page-container>
+        </div>
+
+        <!-- Solo título y opciones -->
+        <div>
+          <small style="color: #888; display:block; margin-bottom: 8px;">Solo título + opciones (default)</small>
+          <app-page-container
+            title="Clientes"
+            (onMenuExportExcel)="onHeaderExportExcel()"
+            (onMenuExportPDF)="onHeaderExportPdf()">
+            <div style="padding: 10px; background: #f5f5f5; border: 1px dashed #ccc;">Vista temporal de clientes</div>
+          </app-page-container>
+        </div>
+
+        <!-- Solo título sin opciones -->
+        <div>
+          <small style="color: #888; display:block; margin-bottom: 8px;">Solo título, sin opciones</small>
+          <app-page-container
+            title="Detalle de Venta"
+            [showOptions]="false">
+            <div style="padding: 10px; background: #f5f5f5; border: 1px dashed #ccc;">Detalle aislado sin opciones extras</div>
+          </app-page-container>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW Section: Layout & Multimedia -->
+  <div class="showcase-section">
+    <h2>Layout & Multimedia</h2>
+
+    <!-- Card Container -->
+    <div class="component-card">
+      <h3>Card Container</h3>
+      <p>Contenedor con bordes redondeados y footer automático</p>
+      <div class="demo-area" style="flex-direction: column; align-items: stretch; gap: 20px;">
+        <app-card-container title="Información General" icon="info-circle">
+          <p style="margin: 0; padding: 20px; color: #565e74;">Contenido principal del card-container.</p>
+          <div card-footer style="display: flex; justify-content: flex-end; gap: 10px; padding: 12px 20px; border-top: 1px solid #f0f0f0;">
+            <app-button-action nzType="default">Cancelar</app-button-action>
+            <app-button-action>Guardar</app-button-action>
+          </div>
+        </app-card-container>
+      </div>
+    </div>
+
+    <!-- Images -->
+    <div class="component-card">
+      <h3>Images & Uploaders</h3>
+      <p>Gestión de imágenes y previsualización</p>
+      <div class="demo-area" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; align-items: start;">
+        <div>
+          <small style="color: #888; display:block; margin-bottom: 8px;">Display (Read Only)</small>
+          <app-image-display [imageUrl]="sampleImageUrl" imageName="Logo Empresa"></app-image-display>
+        </div>
+        <div>
+          <small style="color: #888; display:block; margin-bottom: 8px;">Uploader (Interactive)</small>
+          <app-image-uploader></app-image-uploader>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

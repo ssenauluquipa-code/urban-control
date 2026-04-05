@@ -1,0 +1,113 @@
+.permisos-container {
+  padding: 20px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .cell-disabled {
+    background-color: #f0f0f0;
+    width: 100%;
+    height: 100%;
+    cursor: not-allowed;
+  }
+
+  input[type="checkbox"] {
+    cursor: pointer;
+    transform: scale(1.2);
+  }
+}
+
+.permissions-layout {
+  display: flex;
+  height: calc(100vh - 180px);
+  gap: 20px;
+  background-color: #fff;
+
+  .sidebar-modules {
+    width: 280px;
+    border-right: 1px solid #e0e0e0;
+    padding: 1rem;
+
+    .sidebar-header {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      li {
+        padding: 12px 15px;
+        margin-bottom: 5px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.2s;
+
+        &:hover { background-color: #f0f2f5; }
+        &.active {
+          background-color: #e3f2fd;
+          color: #1976d2;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  .content-table {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+    padding: 40px;
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    .btn-save {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      &:hover { background-color: #218838; }
+    }
+    // Aseguramos que el componente de la tabla herede el ancho
+  ag-grid-angular {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); // Opcional: un toque pro
+  }
+  }
+}
+
+.empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #999;
+    font-style: italic;
+}
+
+.sidebar-modules ul li {
+  &.active {
+    background-color: #e3f2fd; // Un azul suave de fondo
+    border-left: 4px solid #1976d2; // Una barra lateral indicadora
+    color: #1976d2;
+    font-weight: bold;
+  }
+}

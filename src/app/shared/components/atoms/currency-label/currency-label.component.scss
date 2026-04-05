@@ -1,0 +1,23 @@
+@import 'src/assets/scss/variable';
+
+.currency-label {
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+
+  &.bs {
+    color: $primary;
+  }
+
+  &.usd {
+    color: $success;
+  }
+
+  &.small {
+    font-size: 12px;
+  }
+
+  &.large {
+    font-size: 18px;
+  }
+}

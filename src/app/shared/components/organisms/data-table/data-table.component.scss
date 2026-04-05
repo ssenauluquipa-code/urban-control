@@ -1,0 +1,176 @@
+// ── Variables ────────────────────────────────────────────────
+$dt-radius:        8px;
+$dt-shadow:        0 2px 8px rgba(0, 0, 0, 0.08);
+$dt-border:        #dee2e6;
+$dt-toolbar-bg:    #f8f9fa;
+$dt-input-bg:      #ffffff;
+$dt-input-focus:   #4f46e5;
+
+$dt-color-create:  #4f46e5;
+$dt-color-view:    #0d6efd;
+$dt-color-edit:    #fd7e14;
+$dt-color-delete:  #dc3545;
+
+$dt-font-size:     0.875rem;
+$dt-btn-radius:    6px;
+
+// ── Wrapper ──────────────────────────────────────────────────
+.dt-wrapper {
+  border-radius: $dt-radius;
+  box-shadow: $dt-shadow;
+  border: 1px solid $dt-border;
+  overflow: hidden;
+  background: #fff;
+}
+
+// ── Toolbar ──────────────────────────────────────────────────
+.dt-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: $dt-toolbar-bg;
+  border-bottom: 1px solid $dt-border;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.dt-search {
+  position: relative;
+  flex: 1;
+  max-width: 360px;
+
+  @media (max-width: 640px) {
+    max-width: 100%;
+  }
+}
+
+.dt-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.dt-search-input {
+  width: 100%;
+  padding: 7px 12px 7px 32px;
+  border: 1px solid $dt-border;
+  border-radius: $dt-btn-radius;
+  font-size: $dt-font-size;
+  background: $dt-input-bg;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: $dt-input-focus;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+  }
+}
+
+.dt-btn-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: $dt-color-create;
+  color: #fff;
+  border: none;
+  border-radius: $dt-btn-radius;
+  font-size: $dt-font-size;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+
+  &:hover { background: darken($dt-color-create, 8%); }
+
+  @media (max-width: 640px) {
+    justify-content: center;
+  }
+}
+
+// ── Grid wrapper ─────────────────────────────────────────────
+.dt-grid-wrapper {
+  position: relative;
+  overflow-x: auto;
+}
+
+.dt-grid {
+  width: 100%;
+  height: 100%;
+}
+
+// ── Loading overlay ──────────────────────────────────────────
+.dt-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.dt-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid $dt-border;
+  border-top-color: $dt-color-create;
+  border-radius: 50%;
+  animation: dt-spin 0.7s linear infinite;
+}
+
+@keyframes dt-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Action buttons (cellRenderer) ────────────────────────────
+:host ::ng-deep .dt-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+:host ::ng-deep .dt-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border: none;
+  border-radius: $dt-btn-radius;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: #fff;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.85; }
+
+  &.btn-view   { background: $dt-color-view; }
+  &.btn-edit   { background: $dt-color-edit; }
+  &.btn-delete { background: $dt-color-delete; }
+}
+
+
+// Fuerza a que las celdas de AG Grid permitan ver componentes de Angular
+::ng-deep .ag-cell-custom-component-wrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Asegura que la columna pinned (derecha) sea visible
+::ng-deep .ag-pinned-right-cols-container {
+  border-left: 1px solid #dee2e6 !important;
+  background-color: #fff !important;
+}

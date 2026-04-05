@@ -1,0 +1,14 @@
+<div class="form-field-wrapper">
+  <nz-form-item>
+    <nz-form-label
+      [nzRequired]="required"
+      [nzFor]="forId"
+      [nzNoColon]="noColon"
+    >
+      {{ label }}
+    </nz-form-label>
+    <nz-form-control [nzErrorTip]="errorTip">
+      <ng-content></ng-content>
+    </nz-form-control>
+  </nz-form-item>
+</div>

@@ -1,0 +1,39 @@
+<div class="card-container" [class.no-padding]="noPadding">
+
+      <!-- Header -->
+      @if (title || icon) {
+        <div class="card-header">
+          <div class="header-content">
+            
+            @if (icon) {
+              <span class="material-symbols-outlined icon">
+                {{ icon }}
+              </span>
+            }
+
+            @if (title) {
+              <h3 class="title">
+                {{ title }}
+              </h3>
+            }
+
+          </div>
+
+          <!-- Actions -->
+          <ng-content select="[card-actions]"></ng-content>
+        </div>
+      }
+
+      <!-- Content -->
+      <div class="card-content">
+        <ng-content></ng-content>
+      </div>
+
+      <!-- Footer automático -->
+      @if (hasFooter) {
+        <div class="card-footer">
+          <ng-content select="[card-footer]"></ng-content>
+        </div>
+      }
+
+    </div>

@@ -1,0 +1,200 @@
+// Sobreponemos los componentes de nz-zorro encima a los de ng-bootstrap
+.cdk-overlay-container {
+  z-index: 1200 !important;
+}
+
+nz-select {
+  width: 100%;
+}
+
+//========================= DISEÑO DE TABLAS PARA DETALLES =========================
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > thead > tr > th {
+  border: 1px solid #e8eaeb;
+  background-color: var(--header_background_color);
+  font-size: 14px;
+  color: var(--header_text_color);
+  font-weight: 500 !important;
+}
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > tbody > tr > td {
+  border: 1px solid #e8eaeb;
+  border-top: none;
+  padding: 7px 10px;
+  color: #333333;
+  line-height: 15px;
+}
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > thead > tr > th:not(:first-child) {
+  border-left: none;
+}
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > tbody > tr > td:not(:first-child) {
+  border-left: none;
+}
+//========================= DISEÑO DE INPUTS DESHABILITADOS ==========================
+
+/*para cambiar el color del input cuando esta desabilitado*/
+.ant-input-disabled,
+.ant-input[disabled] {
+  color: #333 !important;
+  background-color: #f5f5f5 !important;
+}
+
+.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  color: #333 !important;
+  background-color: #f5f5f5 !important;
+}
+
+// ========================= ESTILOS DE INPUT DESHABILITADOS ==========================
+.ant-empty {
+  margin: 0;
+  border: 1px solid #ddd;
+  padding: 15px;
+}
+
+// ========================= ESTILOS DE SWITCH =========================
+.switch-large {
+  button {
+    height: 26px;
+  }
+  .ant-switch-handle {
+    width: 20px;
+    height: 20px;
+    top: 3px;
+  }
+  .ant-switch-checked .ant-switch-handle {
+    left: calc(100% - 20px - 2px);
+  }
+}
+// ========================= ESTILOS DE SEGMENTED =========================
+
+.ant-segmented-item {
+  font-size: 13px;
+  // width: 70px;
+}
+.ant-segmented-item-label {
+  padding: 0 7px;
+}
+.blue-segmented {
+  .ant-segmented-item-selected {
+    background-color: #cfe3fb;
+    color: #1a87ff;
+    border: 1px solid #1a87ff;
+  }
+}
+.orange-segmented {
+  .ant-segmented-item-selected {
+    background-color: #ffebd3;
+    color: #f96902;
+    border: 1px solid #f96902;
+  }
+}
+// ========================= ESTILOS DE DATEPICKER =========================
+.ant-picker {
+  width: 100% !important;
+  height: 34px !important;
+  border-radius: 8px !important; /* Añadido radius */
+
+  &-panel {
+    border-radius: 8px !important; /* Panel desplegable */
+  }
+  &:focus{
+    border-color: #17a2b8 !important;
+    box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.2) !important;
+  }
+}
+
+// ==================== ESTILOS PARA INPUT-GROUP (NUEVO) ====================
+nz-input-group {
+  border-radius: 8px !important;
+  overflow: hidden; /* Necesario para que funcione el border-radius */
+  transition: all 0.3s ease;
+
+  /* Estilo para el input dentro del grupo */
+  .ant-input {
+    border-radius: 8px !important;
+    transition: all 0.3s ease;
+    &:focus{
+      border-color: #17a2b8 !important;
+      box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.2) !important;
+    }
+  }
+
+  /* Estilo cuando tiene prefijo/sufijo */
+  &.ant-input-affix-wrapper {
+    border-radius: 8px !important;
+    
+    .ant-input {
+      border-radius: 0 !important; /* Elimina el radius interno */
+    }
+  }
+
+  /* Estados */
+  &:hover {
+    .ant-input {
+      border-color: #40a9ff;
+    }
+  }
+
+  /* Estado de error */
+  &.ant-input-group-wrapper-status-error {
+    .ant-input {
+      border-color: #ff4d4f;
+    }
+  }
+}
+
+
+// ==================== SELECTS ====================
+.ant-select-selector {
+  border-radius: 8px !important; /* Añadido radius */
+  .ant-select-focused {
+    border-color: #17a2b8 !important;
+    box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.2) !important;
+  }
+}
+
+// ==================== TEXTAREA (NG-ZORRO) ====================
+.ant-input-textarea {
+  border-radius: 8px !important;
+  overflow: hidden; /* Necesario para que el radius funcione */
+
+  /* El textarea dentro del contenedor */
+  textarea.ant-input {
+    border-radius: 8px !important;
+    padding: 8px 12px; /* Ajuste de padding para mejor apariencia */
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: #40a9ff;
+    }
+
+    &:focus {
+      border-color: #17a2b8;
+      box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.2) !important;
+    }
+  }
+
+  /* Estado deshabilitado */
+  &.ant-input-disabled textarea.ant-input {
+    background-color: #f5f5f5 !important;
+    color: #333 !important;
+    border-radius: 8px !important;
+  }
+
+  /* Estado error */
+  &.ant-input-status-error textarea.ant-input {
+    border-color: #ff4d4f;
+  }
+}
+
+// ==================== CONTADOR DE CARACTERES (Opcional) ====================
+.ant-input-textarea-show-count {
+  &::after {
+    bottom: 8px;
+    right: 12px;
+    font-size: 12px;
+  }
+
+  /* Ajuste cuando tiene contador */
+  textarea.ant-input {
+    padding-bottom: 24px !important;
+  }
+}

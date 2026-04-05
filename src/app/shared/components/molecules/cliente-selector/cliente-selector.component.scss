@@ -1,0 +1,33 @@
+@import 'src/assets/scss/variable';
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+nz-select {
+  width: 100%;
+}
+
+.loading-icon {
+  display: inline-block;
+  margin-right: 8px;
+  color: $primary;
+  font-size: 14px;
+}
+
+:host ::ng-deep {
+  .ant-select-selector {
+    border-radius: $border-radius;
+    transition: all $transitions;
+
+    &:hover {
+      border-color: $primary;
+    }
+  }
+
+  .ant-select-focused .ant-select-selector {
+    border-color: $primary;
+    box-shadow: 0 0 0 2px rgba($primary, 0.2);
+  }
+}

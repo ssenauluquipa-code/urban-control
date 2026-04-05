@@ -1,0 +1,37 @@
+<div class="dt-wrapper">
+  <!-- Toolbar -->
+  <div class="dt-toolbar">
+    <div class="dt-search">
+      <i class="bi bi-search dt-search-icon"></i>
+      <input
+        type="text"
+        class="dt-search-input"
+        placeholder="Buscar..."
+        [(ngModel)]="quickFilter"
+        (ngModelChange)="onQuickFilterChange()"
+      />
+    </div>
+    <button *ngIf="showCreate" class="dt-btn-create" (click)="onCreateClick()">
+      <i class="bi bi-plus-lg"></i> Crear
+    </button>
+  </div>
+
+  <!-- Grid container -->
+  <div class="dt-grid-wrapper" [style.height]="height">
+    <ag-grid-angular
+      #gridContainer
+      class="ag-theme-quartz dt-grid"
+      style="width: 100%; height: 100%; display: block;"
+      [rowData]="rowData"
+      [columnDefs]="computedColumnDefs"
+      [gridOptions]="gridOptions"
+      [paginationPageSize]="pageSize"
+      (gridReady)="onGridReady($event)"
+    ></ag-grid-angular>
+
+    <!-- Loading overlay -->
+    <div class="dt-loading-overlay" *ngIf="loading">
+      <div class="dt-spinner"></div>
+    </div>
+  </div>
+</div>

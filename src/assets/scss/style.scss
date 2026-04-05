@@ -1,0 +1,61 @@
+//
+// Xtreme Angular
+//
+
+//(Required file)
+@import "variable";
+
+// Import Bootstrap source files (Required file)
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+@import "../../../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+
+//This is for the components (Required file)
+@import "core/core";
+@import "scafholdings";
+@import "components";
+
+//This is for the responsive (Required file)
+@import "responsive";
+
+//In This scss you can write your scss
+@import "custom";
+
+
+//nueva importacion de la Urban-Control
+//main framework
+@import 'node_modules/bootstrap/scss/functions';
+@import 'node_modules/bootstrap/scss/variables';
+//@import 'node_modules/bootstrap/scss/variables-dark';
+//
+@import '../scss/settings/color-variables.scss';
+@import '../scss//settings/theme-variables.scss';
+@import '../scss/settings/bootstrap-variables.scss';
+//
+////bootstrap import creo que este es el problema
+//@import '../scss/bootstrap/bootstrap.scss';
+//
+@import 'node_modules/bootstrap/scss/utilities';
+@import 'node_modules/bootstrap/scss/utilities/api';
+//
+//
+//// main framework aqui tiene problema general
+//@import '../scss/themes/general.scss';
+@import '../scss/themes/generic.scss';
+
+//themes
+@import '../scss//layouts/menu/sidebar.scss';
+@import '../scss/layouts/navbar/navbar.scss';
+@import '../scss/layouts/pc-common.scss';
+@import '../scss/layouts/breadcrumb/breadcrumb.scss';
+@import '../scss/layouts/footer/footer.scss';
+//
+@import '../scss/themes/preset-style.scss';
+//
+///* Importing Bootstrap SCSS file. */ aqui hay un error igual
+//@import '../scss/bootstrap/bootstrap.scss';
+//
+////ng zorro
+@import '../scss/ng-zorro/ng-zorro-customize.scss';
+//@import '../scss/custom/data-grid.custom.scss';
+@import '../scss/custom/template.custom.scss';
+@import '../scss/custom/variables.custom.scss';
