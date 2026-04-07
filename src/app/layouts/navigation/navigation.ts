@@ -34,6 +34,7 @@ export const NavigationItems: INavigationItem[] = [
         icon: 'bi bi-speedometer2',
         breadcrumbs: false
       },
+/*
       {
         id: 'about',
         title: 'About',
@@ -43,6 +44,7 @@ export const NavigationItems: INavigationItem[] = [
         icon: 'bi bi-people',
         breadcrumbs: false
       },
+*/
       {
         id: 'design-system',
         title: 'Design System',
@@ -131,6 +133,7 @@ export const NavigationItems: INavigationItem[] = [
       }
     ]
   },
+/*
   {
     id: 'ui-components',
     title: 'UI Components',
@@ -184,6 +187,8 @@ export const NavigationItems: INavigationItem[] = [
       }
     ]
   },
+*/
+/*
   {
     id: 'navigation',
     title: 'Navigation',
@@ -236,6 +241,7 @@ export const NavigationItems: INavigationItem[] = [
       }
     ]
   },
+*/
   {
     id: 'configuracion-group',
     title: 'Configuración',

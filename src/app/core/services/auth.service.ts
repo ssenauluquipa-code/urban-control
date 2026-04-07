@@ -1,5 +1,5 @@
 import { inject, Injectable, signal, computed } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 import { AuthRepository } from '../repository/auth.repository';
 import { ILoginDto, ILoginResponse } from '../models/auth.model';
 import { IUpdateProfileDto, IUser } from '../models/user.model';
@@ -44,7 +44,12 @@ export class AuthService {
   }
 
   getProfile(): Observable<IUser> {
-    return this.repo.getLoggedUser();
+    return this.repo.getLoggedUser().pipe(
+      tap(user => {
+        this._currentUser.set(user);
+        localStorage.setItem('user', JSON.stringify(user));
+      })
+    );
   }
 
   getToken(): string | null {
@@ -52,6 +57,34 @@ export class AuthService {
   }
 
   updateProfile(data: IUpdateProfileDto): Observable<IUser> {
-    return this.repo.updateProfile(data);
+    return this.repo.updateProfile(data).pipe(
+      tap(user => {
+        this._currentUser.set(user);
+        localStorage.setItem('user', JSON.stringify(user));
+      })
+    );
+  }
+
+  refreshToken(): Observable<ILoginResponse>{
+    // Obtenemos el token de refresco guardado
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (!refreshToken) {
+      this.logout().subscribe();
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    // Llamamos al repo pasando el DTO requerido
+    return this.repo.refreshTokens({ refreshToken }).pipe(
+      tap(response => {
+        // Usamos tu método existente para actualizar tokens y el Signal del usuario
+        this.saveSession(response);
+      }),
+      catchError(err => {
+        // Si el refresh falla (ej: expiró también el refresh token), limpiamos todo
+        this.logout().subscribe();
+        return throwError(() => err);
+      })
+    );
   }
 }

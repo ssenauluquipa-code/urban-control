@@ -20,6 +20,7 @@ import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import { ProyectoRepository } from './app/core/repository/proyectos/proyecto.repository';
 import { UserRepository } from './app/core/repository/user.repository';
 import { USER_REPOSITORY_TOKEN } from './app/core/services/user.service';
+import { AuthRepository } from './app/core/repository/auth.repository';
 
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -41,6 +42,7 @@ bootstrapApplication(AppComponent, {
             provide: USER_REPOSITORY_TOKEN,
             useClass: UserRepository
         },
+        { provide: 'IAuthRepository', useClass: AuthRepository },
         provideAnimationsAsync(),
         importProvidersFrom(NzIconModule),
         provideAnimations(),
