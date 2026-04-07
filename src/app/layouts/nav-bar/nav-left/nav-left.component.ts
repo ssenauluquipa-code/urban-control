@@ -10,12 +10,12 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   styleUrl: './nav-left.component.scss'
 })
 export class NavLeftComponent {
-  @Input() navCollapsed: boolean = false;
-  @Input() isMobOpen: boolean = false;
-  
+  @Input() navCollapsed = false;
+  @Input() isMobOpen = false;
+
   @Output() NavCollapse = new EventEmitter<void>();
   @Output() NavCollapsedMob = new EventEmitter<void>();
-  
+
   windowWidth: number;
 
   constructor() {
