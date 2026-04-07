@@ -1,10 +1,11 @@
 import { Component, OnChanges, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IUser } from 'src/app/core/models/user.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { ViewRegisterUserComponent } from '../views/view-register-user/view-register-user.component';
+import { catchError, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-user-register',
@@ -24,13 +25,8 @@ export class UserRegisterComponent implements OnInit, OnChanges   {
 
   public userFormGroup!: FormGroup;
   public userData: IUser | null = null; // Recibe datos si es edición
+  /** Archivo de imagen seleccionado temporalmente para subir como avatar */
   private selectedAvatarFile: File | null = null;
-
-  get id() { return this.userFormGroup.get('id') as FormControl<string | null>; }
-  get name() { return this.userFormGroup.get('name') as FormControl<string>; }
-  get email() { return this.userFormGroup.get('email') as FormControl<string>; }
-  get password() { return this.userFormGroup.get('password') as FormControl<string>; }
-  get role() { return this.userFormGroup.get('role') as FormControl<string>; }
 
   constructor(
     private fb: FormBuilder,
@@ -38,15 +34,27 @@ export class UserRegisterComponent implements OnInit, OnChanges   {
     private ngModal: NgbActiveModal,
     private notification: NotificationService
   ) { }
+
+
   ngOnChanges(): void {
     this.patchUserData();
   }
 
+
+  /**
+   * Ciclo de vida: Se ejecuta al iniciar el componente.
+   * Construye el formulario y carga los datos si es edición.
+   */
   ngOnInit(): void {
     this.buildForm();
     this.patchUserData();
   }
 
+  /**
+  * Inicializa el grupo de controles del formulario con sus validaciones por defecto.
+  * Incluye validación fuerte para contraseña y campos requeridos.
+  * @private
+  */
   private buildForm(): void {
     this.userFormGroup = this.fb.group({
       id: [null], // Campo oculto para saber si es edición
@@ -62,6 +70,11 @@ export class UserRegisterComponent implements OnInit, OnChanges   {
     });
   } 
 
+  /**
+   * Si el componente recibió `userData` (modo edición), rellena el formulario
+   * y ajusta las validaciones (ej: deshabilitar email, ignorar contraseña).
+   * @private
+   */
   private patchUserData(): void {
     if (this.userData && this.userFormGroup) {
       this.userFormGroup.patchValue({
@@ -72,32 +85,28 @@ export class UserRegisterComponent implements OnInit, OnChanges   {
         role: this.userData.role
       });
 
-      // Email no se edita
+      // En modo edición, el email no se suele cambiar aquí y la contraseña se gestiona aparte
       this.userFormGroup.get('email')?.disable();
-
-      // Si es edición, quitamos la validación de contraseña
       this.userFormGroup.get('password')?.clearValidators();
       this.userFormGroup.get('password')?.updateValueAndValidity();
     }
   }
 
+  /**
+  * Captura el evento de selección de imagen proveniente del componente hijo.
+  * Guarda el archivo en una variable temporal para procesarlo al guardar.
+  * @param file Archivo seleccionado por el usuario.
+  */
   public onAvatarSelected(file: File): void {
     this.selectedAvatarFile = file;
   }
 
-  private uploadAvatarIfSelected(userId: string): void {
-    if (this.selectedAvatarFile) {
-      this.userService.uploadAvatar(userId, this.selectedAvatarFile).subscribe({
-        next: () => console.log('Avatar subido con éxito'),
-        error: (err) => {
-          this.notification.error('Error al subir el avatar.');
-          console.error(err);
-        }
-      });
-    }
-  }
-
-
+  /**
+     * Maneja la lógica principal de guardado.
+     * 1. Valida el formulario.
+     * 2. Determina si es Creación o Edición.
+     * 3. Ejecuta la petición principal y encadena la subida del avatar si existe.
+     */
   public onSaveUser(): void {
     if (this.userFormGroup.invalid) {
       this.userFormGroup.markAllAsTouched();
@@ -106,72 +115,57 @@ export class UserRegisterComponent implements OnInit, OnChanges   {
     }
 
     const formValue = this.userFormGroup.getRawValue();
+    const isEditMode = !!formValue.id;
 
-    if (formValue.id) {
-      // --- LÓGICA DE EDICIÓN ---
+    // 1. Definir la petición principal (Crear o Actualizar)
+    let mainRequest$;
+
+    if (isEditMode) {
+      // Payload para actualizar (sin email ni contraseña)
       const payload = {
         name: formValue.name,
         contactNumber: formValue.contactNumber,
         role: formValue.role
       };
-
-      console.log('DATOS PARA ACTUALIZAR USUARIO:', payload);
-      this.userService.updateUser(formValue.id, payload).subscribe({
-        next: () => {
-          if (this.selectedAvatarFile) {
-            this.userService.uploadAvatar(formValue.id, this.selectedAvatarFile).subscribe({
-              next: () => {
-                this.notification.success('Usuario y Avatar actualizados.');
-                this.ngModal.close(true);
-              },
-              error: () => {
-                this.notification.warning('Datos actualizados, pero el avatar falló.');
-                this.ngModal.close(true);
-              }
-            });
-          } else {
-            this.notification.success('Usuario actualizado correctamente.');
-            this.ngModal.close(true);
-          }
-        },
-        error: (err) => {
-          const mensajeStr = Array.isArray(err.error?.message) ? err.error.message.join(', ') : err.error?.message;
-          this.notification.error(mensajeStr || 'Error al actualizar usuario.');
-          console.error(err);
-        }
-      });
+      mainRequest$ = this.userService.updateUser(formValue.id, payload);
     } else {
-      // --- LÓGICA DE CREACIÓN ---
-      // Quitamos el ID para el POST
+      // Payload para crear
       const createData = { ...formValue };
       delete createData.id;
-      console.log('DATOS PARA REGISTRAR USUARIO:', createData);
-      this.userService.createUser(createData).subscribe({
-        next: (newUser) => {
-          if (this.selectedAvatarFile && newUser.id) {
-            this.userService.uploadAvatar(newUser.id, this.selectedAvatarFile).subscribe({
-              next: () => {
-                this.notification.success('Usuario y Avatar creados exitosamente.');
-                this.ngModal.close(true);
-              },
-              error: () => {
-                this.notification.warning('Usuario creado, pero hubo un error con la imagen.');
-                this.ngModal.close(true);
-              }
-            });
-          } else {
-            this.notification.success('Usuario creado exitosamente.');
-            this.ngModal.close(true);
-          }
-        },
-        error: (err) => {
-          const mensajeStr = Array.isArray(err.error?.message) ? err.error.message.join(', ') : err.error?.message || 'Error al crear usuario';
-          this.notification.error(mensajeStr);
-          console.error(err);
-        }
-      });
+      mainRequest$ = this.userService.createUser(createData);
     }
+    // 2. Ejecutar cadena de operaciones con RxJS
+    mainRequest$.pipe(
+      switchMap((userResponse: IUser) => {
+        // Una vez guardados los datos, verificamos si hay avatar
+        if (this.selectedAvatarFile && userResponse.id) {
+          return this.userService.uploadAvatar(userResponse.id, this.selectedAvatarFile).pipe(
+            // Si el avatar falla, capturamos el error para no romper el flujo principal
+            catchError(err => {
+              console.error('Error subiendo avatar', err);
+              this.notification.warning('Datos guardados, pero ocurrió un error al subir el avatar.');
+              // Retornamos el usuario original para que el flujo continúe exitosamente
+              return of(userResponse);
+            })
+          );
+        }
+        // Si no hay archivo, simplemente devolvemos la respuesta original
+        return of(userResponse);
+      })
+    ).subscribe({
+      next: () => {
+        const message = isEditMode
+          ? 'Usuario actualizado correctamente.'
+          : 'Usuario creado exitosamente.';
+        this.notification.success(message);
+        this.ngModal.close(true);
+      },
+      error: (err) => {
+        const mensajeStr = Array.isArray(err.error?.message)
+          ? err.error.message.join(', ')
+          : err.error?.message;
+        this.notification.error(mensajeStr || 'Ocurrió un error inesperado.');
+      }
+    });
   }
-
-
 }

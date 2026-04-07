@@ -1,0 +1,42 @@
+// Layout principal: imagen izquierda + campos derecha
+.user-form-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 1.25rem;
+    align-items: flex-start;
+}
+
+// Columna del avatar
+.user-avatar-col {
+    flex-shrink: 0;
+    width: 250px;
+
+    // El image-uploader en este contexto se muestra compacto (vertical)
+    app-image-uploader {
+        display: block;
+        width: 100%;
+    }
+}
+
+// Columna de campos
+.user-fields-col {
+    flex: 1;
+    min-width: 0; // Evita overflow en flex
+}
+
+// --- Responsive: pantallas pequeñas (< 576px) ---
+// El modal size='lg' en móvil igual se estrecha bastante
+@media (max-width: 575.98px) {
+    .user-form-layout {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .user-avatar-col {
+        width: 160px; // Más grande cuando está centrado arriba
+    }
+
+    .user-fields-col {
+        width: 100%;
+    }
+}

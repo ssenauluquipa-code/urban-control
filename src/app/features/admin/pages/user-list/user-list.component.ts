@@ -195,7 +195,7 @@ export class UserListComponent implements OnInit {
 
   private openModal(data?: IUser | null) {
     const modalRef = this.modalService.open(UserRegisterComponent, {
-      size: 'md',
+      size: 'lg',
       backdrop: 'static',
       keyboard: false
     });
