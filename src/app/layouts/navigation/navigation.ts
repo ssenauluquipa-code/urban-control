@@ -55,6 +55,23 @@ export const NavigationItems: INavigationItem[] = [
     ]
   },
   {
+    id: 'administración',
+    title: 'Administración',
+    type: 'group',
+    icon: 'bi bi-person-gear',
+    children: [
+      {
+        id: 'usuarios-admin',
+        title: 'Gestión Usuarios',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/admin/usuarios',
+        icon: 'bi bi-people',
+        breadcrumbs: false
+      }
+    ]
+  },
+  {
     id: 'access',
     title: 'Acceso y Privilegios',
     type: 'group',

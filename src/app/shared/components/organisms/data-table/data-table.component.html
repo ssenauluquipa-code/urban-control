@@ -11,9 +11,11 @@
         (ngModelChange)="onQuickFilterChange()"
       />
     </div>
-    <button *ngIf="showCreate" class="dt-btn-create" (click)="onCreateClick()">
-      <i class="bi bi-plus-lg"></i> Crear
-    </button>
+    @if (showCreate) {
+      <button class="dt-btn-create" (click)="onCreateClick()">
+        <i class="bi bi-plus-lg"></i> Crear
+      </button>
+    }
   </div>
 
   <!-- Grid container -->
@@ -21,7 +23,7 @@
     <ag-grid-angular
       #gridContainer
       class="ag-theme-quartz dt-grid"
-      style="width: 100%; height: 100%; display: block;"
+      style="width: 100%; height: 100%; display: block"
       [rowData]="rowData"
       [columnDefs]="computedColumnDefs"
       [gridOptions]="gridOptions"
@@ -30,8 +32,10 @@
     ></ag-grid-angular>
 
     <!-- Loading overlay -->
-    <div class="dt-loading-overlay" *ngIf="loading">
-      <div class="dt-spinner"></div>
-    </div>
+    @if (loading) {
+      <div class="dt-loading-overlay">
+        <div class="dt-spinner"></div>
+      </div>
+    }
   </div>
 </div>

@@ -36,6 +36,10 @@ export const Approutes: Routes = [
         loadComponent: () => import('./features/design-system-showcase/design-system-showcase.component').then(m => m.DesignSystemShowcaseComponent)
       },
       {
+        path: 'admin',
+        loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
+      },
+      {
         path: 'access',
         loadChildren: () => import('./features/access/access.routes').then(m => m.ACCESS_ROUTES)
       },

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ILoginRequest } from 'src/app/core/models/auth.model';
+import { ILoginDto } from 'src/app/core/models/auth.model';
 import { InputTextComponent } from 'src/app/shared/components/atoms/input-text/input-text.component';
 
 @Component({
@@ -14,12 +14,12 @@ import { InputTextComponent } from 'src/app/shared/components/atoms/input-text/i
 })
 export class ViewLoginComponent {
   @Input() loginGroup: FormGroup = new FormGroup({});
-  @Output() onLogin = new EventEmitter<ILoginRequest>();
+  @Output() login = new EventEmitter<ILoginDto>();
   @Input() isLogin = false;
 
   submit() {
     if (this.loginGroup.valid) {
-      this.onLogin.emit(this.loginGroup.value);
+      this.login.emit(this.loginGroup.value);
     } else {
       this.loginGroup.markAllAsTouched();
     }

@@ -18,6 +18,9 @@ import { LocationStrategy, PathLocationStrategy, CommonModule } from '@angular/c
 // AG Grid - Register Community Modules
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import { ProyectoRepository } from './app/core/repository/proyectos/proyecto.repository';
+import { UserRepository } from './app/core/repository/user.repository';
+import { USER_REPOSITORY_TOKEN } from './app/core/services/user.service';
+
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -34,8 +37,11 @@ bootstrapApplication(AppComponent, {
             provide: 'IProyectoRepository',
             useClass: ProyectoRepository
         },
+        {
+            provide: USER_REPOSITORY_TOKEN,
+            useClass: UserRepository
+        },
         provideAnimationsAsync(),
-        provideHttpClient(),
         importProvidersFrom(NzIconModule),
         provideAnimations(),
         provideHttpClient(withInterceptors([authInterceptor]), withInterceptorsFromDi()),

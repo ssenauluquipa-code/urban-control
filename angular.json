@@ -92,7 +92,8 @@
               "browserTarget": "xtreme-admin-angular-lite:build:production"
             },
             "development": {
-              "browserTarget": "xtreme-admin-angular-lite:build:development"
+              "browserTarget": "xtreme-admin-angular-lite:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

@@ -1,53 +1,40 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable, of, throwError, delay } from 'rxjs';
-import { IAuthResponse, ILoginRequest, IUserSession } from '../models/auth.model';
+import { Observable } from 'rxjs';
+import { ILoginResponse, ILoginDto, RefreshTokenDto } from '../models/auth.model';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment.prod';
-
-const MOCK_USERS = [
-  { email: 'admin@test.com', password: '123456', access_token: 'mock-token-admin', fullName: 'Admin User', role: 'SUPER_ADMIN' },
-  { email: 'vendedor@test.com', password: '123456', access_token: 'mock-token-vendedor', fullName: 'Vendedor User', role: 'VENDEDOR' },
-];
+import { environment } from 'src/environments/environment';
+import { IAuthRepository } from '../interfaces/repository/auth.repository.interface';
+import { IUser, IUpdateProfileDto } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthRepository {
+export class AuthRepository implements IAuthRepository {
+
   private http = inject(HttpClient);
   private readonly TOKEN_KEY = 'urban_control_token';
-  private readonly apiUrl = `${environment.apiUrl}/Auth`;
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
   
 
-  login(credentials: ILoginRequest): Observable<IAuthResponse> {
-    return this.http.post<IAuthResponse>(this.apiUrl+ "/login", credentials);
-  }
-  signIn(credentials: ILoginRequest): Observable<IUserSession> {
-    const email = credentials.email?.trim().toLowerCase();
-    const password = credentials.password?.trim();
-    const user = MOCK_USERS.find(
-      u => u.email === email && u.password === password
-    );
-    if (user) {
-      const session: IUserSession = {
-        access_token: user.access_token,
-        fullName: user.fullName,
-        role: user.role,
-        email: user.email
-      };
-      return of(session).pipe(delay(800));
-    }
-    return throwError(() => new Error('Credenciales incorrectas'));
+  login(credentials: ILoginDto): Observable<ILoginResponse> {
+    return this.http.post<ILoginResponse>(`${this.apiUrl}/login`, credentials);
   }
 
-  saveToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/logout`, {});
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+  refreshTokens(data: RefreshTokenDto): Observable<ILoginResponse> {
+    return this.http.post<ILoginResponse>(`${this.apiUrl}/refresh`, data);
   }
 
-  deleteToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+  getLoggedUser(): Observable<IUser> {
+    return this.http.get<IUser>(`${this.apiUrl}/logged-user`);
   }
+
+  updateProfile(data: IUpdateProfileDto): Observable<IUser> {
+    return this.http.patch<IUser>(`${this.apiUrl}/logged-user`, data);
+  }
+
+  
 }

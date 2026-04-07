@@ -12,10 +12,10 @@ import { AuthService } from 'src/app/core/services/auth.service';
   styleUrl: './nav-right.component.scss'
 })
 export class NavRightComponent {
-  @Input() styleSelectorToggle: boolean = false;
+  @Input() styleSelectorToggle = false;
   @Output() Customize = new EventEmitter<void>();
   windowWidth: number;
-  screenFull: boolean = true;
+  screenFull = true;
 
   constructor(
     private authService: AuthService,
@@ -25,12 +25,13 @@ export class NavRightComponent {
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/auth/login']);
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/auth/login']);
+    });
   }
 
   get currentUser() {
-    return this.authService.currentUser;
+    return this.authService.currentUser(); // llamar el Signal como función
   }
 
    profile = [

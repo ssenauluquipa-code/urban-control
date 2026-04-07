@@ -3,8 +3,9 @@ export interface IUser {
   name: string;
   contactNumber: string;
   email: string;
-  avatarUrl: string;
-  role: 'SUPER_ADMIN' | 'ADMIN' | 'USER'; // Ajusta según tus roles reales
+  avatarUrl: string | null;
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'USER' | 'EDITOR' | 'OPERADOR' | string; // Permitimos más roles y fallback de string
+  isActive?: boolean; // Si el backend lo devuelve
 }
 
 export interface ICreateUserDto {
@@ -16,8 +17,9 @@ export interface ICreateUserDto {
 }
 
 export interface IUpdateUserDto {
+  name?: string;
+  contactNumber?: string;
   role?: string;
-  // Agrega otros campos permitidos para actualizar por admin
 }
 
 export interface IUpdateProfileDto {

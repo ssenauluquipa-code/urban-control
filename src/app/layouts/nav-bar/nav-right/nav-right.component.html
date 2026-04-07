@@ -101,7 +101,7 @@
             <img src="../../../../assets/images/user/avatar-2.jpg" alt="user-image" class="user-avatar wid-35" />
           </div>
           <div class="flex-grow-1 ms-3 text-start">
-            <h6 class="mb-0">{{ currentUser?.fullName || 'Usuario' }}</h6>
+            <h6 class="mb-0">{{ currentUser?.name || 'Usuario' }}</h6>
             <span>{{ currentUser?.role || '' }}</span>
           </div>
           <a href="javascript:" class="bg-transparent" (click)="logout()">

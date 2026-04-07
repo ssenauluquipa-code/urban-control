@@ -6,17 +6,20 @@ export enum TableActionsEnum {
   DELETE = 'delete',
   INFO = 'info',
   ANULAR = 'anular',
-  NUEVO = 'nuevo'
+  NUEVO = 'nuevo',
+  ACTIVATE = 'activate',
+  DEACTIVATE = 'deactivate',
+  REMOVE_IMAGE = 'remove_image'
 }
 
 export type TableAction = TableActionsEnum | string;
 
-export interface ITableActionEvent<T = any> {
+export interface ITableActionEvent<T = unknown> {
   action: TableAction | 'create';
   row: T | null;
 }
 
-export interface ITableActionParams<T = any> extends ICellRendererParams<T> {
+export interface ITableActionParams<T = unknown> extends ICellRendererParams<T> {
   actions?: TableAction[];
   actionClicked?: (event: { action: string; data: T | null }) => void;
 }

@@ -12,27 +12,34 @@ import { ITableActionParams, TableActionsEnum } from '../../../interfaces/table-
   imports: [CommonModule, NzDropDownModule, NzButtonModule, NzIconModule],
   template: `
     <div class="actions-container">
-      <ng-container *ngIf="actions.length <= 2">
-        <button *ngFor="let act of actions" 
-                nz-button nzType="text" 
-                (click)="handleAction(act)">
-          <i nz-icon [nzType]="getIcon(act)"></i>
-        </button>
-      </ng-container>
+      @if (actions.length <= 2) {
+        @for (act of actions; track act) {
+          <button nz-button nzType="text" (click)="handleAction(act)">
+            <i nz-icon [nzType]="getIcon(act)"></i>
+          </button>
+        }
+      }
 
-      <ng-container *ngIf="actions.length > 2">
+      @if (actions.length > 2) {
         <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
           <i nz-icon nzType="more" style="font-size: 20px;"></i>
         </a>
         <nz-dropdown-menu #menu="nzDropdownMenu">
           <ul nz-menu>
-            <li nz-menu-item *ngFor="let act of actions" (click)="handleAction(act)">
-              <i nz-icon [nzType]="getIcon(act)" style="margin-right: 8px;"></i>
-              {{ getLabel(act) }}
-            </li>
+            @for (act of actions; track act) {
+              <li 
+                nz-menu-item 
+                (click)="handleAction(act)" 
+                (keydown.enter)="handleAction(act)" 
+                (keydown.space)="handleAction(act)" 
+                tabindex="0">
+                <i nz-icon [nzType]="getIcon(act)" style="margin-right: 8px;"></i>
+                {{ getLabel(act) }}
+              </li>
+            }
           </ul>
         </nz-dropdown-menu>
-      </ng-container>
+      }
     </div>
   `,
   styles: `
@@ -41,10 +48,10 @@ import { ITableActionParams, TableActionsEnum } from '../../../interfaces/table-
 })
 export class TableActionsComponent implements ICellRendererAngularComp  {
 
-  @Output() actionClicked = new EventEmitter<{ action: string, data: any }>();
+  @Output() actionClicked = new EventEmitter<{ action: string, data: unknown }>();
 
   actions: string[] = [];
-  rowData: any = null;
+  rowData: unknown = null;
   params!: ITableActionParams;
 
   handleAction(action: string) {
@@ -60,7 +67,10 @@ export class TableActionsComponent implements ICellRendererAngularComp  {
       [TableActionsEnum.DELETE]: 'delete',
       [TableActionsEnum.INFO]: 'info-circle',
       [TableActionsEnum.ANULAR]: 'stop',
-      [TableActionsEnum.NUEVO]: 'plus'
+      [TableActionsEnum.NUEVO]: 'plus',
+      [TableActionsEnum.ACTIVATE]: 'check-circle',
+      [TableActionsEnum.DEACTIVATE]: 'close-circle',
+      [TableActionsEnum.REMOVE_IMAGE]: 'file-excel'
     };
     return icons[action] || 'question';
   }
@@ -72,20 +82,38 @@ export class TableActionsComponent implements ICellRendererAngularComp  {
       [TableActionsEnum.DELETE]: 'Eliminar',
       [TableActionsEnum.INFO]: 'Información',
       [TableActionsEnum.ANULAR]: 'Anular',
-      [TableActionsEnum.NUEVO]: 'Nuevo'
+      [TableActionsEnum.NUEVO]: 'Nuevo',
+      [TableActionsEnum.ACTIVATE]: 'Activar',
+      [TableActionsEnum.DEACTIVATE]: 'Desactivar',
+      [TableActionsEnum.REMOVE_IMAGE]: 'Quitar Avatar'
     };
     return labels[action] || action;
   }
+
   agInit(params: ITableActionParams): void {
     this.params = params;
-    this.actions = params.actions || [];
     this.rowData = params.data; // Aquí están los datos de la fila
+    this.actions = this.filterActions((params.actions as string[]) || []);
   }
 
   refresh(params: ITableActionParams): boolean {
     this.params = params;
-    this.actions = params.actions || [];
     this.rowData = params.data;
+    this.actions = this.filterActions((params.actions as string[]) || []);
     return true;
+  }
+
+  private filterActions(actions: string[]): string[] {
+    const data = this.rowData as { isActive?: boolean; avatarUrl?: string };
+    
+    return actions.filter(action => {
+      // Si el usuario ya está activo, no mostramos "Activar"
+      if (action === TableActionsEnum.ACTIVATE) return data?.isActive === false;
+      // Si el usuario ya está inactivo, no mostramos "Desactivar"
+      if (action === TableActionsEnum.DEACTIVATE) return data?.isActive === true;
+      // Si no tiene avatar, no mostramos "Quitar Avatar"
+      if (action === TableActionsEnum.REMOVE_IMAGE) return !!data?.avatarUrl;
+      return true;
+    });
   }
 }

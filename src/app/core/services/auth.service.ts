@@ -1,79 +1,57 @@
-import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, tap } from 'rxjs';
-import { IAuthResponse, ILoginRequest, IUserSession, UserRole } from '../models/auth.model';
+import { inject, Injectable, signal, computed } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 import { AuthRepository } from '../repository/auth.repository';
-import { Router } from '@angular/router';
+import { ILoginDto, ILoginResponse } from '../models/auth.model';
+import { IUpdateProfileDto, IUser } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private authRepo = inject(AuthRepository);
-  private router = inject(Router);
+  private repo = inject(AuthRepository);
 
-  private currentUserSubject = new BehaviorSubject<IUserSession | null>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
+  private _currentUser = signal<IUser | null>(this.getUserFromStorage());
+  public currentUser = this._currentUser.asReadonly();
+  public isAuthenticated = computed(() => !!this._currentUser());
 
-  constructor() {
-    this.checkInitialSession();
-  }
-
-  login(credentials: ILoginRequest) {
-    return this.authRepo.login(credentials).pipe(
-      tap((response: IAuthResponse) => {
-        if (response && response.token) {
-          this.authRepo.saveToken(response.token);
-          this.currentUserSubject.next({
-            access_token: response.token,
-            fullName: response.user?.name,
-            email: response.user?.email,
-            role: response.user?.role,
-          });
-          this.router.navigate(['/dashboard']);
-        }
+  login(credentials: ILoginDto): Observable<ILoginResponse> {
+    return this.repo.login(credentials).pipe(
+      tap(response => {
+        this.saveSession(response);
       })
     );
   }
 
-  private checkInitialSession(): void {
-    const token = this.authRepo.getToken();
-    if (token) {
-      this.currentUserSubject.next({ access_token: token });
-    }
+  private getUserFromStorage(): IUser | null {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
   }
 
-  /*login(credentials: ILoginRequest): Observable<IUserSession> {
-    return this.authRepo.signIn(credentials).pipe(
-      tap(session => {
-        this.authRepo.saveToken(session.access_token);
-        this.currentUserSubject.next(session);
+  private saveSession(response: ILoginResponse): void {
+    localStorage.setItem('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    localStorage.setItem('user', JSON.stringify(response.user));
+    this._currentUser.set(response.user);
+  }
+
+  logout(): Observable<void> {
+    return this.repo.logout().pipe(
+      tap(() => {
+        localStorage.clear();
+        this._currentUser.set(null);
       })
     );
-  }*/
-
-  logout(): void {
-    this.authRepo.deleteToken();
-    this.currentUserSubject.next(null);
   }
 
-  getUser(): IUserSession | null {
-    return this.currentUserSubject.value;
+  getProfile(): Observable<IUser> {
+    return this.repo.getLoggedUser();
   }
 
-  hasRole(role: UserRole): boolean {
-    return this.currentUserSubject.value?.role === role;
+  getToken(): string | null {
+    return localStorage.getItem('accessToken');
   }
 
-  hasAnyRole(roles: UserRole[]): boolean {
-    const userRole = this.currentUserSubject.value?.role as UserRole;
-    return roles.includes(userRole);
-  }
-
-  get isAuthenticated(): boolean {
-    return !!this.currentUserSubject.value;
-  }
-
-  get currentUser(): IUserSession | null {
-    return this.currentUserSubject.value;
+  updateProfile(data: IUpdateProfileDto): Observable<IUser> {
+    return this.repo.updateProfile(data);
   }
 }

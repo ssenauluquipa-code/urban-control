@@ -7,7 +7,7 @@ import { AuthService } from '../services/auth.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  const token = authService.currentUser?.access_token;
+  const token = authService.getToken();
 
   // Clona la request con withCredentials para enviar HttpOnly cookies automáticamente
   const authReq = req.clone({

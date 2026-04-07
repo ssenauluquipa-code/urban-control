@@ -1,28 +1,19 @@
-export interface ILoginRequest {
+import { IUser } from "./user.model";
+
+// Respuesta del Login
+export interface ILoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: IUser;
+}
+
+// Cuerpo de la petición de login
+export interface ILoginDto {
   email: string;
   password: string;
 }
 
-export interface ILoginResponse {
-  accessToken: string;
+// Para el refresh token
+export interface RefreshTokenDto {
   refreshToken: string;
-  //user: IUser;
 }
-export interface IUserSession {
-  access_token: string;
-  fullName?: string;
-  role?: string;
-  email?: string;
-  id?: number;
-}
-export interface IAuthUser {
-  name: string;
-  email: string;
-  role: string;
-}
-
-export interface IAuthResponse {
-  token: string;
-  user: IAuthUser;
-}
-export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'VENDEDOR' | 'CLIENTE';

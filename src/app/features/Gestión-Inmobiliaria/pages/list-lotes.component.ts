@@ -74,10 +74,10 @@ export class ListLotesComponent implements OnInit {
       headerName: 'Estado',
       width: 140,
       cellStyle: (params) => {
-        const styles: any = { fontWeight: 'bold' };
-        if (params.value === 'Disponible') styles.color = '#10b981';
-        if (params.value === 'Vendido') styles.color = '#ef4444';
-        if (params.value === 'Reservado') styles.color = '#f59e0b';
+        const styles: Record<string, string | number> = { fontWeight: 'bold' };
+        if (params.value === 'Disponible') styles['color'] = '#10b981';
+        if (params.value === 'Vendido') styles['color'] = '#ef4444';
+        if (params.value === 'Reservado') styles['color'] = '#f59e0b';
         return styles;
       }
     }
@@ -171,7 +171,9 @@ export class ListLotesComponent implements OnInit {
       if (result) {
         this.refreshData(); // Recarga la AG-Grid
       }
-    }, () => { });
+    }, () => {
+      // Ignorar el cierre del modal (dismiss) sin realizar ninguna acción
+    });
   }
 
   get proyectoId() { return this.loteFormGroup.get('proyectoId') as FormControl<string>; }

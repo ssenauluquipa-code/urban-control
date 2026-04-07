@@ -99,6 +99,14 @@ export const ROUTES: IRouteInfo[] = [
     submenu: []
   },
   {
+    path: '/admin/usuarios',
+    title: 'Gestión de Usuarios',
+    icon: 'bi bi-people-fill',
+    class: '',
+    extralink: false,
+    submenu: []
+  },
+  {
     path: '/configuracion/empresa',
     title: 'Configuración',
     icon: 'bi bi-gear',

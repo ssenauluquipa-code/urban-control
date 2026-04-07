@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:5001/api' // O el puerto que use tu VS local
+  apiUrl: '/api/v1' // El proxy de Angular redirige esto a urbancontrol.onrender.com
 };
