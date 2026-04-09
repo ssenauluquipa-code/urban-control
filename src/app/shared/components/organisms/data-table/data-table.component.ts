@@ -1,7 +1,7 @@
 import {
   Component, Input, Output, EventEmitter, OnChanges,
   SimpleChanges, ViewChild, ElementRef,
-  OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ViewEncapsulation
+  OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +17,6 @@ import { TableAction, ITableActionEvent } from '../../../interfaces/table-action
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None
 })
 export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
   @ViewChild('gridContainer', { read: ElementRef, static: false }) gridContainer!: ElementRef;

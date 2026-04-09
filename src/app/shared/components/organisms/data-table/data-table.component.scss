@@ -1,95 +1,190 @@
-app-data-table {
-  $dt-primary:       #2962ff;
-  $dt-border:        #eef2f6;
-  $dt-header-bg:     #f9f9fb;
-  $dt-header-text:   #475569;
-  $dt-font-family:   "Nunito Sans", sans-serif;
+// ── Variables ────────────────────────────────────────────────
+$dt-radius: 12px; // Más redondeado
+$dt-shadow: 0 10px 40px rgba(0, 0, 0, 0.07);
+$dt-border: #eef2f6;
+$dt-toolbar-bg: #ffffff; // Fondo blanco limpio
+$dt-input-bg: #F8FAFC; // Fondo input gris suave
+$dt-input-focus: #2962ff; // Azul UrbanControl
 
-  .dt-wrapper {
-    border-radius: 12px !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05) !important;
-    border: 1px solid $dt-border !important;
-    overflow: hidden;
+$dt-color-create: #2962ff; // Azul UrbanControl
+$dt-color-view: #0d6efd;
+$dt-color-edit: #fd7e14;
+$dt-color-delete: #dc3545;
+
+// Colores para filas (Zebra)
+$row-odd-bg: #F9FAFB; // Gris muy suave
+$row-even-bg: #FFFFFF; // Blanco
+$row-hover-bg: #F1F5F9; // Gris hover
+
+$dt-font-size: 0.875rem;
+$dt-btn-radius: 50px; // Botones redondeados (Pill)
+
+// ── Wrapper (Estándar) ──────────────────────────────────────
+.dt-wrapper {
+  border-radius: $dt-radius;
+  box-shadow: $dt-shadow;
+  border: 1px solid $dt-border;
+  overflow: hidden;
+  background: #fff;
+}
+
+// ── Toolbar ──────────────────────────────────────────────────
+.dt-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  background: $dt-toolbar-bg;
+  border-bottom: 1px solid $dt-border;
+}
+
+.dt-search {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.dt-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8; // Color de icono más suave
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.dt-search-input {
+  width: 100%;
+  // Ajuste para altura y padding
+  height: 44px;
+  padding: 0 16px 0 45px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: $dt-btn-radius; // Redondo
+  font-size: $dt-font-size;
+  background: $dt-input-bg;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: $dt-input-focus;
     background: #fff;
+    box-shadow: 0 0 0 3px rgba(41, 98, 255, 0.1);
+  }
+}
+
+.dt-btn-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 24px;
+  background: $dt-color-create;
+  color: #fff;
+  border: none;
+  border-radius: $dt-btn-radius; // Redondo
+  font-size: $dt-font-size;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(41, 98, 255, 0.2);
+
+  &:hover {
+    background: darken($dt-color-create, 8%);
+    transform: translateY(-1px);
+  }
+}
+
+// ── Grid wrapper ─────────────────────────────────────────────
+.dt-grid-wrapper {
+  position: relative;
+}
+
+.dt-grid {
+  width: 100%;
+  height: 100%;
+  // Borde superior para separar del toolbar
+  border-top: 1px solid $dt-border;
+}
+
+// ── Loading overlay ──────────────────────────────────────────
+.dt-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.dt-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid $dt-border;
+  border-top-color: $dt-color-create;
+  border-radius: 50%;
+  animation: dt-spin 0.8s linear infinite;
+}
+
+@keyframes dt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🎨 ESTILOS ESPECÍFICOS DE AG GRID (USANDO ::ng-deep)
+// Esto es lo que te permite modificar el interior del grid
+// ═══════════════════════════════════════════════════════════════
+
+:host ::ng-deep .ag-theme-quartz {
+
+  // 1. Colores de Filas (Zebra Striping)
+  .ag-root-wrapper {
+    border: none; // Quitamos borde extra del grid
   }
 
-  /* ── Estética Profunda de ag-Grid ──────────────────────────────── */
-  .ag-theme-quartz.dt-grid {
-    --ag-font-family: #{$dt-font-family} !important;
-    --ag-font-size: 14px;
-    
-    /* Colores Principales */
-    --ag-active-color: #{$dt-primary} !important;
-    --ag-border-color: #{$dt-border} !important;
-    
-    /* Cabeceras Estilizadas */
-    --ag-header-background-color: #{$dt-header-bg} !important;
-    --ag-header-foreground-color: #{$dt-header-text} !important;
-    --ag-header-font-weight: 700 !important;
-    --ag-header-column-separator-display: none; // Quitar líneas divisoras
-    --ag-header-cell-hover-background-color: #f1f5f9;
-    
-    /* Filas y Celdas */
-    --ag-row-hover-color: #f1f7ff !important;
-    --ag-selected-row-background-color: rgba(41, 98, 255, 0.05) !important;
-    --ag-odd-row-background-color: #fcfcfd !important; // Zebra striping sutil
-    --ag-row-border-color: #{$dt-border} !important;
-    
-    /* Quitar bordes internos para un look más moderno */
-    --ag-borders: none;
-    --ag-borders-critical: none;
-    --ag-borders-side: none;
-    --ag-row-border-style: solid;
-    --ag-row-border-width: 1px;
+  .ag-body-viewport {
+    .ag-row {
+      background-color: $row-even-bg; // Fila par (Blanco)
+      border-bottom: 1px solid $dt-border;
+    }
 
-    border: none !important;
+    .ag-row-odd {
+      background-color: $row-odd-bg; // Fila impar (Gris suave)
+    }
 
-    /* Estilo de la cabecera (Header Row) */
-    .ag-header {
-      border-bottom: 2px solid #e2e8f0 !important;
+    .ag-row-hover {
+      background-color: $row-hover-bg !important; // Hover
+    }
+  }
+
+  // 2. Cabeceras
+  .ag-header {
+    background-color: #f9f9fb;
+    border-bottom: 2px solid #e2e8f0;
+
+    .ag-header-cell-label {
+      font-weight: 700;
+      color: #475569;
       text-transform: uppercase;
-      letter-spacing: 0.025em;
-      font-size: 12px;
-    }
-
-    /* Padding de las celdas */
-    .ag-cell {
-      display: flex;
-      align-items: center;
-      line-height: normal;
-      color: #1e293b;
-    }
-
-    /* Estilo de la columna "Pinned" (Acciones) */
-    .ag-pinned-right-cols-container {
-      background-color: #fff !important;
-      border-left: 1px solid #e2e8f0 !important;
-      box-shadow: -4px 0 10px rgba(0,0,0,0.02);
+      font-size: 11px;
     }
   }
 
-  /* ── Barra de Herramientas (Toolbar) ──────────────────────────── */
-  .dt-toolbar {
-    padding: 16px 20px !important;
-    background: #ffffff !important;
-    border-bottom: 1px solid $dt-border !important;
+  // 3. Centrar contenido de celdas
+  .ag-cell {
+    display: flex;
+    align-items: center;
   }
 
-  .dt-search-input {
-    border: 1px solid #e2e8f0 !important;
-    background: #f8fafc !important;
-    border-radius: 8px !important;
-    &:focus {
-      background: #fff !important;
-      border-color: $dt-primary !important;
-    }
-  }
-
-  .dt-btn-create {
-    border-radius: 8px !important;
-    box-shadow: 0 4px 12px rgba(41, 98, 255, 0.2) !important;
-    &:hover {
-      box-shadow: 0 6px 15px rgba(41, 98, 255, 0.3) !important;
-    }
+  // 4. Columna de acciones (Pinned)
+  .ag-pinned-right-cols-container {
+    background-color: #fff;
+    border-left: 1px solid $dt-border;
   }
 }
