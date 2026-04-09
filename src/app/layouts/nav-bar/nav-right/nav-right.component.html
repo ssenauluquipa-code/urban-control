@@ -119,13 +119,13 @@
           </a>
           <ng-template ngbNavContent>
             @for (task of profile; track task) {
-              <div>
-                <a href="javascript:" class="dropdown-item" (click)="task.title === 'Logout' ? logout() : null">
-                  <span nz-icon [nzType]="task.icon" class="text-muted"></span>
-                  <span>{{ task.title }}</span>
-                </a>
-              </div>
-            }
+  <div>
+    <a href="javascript:" class="dropdown-item" (click)="handleProfileClick(task.title)">
+      <span nz-icon [nzType]="task.icon" class="text-muted"></span>
+      <span>{{ task.title }}</span>
+    </a>
+  </div>
+}
           </ng-template>
         </li>
         <li ngbNavItem="2">

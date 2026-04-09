@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { ProfileFormComponent } from 'src/app/features/profile/views/profile-form/profile-form.component';
+import { IUpdateProfileDto } from 'src/app/core/models/user.model';
 
 @Component({
   selector: 'app-nav-right',
@@ -14,13 +16,15 @@ import { AuthService } from 'src/app/core/services/auth.service';
 export class NavRightComponent {
   @Input() styleSelectorToggle = false;
   @Output() Customize = new EventEmitter<void>();
+  
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private modalService = inject(NgbModal);
+
   windowWidth: number;
   screenFull = true;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {
+  constructor() {
     this.windowWidth = window.innerWidth;
   }
 
@@ -31,54 +35,57 @@ export class NavRightComponent {
   }
 
   get currentUser() {
-    return this.authService.currentUser(); // llamar el Signal como función
+    return this.authService.currentUser();
   }
 
-   profile = [
-    {
-      icon: 'edit',
-      title: 'Edit Profile'
-    },
-    {
-      icon: 'user',
-      title: 'View Profile'
-    },
-    {
-      icon: 'profile',
-      title: 'Social Profile'
-    },
-    {
-      icon: 'wallet',
-      title: 'Billing'
-    },
-    {
-      icon: 'logout',
-      title: 'Logout'
-    }
+  profile = [
+    { icon: 'edit', title: 'Edit Profile' },
+    { icon: 'user', title: 'View Profile' },
+    { icon: 'logout', title: 'Logout' }
   ];
 
   setting = [
-    {
-      icon: 'question-circle',
-      title: 'Support'
-    },
-    {
-      icon: 'user',
-      title: 'Account Settings'
-    },
-    {
-      icon: 'lock',
-      title: 'Privacy Center'
-    },
-    {
-      icon: 'comment',
-      title: 'Feedback'
-    },
-    {
-      icon: 'unordered-list',
-      title: 'History'
-    }
+    { icon: 'help-circle', title: 'Support' },
+    { icon: 'user', title: 'Account Settings' },
+    { icon: 'lock', title: 'Privacy Center' }
   ];
 
+  handleProfileClick(title: string) {
+    if (title === 'Logout') {
+      this.logout();
+    } else if (title === 'Edit Profile') {
+      this.openProfileModal();
+    }
+  }
+
+  private openProfileModal() {
+    const modalRef = this.modalService.open(ProfileFormComponent, { 
+      size: 'lg', 
+      centered: true,
+      backdrop: 'static'
+    });
+
+    // Pasar datos al componente
+    modalRef.componentInstance.userData = this.currentUser;
+    modalRef.componentInstance.avatarUrl = this.currentUser?.avatarUrl;
+
+    // Escuchar eventos del formulario
+    modalRef.componentInstance.Save.subscribe((data: IUpdateProfileDto) => {
+      modalRef.componentInstance.loading = true;
+      this.authService.updateProfile(data).subscribe({
+        next: () => {
+          modalRef.componentInstance.loading = false;
+          modalRef.close();
+        },
+        error: () => modalRef.componentInstance.loading = false
+      });
+    });
+
+    modalRef.componentInstance.ImageSelected.subscribe((file: File) => {
+      console.log('Imagen para subir desde Nav:', file);
+      // Aquí podrías llamar al servicio de subida de imágenes
+    });
+  }
 
 }
+

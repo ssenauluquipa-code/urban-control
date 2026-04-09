@@ -37,7 +37,7 @@ export const Approutes: Routes = [
       },
       {
         path: 'admin',
-        loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
+        loadChildren: () => import('./features/users/users.routes').then(m => m.USERS_ROUTES)
       },
       {
         path: 'access',
@@ -48,8 +48,12 @@ export const Approutes: Routes = [
         loadChildren: () => import('./features/Gestión-Inmobiliaria/inmobiliaria.routes').then(m => m.INMOBILIARIA_ROUTES)
       },
       {
-        path: 'configuracion',
-        loadChildren: () => import('./features/configuracion/configuracion.routes').then(m => m.ConfiguracionRoutes)
+        path: 'organization',
+        loadChildren: () => import('./features/organization/organization.routes').then(m => m.OrganizationRoutes)
+      },
+      {
+        path: 'profile',
+        loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES)
       }
     ]
   },
