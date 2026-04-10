@@ -48,7 +48,7 @@ export const Approutes: Routes = [
         loadChildren: () => import('./features/Gestión-Inmobiliaria/inmobiliaria.routes').then(m => m.INMOBILIARIA_ROUTES)
       },
       {
-        path: 'organization',
+        path: 'configuracion',
         loadChildren: () => import('./features/organization/organization.routes').then(m => m.OrganizationRoutes)
       },
       {

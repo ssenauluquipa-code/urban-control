@@ -12,10 +12,11 @@ import { FormsModule } from '@angular/forms';
   template: `
     <div class="form-group custom-select-container">
       @if (label) {
-        <label class="form-label fw-bold mb-1">{{ label }}</label>
+        <label [for]="selectId" class="form-label fw-bold mb-1">{{ label }}</label>
       }
       <ng-select
         #inputSelect
+        [labelForId]="selectId"
         [items]="itemList"
         [multiple]="isMultiple"
         [bindValue]="bindValue"
@@ -28,8 +29,8 @@ import { FormsModule } from '@angular/forms';
         [loadingText]="'Cargando...'"
         [notFoundText]="'No se encontraron resultados'"
         [class.is-invalid]="inputControl.invalid && inputControl.touched"
-        (blur)="onBlur.emit($event)"
-        (change)="onChangeValue.emit($event)">
+        (blur)="Blur.emit($event)"
+        (change)="ChangeValue.emit($event)">
         
         <ng-template ng-notfound-tmp let-searchTerm="searchTerm">
           <div class="p-2 small text-muted">
@@ -61,28 +62,30 @@ import { FormsModule } from '@angular/forms';
 export class SelectDataComponent implements OnInit {
 
   @ViewChild('inputSelect') inputSelect!: NgSelectComponent;
+  
+  public selectId = 'select-' + Math.random().toString(36).substring(2, 9);
 
   // Propiedades de configuración
   @Input() label?: string; // Nueva: Para no tener que escribir el label afuera siempre
-  @Input() itemList: any[] = [];
-  @Input() bindValue: string = 'Id';
-  @Input() bindLabel: string = 'Name';
-  @Input() placeholder: string = 'Seleccionar...';
-  @Input() loading: boolean = false; // Nueva: Para mostrar spinner interno
+  @Input() itemList: unknown[] = [];
+  @Input() bindValue = 'Id';
+  @Input() bindLabel = 'Name';
+  @Input() placeholder = 'Seleccionar...';
+  @Input() loading = false; // Nueva: Para mostrar spinner interno
   
   // Control y validación
-  @Input() inputControl = new FormControl<any>(null);
-  @Input() defaultValue: any = null;
+  @Input() inputControl = new FormControl<unknown>(null);
+  @Input() defaultValue: unknown = null;
   
   // Comportamiento
-  @Input() clearable: boolean = true;
-  @Input() searchable: boolean = true;
-  @Input() isMultiple: boolean = false;
-  @Input() setFocus: boolean = false;
+  @Input() clearable = true;
+  @Input() searchable = true;
+  @Input() isMultiple = false;
+  @Input() setFocus = false;
   @Input() appendToStyle: string | null = null; // Se cambió a null por defecto para evitar conflictos de z-index y focus en Modales
 
-  @Output() onChangeValue = new EventEmitter<any>();
-  @Output() onBlur = new EventEmitter<any>();
+  @Output() ChangeValue = new EventEmitter<unknown>();
+  @Output() Blur = new EventEmitter<unknown>();
 
   ngOnInit(): void {
     if (this.defaultValue) {

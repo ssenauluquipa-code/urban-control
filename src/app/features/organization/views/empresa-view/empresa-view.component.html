@@ -1,86 +1,52 @@
-
 @if (isLoading) {
   <div class="loading-container">
     <div class="spinner"></div>
     <p>Cargando configuración...</p>
   </div>
 } @else if (empresaData) {
-  <!-- GRID -->
-  <div class="view-grid">
-
-    <!-- DATOS DE EMPRESA -->
-    <app-card-container>
-      <div class="card-header">
-        <h3>Datos de la empresa</h3>
+  <div class="compact-container">
+    
+    <div class="org-header">
+      <div class="avatar">{{ empresaData.name.substring(0, 2).toUpperCase() }}</div>
+      <div class="org-meta">
+        <h2 class="org-title">{{ empresaData.name }}</h2>
+        <p class="org-subtitle">{{ empresaData.subdomain }}.urbancontrol.app</p>
       </div>
+      <div class="status-tag" [class.active]="empresaData.isActive">
+        {{ empresaData.isActive ? 'Activo' : 'Inactivo' }}
+      </div>
+    </div>
 
+    <div class="divider"></div>
+
+    <div class="info-section">
+      <h3 class="section-title">Información de contacto</h3>
       <div class="info-grid">
-        <app-input-text-info
-          label="Nombre Comercial"
-          [value]="empresaData.nombreComercial">
-        </app-input-text-info>
-
-        <app-input-text-info
-          label="Razón Social"
-          [value]="empresaData.razonSocial">
-        </app-input-text-info>
-
-        <app-input-text-info
-          label="NIT"
-          [value]="empresaData.nit">
-        </app-input-text-info>
-
-        <app-input-text-info
-          label="Dirección"
-          [value]="empresaData.direccion"
-          class="full-width">
-        </app-input-text-info>
+        <app-input-text-info label="Correo Electrónico" [value]="empresaData.email" [showCopy]="true"></app-input-text-info>
+        <app-input-text-info label="Teléfono" [value]="empresaData.phone"></app-input-text-info>
+        <app-input-text-info label="Dirección Física" [value]="empresaData.address" class="full-width"></app-input-text-info>
       </div>
-    </app-card-container>
+    </div>
 
-    <!-- CONTACTO -->
-    <app-card-container>
-      <div class="card-header">
-        <h3>Contacto</h3>
-      </div>
+    <div class="divider"></div>
 
+    <div class="info-section">
+      <h3 class="section-title">Configuración Regional</h3>
       <div class="info-grid">
-        <app-input-text-info
-          label="Correo Electrónico"
-          [value]="empresaData.email"
-          [showCopy]="true">
-        </app-input-text-info>
-
-        <app-input-text-info
-          label="Teléfono"
-          [value]="empresaData.telefono">
-        </app-input-text-info>
+        <app-input-text-info label="Moneda" [value]="empresaData.currency"></app-input-text-info>
+        <app-input-text-info label="Zona Horaria" [value]="empresaData.timezone"></app-input-text-info>
       </div>
-    </app-card-container>
+    </div>
 
-    <!-- CONFIGURACIÓN DE RESERVAS -->
-    <app-card-container>
-      <div class="card-header">
-        <h3>Configuración de reservas</h3>
-      </div>
+    <div class="divider"></div>
 
+    <div class="info-section">
+      <h3 class="section-title">Registro de Sistema</h3>
       <div class="info-grid">
-        <app-input-text-info
-          label="Días de vencimiento"
-          [value]="empresaData.diasReservaVencimiento.toString()"
-          helperText="Las reservas vencen automáticamente después de este número de días">
-        </app-input-text-info>
-
-        <app-input-text-info
-          label="Símbolo de moneda"
-          [value]="empresaData.monedaSimbolo">
-        </app-input-text-info>
+        <app-input-text-info label="Fecha de Creación" [value]="empresaData.createdAt | date:'dd MMM, yyyy · HH:mm'"></app-input-text-info>
+        <app-input-text-info label="Última Actualización" [value]="empresaData.updatedAt | date:'dd MMM, yyyy · HH:mm'"></app-input-text-info>
       </div>
-    </app-card-container>
+    </div>
 
-  </div>
-} @else {
-  <div class="empty-state">
-    <p>No se encontró información de la empresa.</p>
   </div>
 }

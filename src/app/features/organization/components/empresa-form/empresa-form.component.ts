@@ -8,16 +8,16 @@ import { InputTextareaComponent } from '../../../../shared/components/atoms/inpu
 import { SelectDataComponent } from '../../../../shared/components/atoms/select-data.component';
 import { ButtonActionComponent } from '../../../../shared/components/atoms/button-action/button-action.component';
 import { Router } from '@angular/router';
-import { EmpresaService } from 'src/app/core/services/configuracion/empresa.service';
+import { OrganizationService } from 'src/app/core/services/configuracion/organization.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
-import { IEmpresaConfig } from 'src/app/core/models/Empresas/empresa-config.model';
+import { IOrganization, UpdateOrganizationDto } from 'src/app/core/models/Empresas/empresa-config.model';
 
 @Component({
   selector: 'app-empresa-form',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     ReactiveFormsModule,
     FormFieldComponent,
     InputTextComponent,
@@ -32,7 +32,7 @@ import { IEmpresaConfig } from 'src/app/core/models/Empresas/empresa-config.mode
 })
 export class EmpresaFormComponent implements OnInit {
   @Input() form!: FormGroup;
-  @Input() loading: boolean = false;
+  @Input() loading= false;
   @Output() save = new EventEmitter<void>();
 
   currenciesList = [
@@ -40,12 +40,18 @@ export class EmpresaFormComponent implements OnInit {
     { value: 'USD', label: 'Dólares (USD)' }
   ];
 
+  timezonesList = [
+    { value: 'America/La_Paz', label: 'Bolivia (GMT-4)' },
+    { value: 'UTC', label: 'UTC' }
+  ];
+
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private empresaService = inject(EmpresaService);
+  private empresaService = inject(OrganizationService);
+
   private notificationService = inject(NotificationService);
 
-  private stateData: IEmpresaConfig | null = null;
+  private stateData: IOrganization | null = null;
 
   ngOnInit(): void {
     if (!this.form) {
@@ -56,14 +62,12 @@ export class EmpresaFormComponent implements OnInit {
 
   private initForm(): void {
     this.form = this.fb.group({
-      nombreComercial: ['', [Validators.required]],
-      razonSocial: ['', [Validators.required]],
-      nit: ['', [Validators.required]],
-      direccion: ['', [Validators.required]],
-      telefono: ['', [Validators.required]],
+      name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      diasReservaVencimiento: [3, [Validators.required, Validators.min(1)]],
-      monedaSimbolo: ['Bs', [Validators.required]],
+      address: ['', [Validators.required]],
+      phone: ['', [Validators.required]],
+      currency: ['Bs', [Validators.required]],
+      timezone: ['America/La_Paz', [Validators.required]],
     });
   }
 
@@ -96,22 +100,18 @@ export class EmpresaFormComponent implements OnInit {
   private updateEmpresa(): void {
     if (!this.form.valid) return;
 
-        this.loading = true;
-    
+    this.loading = true;
+
     // Obtenemos los valores del formulario
     const values = this.form.value;
-    // Construimos el objeto respetando lo que la API espera 
-    // e incluyendo razonSocial para cumplir con el contrato de IEmpresaConfig
-    const datosParaEnviar: IEmpresaConfig = {
-      ...this.stateData, // Esto mantiene el ID si existe
-      nombreComercial: values.nombreComercial,
-      razonSocial: values.razonSocial, // ¡Faltaba este en tu mapeo manual!
-      nit: values.nit,
-      direccion: values.direccion,
-      telefono: values.telefono,
+    
+    const datosParaEnviar: UpdateOrganizationDto = {
+      name: values.name,
       email: values.email,
-      diasReservaVencimiento: values.diasReservaVencimiento,
-      monedaSimbolo: values.monedaSimbolo,
+      address: values.address,
+      phone: values.phone,
+      currency: values.currency,
+      timezone: values.timezone,
     };
 
     this.empresaService.updateEmpresa(datosParaEnviar).subscribe({

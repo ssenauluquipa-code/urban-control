@@ -1,44 +1,104 @@
+:host {
+  display: block;
+  margin: 0 auto; // CENTRADO AUTOMÁTICO
+  padding: 1rem;
+}
+
 .empresa-form {
+  background: #ffffff;
+  border: 1px solid #e5e7eb; // Borde sutil igual a la vista
+  border-radius: 12px; // Bordes redondeados igual a la vista
+  padding: 1.5rem; // Espaciado interno controlado
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
 
-  .form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
+.form-section {
+  display: flex;
+  flex-direction: column;
+}
 
-  .form-section {
-    border: 1px solid #e2e8f0;
-    padding: 1.5rem;
-    border-radius: 6px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.sec-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
 
-    legend {
-      padding: 0 0.5rem;
-      font-weight: 600;
-      color: #2d3748;
-      font-size: 0.95rem;
-      text-transform: uppercase;
-      letter-spacing: 0.025em;
+.divider {
+  height: 1px;
+  background: #f3f4f6;
+  margin: 1.25rem 0;
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; // Dos columnas fijas
+  gap: 1.25rem;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+/* AJUSTE DE DENSIDAD PARA LOS COMPONENTES ÁTOMOS */
+::ng-deep {
+  app-form-field {
+    .label-text {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      margin-bottom: 4px !important;
+      color: #4b5563 !important;
     }
   }
 
-  .full-width {
-    grid-column: 1 / -1;
+  app-input-text,
+  app-input-number,
+  app-select-data,
+  app-input-textarea {
+
+    /* Seleccionamos los selectores reales de Ant Design y NgSelect */
+    .ant-input,
+    .ant-input-affix-wrapper,
+    .ant-input-number,
+    .ng-select .ng-select-container {
+      min-height: 46px !important; /* Altura exacta que da el px-4 py-3 (44px-46px aprox) */
+      font-size: 14px !important; /* text-sm (14px) en input-text-info */
+      border-radius: 8px !important; /* rounded-lg (8px) en input-text-info */
+      background-color: transparent !important;
+      border-color: #d1d5db !important;
+      display: flex;
+      align-items: center;
+    }
+    
+    /* Ajustes específicos de padding */
+    .ant-input-affix-wrapper,
+    .ng-select .ng-select-container {
+      padding-left: 1rem !important;  /* px-4 */
+      padding-right: 1rem !important; /* px-4 */
+    }
+
+    textarea.ant-input {
+      padding: 0.75rem 1rem !important; /* py-3 px-4 literal */
+      min-height: auto !important;
+    }
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  :host {
+    padding: 0.5rem;
   }
 
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    padding-top: 1rem;
-    border-top: 1px solid #edf2f7;
+  .fields-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: span 1;
   }
 }

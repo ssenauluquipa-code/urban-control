@@ -21,6 +21,8 @@ import { ProyectoRepository } from './app/core/repository/proyectos/proyecto.rep
 import { UserRepository } from './app/core/repository/user.repository';
 import { USER_REPOSITORY_TOKEN } from './app/core/services/user.service';
 import { AuthRepository } from './app/core/repository/auth.repository';
+import { ORGANIZATION_REPOSITORY_TOKEN } from './app/core/services/configuracion/organization.service';
+import { OrganizationRepository } from './app/core/repository/configuracion/organization.repository';
 
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -43,6 +45,7 @@ bootstrapApplication(AppComponent, {
             useClass: UserRepository
         },
         { provide: 'IAuthRepository', useClass: AuthRepository },
+        { provide: ORGANIZATION_REPOSITORY_TOKEN, useClass: OrganizationRepository },
         provideAnimationsAsync(),
         importProvidersFrom(NzIconModule),
         provideAnimations(),

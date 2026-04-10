@@ -4,7 +4,7 @@ import { MaskitoOptions } from '@maskito/core';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { InputErrorMessagesComponent } from '../input-error-messages/input-error-messages.component';
 import { MaskitoDirective } from '@maskito/angular';
-import { NgStyle, NgClass, NgIf } from '@angular/common';
+import { NgStyle, NgClass} from '@angular/common';
 import { NzInputGroupComponent, NzInputGroupWhitSuffixOrPrefixDirective, NzInputDirective } from 'ng-zorro-antd/input';
 import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patch';
 
@@ -27,15 +27,16 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
                     [ngStyle]="customStyles"
                     [ngClass]="customClass"
                     [maskito]="maskitoOptions"
-                    [autofocus]="setFocus"
                     />
 
                 </nz-input-group>
                 <!-- Messages -->
-                <small *ngIf="help_text && input_control.valid" class="text-muted">
+                 @if(help_text && input_control.valid){
+                  <small class="text-muted">
                   <span nz-icon nzType="check-circle" nzTheme="fill" nzTheme="twotone" nzTwotoneColor="#52c41a"></span>
                   {{help_text}}
                 </small>
+                 }                
                 <!-- Error Messages -->
                  @if (show_error_messages) {
                    <app-input-error-messages
@@ -77,7 +78,6 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
       ReactiveFormsModule,
       NgStyle,
       NgClass,
-      NgIf,
       MaskitoDirective,
       NzIconDirective,
       InputErrorMessagesComponent
@@ -86,26 +86,26 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
 export class InputNumberComponent implements OnInit {
   @ViewChild('inputElement') inputElement!: ElementRef;
 
-  @Output() onBlurValue = new EventEmitter<string | number>();
+  @Output() BlurValue = new EventEmitter<string | number>();
   @Input() input_control = new FormControl<string | number | null>(null);
   @Input() input_size: 'large' | 'default' | 'small' = 'default';
-  @Input() input_placeholder: string = 'Ingrese un número';
-  @Input() help_text: string | null = null;
-  @Input() prefix_icon: string = '';
-  @Input() suffix_icon: string = '';
-  @Input() setFocus: boolean = false;
-  @Input() input_maxlength: number = 0;
-  @Input() input_minlength: number = 0;
-  @Input() input_maxvalue: number = 0;
-  @Input() input_minvalue: number = 0;
-  @Input() show_error_messages: boolean = true;
-  @Input() patternValidMessage: string = 'Ingrese un número válido';
-  @Input() customStyles: { [key: string]: string } = {};
-  @Input() customClass: string = '';
-  @Input() allow_decimals: boolean = false; // Permitir decimales
-  @Input() decimal_separator: string = '.'; // Separador decimal (. o ,)
+  @Input() input_placeholder = 'Ingrese un número';
+  @Input() help_text = '';
+  @Input() prefix_icon = '';
+  @Input() suffix_icon = '';
+  @Input() setFocus = false;
+  @Input() input_maxlength = 0;
+  @Input() input_minlength = 0;
+  @Input() input_maxvalue = 0;
+  @Input() input_minvalue = 0;
+  @Input() show_error_messages = true;
+  @Input() patternValidMessage = 'Ingrese un número válido';
+  @Input() customStyles: Record<string, string> = {};
+  @Input() customClass = '';
+  @Input() allow_decimals = false; // Permitir decimales
+  @Input() decimal_separator = '.'; // Separador decimal (. o ,)
 
-  public passwordVisible: boolean = false;
+  public passwordVisible = false;
 
   // Configuración para solo números enteros o decimales
   public maskitoOptions: MaskitoOptions = { mask: /^\d+$/ };
@@ -116,8 +116,9 @@ export class InputNumberComponent implements OnInit {
   }
 
   //metodo para el input
-  public onInputBlur(event: any): void {
-    this.onBlurValue.emit(event.target.value);
+  public onInputBlur(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.BlurValue.emit(target.value);
   }
 
   /** Configura la máscara según si permite decimales o no */

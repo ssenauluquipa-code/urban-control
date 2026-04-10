@@ -45,7 +45,7 @@ export class NavRightComponent {
   ];
 
   setting = [
-    { icon: 'help-circle', title: 'Support' },
+    { icon: 'building', title: 'Organización' },
     { icon: 'user', title: 'Account Settings' },
     { icon: 'lock', title: 'Privacy Center' }
   ];

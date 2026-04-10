@@ -1,9 +1,9 @@
 import { Component, inject, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EmpresaService } from 'src/app/core/services/configuracion/empresa.service';
+import { OrganizationService } from 'src/app/core/services/configuracion/organization.service';
 import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 import { InputTextInfoComponent } from 'src/app/shared/components/atoms/input-text-info.component';
-import { IEmpresaConfig } from 'src/app/core/models/Empresas/empresa-config.model';
+import { IOrganization } from 'src/app/core/models/Empresas/empresa-config.model';
 
 @Component({
   selector: 'app-empresa-view',
@@ -13,11 +13,11 @@ import { IEmpresaConfig } from 'src/app/core/models/Empresas/empresa-config.mode
   styleUrl: './empresa-view.component.scss'
 })
 export class EmpresaViewComponent implements OnInit {
-  private empresaService = inject(EmpresaService);
+  private empresaService = inject(OrganizationService);
 
-  @Input() empresaData: IEmpresaConfig | null = null;
-  @Input() isLoading: boolean = false;
-  @Input() autoLoad: boolean = true;
+  @Input() empresaData: IOrganization | null = null;
+  @Input() isLoading = false;
+  @Input() autoLoad = true;
 
   ngOnInit(): void {
     if (this.autoLoad && !this.empresaData) {

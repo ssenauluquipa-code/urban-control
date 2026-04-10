@@ -10,9 +10,9 @@ import { AfterContentInit, Component, ContentChild, ElementRef, Input } from '@a
 })
 export class CardContainerComponent implements AfterContentInit{
   // Inputs
-  @Input() title: string = '';
-  @Input() icon: string = '';
-  @Input() noPadding: boolean = false;
+  @Input() title = '';
+  @Input() icon = '';
+  @Input() noPadding = false;
 
   // Detect footer automáticamente
   @ContentChild('[card-footer]', { static: false }) footer?: ElementRef;

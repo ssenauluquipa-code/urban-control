@@ -14,10 +14,10 @@ export type ButtonSize = 'large' | 'default' | 'small';
 })
 export class ButtonActionComponent {
   @Input() nzType: NzButtonType = 'primary';
-  @Input() loading: boolean = false;
-  @Input() disabled: boolean = false;
-  @Input() block: boolean = false;
-  @Input() ghost: boolean = false;
+  @Input() loading = false;
+  @Input() disabled = false;
+  @Input() block = false;
+  @Input() ghost = false;
   @Input() size: ButtonSize = 'default';
   @Input() icon: string | null = null;
 

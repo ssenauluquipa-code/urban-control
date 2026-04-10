@@ -1,13 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   ReactiveFormsModule,
 } from '@angular/forms';
-import { EmpresaService } from 'src/app/core/services/configuracion/empresa.service';
 import { CommonModule } from '@angular/common';
 import { EmpresaViewComponent } from "../views/empresa-view/empresa-view.component";
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
-import { IEmpresaConfig } from 'src/app/core/models/Empresas/empresa-config.model';
 import { Router } from '@angular/router';
+import { IOrganization } from 'src/app/core/models/Empresas/empresa-config.model';
+import { OrganizationService } from 'src/app/core/services/configuracion/organization.service';
 
 @Component({
   selector: 'app-empresa-page',
@@ -28,10 +28,10 @@ import { Router } from '@angular/router';
 })
 export class EmpresaPageComponent implements OnInit {
 
-  empresaData: IEmpresaConfig | null = null;
-  isLoading: boolean = false;
+  empresaData: IOrganization | null = null;
+  isLoading = false;
 
-  constructor(private empresaService: EmpresaService, private router : Router) {
+  constructor(private empresaService: OrganizationService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -55,8 +55,8 @@ export class EmpresaPageComponent implements OnInit {
   }
 
   goToEdita(): void {
-    this.router.navigate(['/configuracion/empresa-edit'], { 
-      state: { empresa: this.empresaData } 
+    this.router.navigate(['/configuracion/empresa-edit'], {
+      state: { empresa: this.empresaData }
     });
   }
 

@@ -4,7 +4,7 @@ import { MaskitoOptions } from '@maskito/core';
 import { InputErrorMessagesComponent } from '../input-error-messages/input-error-messages.component';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { MaskitoDirective } from '@maskito/angular';
-import { NgStyle, NgClass, NgIf } from '@angular/common';
+import { NgStyle, NgClass } from '@angular/common';
 import { NzInputGroupComponent, NzInputGroupWhitSuffixOrPrefixDirective, NzInputDirective } from 'ng-zorro-antd/input';
 import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patch';
 
@@ -12,7 +12,6 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
     selector: 'app-input-text',
     template: `<nz-input-group
                 [nzSize]="input_size"
-                [autofocus]="setFocus"
                 [nzSuffix]="suffixTemplateInfo"
                 [nzPrefix]="prefixTemplateUser"
                 [nzStatus]="input_control.invalid && input_control.touched?'error':''">
@@ -20,7 +19,6 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
                   <input
                     #inputElement
                     nz-input
-                    [autofocus]="setFocus"
                     [type]="passwordVisible? 'text' : input_type"
                     [placeholder]="input_placeholder"
                     [maxlength]="input_maxlength? input_maxlength + 1 : null"
@@ -35,10 +33,13 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
 
                 </nz-input-group>
                 <!-- Messages -->
-                <small *ngIf="help_text && input_control.valid" class="text-muted">
+                 @if(help_text && input_control.valid){
+                  <small  class="text-muted">
                   <span nz-icon nzType="check-circle" nzTheme="fill" nzTheme="twotone" nzTwotoneColor="#52c41a"></span>
                   {{help_text}}
                 </small>
+                 }
+                
                 <!-- Error Messages -->
                  @if (show_error_messages) {
                    <app-input-error-messages 
@@ -59,7 +60,15 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
                     <span nz-icon [nzType]="suffix_icon" nzTheme="outline" ></span>
                   }
                   @if (enableCheckPass) {
-                    <span role="button" nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'" (click)="passwordVisible = !passwordVisible"></span>
+                    <span 
+                      role="button"
+                      tabindex="0" 
+                      nz-icon 
+                      [nzType]="passwordVisible ? 'eye-invisible' : 'eye'" 
+                      (click)="passwordVisible = !passwordVisible"
+                      (keydown.enter)="passwordVisible = !passwordVisible"
+                      (keydown.space)="passwordVisible = !passwordVisible; $event.preventDefault()">
+                    </span>
                   }
                 </ng-template>
             <!-- <pre>value:{{input_control.value}}</pre> -->
@@ -73,7 +82,7 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
       }
     `,
     standalone: true,
-    imports: [ɵNzTransitionPatchDirective, NzInputGroupComponent, NzInputGroupWhitSuffixOrPrefixDirective, NzInputDirective, FormsModule, ReactiveFormsModule, NgStyle, NgClass, MaskitoDirective, NgIf, NzIconDirective, InputErrorMessagesComponent]
+    imports: [ɵNzTransitionPatchDirective, NzInputGroupComponent, NzInputGroupWhitSuffixOrPrefixDirective, NzInputDirective, FormsModule, ReactiveFormsModule, NgStyle, NgClass, MaskitoDirective, NzIconDirective, InputErrorMessagesComponent]
 })
 export class InputTextComponent implements OnInit {
   //  @Output():Permite que un componente hijo envíe datos o eventos a un componente padre.
@@ -81,30 +90,31 @@ export class InputTextComponent implements OnInit {
 
   @ViewChild('inputElement') inputElement!: ElementRef;
 
-  @Output() onBlurValue = new EventEmitter<string>();
+  @Output() BlurValue = new EventEmitter<string>();
   @Input() input_control = new FormControl<string | number | null>(null);
   @Input() input_size: 'large' | 'default' | 'small' = 'default';
   @Input() input_type: 'text' | 'password' | 'email' = 'text';
-  @Input() input_placeholder: string = '';
-  @Input() help_text: string | null = null;
-  @Input() prefix_icon: string = '';
-  @Input() suffix_icon: string = '';
-  @Input() setFocus: boolean = false;
-  @Input() input_maxlength: number = 0;
-  @Input() input_minlength: number = 0;
-  @Input() enableCheckPass: boolean = false;
-  @Input() show_error_messages: boolean = true;
-  @Input() patternValidMessage: string = 'Ingrese un valor válido';
-  @Input() customStyles: { [key: string]: string } = {}; //para poner estilos en caso de que se use disabled 
-  @Input() customClass: string = '';
+  @Input() input_placeholder = '';
+  @Input() help_text = '';
+  @Input() prefix_icon = '';
+  @Input() suffix_icon = '';
+  @Input() setFocus = false;
+  @Input() input_maxlength = 0;
+  @Input() input_minlength = 0;
+  @Input() enableCheckPass = false;
+  @Input() show_error_messages = true;
+  @Input() patternValidMessage = 'Ingrese un valor válido';
+  @Input() customStyles: Record<string, string> = {}; //para poner estilos en caso de que se use disabled 
+  @Input() customClass = '';
   @Input() input_maskito: RegExp | string = ''; // Patrón de máscara configurable
-  public passwordVisible: boolean = false;
+  public passwordVisible = false;
 
   public maskitoOptions: MaskitoOptions = { mask: /.*/ };
 
   //metodo para el input
-  onInputBlur(event: any) {
-    this.onBlurValue.emit(event.target.value)
+  public onInputBlur(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.BlurValue.emit(target.value);
   }
 
   // Ejemplos de máscaras:

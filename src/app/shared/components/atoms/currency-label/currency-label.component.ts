@@ -12,13 +12,13 @@ export type CurrencySize = 'small' | 'default' | 'large';
   styleUrls: ['./currency-label.component.scss']
 })
 export class CurrencyLabelComponent implements OnChanges, OnInit {
-  @Input() value: number = 0;
-  @Input() currency: CurrencyType = 'BS';
-  @Input() size: CurrencySize = 'default';
-  @Input() prefix: string = '';
-  @Input() decimals: number = 2;
+  @Input() value = 0;
+  @Input() currency = 'BS';
+  @Input() size = 'default';
+  @Input() prefix = '';
+  @Input() decimals = 2;
 
-  formattedValue: string = '';
+  formattedValue = '';
 
   ngOnInit(): void {
     this.formatValue();

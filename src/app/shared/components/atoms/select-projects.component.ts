@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
 import { SelectDataComponent } from './select-data.component';
@@ -14,18 +14,18 @@ import { SelectDataComponent } from './select-data.component';
       [placeholder]="placeholder"
       [bindValue]="'id'"
       [bindLabel]="'name'"
-      (onChangeValue)="onSelect($event)">
+      (ChangeValue)="onSelect($event)">
     </app-select-data>
   `,
   styles: ``
 })
-export class SelectProjectsComponent {
+export class SelectProjectsComponent implements OnInit {
 
   @Input() inputControl = new FormControl();
   @Input() placeholder = 'Seleccionar Proyecto...';
-  @Output() onChange = new EventEmitter<any>();
+  @Output() Change = new EventEmitter<unknown>();
 
-  public projectList: any[] = [];
+  public projectList: unknown[] = [];
 
   constructor(
     private proyectoService: ProyectoService,
@@ -43,7 +43,7 @@ export class SelectProjectsComponent {
     });
   }
 
-  onSelect(event: any) {
-    this.onChange.emit(event);
+  onSelect(event: unknown) {
+    this.Change.emit(event);
   }
 }

@@ -17,11 +17,11 @@ import {
 
       <!-- Label -->
       @if (label) {
-        <label 
-          class="text-[11px] font-bold text-secondary uppercase tracking-wider"
+        <span 
+          class="block text-[11px] font-bold text-secondary uppercase tracking-wider"
           [class.required]="required">
           {{ label }}
-        </label>
+        </span>
       }
 
       <!-- Field -->
@@ -31,7 +31,9 @@ import {
         [class.disabled]="disabled"
         [class.error]="hasError"
         [attr.tabindex]="clickable && !disabled ? 0 : null"
-        (click)="handleClick()">
+        (click)="handleClick()"
+        (keydown.enter)="handleClick()"
+        (keydown.space)="handleClick()">
 
         <!-- Value -->
         @if (!isEmpty) {
@@ -135,17 +137,17 @@ import {
 export class InputTextInfoComponent {
 
   // Inputs
-  @Input() label: string = '';
-  @Input() value: any;
-  @Input() emptyText: string = 'No especificado';
-  @Input() helperText: string = '';
-  @Input() required: boolean = false;
-  @Input() hasError: boolean = false;
-  @Input() bold: boolean = false;
-  @Input() clickable: boolean = false;
-  @Input() disabled: boolean = false;
-  @Input() showCopy: boolean = false;
-  @Input() formatter?: (value: any) => string;
+  @Input() label = '';
+  @Input() value: unknown;
+  @Input() emptyText = 'No especificado';
+  @Input() helperText = '';
+  @Input() required = false;
+  @Input() hasError = false;
+  @Input() bold = false;
+  @Input() clickable = false;
+  @Input() disabled = false;
+  @Input() showCopy = false;
+  @Input() formatter?: (value: unknown) => string;
 
   // Outputs
   @Output() clicked = new EventEmitter<void>();
