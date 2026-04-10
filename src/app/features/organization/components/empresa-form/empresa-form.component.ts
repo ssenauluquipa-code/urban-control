@@ -3,11 +3,10 @@ import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormFieldComponent } from '../../../../shared/components/molecules/form-field/form-field.component';
 import { InputTextComponent } from '../../../../shared/components/atoms/input-text/input-text.component';
-import { InputNumberComponent } from '../../../../shared/components/atoms/input-number/input-number.component';
 import { InputTextareaComponent } from '../../../../shared/components/atoms/input-textarea/input-textarea.component';
 import { SelectDataComponent } from '../../../../shared/components/atoms/select-data.component';
-import { ButtonActionComponent } from '../../../../shared/components/atoms/button-action/button-action.component';
 import { Router } from '@angular/router';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { OrganizationService } from 'src/app/core/services/configuracion/organization.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
@@ -21,11 +20,10 @@ import { IOrganization, UpdateOrganizationDto } from 'src/app/core/models/Empres
     ReactiveFormsModule,
     FormFieldComponent,
     InputTextComponent,
-    InputNumberComponent,
     InputTextareaComponent,
     SelectDataComponent,
-    ButtonActionComponent,
-    PageContainerComponent
+    PageContainerComponent,
+    NzFormModule
   ],
   templateUrl: './empresa-form.component.html',
   styleUrl: './empresa-form.component.scss'

@@ -3,7 +3,5 @@ import { IOrganization, UpdateOrganizationDto } from "src/app/core/models/Empres
 
 export interface IOrganizationRepository {
   get(): Observable<IOrganization>;
-
-  // Coincide con: PUT /api/Empresa
   update(config: UpdateOrganizationDto): Observable<IOrganization>;
 }

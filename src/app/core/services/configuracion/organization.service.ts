@@ -18,7 +18,6 @@ getEmpresa(): Observable<IOrganization> {
   }
 
   updateEmpresa(config: UpdateOrganizationDto): Observable<IOrganization> {
-    // Aquí podrías añadir lógica: ej. verificar si el usuario tiene permiso Admin
     return this.repository.update(config);
   }
 }

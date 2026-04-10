@@ -44,49 +44,6 @@
   grid-column: span 2;
 }
 
-/* AJUSTE DE DENSIDAD PARA LOS COMPONENTES ÁTOMOS */
-::ng-deep {
-  app-form-field {
-    .label-text {
-      font-size: 11px !important;
-      font-weight: 600 !important;
-      margin-bottom: 4px !important;
-      color: #4b5563 !important;
-    }
-  }
-
-  app-input-text,
-  app-input-number,
-  app-select-data,
-  app-input-textarea {
-
-    /* Seleccionamos los selectores reales de Ant Design y NgSelect */
-    .ant-input,
-    .ant-input-affix-wrapper,
-    .ant-input-number,
-    .ng-select .ng-select-container {
-      min-height: 46px !important; /* Altura exacta que da el px-4 py-3 (44px-46px aprox) */
-      font-size: 14px !important; /* text-sm (14px) en input-text-info */
-      border-radius: 8px !important; /* rounded-lg (8px) en input-text-info */
-      background-color: transparent !important;
-      border-color: #d1d5db !important;
-      display: flex;
-      align-items: center;
-    }
-    
-    /* Ajustes específicos de padding */
-    .ant-input-affix-wrapper,
-    .ng-select .ng-select-container {
-      padding-left: 1rem !important;  /* px-4 */
-      padding-right: 1rem !important; /* px-4 */
-    }
-
-    textarea.ant-input {
-      padding: 0.75rem 1rem !important; /* py-3 px-4 literal */
-      min-height: auto !important;
-    }
-  }
-}
 
 /* RESPONSIVE */
 @media (max-width: 640px) {

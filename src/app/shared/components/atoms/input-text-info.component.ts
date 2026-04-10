@@ -26,7 +26,7 @@ import {
 
       <!-- Field -->
       <div 
-        class="w-full field-container rounded-lg px-4 py-3 transition-all group"
+        class="field-container ui-input-base transition-all group"
         [class.clickable]="clickable && !disabled"
         [class.disabled]="disabled"
         [class.error]="hasError"
@@ -37,7 +37,7 @@ import {
 
         <!-- Value -->
         @if (!isEmpty) {
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between w-full">
             <span 
               class="field-text"
               [class.text-error]="hasError"
@@ -79,24 +79,19 @@ import {
     /* Base */
     .field-container {
       background-color: #eff4ff; /* surface-container-low */
-      font-size: 0.875rem;
-      line-height: 1.25rem;
       outline: none;
       transition: all 0.2s ease;
-      border-radius: 10px;
+      justify-content: space-between;
     }
 
     /* Text */
     .field-text {
       color: #0b1c30; /* on-surface */
-      font-size: 0.875rem;
-      line-height: 1.25rem;
     }
 
     /* Placeholder */
     .field-placeholder {
       color: #565e74; /* secondary */
-      font-size: 0.875rem;
       font-style: italic;
     }
 
