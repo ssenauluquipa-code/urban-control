@@ -1,0 +1,45 @@
+<app-modal-container
+  #modal
+  [mainTitleModal]="manzanaData ? 'Editar Manzana' : 'Nueva Manzana'"
+  (onSaveAction)="Save.emit()"
+  (onCancelAction)="modal.activeModal.close()"
+>
+  <form nz-form [formGroup]="manzanaForm" nzLayout="vertical">
+    <div class="row">
+      <div class="col-12">
+        <app-form-field
+          label="Código / Nombre"
+          [required]="true"
+          forId="codigoManzana"
+        >
+          <app-input-text
+            [input_control]="codigo"
+            input_placeholder="Ej. Manzana A, MZ-1, Norte"
+          >
+          </app-input-text>
+        </app-form-field>
+      </div>
+
+      <div class="col-12">
+        <app-form-field label="Descripción (Opcional)" forId="descManzana">
+          <textarea
+            nz-input
+            formControlName="descripcion"
+            rows="3"
+            placeholder="Ej. Manzana cercana al parque principal..."
+          >
+          </textarea>
+        </app-form-field>
+      </div>
+
+      <!-- Información adicional si es edición -->
+      @if (manzanaData) {
+        <div class="col-12">
+          <small class="text-muted">
+            Los cambios en el código pueden afectar a los lotes asociados.
+          </small>
+        </div>
+      }
+    </div>
+  </form>
+</app-modal-container>

@@ -33,7 +33,7 @@ export class SelectProjectsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.proyectoService.getProyectosLookup().subscribe({
+    this.proyectoService.getProyectos().subscribe({
       next: (data) => {
         this.projectList = [...data];
         this.cdr.detectChanges();

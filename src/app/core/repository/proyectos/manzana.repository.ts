@@ -9,7 +9,7 @@ import { IManzanaRepository } from "../../interfaces/repository/proyectos/manzan
   providedIn: 'root'
 })
 export class ManzanaRepository implements IManzanaRepository {
-  private readonly API_URL = `${environment.apiUrl}/manzana`;
+  private readonly API_URL = `${environment.apiUrl}/manzanas`;
 
   constructor(private http: HttpClient) {}
 
