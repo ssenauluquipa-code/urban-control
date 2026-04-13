@@ -31,7 +31,7 @@ import { ILote } from 'src/app/core/models/lote/lote.model';
 })
 export class ViewRegisterLotesComponent {
   @Input() loteForm!: FormGroup;
-  @Input() loteData: ILote | undefined;
+  @Input() loteData: ILote | null = null;
   @Output() SaveLote = new EventEmitter<void>();
 
 

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ViewRegisterLotesComponent } from '../views/view-register-lotes/view-register-lotes.component';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
-import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
+import { ILote, TEstadoLote } from 'src/app/core/models/lote/lote.model';
+import { ViewRegisterLotesComponent } from '../../views/view-register-lotes/view-register-lotes.component';
 
 @Component({
   selector: 'app-register-lotes',
@@ -19,7 +19,7 @@ import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
 })
 export class RegisterLotesComponent implements OnInit {
   public loteFormGroup!: FormGroup;
-  public loteData: any;
+  public loteData: ILote | null = null;
 
   get id() { return this.loteFormGroup.get('id') as FormControl<string | null>; }
   get numero() { return this.loteFormGroup.get('numero') as FormControl<number>; }
@@ -34,7 +34,7 @@ export class RegisterLotesComponent implements OnInit {
     private loteService: LoteService,
     private ngModal: NgbActiveModal,
     private notification: NotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.buildForm();
