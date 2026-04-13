@@ -1,31 +1,22 @@
-import { Injectable } from '@angular/core';
-import { MazanaRepository } from '../../repository/proyectos/mazana-repository';
-import { Observable } from 'rxjs';
-import { IManzana, IManzanaCreateDto } from '../../models/proyectos/manzana.model';
+import { Inject, Injectable } from '@angular/core';
+import { IManzanaRepository } from '../../interfaces/repository/proyectos/manzana.repository.interface';
+import { CreateManzanaDto, UpdateManzanaDto } from '../../models/manzana/manzana.model';
+
+
+export const MANZANA_REPOSITORY_TOKEN = 'IManzanaRepository';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ManzanaService {
 
-constructor(private _repo: MazanaRepository) { }
-getManzanasPorProyecto(proyectoId: string): Observable<IManzana[]> {
-    return this._repo.getByProyecto(proyectoId);
-  }
+constructor(@Inject(MANZANA_REPOSITORY_TOKEN) private repo : IManzanaRepository){}
 
-  obtenerDetalle(id: string): Observable<IManzana> {
-    return this._repo.getById(id);
-  }
+getManzanas(proyectoId?: string) { return this.repo.getAll(proyectoId); }
+getManzanaById(id: string) { return this.repo.getById(id); }
+createManzana(dto: CreateManzanaDto) { return this.repo.create(dto); }
+updateManzana(id: string, dto: UpdateManzanaDto) { return this.repo.update(id, dto); }
+deleteManzana(id: string) { return this.repo.delete(id); }
+searchManzanas(proyectoId: string, term: string) { return this.repo.search(proyectoId, term); }
 
-  crearNuevaManzana(dto: IManzanaCreateDto): Observable<IManzana> {
-    return this._repo.create(dto);
-  }
-
-  actualizarGeometria(id: string, geometria: string): Observable<void> {
-    return this._repo.update(id, { geometria });
-  }
-
-  eliminar(id: string): Observable<void> {
-    return this._repo.delete(id);
-  }
 }

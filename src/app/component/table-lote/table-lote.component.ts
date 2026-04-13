@@ -7,7 +7,7 @@ import { ColDef } from 'ag-grid-community';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
-import { ILote } from 'src/app/core/models/gestion-inmobiliaria/lotes.model';
+import { ILote } from 'src/app/core/models/lote/lote.model';
 
 @Component({
   selector: 'app-table-lote',
@@ -53,48 +53,48 @@ export class TableLoteComponent {
   rowData: ILote[] = [
     {
       id: '1',
-      numeroLote: 'L-001',
-      manzana: 'A',
-      proyectoId: '1',
-      superficieM2: 125,
-      estado: 'Disponible',
-      proyecto: { nombre: 'Urbanización Mollar', precioBaseM2: 200 }
+      numero: 1,
+      areaM2: 125,
+      precioReferencial: 25000,
+      estado: 'DISPONIBLE',
+      manzanaId: '1',
+      proyectoId: '1'
     },
     {
       id: '2',
-      numeroLote: 'L-002',
-      manzana: 'A',
-      proyectoId: '1',
-      superficieM2: 130,
-      estado: 'Vendido',
-      proyecto: { nombre: 'Urbanización Mollar', precioBaseM2: 200 }
+      numero: 2,
+      areaM2: 130,
+      precioReferencial: 26000,
+      estado: 'VENDIDO',
+      manzanaId: '1',
+      proyectoId: '1'
     },
     {
       id: '3',
-      numeroLote: 'L-003',
-      manzana: 'B',
-      proyectoId: '1',
-      superficieM2: 135,
-      estado: 'Reservado',
-      proyecto: { nombre: 'Urbanización Mollar', precioBaseM2: 200 }
+      numero: 3,
+      areaM2: 135,
+      precioReferencial: 27000,
+      estado: 'RESERVADO',
+      manzanaId: '1',
+      proyectoId: '1'
     },
     {
       id: '4',
-      numeroLote: 'L-004',
-      manzana: 'B',
-      proyectoId: '1',
-      superficieM2: 140,
-      estado: 'Disponible',
-      proyecto: { nombre: 'Urbanización Mollar', precioBaseM2: 200 }
+      numero: 4,
+      areaM2: 140,
+      precioReferencial: 28000,
+      estado: 'DISPONIBLE',
+      manzanaId: '1',
+      proyectoId: '1'
     },
     {
       id: '5',
-      numeroLote: 'L-005',
-      manzana: 'C',
-      proyectoId: '1',
-      superficieM2: 145,
-      estado: 'Bloqueado',
-      proyecto: { nombre: 'Urbanización Mollar', precioBaseM2: 200 }
+      numero: 5,
+      areaM2: 145,
+      precioReferencial: 29000,
+      estado: 'BLOQUEADO',
+      manzanaId: '1',
+      proyectoId: '1'
     },
   ];
 

@@ -13,7 +13,7 @@ import { SelectDataComponent } from './select-data.component';
       [inputControl]="inputControl"
       [placeholder]="placeholder"
       [bindValue]="'id'"
-      [bindLabel]="'name'"
+      [bindLabel]="'nombre'"
       (ChangeValue)="onSelect($event)">
     </app-select-data>
   `,
@@ -36,8 +36,7 @@ export class SelectProjectsComponent implements OnInit {
     this.proyectoService.getProyectosLookup().subscribe({
       next: (data) => {
         this.projectList = [...data];
-        console.log("this lista ", this.projectList);
-        this.cdr.detectChanges(); // Forzamos actualización visual de Angular
+        this.cdr.detectChanges();
       },
       error: (error) => console.error('Error al cargar proyectos', error)
     });

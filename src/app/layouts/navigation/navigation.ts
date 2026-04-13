@@ -123,6 +123,24 @@ export const NavigationItems: INavigationItem[] = [
     icon: 'bi bi-building',
     children: [
       {
+        id: 'proyectos',
+        title: 'Proyectos',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/gestion-inmobiliaria/proyecto',
+        icon: 'bi bi-folder2-open',
+        breadcrumbs: false
+      },
+      {
+        id: 'manzanas',
+        title: 'Manzanas',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/gestion-inmobiliaria/manzanas',
+        icon: 'bi bi-grid-3x3',
+        breadcrumbs: false
+      },
+      {
         id: 'lotes',
         title: 'Lotes',
         type: 'item',

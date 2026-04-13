@@ -1,18 +1,23 @@
-
 export interface IProyecto {
-   id: string;
+  id: string;
   nombre: string;
-  ubicacion?: string;
-  precioBaseM2: number;
-  urlImagenPlano?: string;
-  configMapa?: string;
+  descripcion: string;
+  departamento: string;
+  provincia: string;
+  distrito: string;
+  direccion: string;
+  estado: string; // Ej: 'ACTIVO'
+  createdAt: string;
+  updatedAt: string;
 }
-export interface IProyectoCreateDto {
+
+export interface CreateProyectoDto {
   nombre: string;
-  ubicacion?: string;
-  precioBaseM2: number;
+  departamento: string;
+  provincia?: string;
+  distrito?: string;
+  direccion: string;
+  descripcion?: string;
 }
-export interface IProyectoLookup {
-    id: string;
-    name: string;
-}
+
+export type UpdateProyectoDto = Partial<CreateProyectoDto>;

@@ -9,6 +9,7 @@ import { InputTextComponent } from 'src/app/shared/components/atoms/input-text/i
 import { InputNumberComponent } from 'src/app/shared/components/atoms/input-number/input-number.component';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { SelectProjectsComponent } from "src/app/shared/components/atoms/select-projects.component";
+import { ILote } from 'src/app/core/models/lote/lote.model';
 
 @Component({
   selector: 'app-view-register-lotes',
@@ -24,19 +25,21 @@ import { SelectProjectsComponent } from "src/app/shared/components/atoms/select-
     InputNumberComponent,
     FormFieldComponent,
     SelectProjectsComponent
-],
+  ],
   templateUrl: './view-register-lotes.component.html',
   styleUrl: './view-register-lotes.component.scss'
 })
 export class ViewRegisterLotesComponent {
   @Input() loteForm!: FormGroup;
-  @Input() loteData: any;
-  @Output() onSaveLote = new EventEmitter<void>();
+  @Input() loteData: ILote | undefined;
+  @Output() SaveLote = new EventEmitter<void>();
+
 
   get id() { return this.loteForm.get('id') as FormControl<string | null>; }
-  get numeroLote() { return this.loteForm.get('numeroLote') as FormControl<string>; }
-  get manzana() { return this.loteForm.get('manzana') as FormControl<string>; }
-  get superficieM2() { return this.loteForm.get('superficieM2') as FormControl<number>; }
+  get numero() { return this.loteForm.get('numero') as FormControl<number>; }
+  get areaM2() { return this.loteForm.get('areaM2') as FormControl<number>; }
+  get precioReferencial() { return this.loteForm.get('precioReferencial') as FormControl<number>; }
+  get observaciones() { return this.loteForm.get('observaciones') as FormControl<string>; }
   get estado() { return this.loteForm.get('estado') as FormControl<string>; }
-  get proyectoId() { return this.loteForm.get('proyectoId') as FormControl<string>; }
+  get manzanaId() { return this.loteForm.get('manzanaId') as FormControl<string>; }
 }

@@ -1,18 +1,19 @@
 <app-modal-container
   #modal
   [mainTitleModal]="loteData ? 'Editar Lote' : 'Registrar Lote'"
-  (onSaveAction)="onSaveLote.emit()"
+  (onSaveAction)="SaveLote.emit()"
   (onCancelAction)="modal.activeModal.close()"
 >
   <form nz-form [formGroup]="loteForm" nzLayout="vertical">
     <div class="row">
       <div class="col-12 col-md-12 mt-2">
-        <label class="fw-bold">Proyecto / Urbanización</label>
-        <app-select-projects
-          [inputControl]="proyectoId"
-          [placeholder]="'Seleccione el proyecto de destino...'"
-        >
-        </app-select-projects>
+        <app-form-field label="Manzana" [required]="true" forId="manzanaId">
+          <app-input-text
+            formControlName="manzanaId"
+            input_placeholder="ID de la manzana"
+          >
+          </app-input-text>
+        </app-form-field>
       </div>
       <div class="col-md-6">
         <app-form-field
@@ -20,36 +21,46 @@
           [required]="true"
           forId="numLote"
         >
-          <app-input-text
-            [input_control]="numeroLote"
+          <app-input-number
+            [input_control]="numero"
             input_placeholder="Ej. 15"
           >
-          </app-input-text>
+          </app-input-number>
         </app-form-field>
       </div>
       <div class="col-md-6">
-        <app-form-field label="Manzana" [required]="true" forId="manzanaLote">
-          <app-input-text [input_control]="manzana" input_placeholder="Ej. G">
-          </app-input-text>
-        </app-form-field>
-      </div>
-      <div class="col-md-12">
-        <app-form-field label="Superficie (m²)" forId="superficieLote">
+        <app-form-field label="Área (m²)" [required]="true" forId="areaM2">
           <app-input-number
-            [input_control]="superficieM2"
+            [input_control]="areaM2"
             [allow_decimals]="true"
             input_placeholder="0"
           >
           </app-input-number>
         </app-form-field>
       </div>
-      @if(!loteData){
+      <div class="col-md-12">
+        <app-form-field label="Precio Referencial (Bs)" forId="precioRef">
+          <app-input-number
+            [input_control]="precioReferencial"
+            [allow_decimals]="true"
+            input_placeholder="0"
+          >
+          </app-input-number>
+        </app-form-field>
+      </div>
+      <div class="col-md-12">
+        <app-form-field label="Observaciones" forId="observaciones">
+          <textarea nz-input formControlName="observaciones" placeholder="Observaciones del lote" [nzAutosize]="{ minRows: 2, maxRows: 4 }"></textarea>
+        </app-form-field>
+      </div>
+      @if(loteData){
       <div class="col-md-12">
         <app-form-field label="Estado" forId="estadoLote">
           <nz-select formControlName="estado">
-            <nz-option nzValue="Disponible" nzLabel="Disponible"></nz-option>
-            <nz-option nzValue="Reservado" nzLabel="Reservado"></nz-option>
-            <nz-option nzValue="Vendido" nzLabel="Vendido"></nz-option>
+            <nz-option nzValue="DISPONIBLE" nzLabel="Disponible"></nz-option>
+            <nz-option nzValue="RESERVADO" nzLabel="Reservado"></nz-option>
+            <nz-option nzValue="VENDIDO" nzLabel="Vendido"></nz-option>
+            <nz-option nzValue="BLOQUEADO" nzLabel="Bloqueado"></nz-option>
           </nz-select>
         </app-form-field>
       </div>
