@@ -6,7 +6,8 @@ export enum EPageAction {
   CANCEL = 'CANCEL',
   BACK = 'BACK',
   UPDATE = 'UPDATE',
-  SEND = 'SEND'
+  SEND = 'SEND',
+  CUSTOM = 'CUSTOM'
 }
 
 export enum EPageMenuAction {

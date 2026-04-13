@@ -1,0 +1,34 @@
+<div class="visualizer-container">
+  <div class="manzana-grid">
+    @for (lote of lotes; track lote.id) {
+      <div
+        class="lote-box"
+        role="button"
+        tabindex="0"
+        [ngClass]="getStatusClass(lote.estado)"
+        [style.aspectRatio]="getAspectRatio(lote)"
+        (click)="loteClick.emit(lote)"
+        (keydown.enter)="loteClick.emit(lote)"
+        (keydown.space)="loteClick.emit(lote); $event.preventDefault()"
+        [title]="getTooltip(lote)"
+      >
+        <span class="lote-number">{{ lote.numero }}</span>
+        <small class="lote-status-tag">{{ lote.estado }}</small>
+      </div>
+    }
+  </div>
+
+  <!-- Leyenda -->
+  <div class="legend">
+    <span class="legend-item">
+      <span class="dot available"></span> Disponible
+    </span>
+    <span class="legend-item">
+      <span class="dot reserved"></span> Reservado
+    </span>
+    <span class="legend-item"> <span class="dot sold"></span> Vendido </span>
+    <span class="legend-item">
+      <span class="dot blocked"></span> Bloqueado
+    </span>
+  </div>
+</div>

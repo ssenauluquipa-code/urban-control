@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
-import { finalize, Observable, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, Observable, of } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SelectProjectsComponent } from "src/app/shared/components/atoms/select-projects.component";
@@ -12,74 +12,112 @@ import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.servic
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
-import { ILote } from 'src/app/core/models/lote/lote.model';
+import { ILote, TEstadoLote } from 'src/app/core/models/lote/lote.model';
 import { RegisterLotesComponent } from './register-lotes.component';
 import { IManzana } from 'src/app/core/models/manzana/manzana.model';
 import { ManzanaService } from 'src/app/core/services/proyectos/manzana.service';
-import { NzSelectModule } from 'ng-zorro-antd/select';
+import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
+import { InputTextComponent } from 'src/app/shared/components/atoms/input-text/input-text.component';
+import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
+import { LoteVisualizerComponent } from "../../views/lote-visualizer/lote-visualizer.component";
 
 @Component({
   selector: 'app-list-lotes',
   standalone: true,
   imports: [CommonModule, PageContainerComponent, DataTableComponent,
-    SelectProjectsComponent, ReactiveFormsModule, FormsModule, NzModalModule, NzSelectModule],
+    SelectProjectsComponent, ReactiveFormsModule, FormsModule,
+    NzModalModule, SelectDataComponent, LoteVisualizerComponent, InputTextComponent, FormFieldComponent],
   template: `
     
     <app-page-container
-      title="Gestión de Lotes"
-      permissionScope="lotes"
-      [showNew]="true"
-      [showOptions]="true"
-      (onAddNew)="onAddNewLote()">
+  title="Gestión de Lotes"
+  permissionScope="lotes"
+  [showNew]="true"
+  [showOptions]="true"
+  (AddNew)="onAddNewLote()">
 
-      <!-- Filtros en Cascada -->
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <label class="form-label-small" for="proyecto-select">Proyecto</label>
-          <app-select-projects
-            id="proyecto-select"
-            [inputControl]="proyectoIdControl"
-            [placeholder]="'Seleccione proyecto...'">
-          </app-select-projects>
-        </div>
-        <div class="col-md-4">
-          <label class="form-label-small" for="manzana-select">Manzana</label>
-          <nz-select
-            nzId="manzana-select"
-            class="w-100"
-            [ngModel]="manzanaIdControl.value"
-            (ngModelChange)="onManzanaChange($event)"
-            [nzPlaceHolder]="'Seleccione manzana'"
-            [nzDisabled]="!proyectoIdControl.value">
-              @for (manzana of manzanasList$ | async; track manzana.id) {
-                <nz-option [nzValue]="manzana.id" [nzLabel]="manzana.codigo"></nz-option>
-              }
-          </nz-select>
-        </div>
-      </div>
-            <app-data-table
-        [rowData]="(lotes$ | async) || []"
-        [columnDefs]="columnDefs"
-        [loading]="isLoading"
-        height="350px"
-        [showCreate]="false"
-        [actions]="[tableActionEnum.EDIT, tableActionEnum.DELETE]"
-        (actionClicked)="onTableAction($event)">
-      </app-data-table>
+  <!-- Filtros en Cascada -->
+  <div class="row mb-3 flex">
+    <div class="col-md-4">
+      <app-form-field label="Proyecto" forId="proyecto-select"
+      >
+        <app-select-projects
+          id="proyecto-select"
+          [inputControl]="proyectoIdControl"
+          [placeholder]="'Seleccione proyecto...'">
+        </app-select-projects>
+      </app-form-field>
+    </div>
+    <div class="col-md-4">
+      <app-form-field label="Manzana">
+        <app-select-data
+          [inputControl]="manzanaIdControl"
+          [itemList]="(manzanasList$ | async) || []"
+          [bindValue]="'id'"
+          [bindLabel]="'codigo'"
+          [placeholder]="'Seleccione manzana'">
+        </app-select-data>
+      </app-form-field>
+    </div>
 
-    </app-page-container>
+    <!-- 🔍 Buscador -->
+    <div class="col-md-4">
+      <app-form-field label="Buscar Lote" forId="search-lote-id">
+        <app-input-text
+          inputId="search-lote-id"
+          [input_control]="searchControl"
+          input_placeholder="Escriba el número..."
+          prefix_icon="search">
+        </app-input-text>
+      </app-form-field>
+    </div>
+  </div>
+
+  <!-- 🆕 BOTONES DE VISTA -->
+  <div class="btn-group mb-3" role="group" aria-label="Cambiar vista">
+    <button
+      type="button"
+      class="btn"
+      [class.btn-primary]="viewMode === 'table'"
+      [class.btn-outline-secondary]="viewMode !== 'table'"
+      (click)="viewMode = 'table'">
+      <i class="bi bi-table me-1"></i> Lista
+    </button>
+    <button
+      type="button"
+      class="btn"
+      [class.btn-primary]="viewMode === 'map'"
+      [class.btn-outline-secondary]="viewMode !== 'map'"
+      (click)="viewMode = 'map'">
+      <i class="bi bi-map me-1"></i> Plano
+    </button>
+  </div>
+
+  <!-- 🆕 VISTA MAPA / PLANO -->
+  @if (viewMode === 'map') {
+    <app-lote-visualizer
+      [lotes]="(lotes$ | async) || []"
+      (loteClick)="onLoteClick($event)">
+    </app-lote-visualizer>
+  }
+
+  <!-- VISTA TABLA -->
+  @if (viewMode === 'table') {
+    <app-data-table
+      [rowData]="(lotes$ | async) || []"
+      [columnDefs]="columnDefs"
+      [loading]="isLoading"
+      height="350px"
+      [showCreate]="false"
+      [actions]="[tableActionEnum.EDIT, tableActionEnum.DELETE]"
+      (actionClicked)="onTableAction($event)">
+    </app-data-table>
+  }
+
+</app-page-container>
 
   `,
-  styles: `
-  .form-label-small {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: #64748b;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-    }
-  `
+  styles: ``
 })
 export class ListLotesComponent implements OnInit {
   public tableActionEnum = TableActionsEnum;
@@ -89,8 +127,12 @@ export class ListLotesComponent implements OnInit {
 
   // Controles
   public proyectoIdControl = new FormControl<string>('');
-  public manzanaIdControl = new FormControl<string>('');
+  public manzanaIdControl = new FormControl<string | null>({ value: null, disabled: true });
 
+  // 🔍 NUEVO: Control para el buscador
+  public searchControl = new FormControl<string>('');
+
+  public viewMode: 'table' | 'map' = 'table';
   columnDefs: ColDef[] = [
     {
       field: 'numero',
@@ -152,35 +194,96 @@ export class ListLotesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // 1. Cargar primer proyecto por defecto
+    // 1. Cargar primer proyecto
     this.proyectoService.getProyectos().subscribe(proyectos => {
       if (proyectos.length > 0) {
         this.proyectoIdControl.setValue(proyectos[0].id);
       }
     });
 
-    // 2. Escuchar cambios en PROYECTO -> Cargar Manzanas
+    // 2. Proyecto cambia -> Carga Manzanas
     this.proyectoIdControl.valueChanges.subscribe(proyectoId => {
       if (proyectoId) {
         this.manzanasList$ = this.manzanaService.getManzanas(proyectoId);
-        // Reseteamos la manzana seleccionada al cambiar de proyecto
+        this.manzanaIdControl.enable();
+        this.manzanaIdControl.setValue(null);
+        this.searchControl.setValue(''); // Limpia búsqueda al cambiar proyecto
+      } else {
+        this.manzanaIdControl.disable();
         this.manzanaIdControl.setValue(null);
       }
     });
+
+    // 3. Manzana cambia -> Carga Lotes
+    this.manzanaIdControl.valueChanges.subscribe(manzanaId => {
+      this.searchControl.setValue(''); // Limpia búsqueda al cambiar manzana
+      if (manzanaId) {
+        this.loadLotes(manzanaId);
+      } else {
+        this.lotes$ = of([]);
+      }
+    });
+
+    // 🔍 4. Lógica del Buscador
+    this.searchControl.valueChanges.pipe(
+      debounceTime(300), // Espera 300ms
+      distinctUntilChanged() // Evita buscar lo mismo
+    ).subscribe(term => {
+      const manzanaId = this.manzanaIdControl.value;
+      if (!manzanaId) return;
+
+      if (term && term.length > 0) {
+        this.searchLotes(manzanaId, term);
+      } else {
+        this.loadLotes(manzanaId);
+      }
+    });
+
   }
 
-  // 3. Escuchar cambios en MANZANA -> Cargar Lotes
-  onManzanaChange(manzanaId: string): void {
-    this.manzanaIdControl.setValue(manzanaId);
+  private loadLotes(manzanaId: string): void {
+    this.isLoading = true;
+    this.lotes$ = this.loteService.getLotes(manzanaId).pipe(
+      finalize(() => this.isLoading = false)
+    );
+  }
 
-    if (manzanaId) {
-      this.isLoading = true;
-      this.lotes$ = this.loteService.getLotes(manzanaId).pipe(
-        finalize(() => this.isLoading = false)
-      );
-    } else {
-      this.lotes$ = of([]);
-    }
+  // 🔍 Método para búsqueda
+  private searchLotes(manzanaId: string, term: string): void {
+    this.isLoading = true;
+    this.lotes$ = this.loteService.searchLotes(manzanaId, term).pipe(
+      finalize(() => this.isLoading = false)
+    );
+  }
+
+  // 🚀 Método para cambio de estado rápido
+  private cambiarEstadoRapido(lote: ILote): void {
+    // Lógica simple para ciclar estados. 
+    // En una app real, aquí podría abrirse un mini-menú contextual.
+    const estados: TEstadoLote[] = ['DISPONIBLE', 'RESERVADO', 'VENDIDO', 'BLOQUEADO'];
+    const currentIndex = estados.indexOf(lote.estado);
+    const nextIndex = (currentIndex + 1) % estados.length;
+    const nuevoEstado = estados[nextIndex];
+
+    this.loteService.updateEstadoLote(lote.id, { estado: nuevoEstado }).subscribe({
+      next: () => {
+        this.notification.success(`Estado cambiado a ${nuevoEstado}`);
+        // Refrescar lista actual
+        const currentManzana = this.manzanaIdControl.value;
+        const currentSearch = this.searchControl.value;
+
+        if (currentSearch) {
+          this.searchLotes(currentManzana!, currentSearch);
+        } else {
+          this.loadLotes(currentManzana!);
+        }
+      },
+      error: () => this.notification.error('No se pudo cambiar el estado')
+    });
+  }
+
+  public onLoteClick(lote: ILote): void {
+    this.openModal(lote, this.manzanaIdControl.value!);
   }
 
   onTableAction(event: ITableActionEvent<ILote>): void {
@@ -214,7 +317,12 @@ export class ListLotesComponent implements OnInit {
 
     modalRef.result.then((result) => {
       if (result && this.manzanaIdControl.value) {
-        this.onManzanaChange(this.manzanaIdControl.value); // Refrescar
+        // Si estábamos buscando, recargamos búsqueda, sino lista normal
+        if (this.searchControl.value) {
+          this.searchLotes(this.manzanaIdControl.value, this.searchControl.value);
+        } else {
+          this.loadLotes(this.manzanaIdControl.value);
+        }
       }
     });
   }
@@ -230,7 +338,7 @@ export class ListLotesComponent implements OnInit {
           this.loteService.deleteLote(lote.id).subscribe({
             next: () => {
               this.notification.success('Lote eliminado');
-              if (this.manzanaIdControl.value) this.onManzanaChange(this.manzanaIdControl.value);
+              if (this.manzanaIdControl.value) this.loadLotes(this.manzanaIdControl.value);
               resolve(true);
             },
             error: (err) => {

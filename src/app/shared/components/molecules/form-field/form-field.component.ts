@@ -12,14 +12,10 @@ export type FormLayout = 'horizontal' | 'vertical' | 'inline';
   styleUrls: ['./form-field.component.scss']
 })
 export class FormFieldComponent {
-  @Input() label: string = '';
-  @Input() forId: string = '';
-  @Input() required: boolean = false;
-  @Input() noColon: boolean = false;
-  @Input() errorTip: string = '';
+  @Input() label = '';
+  @Input() forId = '';
+  @Input() required = false;
+  @Input() noColon = false;
+  @Input() errorTip = '';
   @Input() layout: FormLayout = 'vertical';
-
-  get containerClass(): string {
-    return this.layout;
-  }
 }

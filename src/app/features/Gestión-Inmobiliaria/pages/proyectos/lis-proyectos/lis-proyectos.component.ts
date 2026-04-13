@@ -21,7 +21,7 @@ import { RegisterProyectoComponent } from '../register-proyecto/register-proyect
       title="Proyectos de Urbanización"
       permissionScope="proyectos"
       [showNew]="true"
-      (onAddNew)="onAddNew()">
+      (AddNew)="onAddNew()">
       <app-data-table
         [rowData]="(proyectos$ | async) || []"
         [columnDefs]="columnDefs"

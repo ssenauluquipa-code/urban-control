@@ -18,6 +18,7 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
                 <!-- input -->
                   <input
                     #inputElement
+                    [id]="inputId"
                     nz-input
                     [type]="passwordVisible? 'text' : input_type"
                     [placeholder]="input_placeholder"
@@ -94,6 +95,7 @@ export class InputTextComponent implements OnInit {
   @Input() input_control = new FormControl<string | number | null>(null);
   @Input() input_size: 'large' | 'default' | 'small' = 'default';
   @Input() input_type: 'text' | 'password' | 'email' = 'text';
+  @Input() inputId = 'input-' + Math.random().toString(36).substring(2, 9);
   @Input() input_placeholder = '';
   @Input() help_text = '';
   @Input() prefix_icon = '';

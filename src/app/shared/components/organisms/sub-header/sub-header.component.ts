@@ -24,11 +24,11 @@ export class SubHeaderComponent {
   private router = inject(Router);
   private location = inject(Location);
 
-  @Input() title: string = '';
+  @Input() title = '';
   @Input() permissionScope?: string;
   @Input() backRoute?: string[];
-  @Input() hasBackListener: boolean = false;
-  
+  @Input() hasBackListener = false;
+
   @Input() config: IPageConfig = { ...DEFAULT_PAGE_CONFIG };
 
   public readonly A = EPageAction;
@@ -49,6 +49,10 @@ export class SubHeaderComponent {
   get canShowPrint(): boolean { return !!this.config.showPrint; }
   get canShowLog(): boolean { return !!this.config.showLog; }
   get canShowBack(): boolean { return !!this.config.showBack; }
+
+  get canShowCustom(): boolean { return !!this.config.showCustom; }
+  get customLabel(): string { return this.config.customLabel || 'Acción'; }
+  get customIcon(): string { return this.config.customIcon || 'bi bi-plus-circle'; }
 
   get hasPrimaryActions(): boolean {
     return this.canShowNew || this.canShowSave || this.canShowSend;
@@ -71,7 +75,7 @@ export class SubHeaderComponent {
       }
       return;
     }
-    
+
     this.pageActionService.emitAction(action);
   }
 }

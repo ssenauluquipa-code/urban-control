@@ -24,7 +24,7 @@ import { UserRegisterComponent } from '../user-register.component';
       permissionScope="usuarios"
       [showNew]="true"
       [showOptions]="true"
-      (onAddNew)="onAddNewUser()">
+      (AddNew)="onAddNewUser()">
 
       <!-- Eliminamos el selector de proyectos porque la lista de usuarios es global -->
 
@@ -43,7 +43,7 @@ import { UserRegisterComponent } from '../user-register.component';
   styles: ``
 })
 export class UserListComponent implements OnInit {
-  
+
   public tableActionEnum = TableActionsEnum;
   public users$!: Observable<IUser[]>;
   public isLoading = false;
@@ -210,6 +210,6 @@ export class UserListComponent implements OnInit {
       // Ignorar el cierre del modal (dismiss) sin realizar ninguna acción
     });
   }
-  
+
 
 }

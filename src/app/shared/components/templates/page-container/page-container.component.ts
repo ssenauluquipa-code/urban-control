@@ -36,10 +36,10 @@ export class PageContainerComponent implements OnInit, OnChanges {
   private pageActionService = inject(PageActionService);
   private destroyRef = inject(DestroyRef);
 
-  @Input() title: string = '';
+  @Input() title = '';
   @Input() permissionScope?: string;
   @Input() backRoute?: string[];
-  
+
   // Objeto de configuración unificado
   @Input() config?: IPageConfig;
 
@@ -60,25 +60,30 @@ export class PageContainerComponent implements OnInit, OnChanges {
   @Input() showPrint?: boolean;
   @Input() showLog?: boolean;
 
+  @Input() showCustom?: boolean;
+  @Input() customLabel?: string;
+  @Input() customIcon?: string;
+
   mergedConfig: IPageConfig = { ...DEFAULT_PAGE_CONFIG };
 
-  @Output() onAddNew = new EventEmitter<void>();
-  @Output() onSave = new EventEmitter<void>();
-  @Output() onEdit = new EventEmitter<void>();
-  @Output() onDelete = new EventEmitter<void>();
-  @Output() onCancel = new EventEmitter<void>();
-  @Output() onBack = new EventEmitter<void>();
-  @Output() onUpdate = new EventEmitter<void>();
-  @Output() onSend = new EventEmitter<void>();
+  @Output() AddNew = new EventEmitter<void>();
+  @Output() Save = new EventEmitter<void>();
+  @Output() Edit = new EventEmitter<void>();
+  @Output() Delete = new EventEmitter<void>();
+  @Output() Cancel = new EventEmitter<void>();
+  @Output() Back = new EventEmitter<void>();
+  @Output() Update = new EventEmitter<void>();
+  @Output() Send = new EventEmitter<void>();
 
-  @Output() onMenuExportExcel = new EventEmitter<void>();
-  @Output() onMenuExportPDF = new EventEmitter<void>();
-  @Output() onMenuImportExcel = new EventEmitter<void>();
-  @Output() onMenuPrint = new EventEmitter<void>();
-  @Output() onMenuLog = new EventEmitter<void>();
+  @Output() MenuExportExcel = new EventEmitter<void>();
+  @Output() MenuExportPDF = new EventEmitter<void>();
+  @Output() MenuImportExcel = new EventEmitter<void>();
+  @Output() MenuPrint = new EventEmitter<void>();
+  @Output() MenuLog = new EventEmitter<void>();
+  @Output() CustomAction = new EventEmitter<void>();
 
   get hasBackListener(): boolean {
-    return this.onBack.observed;
+    return this.Back.observed;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -87,11 +92,11 @@ export class PageContainerComponent implements OnInit, OnChanges {
 
   private updateMergedConfig(): void {
     const baseConfig = { ...DEFAULT_PAGE_CONFIG };
-    
+
     if (this.config) {
       Object.assign(baseConfig, this.config);
     }
-    
+
     const inputsConfig: IPageConfig = {};
     if (this.showBack !== undefined) inputsConfig.showBack = this.showBack;
     if (this.showNew !== undefined) inputsConfig.showNew = this.showNew;
@@ -101,13 +106,17 @@ export class PageContainerComponent implements OnInit, OnChanges {
     if (this.showCancel !== undefined) inputsConfig.showCancel = this.showCancel;
     if (this.showUpdate !== undefined) inputsConfig.showUpdate = this.showUpdate;
     if (this.showSend !== undefined) inputsConfig.showSend = this.showSend;
-    
+
     if (this.showOptions !== undefined) inputsConfig.showOptions = this.showOptions;
     if (this.showExportExcel !== undefined) inputsConfig.showExportExcel = this.showExportExcel;
     if (this.showExportPdf !== undefined) inputsConfig.showExportPdf = this.showExportPdf;
     if (this.showImportExcel !== undefined) inputsConfig.showImportExcel = this.showImportExcel;
     if (this.showPrint !== undefined) inputsConfig.showPrint = this.showPrint;
     if (this.showLog !== undefined) inputsConfig.showLog = this.showLog;
+
+    if (this.showCustom !== undefined) inputsConfig.showCustom = this.showCustom;
+    if (this.customLabel !== undefined) inputsConfig.customLabel = this.customLabel;
+    if (this.customIcon !== undefined) inputsConfig.customIcon = this.customIcon;
 
     this.mergedConfig = { ...baseConfig, ...inputsConfig };
   }
@@ -118,20 +127,21 @@ export class PageContainerComponent implements OnInit, OnChanges {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((action: AnyPageAction) => {
         switch (action) {
-          case EPageAction.NEW: this.onAddNew.emit(); break;
-          case EPageAction.SAVE: this.onSave.emit(); break;
-          case EPageAction.EDIT: this.onEdit.emit(); break;
-          case EPageAction.DELETE: this.onDelete.emit(); break;
-          case EPageAction.CANCEL: this.onCancel.emit(); break;
-          case EPageAction.BACK: this.onBack.emit(); break;
-          case EPageAction.UPDATE: this.onUpdate.emit(); break;
-          case EPageAction.SEND: this.onSend.emit(); break;
+          case EPageAction.NEW: this.AddNew.emit(); break;
+          case EPageAction.SAVE: this.Save.emit(); break;
+          case EPageAction.EDIT: this.Edit.emit(); break;
+          case EPageAction.DELETE: this.Delete.emit(); break;
+          case EPageAction.CANCEL: this.Cancel.emit(); break;
+          case EPageAction.BACK: this.Back.emit(); break;
+          case EPageAction.UPDATE: this.Update.emit(); break;
+          case EPageAction.SEND: this.Send.emit(); break;
 
-          case EPageMenuAction.EXPORT_EXCEL: this.onMenuExportExcel.emit(); break;
-          case EPageMenuAction.EXPORT_PDF: this.onMenuExportPDF.emit(); break;
-          case EPageMenuAction.IMPORT_EXCEL: this.onMenuImportExcel.emit(); break;
-          case EPageMenuAction.PRINT: this.onMenuPrint.emit(); break;
-          case EPageMenuAction.LOG: this.onMenuLog.emit(); break;
+          case EPageMenuAction.EXPORT_EXCEL: this.MenuExportExcel.emit(); break;
+          case EPageMenuAction.EXPORT_PDF: this.MenuExportPDF.emit(); break;
+          case EPageMenuAction.IMPORT_EXCEL: this.MenuImportExcel.emit(); break;
+          case EPageMenuAction.PRINT: this.MenuPrint.emit(); break;
+          case EPageMenuAction.LOG: this.MenuLog.emit(); break;
+          case EPageAction.CUSTOM: this.CustomAction.emit(); break;
         }
       });
   }

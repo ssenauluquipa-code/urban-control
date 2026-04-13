@@ -1,14 +1,20 @@
 <div class="form-field-wrapper">
-  <nz-form-item>
-    <nz-form-label
-      [nzRequired]="required"
-      [nzFor]="forId"
-      [nzNoColon]="noColon"
-    >
+  <!-- LABEL -->
+  @if (label) {
+    <label class="form-label-custom" [attr.for]="forId">
       {{ label }}
-    </nz-form-label>
-    <nz-form-control [nzErrorTip]="errorTip">
-      <ng-content></ng-content>
-    </nz-form-control>
-  </nz-form-item>
+    </label>
+  }
+
+  <!-- INPUT / SELECT / ETC -->
+  <div class="form-control-wrapper">
+    <ng-content></ng-content>
+  </div>
+
+  <!-- ERROR -->
+  @if (errorTip) {
+    <div class="form-error">
+      {{ errorTip }}
+    </div>
+  }
 </div>

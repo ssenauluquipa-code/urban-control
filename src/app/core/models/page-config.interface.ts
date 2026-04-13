@@ -14,6 +14,11 @@ export interface IPageConfig {
   showImportExcel?: boolean;
   showPrint?: boolean;
   showLog?: boolean;
+  
+  // Botón Personalizado
+  showCustom?: boolean;
+  customLabel?: string;
+  customIcon?: string;
 }
 
 export const DEFAULT_PAGE_CONFIG: IPageConfig = {
@@ -31,4 +36,7 @@ export const DEFAULT_PAGE_CONFIG: IPageConfig = {
   showImportExcel: false,
   showPrint: false,
   showLog: false,
+  showCustom: false,
+  customLabel: 'Acción',
+  customIcon: 'bi bi-plus-circle'
 };

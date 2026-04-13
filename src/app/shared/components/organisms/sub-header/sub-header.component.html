@@ -43,6 +43,12 @@
 
     <!-- Botones Primarios: Ocultar en mobile (<=768px) -->
     <div class="primary-actions">
+      @if (canShowCustom) {
+          <button nz-button nzType="default" (click)="emitAction(A.CUSTOM)" class="btn-custom">
+            <i [class]="customIcon" style="margin-right: 8px;"></i> {{ customLabel }}
+          </button>
+      }
+
       @if (canShowSend) {
         <button nz-button nzType="primary" (click)="emitAction(A.SEND)">
           <span nz-icon nzType="send"></span> Enviar
@@ -67,11 +73,31 @@
       </button>
       <nz-dropdown-menu #optionsMenu="nzDropdownMenu">
         <ul nz-menu>
-          @if (canShowExportExcel) { <li nz-menu-item (click)="emitAction(M.EXPORT_EXCEL)"><span nz-icon nzType="file-excel"></span> Exportar a Excel</li> }
-          @if (canShowExportPdf) { <li nz-menu-item (click)="emitAction(M.EXPORT_PDF)"><span nz-icon nzType="file-pdf"></span> Exportar a PDF</li> }
-          @if (canShowImportExcel) { <li nz-menu-item (click)="emitAction(M.IMPORT_EXCEL)"><span nz-icon nzType="upload"></span> Importar Excel</li> }
-          @if (canShowPrint) { <li nz-menu-item (click)="emitAction(M.PRINT)"><span nz-icon nzType="printer"></span> Imprimir Vista</li> }
-          @if (canShowLog) { <li nz-menu-item (click)="emitAction(M.LOG)"><span nz-icon nzType="history"></span> Ver Bitácora</li> }
+          @if (canShowExportExcel) { 
+            <li nz-menu-item tabindex="0" (click)="emitAction(M.EXPORT_EXCEL)" (keydown.enter)="emitAction(M.EXPORT_EXCEL)">
+              <span nz-icon nzType="file-excel"></span> Exportar a Excel
+            </li> 
+          }
+          @if (canShowExportPdf) { 
+            <li nz-menu-item tabindex="0" (click)="emitAction(M.EXPORT_PDF)" (keydown.enter)="emitAction(M.EXPORT_PDF)">
+              <span nz-icon nzType="file-pdf"></span> Exportar a PDF
+            </li> 
+          }
+          @if (canShowImportExcel) { 
+            <li nz-menu-item tabindex="0" (click)="emitAction(M.IMPORT_EXCEL)" (keydown.enter)="emitAction(M.IMPORT_EXCEL)">
+              <span nz-icon nzType="upload"></span> Importar Excel
+            </li> 
+          }
+          @if (canShowPrint) { 
+            <li nz-menu-item tabindex="0" (click)="emitAction(M.PRINT)" (keydown.enter)="emitAction(M.PRINT)">
+              <span nz-icon nzType="printer"></span> Imprimir Vista
+            </li> 
+          }
+          @if (canShowLog) { 
+            <li nz-menu-item tabindex="0" (click)="emitAction(M.LOG)" (keydown.enter)="emitAction(M.LOG)">
+              <span nz-icon nzType="history"></span> Ver Bitácora
+            </li> 
+          }
         </ul>
       </nz-dropdown-menu>
     }

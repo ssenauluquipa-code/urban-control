@@ -1,0 +1,129 @@
+.visualizer-container {
+    background-color: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.manzana-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+}
+
+.lote-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 70px;
+    min-height: 70px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* Esto hace que el cambio de color sea suave */
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+    user-select: none;
+
+    &:focus {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+        z-index: 10;
+    }
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 5;
+    }
+}
+
+.lote-number {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.lote-status-tag {
+    font-size: 9px;
+    text-transform: uppercase;
+    margin-top: 4px;
+    opacity: 0.8;
+    font-weight: 600;
+}
+
+/* 🎨 COLORES DE ESTADO (Lo que te faltaba) */
+/* Estas clases deben coincidir con lo que devuelve tu función getStatusClass() en el TS */
+
+.status-disponible {
+    background-color: #d1fae5; // Fondo verde suave
+    color: #065f46; // Texto verde oscuro
+    border-color: #a7f3d0;
+}
+
+.status-reservado {
+    background-color: #fef3c7; // Fondo naranja suave
+    color: #92400e; // Texto naranja oscuro
+    border-color: #fde68a;
+}
+
+.status-vendido {
+    background-color: #fee2e2; // Fondo rojo suave
+    color: #991b1b; // Texto rojo oscuro
+    border-color: #fecaca;
+}
+
+.status-bloqueado {
+    background-color: #e5e7eb; // Fondo gris
+    color: #374151; // Texto gris oscuro
+    border-color: #d1d5db;
+    opacity: 0.7; // Un poco más transparente para indicar inhabilitado
+}
+
+/* Leyenda */
+.legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.dot.available {
+    background: #10b981;
+}
+
+.dot.reserved {
+    background: #f59e0b;
+}
+
+.dot.sold {
+    background: #ef4444;
+}
+
+.dot.blocked {
+    background: #6b7280;
+}

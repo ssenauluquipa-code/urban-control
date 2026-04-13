@@ -26,7 +26,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
       permissionScope="manzanas"
       [showNew]="true"
       [showOptions]="true"
-      (onAddNew)="onAddNewManzana()">
+      (AddNew)="onAddNewManzana()">
 
       <!-- Selector de Proyecto -->
       <div class="mb-3" style="max-width: 400px;">
