@@ -6,6 +6,7 @@ export interface IManzana {
     proyectoId: string;
     codigo: string; // Ej: "A", "B", "1"
     descripcion?: string;
+    _count?: { lotes: number };
     // El backend podría devolver lotes aquí si es el endpoint detallado
     lotes?: ILote[];
 }

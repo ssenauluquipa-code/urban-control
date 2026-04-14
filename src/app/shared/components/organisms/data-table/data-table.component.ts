@@ -5,7 +5,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ColDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import { ColDef, GridApi, GridOptions, GridReadyEvent, RowClickedEvent } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { TableActionsComponent } from '../table-actions/table-actions.component';
 import { TableAction, ITableActionEvent } from '../../../interfaces/table-actions.interface';
@@ -30,6 +30,7 @@ export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
   @Input() actions: TableAction[] = ['view', 'edit', 'delete'];
 
   @Output() actionClicked = new EventEmitter<ITableActionEvent<T>>();
+  @Output() rowClicked = new EventEmitter<T>();
 
   quickFilter = '';
   public gridApi!: GridApi;
@@ -40,11 +41,11 @@ export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
     paginationPageSizeSelector: [5, 10, 20, 50],
     rowHeight: 52, // Más espacio entre filas (Dashboard Premium)
     headerHeight: 56, // Cabeceras más destacadas
-    defaultColDef: { 
-      sortable: true, 
-      filter: true, 
-      resizable: true, 
-      flex: 1, 
+    defaultColDef: {
+      sortable: true,
+      filter: true,
+      resizable: true,
+      flex: 1,
       minWidth: 150,
       suppressMovable: true, // Diseño más estático y profesional
       cellStyle: { display: 'flex', 'align-items': 'center' } // Centrado vertical manual
@@ -62,12 +63,12 @@ export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
       andCondition: 'Y', orCondition: 'O', applyFilter: 'Aplicar', resetFilter: 'Limpiar'
     },
     context: { parentComponent: this },
-    components: { 
-      tableActions: TableActionsComponent 
+    components: {
+      tableActions: TableActionsComponent
     }
   };
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) { }
 
   onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
@@ -79,7 +80,7 @@ export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
     if (changes['columnDefs'] || changes['actions']) {
       this.computedColumnDefs = this.buildColumns();
     }
-    
+
     if (this.gridApi && changes['loading']) {
       this.gridApi.setGridOption('loading', this.loading);
     }
@@ -104,11 +105,13 @@ export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
   private buildActionsColumn(): ColDef {
     return {
       headerName: 'Acciones',
-      cellRenderer: 'tableActions', 
+      cellRenderer: 'tableActions',
       cellRendererParams: {
         actions: this.actions,
         actionClicked: (params: { action: string; data: T }) => this.onActionClicked(params)
       },
+      // Evita que el clic en esta celda active eventos de fila o selección
+      suppressNavigable: true,
       pinned: 'right',
       width: this.actions.length > 2 ? 80 : 120,
       minWidth: this.actions.length > 2 ? 80 : 120,
@@ -121,6 +124,12 @@ export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
 
   private onActionClicked(event: { action: string; data: T }) {
     this.actionClicked.emit({ action: event.action, row: event.data });
+  }
+
+  onRowClicked(event: RowClickedEvent): void {
+    if (event.data) {
+      this.rowClicked.emit(event.data);
+    }
   }
 
   ngOnDestroy(): void {

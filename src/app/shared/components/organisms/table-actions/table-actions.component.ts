@@ -14,7 +14,7 @@ import { ITableActionParams, TableActionsEnum } from '../../../interfaces/table-
     <div class="actions-container">
       @if (actions.length <= 2) {
         @for (act of actions; track act) {
-          <button nz-button nzType="text" (click)="handleAction(act)">
+          <button nz-button nzType="text" (click)="handleAction(act, $event)">
             <i nz-icon [nzType]="getIcon(act)"></i>
           </button>
         }
@@ -29,7 +29,7 @@ import { ITableActionParams, TableActionsEnum } from '../../../interfaces/table-
             @for (act of actions; track act) {
               <li 
                 nz-menu-item 
-                (click)="handleAction(act)" 
+                (click)="handleAction(act, $event)" 
                 (keydown.enter)="handleAction(act)" 
                 (keydown.space)="handleAction(act)" 
                 tabindex="0">
@@ -46,7 +46,7 @@ import { ITableActionParams, TableActionsEnum } from '../../../interfaces/table-
   .actions-container { display: flex; justify-content: center; align-items: center; gap: 4px; }
   `
 })
-export class TableActionsComponent implements ICellRendererAngularComp  {
+export class TableActionsComponent implements ICellRendererAngularComp {
 
   @Output() actionClicked = new EventEmitter<{ action: string, data: unknown }>();
 
@@ -54,7 +54,10 @@ export class TableActionsComponent implements ICellRendererAngularComp  {
   rowData: unknown = null;
   params!: ITableActionParams;
 
-  handleAction(action: string) {
+  handleAction(action: string, event?: MouseEvent) {
+    if (event) {
+      event.stopPropagation();
+    }
     if (this.params && this.params.actionClicked) {
       this.params.actionClicked({ action, data: this.rowData });
     }
@@ -105,7 +108,7 @@ export class TableActionsComponent implements ICellRendererAngularComp  {
 
   private filterActions(actions: string[]): string[] {
     const data = this.rowData as { isActive?: boolean; avatarUrl?: string };
-    
+
     return actions.filter(action => {
       // Si el usuario ya está activo, no mostramos "Activar"
       if (action === TableActionsEnum.ACTIVATE) return data?.isActive === false;

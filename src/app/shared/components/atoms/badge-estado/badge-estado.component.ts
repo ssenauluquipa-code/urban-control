@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 // 1. Importamos las interfaces necesarias
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
-
-export type EstadoLote = 'DISPONIBLE' | 'VENDIDO' | 'RESERVADO';
+import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
 
 @Component({
   selector: 'app-badge-estado',
@@ -15,7 +14,7 @@ export type EstadoLote = 'DISPONIBLE' | 'VENDIDO' | 'RESERVADO';
 })
 // 2. Implementamos ICellRendererAngularComp
 export class BadgeEstadoComponent implements ICellRendererAngularComp {
-  @Input() estado: EstadoLote = 'DISPONIBLE';
+  @Input() estado: TEstadoLote = TEstadoLote.DISPONIBLE;
 
   // 3. Este método recibe el valor desde AG Grid
   agInit(params: ICellRendererParams): void {

@@ -1,5 +1,10 @@
 // Enum para los estados del Lote según el Swagger
-export type TEstadoLote = 'DISPONIBLE' | 'RESERVADO' | 'VENDIDO' | 'BLOQUEADO';
+export enum TEstadoLote {
+    DISPONIBLE = 'DISPONIBLE',
+    RESERVADO = 'RESERVADO',
+    VENDIDO = 'VENDIDO',
+    BLOQUEADO = 'BLOQUEADO'
+}
 
 export interface ILote {
     id: string;
@@ -15,7 +20,8 @@ export interface ILote {
     comision?: number;
     observaciones?: string;
     estado: TEstadoLote;
-    imagenes?: string[];
+    manzana: IManzanaInLote;
+    imagenes?: ILoteImagen[];
 }
 
 export interface CreateLoteDto {
@@ -35,4 +41,21 @@ export type UpdateLoteDto = Partial<CreateLoteDto>;
 
 export interface UpdateEstadoLoteDto {
     estado: TEstadoLote;
+}
+export interface ILoteImagen {
+    id: string;
+    publicUrl: string;
+    mimeType: string;
+    orden: number;
+}
+
+export interface IProyectoInLote {
+    id: string;
+    nombre: string;
+}
+
+export interface IManzanaInLote {
+    id: string;
+    codigo: string;
+    proyecto: IProyectoInLote;
 }

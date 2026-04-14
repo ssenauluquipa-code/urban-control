@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, Validators } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { ColDef, GridApi } from 'ag-grid-community';
+import { ColDef, GridApi, ICellRendererParams } from 'ag-grid-community';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
@@ -21,6 +21,7 @@ import { InputTextInfoComponent } from 'src/app/shared/components/atoms/input-te
 import { ImageDisplayComponent } from 'src/app/shared/components/atoms/image-display/image-display.component';
 import { ImageUploaderComponent } from 'src/app/shared/components/atoms/image-uploader/image-uploader.component';
 import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
+import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
 
 @Component({
   selector: 'app-design-system-showcase',
@@ -61,6 +62,8 @@ export class DesignSystemShowcaseComponent implements OnInit {
     Validators.maxLength(200),
   ]);
   selectControl = new FormControl(null, [Validators.required]);
+
+  public estado = TEstadoLote;
 
   clientes: ICliente[] = [
     {
@@ -147,9 +150,9 @@ export class DesignSystemShowcaseComponent implements OnInit {
       headerName: 'Estado',
       width: 120,
       cellRenderer: BadgeEstadoComponent,
-      cellRendererParams: (params: any) => ({
-    estado: params.value
-  })
+      cellRendererParams: (params: ICellRendererParams) => ({
+        estado: params.value
+      })
     },
     {
       field: 'precio',
@@ -169,7 +172,11 @@ export class DesignSystemShowcaseComponent implements OnInit {
 
   sampleImageUrl = 'https://picsum.photos/400/400';
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.textControl.valueChanges.subscribe((value) => {
+      console.log('Text control:', value);
+    });
+  }
 
   onClick(event: MouseEvent): void {
     console.log('Botón clickeado:', event);

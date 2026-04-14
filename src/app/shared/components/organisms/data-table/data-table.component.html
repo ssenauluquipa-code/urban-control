@@ -29,6 +29,7 @@
       [gridOptions]="gridOptions"
       [paginationPageSize]="pageSize"
       (gridReady)="onGridReady($event)"
+      (rowClicked)="onRowClicked($event)"
     ></ag-grid-angular>
 
     @if (loading) {

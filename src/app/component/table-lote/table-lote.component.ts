@@ -7,7 +7,7 @@ import { ColDef } from 'ag-grid-community';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
-import { ILote } from 'src/app/core/models/lote/lote.model';
+import { ILote, TEstadoLote } from 'src/app/core/models/lote/lote.model';
 
 @Component({
   selector: 'app-table-lote',
@@ -41,12 +41,12 @@ export class TableLoteComponent {
   public tableActionEnum = TableActionsEnum;
 
   onTableAction(event: ITableActionEvent<ILote>) {
-  console.log('Acción ejecutada:', event.action, 'sobre la fila:', event.row);
+    console.log('Acción ejecutada:', event.action, 'sobre la fila:', event.row);
 
-  if (event.action === 'edit') {
-    // Lógica para editar
+    if (event.action === 'edit') {
+      // Lógica para editar
+    }
   }
-}
 
 
   // Row Data: The data to be displayed
@@ -56,92 +56,127 @@ export class TableLoteComponent {
       numero: 1,
       areaM2: 125,
       precioReferencial: 25000,
-      estado: 'DISPONIBLE',
+      estado: TEstadoLote.DISPONIBLE,
       manzanaId: '1',
-      proyectoId: '1'
+      proyectoId: '1',
+      manzana: {
+        id: '1',
+        codigo: 'A',
+        proyecto: {
+          id: '1',
+          nombre: 'Proyecto 1'
+        }
+      }
     },
     {
       id: '2',
       numero: 2,
       areaM2: 130,
       precioReferencial: 26000,
-      estado: 'VENDIDO',
+      estado: TEstadoLote.VENDIDO,
       manzanaId: '1',
-      proyectoId: '1'
+      proyectoId: '1',
+      manzana: {
+        id: '1',
+        codigo: 'A',
+        proyecto: {
+          id: '1',
+          nombre: 'Proyecto 1'
+        }
+      }
     },
     {
       id: '3',
       numero: 3,
       areaM2: 135,
       precioReferencial: 27000,
-      estado: 'RESERVADO',
+      estado: TEstadoLote.RESERVADO,
       manzanaId: '1',
-      proyectoId: '1'
+      proyectoId: '1',
+      manzana: {
+        id: '1',
+        codigo: 'A',
+        proyecto: {
+          id: '1',
+          nombre: 'Proyecto 1'
+        }
+      }
     },
     {
       id: '4',
       numero: 4,
       areaM2: 140,
       precioReferencial: 28000,
-      estado: 'DISPONIBLE',
+      estado: TEstadoLote.DISPONIBLE,
       manzanaId: '1',
-      proyectoId: '1'
+      proyectoId: '1',
+      manzana: {
+        id: '1',
+        codigo: 'A',
+        proyecto: {
+          id: '1',
+          nombre: 'Proyecto 1'
+        }
+      }
     },
     {
       id: '5',
       numero: 5,
       areaM2: 145,
       precioReferencial: 29000,
-      estado: 'BLOQUEADO',
+      estado: TEstadoLote.BLOQUEADO,
       manzanaId: '1',
-      proyectoId: '1'
+      proyectoId: '1',
+      manzana: {
+        id: '1',
+        codigo: 'A',
+        proyecto: {
+          id: '1',
+          nombre: 'Proyecto 1'
+        }
+      }
     },
   ];
 
   // Column Definitions: Defines the columns to be displayed
   colDefs: ColDef[] = [
     { field: 'id', headerName: 'ID', width: 80 },
-    { field: 'numeroLote', headerName: 'Nro. Lote', width: 120 },
+    { field: 'numero', headerName: 'Nro. Lote', width: 120 },
     {
-      field: 'manzana',
+      field: 'manzana.codigo',
       headerName: 'Manzana',
       width: 100,
       valueFormatter: (params) => `Manzana ${params.value}`
     },
     {
-      field: 'superficieM2',
+      field: 'areaM2',
       headerName: 'Área (m²)',
       width: 100,
-      valueFormatter: (params) => params.value.toLocaleString()
+      valueFormatter: (params) => params.value?.toLocaleString() || '0'
     },
     {
       field: 'estado',
       headerName: 'Estado',
       width: 130,
       cellStyle: (params) => {
-        if (params.value === 'Disponible') {
+        if (params.value === TEstadoLote.DISPONIBLE) {
           return { color: '#10b981', fontWeight: 'bold' };
-        } else if (params.value === 'Vendido') {
+        } else if (params.value === TEstadoLote.VENDIDO) {
           return { color: '#ef4444', fontWeight: 'bold' };
-        } else if (params.value === 'Reservado') {
+        } else if (params.value === TEstadoLote.RESERVADO) {
           return { color: '#f59e0b', fontWeight: 'bold' };
-        } else if (params.value === 'Bloqueado') {
+        } else if (params.value === TEstadoLote.BLOQUEADO) {
           return { color: '#6b7280', fontWeight: 'bold' };
         }
         return null;
       },
     },
     {
+      field: 'precioReferencial',
       headerName: 'Precio',
       width: 130,
-      valueGetter: (params) => {
-        if (params.data.superficieM2 && params.data.proyecto?.precioBaseM2) {
-          return params.data.superficieM2 * params.data.proyecto.precioBaseM2;
-        }
-        return 0;
-      },
       valueFormatter: (params) => {
-        return 'Bs ' + params.value.toLocaleString();
+        return 'Bs ' + (params.value?.toLocaleString() || '0');
       },
     },
   ];

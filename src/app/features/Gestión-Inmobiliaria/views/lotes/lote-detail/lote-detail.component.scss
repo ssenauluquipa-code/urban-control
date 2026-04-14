@@ -1,0 +1,189 @@
+// Variables
+$dark: #0b1c30;
+$gray-text: #74777d;
+$bg-light: #f8f9ff;
+
+.blueprint-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; // Ocupa el drawer
+    max-width: 100vw; // Prohíbe salir del ancho de pantalla
+    overflow: hidden; // Evita scroll horizontal accidental
+    background: $bg-light;
+
+    .blueprint-header {
+        background: white;
+        padding: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        flex-shrink: 0; // El header no se encoge
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .lote-id {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin: 0;
+            color: $dark;
+        }
+
+        .lote-meta {
+            font-size: 0.8rem;
+            color: $gray-text;
+            margin: 0;
+        }
+
+        .btn-close-drawer {
+            border: none;
+            background: none;
+            color: $gray-text;
+        }
+    }
+
+    .badge-status {
+        display: inline-block;
+        padding: 2px 8px;
+        font-size: 9px;
+        font-weight: 700;
+        color: white;
+        text-transform: uppercase;
+    }
+}
+
+.blueprint-scroll {
+    flex: 1;
+    overflow-y: auto; // Solo scroll vertical aquí
+    padding: 1rem;
+    -webkit-overflow-scrolling: touch; // Suavidad en iPhone
+}
+
+// CARD DE VALORACIÓN
+.card-valuation {
+    background: $dark;
+    color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+
+    .label-mini {
+        font-size: 9px;
+        opacity: 0.5;
+        text-transform: uppercase;
+    }
+
+    .price-main {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0.25rem 0 1rem 0;
+    }
+
+    .stats-grid {
+        display: flex;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 0.75rem;
+
+        .stat-box {
+            flex: 1;
+            min-width: 0; // IMPORTANTE: permite que el texto se trunque si no cabe
+
+            .stat-label {
+                display: block;
+                font-size: 8px;
+                opacity: 0.5;
+            }
+
+            .stat-val {
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
+            &.divider {
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+                padding-left: 0.75rem;
+            }
+        }
+    }
+}
+
+// DIMENSIONES RESPONSIVAS
+.grid-dims {
+    display: grid;
+    // minmax(100px, 1fr) asegura que si no caben 100px, se rompa a la siguiente línea
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1px;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+
+    .dim-unit {
+        background: white;
+        padding: 0.75rem;
+
+        .unit-label {
+            display: block;
+            font-size: 8px;
+            color: $gray-text;
+            text-transform: uppercase;
+        }
+
+        .unit-val {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: $dark;
+        }
+    }
+}
+
+// GALERÍA RESPONSIVA
+.grid-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+
+    .img-container {
+        aspect-ratio: 1;
+        overflow: hidden;
+        border-radius: 2px;
+        background: #eee;
+
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+}
+
+.blueprint-footer {
+    padding: 1rem;
+    background: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+
+    .btn-action-main {
+        width: 100%;
+        padding: 0.75rem;
+        background: black;
+        color: white;
+        border: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 10px;
+    }
+}
+
+// CORRECCIÓN FINAL PARA MÓVILES EXTREMOS
+@media (max-width: 350px) {
+    .grid-dims {
+        grid-template-columns: 1fr;
+    }
+
+    // Fuerza una sola columna si es muy angosto
+    .price-main {
+        font-size: 1.25rem;
+    }
+}

@@ -20,13 +20,17 @@ import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data
 import { InputTextComponent } from 'src/app/shared/components/atoms/input-text/input-text.component';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { LoteVisualizerComponent } from "../../views/lote-visualizer/lote-visualizer.component";
+import { NzDrawerModule, NzDrawerService } from 'ng-zorro-antd/drawer'; // Importar servicio
+import { LoteDetailComponent } from '../../views/lotes/lote-detail/lote-detail.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-list-lotes',
   standalone: true,
   imports: [CommonModule, PageContainerComponent, DataTableComponent,
     SelectProjectsComponent, ReactiveFormsModule, FormsModule,
-    NzModalModule, SelectDataComponent, LoteVisualizerComponent, InputTextComponent, FormFieldComponent],
+    NzModalModule, SelectDataComponent, LoteVisualizerComponent,
+    InputTextComponent, FormFieldComponent, NzDrawerModule],
   template: `
     
     <app-page-container
@@ -110,7 +114,9 @@ import { LoteVisualizerComponent } from "../../views/lote-visualizer/lote-visual
       height="350px"
       [showCreate]="false"
       [actions]="[tableActionEnum.EDIT, tableActionEnum.DELETE]"
-      (actionClicked)="onTableAction($event)">
+      (actionClicked)="onTableAction($event)"
+      (rowClicked)="openDetailDrawer($event.id)"
+      >
     </app-data-table>
   }
 
@@ -163,13 +169,13 @@ export class ListLotesComponent implements OnInit {
         let bg = '#f1f5f9';
 
         switch (estado) {
-          case 'DISPONIBLE':
+          case TEstadoLote.DISPONIBLE:
             color = '#059669'; bg = '#d1fae5'; break; // Verde
-          case 'RESERVADO':
+          case TEstadoLote.RESERVADO:
             color = '#d97706'; bg = '#fef3c7'; break; // Naranja
-          case 'VENDIDO':
+          case TEstadoLote.VENDIDO:
             color = '#dc2626'; bg = '#fee2e2'; break; // Rojo
-          case 'BLOQUEADO':
+          case TEstadoLote.BLOQUEADO:
             color = '#4b5563'; bg = '#e5e7eb'; break; // Gris oscuro
         }
 
@@ -190,7 +196,9 @@ export class ListLotesComponent implements OnInit {
     private proyectoService: ProyectoService,
     private modalService: NgbModal,
     private notification: NotificationService,
-    private nzModal: NzModalService
+    private nzModal: NzModalService,
+    private drawerService: NzDrawerService,
+    private breakpointObserver: BreakpointObserver,
   ) { }
 
   ngOnInit(): void {
@@ -260,7 +268,7 @@ export class ListLotesComponent implements OnInit {
   private cambiarEstadoRapido(lote: ILote): void {
     // Lógica simple para ciclar estados. 
     // En una app real, aquí podría abrirse un mini-menú contextual.
-    const estados: TEstadoLote[] = ['DISPONIBLE', 'RESERVADO', 'VENDIDO', 'BLOQUEADO'];
+    const estados: TEstadoLote[] = Object.values(TEstadoLote);
     const currentIndex = estados.indexOf(lote.estado);
     const nextIndex = (currentIndex + 1) % estados.length;
     const nuevoEstado = estados[nextIndex];
@@ -283,7 +291,7 @@ export class ListLotesComponent implements OnInit {
   }
 
   public onLoteClick(lote: ILote): void {
-    this.openModal(lote, this.manzanaIdControl.value!);
+    this.openDetailDrawer(lote.id);
   }
 
   onTableAction(event: ITableActionEvent<ILote>): void {
@@ -348,5 +356,27 @@ export class ListLotesComponent implements OnInit {
           });
         })
     });
+  }
+
+  public openDetailDrawer(loteId: string): void {
+    const isMobile = this.breakpointObserver.isMatched(Breakpoints.Handset);
+    if (isMobile) {
+      this.modalService.open(LoteDetailComponent, {
+        size: 'fullscreen', // En móvil, mejor que ocupe todo
+        scrollable: true,
+        windowClass: 'terraform-modal-mobile'
+      }).componentInstance.loteId = loteId;
+    } else {
+      this.drawerService.create({
+        nzContent: LoteDetailComponent,
+        nzTitle: '',
+        nzClosable: false,
+        nzMaskClosable: true,
+        nzWidth: 450,
+        nzData: {
+          loteId: loteId
+        }
+      });
+    }
   }
 }

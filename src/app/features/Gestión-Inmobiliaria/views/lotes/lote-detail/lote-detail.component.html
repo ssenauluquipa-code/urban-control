@@ -1,0 +1,92 @@
+<div class="blueprint-container">
+  @if (loading) {
+    <div class="loading-overlay">
+      <nz-spin nzSimple nzSize="large"></nz-spin>
+    </div>
+  } @else if (lote) {
+    <header class="blueprint-header">
+      <div class="header-content">
+        <div class="title-wrap">
+          <h2 class="lote-id">Lote #{{ lote.numero }}</h2>
+          <p class="lote-meta">
+            {{ lote.manzana.proyecto.nombre }} • Mza {{ lote.manzana.codigo }}
+          </p>
+        </div>
+        <button class="btn-close-drawer" (click)="closeDrawer()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div
+        class="badge-status"
+        [style.background-color]="getStatusBgColor(lote.estado)"
+      >
+        {{ lote.estado }}
+      </div>
+    </header>
+
+    <div class="blueprint-scroll">
+      <section class="card-valuation">
+        <span class="label-mini">Valoración de Mercado</span>
+        <div class="price-main">
+          <app-currency-label
+            [value]="lote.precioReferencial"
+          ></app-currency-label>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-label">Área</span>
+            <span class="stat-val">{{ lote.areaM2 }} m²</span>
+          </div>
+          <div class="stat-box divider">
+            <span class="stat-label">Comisión</span>
+            <span class="stat-val text-success">{{ lote.comision }}%</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="info-block">
+        <h3 class="block-title">Dimensiones</h3>
+        <div class="grid-dims">
+          @for (
+            dim of [
+              { l: "Norte", v: lote.dimensionNorte },
+              { l: "Sur", v: lote.dimensionSur },
+              { l: "Este", v: lote.dimensionEste },
+              { l: "Oeste", v: lote.dimensionOeste },
+            ];
+            track dim.l
+          ) {
+            <div class="dim-unit">
+              <span class="unit-label">{{ dim.l }}</span>
+              <span class="unit-val">{{ dim.v || "0.00" }}m</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="info-block">
+        <h3 class="block-title">Visuales</h3>
+        @if (lote.imagenes && lote.imagenes.length > 0) {
+          <div nz-image-group class="grid-gallery">
+            @for (img of lote.imagenes; track img.id) {
+              <div class="img-container">
+                <img
+                  nz-image
+                  [nzSrc]="img.publicUrl"
+                  alt="Lote"
+                  class="img-fit"
+                />
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-box">Sin imágenes</div>
+        }
+      </section>
+    </div>
+
+    <footer class="blueprint-footer">
+      <button class="btn-action-main">Gestionar Lote</button>
+    </footer>
+  }
+</div>
