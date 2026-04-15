@@ -1,31 +1,52 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbDropdownModule, NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ProfileFormComponent } from 'src/app/features/profile/views/profile-form/profile-form.component';
 import { IUpdateProfileDto } from 'src/app/core/models/user.model';
+import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
+import { FormControl } from '@angular/forms';
+import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
+import { SelectProjectsComponent } from "src/app/shared/components/atoms/select-projects.component";
 
 @Component({
   selector: 'app-nav-right',
   standalone: true,
-  imports: [RouterModule, NgbNavModule, NgbDropdownModule, NzIconModule],
+  imports: [RouterModule, NgbNavModule, NgbDropdownModule, NzIconModule, SelectProjectsComponent],
   templateUrl: './nav-right.component.html',
   styleUrl: './nav-right.component.scss'
 })
-export class NavRightComponent {
+export class NavRightComponent implements OnInit {
   @Input() styleSelectorToggle = false;
   @Output() Customize = new EventEmitter<void>();
-  
+
   private authService = inject(AuthService);
   private router = inject(Router);
   private modalService = inject(NgbModal);
-
+  private globalContext = inject(ProjectStatusGlobalService);
+  private projectService = inject(ProyectoService);
   windowWidth: number;
   screenFull = true;
 
+
+  public globalProjectControl = new FormControl<string>('');
   constructor() {
     this.windowWidth = window.innerWidth;
+  }
+  ngOnInit(): void {
+    this.projectService.getProyectActive().subscribe(proyectos => {
+      if (proyectos.length > 0) {
+        const firstId = proyectos[0].id;
+        this.globalContext.setSelectedProjectId(firstId);
+        this.globalProjectControl.setValue(firstId);
+      }
+    })
+  }
+
+  onProjectChange(projectId: string | null): void {
+    console.log(' proyecto global cambiado a ', projectId);
+    this.globalContext.setSelectedProjectId(projectId);
   }
 
   logout(): void {
@@ -59,8 +80,8 @@ export class NavRightComponent {
   }
 
   private openProfileModal() {
-    const modalRef = this.modalService.open(ProfileFormComponent, { 
-      size: 'lg', 
+    const modalRef = this.modalService.open(ProfileFormComponent, {
+      size: 'lg',
       centered: true,
       backdrop: 'static'
     });

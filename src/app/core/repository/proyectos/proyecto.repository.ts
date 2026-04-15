@@ -1,6 +1,6 @@
 import { Observable, map } from "rxjs";
 import { IProyectoRepository } from "../../interfaces/repository/proyectos/proyecto.repository.interface";
-import { CreateProyectoDto, IProyecto, UpdateProyectoDto } from "../../models/proyectos/proyecto.model";
+import { CreateProyectoDto, IProyecto, IProyectoActivo, UpdateProyectoDto } from "../../models/proyectos/proyecto.model";
 import { environment } from "src/environments/environment.prod";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -33,6 +33,10 @@ export class ProyectoRepository implements IProyectoRepository {
     return this.http.get<{ id: string; name: string }[]>(`${this.API_URL}/lookup`).pipe(
       map(response => response.map(p => ({ id: p.id, nombre: p.name })))
     );
+  }
+
+  getProyectActive(): Observable<IProyectoActivo[]> {
+    return this.http.get<IProyectoActivo[]>(`${this.API_URL}/activos`);
   }
 
 }

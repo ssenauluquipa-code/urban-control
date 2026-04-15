@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, ChangeDetectorRef, OnInit } fro
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
 import { SelectDataComponent } from './select-data.component';
+import { IProyectoActivo } from 'src/app/core/models/proyectos/proyecto.model';
 
 @Component({
   selector: 'app-select-projects',
@@ -23,17 +24,17 @@ export class SelectProjectsComponent implements OnInit {
 
   @Input() inputControl = new FormControl();
   @Input() placeholder = 'Seleccionar Proyecto...';
-  @Output() Change = new EventEmitter<unknown>();
+  @Output() Change = new EventEmitter<string | null>();
 
-  public projectList: unknown[] = [];
+  public projectList: IProyectoActivo[] = [];
 
   constructor(
     private proyectoService: ProyectoService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.proyectoService.getProyectos().subscribe({
+    this.proyectoService.getProyectActive().subscribe({
       next: (data) => {
         this.projectList = [...data];
         this.cdr.detectChanges();
@@ -42,7 +43,7 @@ export class SelectProjectsComponent implements OnInit {
     });
   }
 
-  onSelect(event: unknown) {
+  onSelect(event: string | null): void {
     this.Change.emit(event);
   }
 }

@@ -1,5 +1,5 @@
 import {
-  Component, Input, Output, EventEmitter, OnChanges,
+  Component, Input, Output, EventEmitter, OnInit, OnChanges,
   SimpleChanges, ViewChild, ElementRef,
   OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef
 } from '@angular/core';
@@ -9,6 +9,7 @@ import { ColDef, GridApi, GridOptions, GridReadyEvent, RowClickedEvent } from 'a
 import { AgGridAngular } from 'ag-grid-angular';
 import { TableActionsComponent } from '../table-actions/table-actions.component';
 import { TableAction, ITableActionEvent } from '../../../interfaces/table-actions.interface';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-data-table',
@@ -18,7 +19,7 @@ import { TableAction, ITableActionEvent } from '../../../interfaces/table-action
   styleUrls: ['./data-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
+export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDestroy {
   @ViewChild('gridContainer', { read: ElementRef, static: false }) gridContainer!: ElementRef;
 
   @Input() columnDefs: ColDef[] = [];
@@ -32,8 +33,18 @@ export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
   @Output() actionClicked = new EventEmitter<ITableActionEvent<T>>();
   @Output() rowClicked = new EventEmitter<T>();
 
+  /**
+   * Emite el término de búsqueda (con debounce) para búsqueda server-side.
+   * Si el padre escucha este evento, puede llamar al endpoint /search?term=...
+   * y reemplazar el [rowData] con los resultados del servidor.
+   * Si nadie escucha, el quickFilter local de ag-grid sigue funcionando.
+   */
+  @Output() searchChange = new EventEmitter<string>();
+
   quickFilter = '';
   public gridApi!: GridApi;
+  private searchTerm$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
   computedColumnDefs: ColDef[] = [];
 
   gridOptions: GridOptions = {
@@ -70,6 +81,23 @@ export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
 
   constructor(private cdr: ChangeDetectorRef) { }
 
+  ngOnInit(): void {
+    // Debounce del input de búsqueda → emite al padre para búsqueda server-side
+    this.searchTerm$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((term) => {
+        this.searchChange.emit(term);
+        // Si no hay listeners externos, aplicar filtro local como fallback
+        if (this.searchChange.observers.length === 0) {
+          this.gridApi?.setGridOption('quickFilterText', term);
+        }
+      });
+  }
+
   onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
     // Usamos el setGridOption para evitar el warning de deprecación de showLoadingOverlay
@@ -87,6 +115,8 @@ export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
   }
 
   onQuickFilterChange(): void {
+    this.searchTerm$.next(this.quickFilter);
+    // Siempre aplicar filtro local también (para respuesta inmediata)
     this.gridApi?.setGridOption('quickFilterText', this.quickFilter);
   }
 
@@ -133,6 +163,8 @@ export class DataTableComponent<T = unknown> implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.gridApi && !this.gridApi.isDestroyed()) {
       this.gridApi.destroy();
     }

@@ -30,8 +30,8 @@ import { FormsModule } from '@angular/forms';
         [notFoundText]="'No se encontraron resultados'"
         [class.is-invalid]="inputControl.invalid && inputControl.touched"
         (blur)="Blur.emit($event)"
-        (change)="ChangeValue.emit($event)">
-        
+        (change)="onSelectChange()">
+
         <ng-template ng-notfound-tmp let-searchTerm="searchTerm">
           <div class="p-2 small text-muted">
             No hay resultados para "{{searchTerm}}"
@@ -43,7 +43,7 @@ import { FormsModule } from '@angular/forms';
     </div>
   `,
   styles: `
-  
+
   .custom-select-container {
       display: block;
       width: 100%;
@@ -62,30 +62,30 @@ import { FormsModule } from '@angular/forms';
 export class SelectDataComponent implements OnInit {
 
   @ViewChild('inputSelect') inputSelect!: NgSelectComponent;
-  
+
   public selectId = 'select-' + Math.random().toString(36).substring(2, 9);
 
   // Propiedades de configuración
-  @Input() label?: string; // Nueva: Para no tener que escribir el label afuera siempre
+  @Input() label?: string;
   @Input() itemList: unknown[] = [];
   @Input() bindValue = 'Id';
   @Input() bindLabel = 'Name';
   @Input() placeholder = 'Seleccionar...';
-  @Input() loading = false; // Nueva: Para mostrar spinner interno
-  
+  @Input() loading = false;
+
   // Control y validación
   @Input() inputControl = new FormControl<unknown>(null);
   @Input() defaultValue: unknown = null;
-  
+
   // Comportamiento
   @Input() clearable = true;
   @Input() searchable = true;
   @Input() isMultiple = false;
   @Input() setFocus = false;
-  @Input() appendToStyle: string | null = null; // Se cambió a null por defecto para evitar conflictos de z-index y focus en Modales
+  @Input() appendToStyle: string | null = null;
 
-  @Output() ChangeValue = new EventEmitter<unknown>();
-  @Output() Blur = new EventEmitter<unknown>();
+  @Output() ChangeValue = new EventEmitter<string | null>();
+  @Output() Blur = new EventEmitter<string>();
 
   ngOnInit(): void {
     if (this.defaultValue) {
@@ -94,5 +94,10 @@ export class SelectDataComponent implements OnInit {
     if (this.setFocus) {
       setTimeout(() => this.inputSelect.focus(), 100);
     }
+  }
+
+  // Emite el valor real del control (bindValue ya aplicado), no el objeto crudo del ng-select
+  onSelectChange(): void {
+    this.ChangeValue.emit(this.inputControl.value as string | null);
   }
 }

@@ -20,4 +20,11 @@ export interface CreateProyectoDto {
   descripcion?: string;
 }
 
-export type UpdateProyectoDto = Partial<CreateProyectoDto>;
+export type UpdateProyectoDto = Partial<CreateProyectoDto>;
+
+export interface IProyectoActivo {
+  id: string;
+  nombre: string;
+  cantidadManzanas: number;
+  cantidadLotes: number;
+}

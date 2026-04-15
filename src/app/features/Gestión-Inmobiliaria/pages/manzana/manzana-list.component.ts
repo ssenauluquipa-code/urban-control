@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ColDef } from 'ag-grid-community';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { finalize, Observable } from 'rxjs';
+import { finalize, Observable, of } from 'rxjs';
 import { IManzana } from 'src/app/core/models/manzana/manzana.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ManzanaService } from 'src/app/core/services/proyectos/manzana.service';
@@ -15,6 +15,7 @@ import { SelectProjectsComponent } from "src/app/shared/components/atoms/select-
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
 import { CommonModule } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 
 @Component({
   selector: 'app-manzana-list',
@@ -27,14 +28,6 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
       [showNew]="true"
       [showOptions]="true"
       (AddNew)="onAddNewManzana()">
-
-      <!-- Selector de Proyecto -->
-      <div class="mb-3" style="max-width: 400px;">
-        <app-select-projects
-          [inputControl]="proyectoIdControl"
-          [placeholder]="'Seleccione un proyecto...'">
-        </app-select-projects>
-      </div>
 
       <app-data-table
         [rowData]="(manzanas$ | async) || []"
@@ -56,14 +49,13 @@ export class ManzanaListComponent implements OnInit {
   public manzanas$!: Observable<IManzana[]>;
   public isLoading = false;
 
-  // Control para el selector de proyectos
-  public proyectoIdControl = new FormControl<string>('');
-
   constructor(private manzanaService: ManzanaService,
     private proyectoService: ProyectoService, // Para cargar el primero por defecto
     private modalService: NgbModal,
     private notification: NotificationService,
-    private nzModal: NzModalService) { }
+    private nzModal: NzModalService,
+    private globalContext: ProjectStatusGlobalService
+  ) { }
 
   columnDefs: ColDef[] = [
     {
@@ -82,20 +74,13 @@ export class ManzanaListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // 1. Cargar el primer proyecto automáticamente (opcional, para UX)
-    this.proyectoService.getProyectos().subscribe(proyectos => {
-      if (proyectos && proyectos.length > 0) {
-        const firstId = proyectos[0].id;
-        console.log(firstId, 'sas');
-        this.proyectoIdControl.setValue(firstId);
-        this.refreshData(firstId);
+    this.globalContext.selectedProjectId$.subscribe(projectId => {
+      if (projectId) {
+        this.refreshData(projectId);
+      } else {
+        this.manzanas$ = of([]);
       }
-    });
-
-    // 2. Escuchar cambios manuales en el selector
-    this.proyectoIdControl.valueChanges.subscribe(id => {
-      if (id) this.refreshData(id);
-    });
+    })
   }
 
   refreshData(proyectoId: string): void {
@@ -106,7 +91,7 @@ export class ManzanaListComponent implements OnInit {
   }
 
   onTableAction(event: ITableActionEvent<IManzana>): void {
-    const proyectoId = this.proyectoIdControl.value;
+    const proyectoId = this.globalContext.getCurrentProjectId();
     if (!proyectoId) return;
 
     if (event.action === TableActionsEnum.EDIT) {
@@ -119,7 +104,7 @@ export class ManzanaListComponent implements OnInit {
   }
 
   onAddNewManzana(): void {
-    const proyectoId = this.proyectoIdControl.value;
+    const proyectoId = this.globalContext.getCurrentProjectId();
     if (!proyectoId) {
       this.notification.warning('Seleccione un proyecto primero.');
       return;
@@ -152,7 +137,7 @@ export class ManzanaListComponent implements OnInit {
             next: () => {
               this.notification.success('Manzana eliminada');
               // Recargamos usando el ID actual del selector
-              const currentId = this.proyectoIdControl.value;
+              const currentId = this.globalContext.getCurrentProjectId();
               if (currentId) this.refreshData(currentId);
               resolve(true);
             },
