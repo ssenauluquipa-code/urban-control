@@ -1,92 +1,97 @@
-<div class="blueprint-container">
+<div class="blueprint-grid">
   @if (loading) {
     <div class="loading-overlay">
       <nz-spin nzSimple nzSize="large"></nz-spin>
+      <p class="loading-text">SINCRONIZANDO DATOS...</p>
     </div>
   } @else if (lote) {
-    <header class="blueprint-header">
-      <div class="header-content">
-        <div class="title-wrap">
-          <h2 class="lote-id">Lote #{{ lote.numero }}</h2>
-          <p class="lote-meta">
-            {{ lote.manzana.proyecto.nombre }} • Mza {{ lote.manzana.codigo }}
+    <header class="drawer-header">
+      <div class="header-top-row">
+        <div class="title-meta">
+          <h2 class="lote-number">LOTE #{{ lote.numero }}</h2>
+          <p class="project-path">
+            {{ lote.manzana.proyecto.nombre }} /
+            <span>MANZANA {{ lote.manzana.codigo }}</span>
           </p>
         </div>
-        <button class="btn-close-drawer" (click)="closeDrawer()">
-          <i class="bi bi-x-lg"></i>
-        </button>
+
+        <div
+          class="status-badge"
+          [style.background]="getStatusBgColor(lote.estado)"
+        >
+          {{ lote.estado }}
+        </div>
       </div>
-      <div
-        class="badge-status"
-        [style.background-color]="getStatusBgColor(lote.estado)"
-      >
-        {{ lote.estado }}
-      </div>
+
+      <button class="close-btn-minimal" (click)="closeDrawer()">
+        <i class="bi bi-x-lg"></i>
+      </button>
     </header>
 
-    <div class="blueprint-scroll">
-      <section class="card-valuation">
-        <span class="label-mini">Valoración de Mercado</span>
-        <div class="price-main">
-          <app-currency-label
-            [value]="lote.precioReferencial"
-          ></app-currency-label>
-        </div>
-        <div class="stats-grid">
-          <div class="stat-box">
-            <span class="stat-label">Área</span>
-            <span class="stat-val">{{ lote.areaM2 }} m²</span>
+    <div class="blueprint-body-scroll">
+      <div class="content-centered-container">
+        <section class="valuation-block">
+          <header class="block-label">VALORACIÓN REFERENCIAL</header>
+          <div class="price-hero">
+            <app-currency-label
+              [value]="lote.precioReferencial"
+            ></app-currency-label>
           </div>
-          <div class="stat-box divider">
-            <span class="stat-label">Comisión</span>
-            <span class="stat-val text-success">{{ lote.comision }}%</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="info-block">
-        <h3 class="block-title">Dimensiones</h3>
-        <div class="grid-dims">
-          @for (
-            dim of [
-              { l: "Norte", v: lote.dimensionNorte },
-              { l: "Sur", v: lote.dimensionSur },
-              { l: "Este", v: lote.dimensionEste },
-              { l: "Oeste", v: lote.dimensionOeste },
-            ];
-            track dim.l
-          ) {
-            <div class="dim-unit">
-              <span class="unit-label">{{ dim.l }}</span>
-              <span class="unit-val">{{ dim.v || "0.00" }}m</span>
+          <div class="tech-stats-row">
+            <div class="stat-unit">
+              <span class="u-label">ÁREA TOTAL</span>
+              <span class="u-val">{{ lote.areaM2 }} m²</span>
             </div>
-          }
-        </div>
-      </section>
+            <div class="stat-divider"></div>
+            <div class="stat-unit">
+              <span class="u-label">COMISIÓN</span>
+              <span class="u-val text-success">{{ lote.comision }}%</span>
+            </div>
+          </div>
+        </section>
 
-      <section class="info-block">
-        <h3 class="block-title">Visuales</h3>
-        @if (lote.imagenes && lote.imagenes.length > 0) {
-          <div nz-image-group class="grid-gallery">
-            @for (img of lote.imagenes; track img.id) {
-              <div class="img-container">
-                <img
-                  nz-image
-                  [nzSrc]="img.publicUrl"
-                  alt="Lote"
-                  class="img-fit"
-                />
+        <section class="info-group">
+          <h4 class="group-title">LÍMITES TÉCNICOS / PERÍMETRO</h4>
+          <div class="dim-grid">
+            @for (
+              dim of [
+                { t: "NORTE", v: lote.dimensionNorte },
+                { t: "SUR", v: lote.dimensionSur },
+                { t: "ESTE", v: lote.dimensionEste },
+                { t: "OESTE", v: lote.dimensionOeste },
+              ];
+              track dim.t
+            ) {
+              <div class="dim-box">
+                <span class="dim-label">{{ dim.t }}</span>
+                <span class="dim-value">{{ dim.v || "0.00" }}m</span>
               </div>
             }
           </div>
-        } @else {
-          <div class="empty-box">Sin imágenes</div>
-        }
-      </section>
+        </section>
+
+        <section class="info-group">
+          <h4 class="group-title">EVIDENCIA VISUAL</h4>
+          @if (lote.imagenes && lote.imagenes.length > 0) {
+            <div nz-image-group class="gallery-layout">
+              @for (img of lote.imagenes; track img.id) {
+                <div class="img-frame">
+                  <img nz-image [nzSrc]="img.publicUrl" alt="Vista Técnica" />
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-state-tech">
+              <i class="bi bi-camera-video-off"></i>
+              <span>SIN REGISTRO VISUAL</span>
+            </div>
+          }
+        </section>
+      </div>
     </div>
 
     <footer class="blueprint-footer">
-      <button class="btn-action-main">Gestionar Lote</button>
+      <button class="btn-terraform-action">GESTIONAR OPERACIÓN</button>
     </footer>
   }
 </div>

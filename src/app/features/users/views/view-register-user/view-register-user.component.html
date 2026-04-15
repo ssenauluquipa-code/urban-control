@@ -6,84 +6,115 @@
 >
   <form nz-form [formGroup]="userForm" nzLayout="vertical">
     <div class="row">
-
       <div class="col-12">
         <div class="user-form-layout">
-
           <!-- Foto de Perfil / Avatar -->
           <div class="user-avatar-col">
             <app-image-uploader
               [initialPreview]="userData?.avatarUrl || ''"
               uploadTitle="Subir avatar"
-              (imageSelected)="imageSelected.emit($event)">
+              (imageSelected)="imageSelected.emit($event)"
+            >
             </app-image-uploader>
           </div>
 
           <!-- Campos del formulario -->
           <div class="user-fields-col">
             <div class="row">
-
               <!-- Nombre -->
               <div class="col-12">
-                <app-form-field label="Nombre Completo" [required]="true" forId="userName">
-                  <app-input-text [input_control]="name" input_placeholder="Ej. Juan Perez"></app-input-text>
+                <app-form-field
+                  label="Nombre Completo"
+                  [required]="true"
+                  forId="userName"
+                >
+                  <app-input-text
+                    [input_control]="name"
+                    input_placeholder="Ej. Juan Perez"
+                  ></app-input-text>
                 </app-form-field>
               </div>
 
               <!-- Email -->
               <div class="col-12 col-sm-6">
-                <app-form-field label="Correo Electrónico" [required]="true" forId="userEmail">
-                  <app-input-text [input_control]="email" input_placeholder="ejemplo@correo.com"></app-input-text>
+                <app-form-field
+                  label="Correo Electrónico"
+                  [required]="true"
+                  forId="userEmail"
+                >
+                  <app-input-text
+                    [input_control]="email"
+                    input_placeholder="ejemplo@correo.com"
+                  ></app-input-text>
                 </app-form-field>
               </div>
 
               <!-- Teléfono -->
               <div class="col-12 col-sm-6">
                 <app-form-field label="Número de Contacto" forId="userPhone">
-                  <app-input-text [input_control]="contactNumber" input_placeholder="+591 70000000"></app-input-text>
+                  <app-input-text
+                    [input_control]="contactNumber"
+                    input_placeholder="+591 70000000"
+                  ></app-input-text>
                 </app-form-field>
               </div>
 
               <!-- Rol -->
               <div class="col-12 col-sm-6">
-                <app-form-field label="Rol del Sistema" [required]="true" forId="userRole">
-                  <nz-select formControlName="role" nzPlaceHolder="Seleccionar rol">
-                    <nz-option nzValue="ADMIN" nzLabel="Administrador"></nz-option>
+                <app-form-field
+                  label="Rol del Sistema"
+                  [required]="true"
+                  forId="userRole"
+                >
+                  <nz-select
+                    formControlName="role"
+                    nzPlaceHolder="Seleccionar rol"
+                  >
+                    <nz-option
+                      nzValue="ADMIN"
+                      nzLabel="Administrador"
+                    ></nz-option>
                     <nz-option nzValue="EDITOR" nzLabel="Editor"></nz-option>
-                    <nz-option nzValue="USER" nzLabel="Usuario Estándar"></nz-option>
+                    <nz-option
+                      nzValue="USER"
+                      nzLabel="Usuario Estándar"
+                    ></nz-option>
                   </nz-select>
                 </app-form-field>
               </div>
 
               <!-- Contraseña (Solo mostrar al crear) -->
-              @if(!userData) {
+              @if (!userData) {
                 <div class="col-12 col-sm-6">
-                  <app-form-field label="Contraseña Temporal" [required]="true" forId="userPass">
+                  <app-form-field
+                    label="Contraseña Temporal"
+                    [required]="true"
+                    forId="userPass"
+                  >
                     <app-input-text
                       [input_control]="password"
                       [input_type]="'password'"
-                      input_placeholder="Mínimo 8 caracteres">
+                      input_placeholder="Mínimo 8 caracteres"
+                    >
                     </app-input-text>
                   </app-form-field>
                 </div>
               }
 
               <!-- Nota si es edición -->
-              @if(userData) {
+              @if (userData) {
                 <div class="col-12">
                   <small class="text-muted">
                     <i class="bi bi-info-circle"></i>
-                    Para cambiar la contraseña, utilice la opción de "Mi Perfil".
+                    Para cambiar la contraseña, utilice la opción de "Mi
+                    Perfil".
                   </small>
                 </div>
               }
-
             </div>
           </div>
-
         </div>
       </div>
-
     </div>
   </form>
-</app-modal-container>>
+</app-modal-container>

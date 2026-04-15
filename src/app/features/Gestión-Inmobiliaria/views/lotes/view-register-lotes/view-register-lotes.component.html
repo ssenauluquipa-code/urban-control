@@ -10,31 +10,31 @@
       <div class="row">
         <div class="col-md-4">
           <app-form-field label="N° de Lote" [required]="true">
-            <nz-input-number
-              formControlName="numero"
-              [nzMin]="1"
-              [nzStep]="1"
-              style="width: 100%"
-            ></nz-input-number>
+            <app-input-number
+              [input_control]="numero"
+              input_placeholder="Ej. 1"
+              prefix_icon="number"
+            ></app-input-number>
           </app-form-field>
         </div>
         <div class="col-md-4">
           <app-form-field label="Área (m²)" [required]="true">
-            <nz-input-number
-              formControlName="areaM2"
-              [nzMin]="0"
-              [nzPrecision]="2"
-              style="width: 100%"
-            ></nz-input-number>
+            <app-input-number
+              [input_control]="areaM2"
+              input_placeholder="Ej. 125.50"
+              prefix_icon="border"
+              [allow_decimals]="true"
+            ></app-input-number>
           </app-form-field>
         </div>
         <div class="col-md-4">
-          <app-form-field label="Precio Referencial ($)">
-            <nz-input-number
-              formControlName="precioReferencial"
-              [nzMin]="0"
-              style="width: 100%"
-            ></nz-input-number>
+          <app-form-field label="Precio Referencial (Bs.)">
+            <app-input-number
+              [input_control]="precioReferencial"
+              input_placeholder="Ej. 25000"
+              prefix_icon="dollar"
+              [allow_decimals]="true"
+            ></app-input-number>
           </app-form-field>
         </div>
       </div>
@@ -49,38 +49,38 @@
       <div class="row">
         <div class="col-md-6">
           <app-form-field label="Lado Norte">
-            <nz-input-number
-              formControlName="dimensionNorte"
-              [nzMin]="0"
-              style="width: 100%"
-            ></nz-input-number>
+            <app-input-number
+              [input_control]="norte"
+              input_placeholder="Ej. 12.50"
+              [allow_decimals]="true"
+            ></app-input-number>
           </app-form-field>
         </div>
         <div class="col-md-6">
           <app-form-field label="Lado Sur">
-            <nz-input-number
-              formControlName="dimensionSur"
-              [nzMin]="0"
-              style="width: 100%"
-            ></nz-input-number>
+            <app-input-number
+              [input_control]="sur"
+              input_placeholder="Ej. 12.50"
+              [allow_decimals]="true"
+            ></app-input-number>
           </app-form-field>
         </div>
         <div class="col-md-6">
           <app-form-field label="Lado Este">
-            <nz-input-number
-              formControlName="dimensionEste"
-              [nzMin]="0"
-              style="width: 100%"
-            ></nz-input-number>
+            <app-input-number
+              [input_control]="este"
+              input_placeholder="Ej. 10.00"
+              [allow_decimals]="true"
+            ></app-input-number>
           </app-form-field>
         </div>
         <div class="col-md-6">
           <app-form-field label="Lado Oeste">
-            <nz-input-number
-              formControlName="dimensionOeste"
-              [nzMin]="0"
-              style="width: 100%"
-            ></nz-input-number>
+            <app-input-number
+              [input_control]="oeste"
+              input_placeholder="Ej. 10.00"
+              [allow_decimals]="true"
+            ></app-input-number>
           </app-form-field>
         </div>
       </div>
@@ -91,21 +91,22 @@
       <div class="row">
         <div class="col-md-6">
           <app-form-field label="Comisión (%)">
-            <nz-input-number
-              formControlName="comision"
-              [nzMin]="0"
-              [nzMax]="100"
-              style="width: 100%"
-            ></nz-input-number>
+            <app-input-number
+              [input_control]="comision"
+              input_placeholder="Ej. 5"
+              prefix_icon="percentage"
+              [allow_decimals]="true"
+            ></app-input-number>
           </app-form-field>
         </div>
         <div class="col-12">
           <app-form-field label="Observaciones">
-            <textarea
-              nz-input
-              formControlName="observaciones"
-              rows="2"
-            ></textarea>
+            <app-input-textarea
+              [input_control]="observaciones"
+              input_placeholder="Ingrese observaciones del lote..."
+              [show_character_count]="true"
+              [input_maxlength]="500"
+            ></app-input-textarea>
           </app-form-field>
         </div>
       </div>
@@ -135,11 +136,11 @@
           @if (loteData.imagenes && loteData.imagenes.length > 0) {
             <!-- Aquí asumimos que imagenes es un array de objetos o strings.
                      Si el backend devuelve strings simples, usamos el string directamente. -->
-            @for (img of loteData.imagenes; track img) {
+            @for (img of loteData.imagenes; track img.id || img.publicUrl) {
               <div class="col-md-4 mb-2 position-relative">
-                <!-- Si img es un string (URL), úsalo directamente. Si es objeto, img.url -->
+                <!-- Mostramos la imagen usando su propiedad publicUrl -->
                 <img
-                  [src]="img"
+                  [src]="img.publicUrl"
                   [alt]="'Foto de lote ' + loteData.numero"
                   class="img-thumbnail rounded"
                   style="height: 120px; width: 100%; object-fit: cover"

@@ -1,189 +1,264 @@
-// Variables
-$dark: #0b1c30;
-$gray-text: #74777d;
-$bg-light: #f8f9ff;
+// Variables Terraform
+$tf-black: #0b1c30;
+$tf-gray-meta: #74777d;
+$tf-bg: #f8f9ff;
+$tf-border: rgba(116, 119, 125, 0.15);
 
-.blueprint-container {
+:host {
+    display: block;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+}
+
+.blueprint-grid {
+    height: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%; // Ocupa el drawer
-    max-width: 100vw; // Prohíbe salir del ancho de pantalla
-    overflow: hidden; // Evita scroll horizontal accidental
-    background: $bg-light;
+    background-color: $tf-bg;
+    background-image:
+        linear-gradient(to right, rgba(116, 119, 125, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(116, 119, 125, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
 
-    .blueprint-header {
-        background: white;
-        padding: 1rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        flex-shrink: 0; // El header no se encoge
+// HEADER REFORMADO
+.drawer-header {
+    padding: 1.25rem 1.5rem; // Padding reducido para que suba el contenido
+    background: white;
+    border-bottom: 1px solid $tf-border;
+    position: relative;
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
-        }
+    .header-top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 2.5rem; // Espacio extra para que el badge no choque con la X
+    }
 
-        .lote-id {
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin: 0;
-            color: $dark;
-        }
+    .lote-number {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin: 0;
+        color: $tf-black;
+        letter-spacing: -0.04em;
+    }
 
-        .lote-meta {
-            font-size: 0.8rem;
-            color: $gray-text;
-            margin: 0;
-        }
+    .project-path {
+        font-size: 0.7rem;
+        color: $tf-gray-meta;
+        text-transform: uppercase;
+        margin: 0;
 
-        .btn-close-drawer {
-            border: none;
-            background: none;
-            color: $gray-text;
+        span {
+            font-weight: 700;
+            color: $tf-black;
         }
     }
 
-    .badge-status {
-        display: inline-block;
-        padding: 2px 8px;
+    .status-badge {
+        padding: 4px 10px;
+        color: white;
         font-size: 9px;
         font-weight: 700;
-        color: white;
+        letter-spacing: 0.5px;
+        border-radius: 2px;
         text-transform: uppercase;
+    }
+
+    .close-btn-minimal {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        border: none;
+        background: transparent;
+        color: $tf-gray-meta;
+        font-size: 1.2rem;
+        cursor: pointer;
+        line-height: 1;
+        transition: color 0.2s;
+
+        &:hover {
+            color: $tf-black;
+        }
     }
 }
 
-.blueprint-scroll {
+// BODY CON CENTRADO HORIZONTAL
+.blueprint-body-scroll {
     flex: 1;
-    overflow-y: auto; // Solo scroll vertical aquí
-    padding: 1rem;
-    -webkit-overflow-scrolling: touch; // Suavidad en iPhone
+    overflow-y: auto;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center; // Centra el contenido horizontalmente
+
+    .content-centered-container {
+        width: 100%;
+        max-width: 550px; // Ancho máximo profesional
+    }
 }
 
-// CARD DE VALORACIÓN
-.card-valuation {
-    background: $dark;
+// BLOQUES TÉCNICOS
+.valuation-block {
+    background: $tf-black;
     color: white;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
+    padding: 1.5rem;
+    border-radius: 2px;
+    margin-bottom: 2rem;
 
-    .label-mini {
+    .block-label {
         font-size: 9px;
         opacity: 0.5;
-        text-transform: uppercase;
+        letter-spacing: 0.1em;
     }
 
-    .price-main {
-        font-size: 1.5rem;
+    .price-hero {
+        font-size: 2rem;
         font-weight: 700;
-        margin: 0.25rem 0 1rem 0;
+        margin: 0.5rem 0 1rem 0;
+        font-family: 'Space Grotesk', sans-serif;
     }
 
-    .stats-grid {
+    .tech-stats-row {
         display: flex;
+        align-items: center;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding-top: 0.75rem;
+        padding-top: 1rem;
 
-        .stat-box {
+        .stat-unit {
             flex: 1;
-            min-width: 0; // IMPORTANTE: permite que el texto se trunque si no cabe
 
-            .stat-label {
+            .u-label {
                 display: block;
                 font-size: 8px;
                 opacity: 0.5;
+                margin-bottom: 2px;
             }
 
-            .stat-val {
+            .u-val {
                 font-size: 1rem;
                 font-weight: 600;
             }
+        }
 
-            &.divider {
-                border-left: 1px solid rgba(255, 255, 255, 0.1);
-                padding-left: 0.75rem;
-            }
+        .stat-divider {
+            width: 1px;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 1rem;
         }
     }
 }
 
-// DIMENSIONES RESPONSIVAS
-.grid-dims {
+.group-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: $tf-gray-meta;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+}
+
+.dim-grid {
     display: grid;
-    // minmax(100px, 1fr) asegura que si no caben 100px, se rompa a la siguiente línea
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 1px;
-    background: rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    margin-bottom: 1rem;
+    background: $tf-border;
+    border: 1px solid $tf-border;
+    margin-bottom: 2rem;
 
-    .dim-unit {
+    .dim-box {
         background: white;
-        padding: 0.75rem;
+        padding: 1rem;
 
-        .unit-label {
+        .dim-label {
             display: block;
             font-size: 8px;
-            color: $gray-text;
-            text-transform: uppercase;
+            color: $tf-gray-meta;
+            margin-bottom: 4px;
         }
 
-        .unit-val {
-            font-size: 1.1rem;
+        .dim-value {
+            font-size: 1.25rem;
             font-weight: 700;
-            color: $dark;
+            color: $tf-black;
+            font-family: 'Space Grotesk', sans-serif;
         }
     }
 }
 
-// GALERÍA RESPONSIVA
-.grid-gallery {
+.gallery-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 8px;
 
-    .img-container {
+    .img-frame {
         aspect-ratio: 1;
         overflow: hidden;
-        border-radius: 2px;
-        background: #eee;
+        border: 1px solid $tf-border;
 
-        .img-fit {
+        img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            filter: grayscale(100%);
+            transition: 0.3s;
+
+            &:hover {
+                filter: grayscale(0%);
+                transform: scale(1.05);
+            }
         }
     }
 }
 
 .blueprint-footer {
-    padding: 1rem;
+    padding: 1.5rem;
     background: white;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    flex-shrink: 0;
+    border-top: 1px solid $tf-border;
+    display: flex;
+    justify-content: center;
 
-    .btn-action-main {
+    .btn-terraform-action {
         width: 100%;
-        padding: 0.75rem;
+        max-width: 550px;
         background: black;
         color: white;
         border: none;
-        font-weight: 700;
+        padding: 1.1rem;
+        font-weight: 800;
+        font-size: 11px;
+        letter-spacing: 2px;
+        border-radius: 2px;
         text-transform: uppercase;
-        font-size: 10px;
+        cursor: pointer;
+
+        &:hover {
+            background: #333;
+        }
     }
 }
 
-// CORRECCIÓN FINAL PARA MÓVILES EXTREMOS
-@media (max-width: 350px) {
-    .grid-dims {
-        grid-template-columns: 1fr;
+.loading-overlay {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .loading-text {
+        font-size: 10px;
+        color: $tf-gray-meta;
+        margin-top: 10px;
+        letter-spacing: 2px;
+    }
+}
+
+@media (max-width: 450px) {
+    .drawer-header .lote-number {
+        font-size: 1.5rem;
     }
 
-    // Fuerza una sola columna si es muy angosto
-    .price-main {
-        font-size: 1.25rem;
+    .valuation-block .price-hero {
+        font-size: 1.5rem;
     }
 }

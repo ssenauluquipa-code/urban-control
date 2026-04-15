@@ -41,7 +41,6 @@ export class LoteDetailComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    console.log("id ", this.loteId);
     this.loadDetail();
   }
 

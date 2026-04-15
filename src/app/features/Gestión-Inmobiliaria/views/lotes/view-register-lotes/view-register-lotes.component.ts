@@ -5,9 +5,11 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { ModalContainerComponent } from 'src/app/shared/components/organisms/modal-container/modal-container.component';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
+import { InputNumberComponent } from 'src/app/shared/components/atoms/input-number/input-number.component';
+import { InputTextareaComponent } from 'src/app/shared/components/atoms/input-textarea/input-textarea.component';
 import { ILote } from 'src/app/core/models/lote/lote.model';
 import { NzCardModule } from "ng-zorro-antd/card";
-import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+
 @Component({
   selector: 'app-view-register-lotes',
   standalone: true,
@@ -17,9 +19,10 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
     ModalContainerComponent,
     NzFormModule,
     NzInputModule,
-    NzInputNumberModule,
-    NzCardModule, // Añadimos Card
-    FormFieldComponent
+    NzCardModule,
+    FormFieldComponent,
+    InputNumberComponent,
+    InputTextareaComponent,
   ],
   templateUrl: './view-register-lotes.component.html',
   styleUrl: './view-register-lotes.component.scss'
