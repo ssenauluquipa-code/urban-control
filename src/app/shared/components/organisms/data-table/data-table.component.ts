@@ -5,7 +5,10 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ColDef, GridApi, GridOptions, GridReadyEvent, RowClickedEvent } from 'ag-grid-community';
+import {
+  ColDef, GridApi, GridOptions, GridReadyEvent,
+  IDatasource, IGetRowsParams, RowClickedEvent, SortModelItem
+} from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { TableActionsComponent } from '../table-actions/table-actions.component';
 import { TableAction, ITableActionEvent } from '../../../interfaces/table-actions.interface';
@@ -22,6 +25,7 @@ import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDestroy {
   @ViewChild('gridContainer', { read: ElementRef, static: false }) gridContainer!: ElementRef;
 
+  // --- Inputs Básicos ---
   @Input() columnDefs: ColDef[] = [];
   @Input() rowData: T[] = [];
   @Input() loading = false;
@@ -29,37 +33,43 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
   @Input() height = '480px';
   @Input() showCreate = true;
   @Input() actions: TableAction[] = ['view', 'edit', 'delete'];
+  @Input() pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
+  // --- Inputs para Paginación por Servidor ---
+  @Input() totalRecords = 0;
+  @Input() serverSide = false;
+
+  // --- Outputs ---
   @Output() actionClicked = new EventEmitter<ITableActionEvent<T>>();
   @Output() rowClicked = new EventEmitter<T>();
-
-  /**
-   * Emite el término de búsqueda (con debounce) para búsqueda server-side.
-   * Si el padre escucha este evento, puede llamar al endpoint /search?term=...
-   * y reemplazar el [rowData] con los resultados del servidor.
-   * Si nadie escucha, el quickFilter local de ag-grid sigue funcionando.
-   */
+  @Output() pageChange = new EventEmitter<number>();
   @Output() searchChange = new EventEmitter<string>();
+  @Output() sortChange = new EventEmitter<SortModelItem[]>();
+  @Output() pageSizeChange = new EventEmitter<number>();
 
   quickFilter = '';
   public gridApi!: GridApi;
-  private searchTerm$ = new Subject<string>();
-  private destroy$ = new Subject<void>();
   computedColumnDefs: ColDef[] = [];
 
-  gridOptions: GridOptions = {
+  private searchTerm$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
+  private pendingGetRows: IGetRowsParams | null = null;
+  private internalCurrentPage = 0; // 👈 Trackeamos qué página tenemos en memoria
+
+  // 🚀 Definimos gridOptions como una propiedad simple
+  // La configuración estructural (rowModelType) va aquí, no en setGridOption
+  public gridOptions: GridOptions = {
     pagination: true,
-    paginationPageSizeSelector: [5, 10, 20, 50],
-    rowHeight: 52, // Más espacio entre filas (Dashboard Premium)
-    headerHeight: 56, // Cabeceras más destacadas
+    rowHeight: 52,
+    headerHeight: 56,
     defaultColDef: {
       sortable: true,
       filter: true,
       resizable: true,
       flex: 1,
       minWidth: 150,
-      suppressMovable: true, // Diseño más estático y profesional
-      cellStyle: { display: 'flex', 'align-items': 'center' } // Centrado vertical manual
+      suppressMovable: true,
+      cellStyle: { display: 'flex', 'align-items': 'center' }
     },
     overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Cargando...</span>',
     overlayNoRowsTemplate: '<span class="ag-overlay-no-rows-center">No se encontraron registros</span>',
@@ -67,41 +77,62 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
       page: 'Página', of: 'de', to: 'a', more: 'más',
       firstPage: 'Primera', lastPage: 'Última',
       nextPage: 'Siguiente', previousPage: 'Anterior',
-      pageSizeSelectorLabel: 'Filas por página:', noRowsToShow: 'Sin datos',
-      filterOoo: 'Filtrar...', contains: 'Contiene', notContains: 'No contiene',
-      equals: 'Igual', notEqual: 'No igual', startsWith: 'Empieza con',
-      endsWith: 'Termina con', blank: 'Vacío', notBlank: 'No vacío',
-      andCondition: 'Y', orCondition: 'O', applyFilter: 'Aplicar', resetFilter: 'Limpiar'
+      pageSizeSelectorLabel: 'Filas por página:', noRowsToShow: 'Sin datos'
     },
     context: { parentComponent: this },
-    components: {
-      tableActions: TableActionsComponent
-    }
+    components: { tableActions: TableActionsComponent }
   };
 
   constructor(private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    // Debounce del input de búsqueda → emite al padre para búsqueda server-side
-    this.searchTerm$
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((term) => {
-        this.searchChange.emit(term);
-        // Si no hay listeners externos, aplicar filtro local como fallback
-        if (this.searchChange.observers.length === 0) {
-          this.gridApi?.setGridOption('quickFilterText', term);
-        }
-      });
+    // 🚀 PASO CLAVE: Configuración estructural ANTES de que cargue la vista
+    // Esto soluciona el error de tipos y asegura que la tabla arranque en el modo correcto.
+    this.gridOptions.paginationPageSize = this.pageSize;
+    this.gridOptions.paginationPageSizeSelector = this.getPageSizeOptions();
+
+    if (this.serverSide) {
+      this.gridOptions.rowModelType = 'infinite';
+      this.gridOptions.cacheBlockSize = this.pageSize;
+      this.gridOptions.infiniteInitialRowCount = 1;
+      this.gridOptions.maxBlocksInCache = 10;
+    } else {
+      this.gridOptions.rowModelType = 'clientSide';
+    }
+
+    // Debounce búsqueda
+    this.searchTerm$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe((term) => {
+      this.searchChange.emit(term);
+      if (this.searchChange.observers.length === 0) {
+        this.gridApi?.setGridOption('quickFilterText', term);
+      }
+    });
   }
 
   onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
-    // Usamos el setGridOption para evitar el warning de deprecación de showLoadingOverlay
+
+    // Configuración que SÍ se puede hacer dinámicamente
     this.gridApi.setGridOption('loading', this.loading);
+
+    if (this.serverSide) {
+      // Definir DataSource
+      const dataSource: IDatasource = {
+        getRows: (params: IGetRowsParams) => {
+          this.pendingGetRows = params;
+          const requestedPage = Math.floor(params.startRow / this.pageSize) + 1;
+          this.pageChange.emit(requestedPage);
+        }
+      };
+      this.gridApi.setGridOption('datasource', dataSource);
+    } else {
+      // Si es modo cliente, cargamos los datos inmediatamente
+      this.gridApi.setGridOption('rowData', this.rowData);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -109,15 +140,52 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
       this.computedColumnDefs = this.buildColumns();
     }
 
-    if (this.gridApi && changes['loading']) {
-      this.gridApi.setGridOption('loading', this.loading);
+    if (this.gridApi) {
+      // Sincronizar Loading
+      if (changes['loading']) {
+        this.gridApi.setGridOption('loading', this.loading);
+        if (!this.loading && this.serverSide && this.pendingGetRows) {
+          this.provideRowsToGrid();
+        }
+      }
+
+      // Sincronizar Datos
+      if (changes['rowData']) {
+        if (this.serverSide && !this.loading) {
+          this.provideRowsToGrid();
+        } else if (!this.serverSide) {
+          this.gridApi.setGridOption('rowData', this.rowData);
+        }
+      }
     }
+  }
+
+  private provideRowsToGrid(): void {
+    if (!this.pendingGetRows) return;
+
+    const rowsThisPage = this.rowData || [];
+    const requestedPage = Math.floor(this.pendingGetRows.startRow / this.pageSize) + 1;
+
+    this.internalCurrentPage = requestedPage;
+    this.pendingGetRows.successCallback(rowsThisPage, this.totalRecords);
+    this.pendingGetRows = null;
   }
 
   onQuickFilterChange(): void {
     this.searchTerm$.next(this.quickFilter);
-    // Siempre aplicar filtro local también (para respuesta inmediata)
-    this.gridApi?.setGridOption('quickFilterText', this.quickFilter);
+  }
+
+  onPaginationChanged(): void {
+    if (this.gridApi) {
+      const newPage = this.gridApi.paginationGetCurrentPage() + 1; // AG Grid usa base 0
+      this.pageChange.emit(newPage);
+    }
+  }
+
+  private getPageSizeOptions(): number[] {
+    const options = [...this.pageSizeOptions];
+    if (!options.includes(this.pageSize)) options.push(this.pageSize);
+    return options.sort((a, b) => a - b);
   }
 
   onCreateClick(): void {
@@ -140,7 +208,6 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
         actions: this.actions,
         actionClicked: (params: { action: string; data: T }) => this.onActionClicked(params)
       },
-      // Evita que el clic en esta celda active eventos de fila o selección
       suppressNavigable: true,
       pinned: 'right',
       width: this.actions.length > 2 ? 80 : 120,

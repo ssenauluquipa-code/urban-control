@@ -70,6 +70,15 @@ export const NavigationItems: INavigationItem[] = [
         url: '/admin/usuarios',
         icon: 'bi bi-people',
         breadcrumbs: false
+      },
+      {
+        id: 'clientes',
+        title: 'Gestión Clientes',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/clientes',
+        icon: 'bi bi-person-lines-fill',
+        breadcrumbs: false
       }
     ]
   },

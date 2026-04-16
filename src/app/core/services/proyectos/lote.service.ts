@@ -12,7 +12,9 @@ export class LoteService {
 
 constructor(@Inject(LOTE_REPOSITORY_TOKEN) private repo : ILoteRepository) { }
 
-getLotes(manzanaId: string): Observable<ILote[]> { return this.repo.getAll(manzanaId); }
+getLotes(manzanaId: string): Observable<ILote[]> {
+  return this.repo.getAll(manzanaId);
+}
 
 getLotesInmobiliarios(proyectoId: string): Observable<ILote[]> {
   return this.repo.getAll().pipe(

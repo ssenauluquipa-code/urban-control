@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { importProvidersFrom } from '@angular/core';
 import {
   provideHttpClient,
@@ -24,7 +25,7 @@ import {
 } from '@angular/common';
 
 // AG Grid - Register Community Modules
-import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
+import { ModuleRegistry, AllCommunityModule, ClientSideRowModelModule, InfiniteRowModelModule } from 'ag-grid-community';
 import { ProyectoRepository } from './app/core/repository/proyectos/proyecto.repository';
 import { UserRepository } from './app/core/repository/user.repository';
 import { USER_REPOSITORY_TOKEN } from './app/core/services/user.service';
@@ -36,8 +37,10 @@ import { MANZANA_REPOSITORY_TOKEN } from './app/core/services/proyectos/manzana.
 import { LOTE_REPOSITORY_TOKEN } from './app/core/services/proyectos/lote.service';
 import { ManzanaRepository } from './app/core/repository/proyectos/manzana.repository';
 import { LoteRepository } from './app/core/repository/proyectos/lote.repository';
+import { ClienteRepository } from './app/core/repository/cliente.repository';
+import { CLIENTE_REPOSITORY_TOKEN } from './app/core/services/cliente.service';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([AllCommunityModule, ClientSideRowModelModule, InfiniteRowModelModule]);
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -69,8 +72,9 @@ bootstrapApplication(AppComponent, {
 
     // 🆕 Lote
     { provide: LOTE_REPOSITORY_TOKEN, useClass: LoteRepository },
+    { provide: CLIENTE_REPOSITORY_TOKEN, useClass: ClienteRepository },
     provideAnimationsAsync(),
-    importProvidersFrom(NzIconModule),
+    importProvidersFrom(NzIconModule, NzModalModule),
     provideAnimations(),
     provideHttpClient(
       withInterceptors([authInterceptor]),

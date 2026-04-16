@@ -12,7 +12,9 @@ export class ManzanaService {
 
 constructor(@Inject(MANZANA_REPOSITORY_TOKEN) private repo : IManzanaRepository){}
 
-getManzanas(proyectoId?: string) { return this.repo.getAll(proyectoId); }
+getManzanas(proyectoId?: string) {
+  return this.repo.getAll(proyectoId);
+}
 getManzanaById(id: string) { return this.repo.getById(id); }
 createManzana(dto: CreateManzanaDto) { return this.repo.create(dto); }
 updateManzana(id: string, dto: UpdateManzanaDto) { return this.repo.update(id, dto); }

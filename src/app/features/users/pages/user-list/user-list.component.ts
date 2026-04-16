@@ -108,7 +108,6 @@ export class UserListComponent implements OnInit {
 
   refreshData() {
     this.isLoading = true;
-    // Llamamos al servicio global (sin projectId)
     this.users$ = this.userService.getUsers().pipe(
       finalize(() => this.isLoading = false)
     );

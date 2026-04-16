@@ -107,6 +107,14 @@ export const ROUTES: IRouteInfo[] = [
     submenu: []
   },
   {
+    path: '/clientes',
+    title: 'Gestión de Clientes',
+    icon: 'bi bi-person-lines-fill',
+    class: '',
+    extralink: false,
+    submenu: []
+  },
+  {
     path: '/configuracion/empresa',
     title: 'Configuración',
     icon: 'bi bi-gear',

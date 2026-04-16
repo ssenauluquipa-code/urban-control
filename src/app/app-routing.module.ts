@@ -52,6 +52,10 @@ export const Approutes: Routes = [
         loadChildren: () => import('./features/organization/organization.routes').then(m => m.OrganizationRoutes)
       },
       {
+        path: 'clientes',
+        loadChildren: () => import('./features/clientes/clientes.routes').then(m => m.CLIENTES_ROUTES)
+      },
+      {
         path: 'profile',
         loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES)
       }

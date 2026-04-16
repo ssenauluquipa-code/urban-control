@@ -15,7 +15,9 @@ export class ProyectoService {
     @Inject('IProyectoRepository') private repo: IProyectoRepository
   ) { }
 
-  getProyectos(): Observable<IProyecto[]> { return this.repo.getAll(); }
+  getProyectos(): Observable<IProyecto[]> {
+    return this.repo.getAll();
+  }
   getProyectoById(id: string): Observable<IProyecto> { return this.repo.getById(id); }
   createProyecto(dto: CreateProyectoDto): Observable<IProyecto> { return this.repo.create(dto); }
   updateProyecto(id: string, dto: UpdateProyectoDto): Observable<IProyecto> { return this.repo.update(id, dto); }

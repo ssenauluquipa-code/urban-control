@@ -13,7 +13,7 @@ export class UserRepository implements IUserRepository {
     private readonly api_url = `${environment.apiUrl}`;
 
     constructor(private readonly http: HttpClient) {}
-   
+
     getAll(): Observable<IUser[]> {
         return this.http.get<IUser[]>(`${this.api_url}/user`);
     }
@@ -50,6 +50,4 @@ export class UserRepository implements IUserRepository {
         return this.http.delete<void>(`${this.api_url}/user/${id}/avatar`);
     }
 
-   
-    
 }

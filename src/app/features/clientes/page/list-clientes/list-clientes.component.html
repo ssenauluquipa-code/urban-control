@@ -1,0 +1,67 @@
+<app-page-container
+  title="Gestión de Clientes"
+  permissionScope="clientes"
+  [showNew]="true"
+  (AddNew)="onAddNew()"
+>
+  <!-- Filtros y Buscador -->
+  <div class="row mb-3 align-items-end">
+    <!-- Buscador -->
+    <div class="col-md-5">
+      <app-form-field label="Buscar Cliente">
+        <app-input-text
+          [input_control]="searchControl"
+          input_placeholder="Nombre, CI o Email..."
+          prefix_icon="search"
+        >
+        </app-input-text>
+      </app-form-field>
+    </div>
+
+    <!-- Filtros Rápidos -->
+    <div class="col-md-4 d-flex align-items-end gap-2 mb-1">
+      <button
+        class="btn"
+        [class.btn-primary]="filterActive === true"
+        [class.btn-outline-secondary]="filterActive !== true"
+        (click)="setFilter(true)"
+      >
+        Activos
+      </button>
+      <button
+        class="btn"
+        [class.btn-primary]="filterActive === false"
+        [class.btn-outline-secondary]="filterActive !== false"
+        (click)="setFilter(false)"
+      >
+        Inactivos
+      </button>
+      <button
+        class="btn"
+        [class.btn-primary]="filterActive === undefined"
+        [class.btn-outline-secondary]="filterActive !== undefined"
+        (click)="setFilter(undefined)"
+      >
+        Todos
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla Server Side -->
+  <app-data-table
+    [rowData]="clientes"
+    [columnDefs]="columnDefs"
+    [loading]="loading"
+    [pageSize]="limit"
+    [serverSide]="true"
+    [totalRecords]="totalRecords"
+    height="400px"
+    [showCreate]="false"
+    [actions]="[tableActionEnum.EDIT, tableActionEnum.DELETE]"
+    (actionClicked)="onTableAction($event)"
+    (pageChange)="onPageChange($event)"
+    (sortChange)="onSortChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  >
+  </app-data-table>
+</app-page-container>

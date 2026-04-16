@@ -273,7 +273,7 @@ export class ListLotesComponent implements OnInit {
     this.isLoading = true;
     this.lotes$ = this.loteService
       .getLotes(manzanaId)
-      .pipe(finalize(() => (this.isLoading = false)));
+      .pipe(finalize(() => this.isLoading = false));
   }
 
   // 🔍 Método para búsqueda
@@ -281,7 +281,7 @@ export class ListLotesComponent implements OnInit {
     this.isLoading = true;
     this.lotes$ = this.loteService
       .searchLotes(manzanaId, term)
-      .pipe(finalize(() => (this.isLoading = false)));
+      .pipe(finalize(() => this.isLoading = false));
   }
 
   // 🚀 Método para cambio de estado rápido
