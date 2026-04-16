@@ -141,19 +141,15 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
     }
 
     if (this.gridApi) {
-      // Sincronizar Loading
       if (changes['loading']) {
         this.gridApi.setGridOption('loading', this.loading);
-        if (!this.loading && this.serverSide && this.pendingGetRows) {
-          this.provideRowsToGrid();
-        }
       }
 
-      // Sincronizar Datos
-      if (changes['rowData']) {
-        if (this.serverSide && !this.loading) {
+      // Si cambian los datos O el total de registros, refrescamos el datasource
+      if (changes['rowData'] || changes['totalRecords']) {
+        if (this.serverSide) {
           this.provideRowsToGrid();
-        } else if (!this.serverSide) {
+        } else {
           this.gridApi.setGridOption('rowData', this.rowData);
         }
       }
@@ -161,14 +157,17 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
   }
 
   private provideRowsToGrid(): void {
-    if (!this.pendingGetRows) return;
+    if (this.gridApi) {
+      const datasource: IDatasource = {
+        getRows: (params: IGetRowsParams) => {
+          // Esto le dice a AG Grid: "Aquí están los 5 registros y el nuevo total es 5"
+          params.successCallback(this.rowData, this.totalRecords);
+        }
+      };
 
-    const rowsThisPage = this.rowData || [];
-    const requestedPage = Math.floor(this.pendingGetRows.startRow / this.pageSize) + 1;
-
-    this.internalCurrentPage = requestedPage;
-    this.pendingGetRows.successCallback(rowsThisPage, this.totalRecords);
-    this.pendingGetRows = null;
+      // Esto obliga a AG Grid a resetear la paginación y la vista
+      this.gridApi.setGridOption('datasource', datasource);
+    }
   }
 
   onQuickFilterChange(): void {

@@ -57,7 +57,12 @@
     [totalRecords]="totalRecords"
     height="400px"
     [showCreate]="false"
-    [actions]="[tableActionEnum.EDIT, tableActionEnum.DELETE]"
+    [actions]="[
+      tableActionEnum.EDIT,
+      tableActionEnum.DEACTIVATE,
+      tableActionEnum.ACTIVATE,
+      tableActionEnum.INFO,
+    ]"
     (actionClicked)="onTableAction($event)"
     (pageChange)="onPageChange($event)"
     (sortChange)="onSortChange($event)"

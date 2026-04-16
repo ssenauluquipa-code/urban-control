@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ColDef, ICellRendererParams, SortModelItem } from 'ag-grid-community';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, Subject, takeUntil } from 'rxjs';
 import { ICliente } from 'src/app/core/models/cliente.model';
 import { ClienteService } from 'src/app/core/services/cliente.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
@@ -14,6 +14,7 @@ import { PageContainerComponent } from "src/app/shared/components/templates/page
 import { InputTextComponent } from "src/app/shared/components/atoms/input-text/input-text.component";
 import { FormFieldComponent } from "src/app/shared/components/molecules/form-field/form-field.component";
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-clientes',
@@ -22,7 +23,7 @@ import { DataTableComponent } from "src/app/shared/components/organisms/data-tab
   templateUrl: './list-clientes.component.html',
   styleUrl: './list-clientes.component.scss'
 })
-export class ListClientesComponent implements OnInit {
+export class ListClientesComponent implements OnInit, OnDestroy {
 
   public tableActionEnum = TableActionsEnum;
 
@@ -39,7 +40,7 @@ export class ListClientesComponent implements OnInit {
   // Filters
   public searchControl = new FormControl('');
   public filterActive: boolean | undefined = true; // Por defecto muestra activos
-
+  private destroy$ = new Subject<void>();
   // Column Definitions
   columnDefs: ColDef[] = [
     {
@@ -77,11 +78,18 @@ export class ListClientesComponent implements OnInit {
     {
       field: 'isActive',
       headerName: 'Estado',
-      width: 100,
+      width: 120,
+      // Hacemos la columna "flexible" para que ocupe espacio o se adapte
+      flex: 1,
       cellRenderer: (params: ICellRendererParams) => {
-        return params.value
-          ? '<span class="badge bg-success-subtle text-success">Activo</span>'
-          : '<span class="badge bg-secondary-subtle text-secondary">Inactivo</span>';
+        const isActive = params.value;
+        // Clases de Bootstrap para que se vea bonito
+        const badgeClass = isActive
+          ? 'bg-success-subtle text-success'
+          : 'bg-danger-subtle text-danger';
+        const text = isActive ? 'Activo' : 'Inactivo';
+
+        return `<span class="badge rounded-pill ${badgeClass}">${text}</span>`;
       }
     }
   ];
@@ -90,19 +98,18 @@ export class ListClientesComponent implements OnInit {
     private clienteService: ClienteService,
     private modalService: NgbModal,
     private nzModal: NzModalService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    // 🚀 IMPORTANTE: En modo serverSide, dejamos que la tabla pida los datos 
-    // por primera vez. No llamamos a loadClientes() aquí para evitar doble petición
-    // y conflictos de estado.
-    // this.loadClientes(); 
 
     // Búsqueda reactiva
     this.searchControl.valueChanges.pipe(
-      debounceTime(400),
-      distinctUntilChanged()
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
     ).subscribe(() => {
       this.currentPage = 1; // Resetear página al buscar
       this.loadClientes();
@@ -113,23 +120,28 @@ export class ListClientesComponent implements OnInit {
    * Carga los datos desde el backend con filtros y paginación
    */
   loadClientes(): void {
-    console.log('ListClientes [load]: Requesting page', this.currentPage, 'with limit', this.limit);
     this.loading = true;
+    this.clientes = [];
     const term = this.searchControl.value || undefined;
 
-    this.clienteService.getPagedClients(this.currentPage, this.limit, term, this.filterActive).pipe(
-      finalize(() => this.loading = false)
-    ).subscribe({
-      next: (res) => {
-        console.log('ListClientes [load]: SUCCESS', { count: res.data.length, total: res.total });
-        this.clientes = res.data;
-        this.totalRecords = res.total;
-      },
-      error: () => {
-        console.error('ListClientes [load]: ERROR');
-        this.notification.error('Error al cargar clientes');
-      }
-    });
+    this.clienteService.getPagedClients(this.currentPage, this.limit, term, this.filterActive)
+      .pipe(finalize(() => {
+        this.loading = false;
+        this.cdr.markForCheck(); // Forzar detección al terminar la carga
+      }))
+      .subscribe({
+        next: (res) => {
+          // ASIGNACIÓN CON SPREAD: Esto obliga a la tabla a reaccionar
+          this.clientes = [...res.data];
+          // ACTUALIZAR TOTALES
+          this.totalRecords = res.total;
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error('ListClientes [load]: ERROR', err);
+          this.notification.error('Error al cargar clientes');
+        },
+      });
   }
 
   // --- Acciones de Filtros ---
@@ -146,8 +158,14 @@ export class ListClientesComponent implements OnInit {
    * Evento disparado por app-data-table cuando el usuario cambia de página
    */
   onPageChange(newPage: number): void {
-    console.log('ListClientes [onPageChange]: newPage =', newPage, 'currentState =', this.currentPage);
     const pageToLoad = newPage < 1 ? 1 : newPage;
+
+    //Evitar recargas innecesarias si la página no ha cambiado realmente
+    // y ya tenemos datos cargados.
+    if (pageToLoad === this.currentPage && this.clientes.length > 0) {
+      return;
+    }
+
     this.currentPage = pageToLoad;
     this.loadClientes();
   }
@@ -175,15 +193,45 @@ export class ListClientesComponent implements OnInit {
 
   onTableAction(event: ITableActionEvent<ICliente>): void {
     if (event.action === TableActionsEnum.EDIT) {
-      this.openModal(event.row!);
+      this.router.navigate(['/clientes/editar', event.row!.id]);
     }
-    if (event.action === TableActionsEnum.DELETE) {
+    // Desactivar (Cliente Activo -> Clic en Desactivar)
+    if (event.action === TableActionsEnum.DEACTIVATE) {
+      // Llamamos a tu servicio toggleStatus (que internamente hace el DELETE)
       this.confirmToggleStatus(event.row!);
+    }
+
+    // 3. Activar (Cliente Inactivo -> Clic en Activar)
+    if (event.action === TableActionsEnum.ACTIVATE) {
+      // Llamamos a tu servicio toggleStatus (que internamente hace el PATCH /activate)
+      this.confirmActivate(event.row!);
+    }
+    if (event.action === TableActionsEnum.INFO) {
+      this.router.navigate(['/clientes/ver', event.row!.id]);
     }
   }
 
+  // 🆕 Nuevo método (Reactivar)
+  private confirmActivate(cliente: ICliente): void {
+    this.nzModal.confirm({
+      nzTitle: '¿Reactivar cliente?',
+      nzContent: `El cliente ${cliente.nombreCompleto} será reactivado.`,
+      nzOkText: 'Reactivar',
+      nzOnOk: () => {
+        // Pasamos cliente.isActive (que es false)
+        this.clienteService.toggleStatus(cliente.id, cliente.isActive).subscribe({
+          next: () => {
+            this.notification.success('Cliente reactivado');
+            this.loadClientes(); // <--- Esto refresca la lista
+          },
+          error: () => this.notification.error('Error al reactivar')
+        });
+      }
+    });
+  }
+
   onAddNew(): void {
-    this.openModal();
+    this.router.navigate(['/clientes/nuevo']);
   }
 
   // --- Modales ---
@@ -203,20 +251,25 @@ export class ListClientesComponent implements OnInit {
    * Cambia el estado del cliente (Activo <-> Inactivo)
    */
   private confirmToggleStatus(cliente: ICliente): void {
-    const action = cliente.isActive ? 'desactivar' : 'activar';
-
     this.nzModal.confirm({
-      nzTitle: `¿${action.charAt(0).toUpperCase() + action.slice(1)} cliente?`,
-      nzContent: `Se ${action}á al cliente ${cliente.nombreCompleto}.`,
+      nzTitle: '¿Desactivar cliente?',
+      nzContent: `El cliente ${cliente.nombreCompleto} será desactivado.`,
       nzOkText: 'Confirmar',
-      nzOnOk: () =>
+      nzOnOk: () => {
+        // Pasamos cliente.isActive (que es true)
         this.clienteService.toggleStatus(cliente.id, cliente.isActive).subscribe({
           next: () => {
-            this.notification.success(`Cliente ${action}do`);
-            this.loadClientes();
+            this.notification.success('Cliente desactivado');
+            this.loadClientes(); // <--- Esto refresca la lista
           },
-          error: () => this.notification.error('No se pudo cambiar el estado')
-        })
+          error: () => this.notification.error('Error al desactivar')
+        });
+      }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

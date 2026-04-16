@@ -17,6 +17,7 @@ import { IPageConfig, DEFAULT_PAGE_CONFIG } from 'src/app/core/models/page-confi
         [permissionScope]="permissionScope"
         [backRoute]="backRoute"
         [hasBackListener]="hasBackListener"
+        [hasCancelListener]="hasCancelListener"
         [config]="mergedConfig">
         <div custom-actions style="display: contents;">
           <ng-content select="[custom-actions]"></ng-content>
@@ -84,6 +85,10 @@ export class PageContainerComponent implements OnInit, OnChanges {
 
   get hasBackListener(): boolean {
     return this.Back.observed;
+  }
+
+  get hasCancelListener(): boolean {
+    return this.Cancel.observed;
   }
 
   ngOnChanges(changes: SimpleChanges): void {

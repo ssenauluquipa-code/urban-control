@@ -1,0 +1,139 @@
+<div class="row">
+  <!-- COLUMNA IZQUIERDA -->
+  <div class="col-lg-6 col-md-12">
+    <!-- Card: Identificación -->
+    <div class="card mb-3 shadow-sm border-0">
+      <div class="card-header bg-light fw-bold">Identificación</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <app-form-field label="Nombre Completo" [required]="true">
+              <app-input-text
+                [input_control]="NombreCompleto"
+                input_placeholder="Juan Pérez"
+              >
+              </app-input-text>
+            </app-form-field>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <app-form-field label="Nro. Documento" [required]="true">
+              <app-input-text
+                [input_control]="NroDocumento"
+                input_placeholder="1234567"
+              >
+              </app-input-text>
+            </app-form-field>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <app-form-field label="Tipo Doc." [required]="true">
+              <!-- Usamos app-select-data para datos estáticos (Enums) -->
+              <app-select-data
+                [inputControl]="TipoDocumento"
+                [itemList]="tipoDocOptions"
+                [bindValue]="'value'"
+                [bindLabel]="'label'"
+                [placeholder]="'Seleccione'"
+              >
+              </app-select-data>
+            </app-form-field>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <app-form-field label="Complemento">
+              <app-input-text
+                [input_control]="Complemento"
+                input_placeholder="SC"
+              >
+              </app-input-text>
+            </app-form-field>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <app-form-field label="Nro. Referencia">
+              <app-input-text
+                [input_control]="NumeroReferencia"
+                input_placeholder="REF-001"
+              >
+              </app-input-text>
+            </app-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Datos Personales -->
+    <div class="card mb-3 shadow-sm border-0">
+      <div class="card-header bg-light fw-bold">Datos Personales</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <app-form-field label="Género" [required]="true">
+              <app-select-data
+                [inputControl]="Genero"
+                [itemList]="generoOptions"
+                [bindValue]="'value'"
+                [bindLabel]="'label'"
+                [placeholder]="'Seleccione'"
+              >
+              </app-select-data>
+            </app-form-field>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <app-form-field label="Fecha Nacimiento" [required]="true">
+              <!-- Usamos NZ DatePicker envuelto en form-field (ya que no hay átomo propio) -->
+              <app-input-date
+                [input_control]="FechaNacimiento"
+                input_placeholder="Seleccione fecha"
+              >
+              </app-input-date>
+            </app-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLUMNA DERECHA -->
+  <div class="col-lg-6 col-md-12">
+    <!-- Card: Contacto -->
+    <div class="card mb-3 shadow-sm border-0">
+      <div class="card-header bg-light fw-bold">Contacto y Ubicación</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <app-form-field label="Teléfono">
+              <app-input-text
+                [input_control]="Telefono"
+                input_placeholder="71234567"
+              >
+              </app-input-text>
+            </app-form-field>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <app-form-field label="Email" [required]="true">
+              <app-input-text
+                [input_control]="Email"
+                input_placeholder="correo@ejemplo.com"
+              >
+              </app-input-text>
+            </app-form-field>
+          </div>
+
+          <div class="col-12 mb-3">
+            <app-form-field label="Dirección" [required]="true">
+              <app-input-textarea
+                [input_control]="Direccion"
+                input_placeholder="Av. Principal #123"
+              >
+              </app-input-textarea>
+            </app-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

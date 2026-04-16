@@ -1,1 +1,17 @@
-<p>register-clientes works!</p>
+<app-page-container
+  [title]="isEditMode ? 'Editar Cliente' : 'Nuevo Cliente'"
+  permissionScope="clientes"
+  [showNew]="false"
+  [showOptions]="false"
+  [showCancel]="true"
+  [showSave]="true"
+  (Save)="onSubmit()"
+>
+  <!-- Pasamos las opciones formateadas -->
+  <app-form-clientes-view
+    [formInput]="form"
+    [generoOptions]="generoOptions"
+    [tipoDocOptions]="tipoDocOptions"
+  >
+  </app-form-clientes-view>
+</app-page-container>

@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { ListClientesComponent } from "./page/list-clientes/list-clientes.component";
+import { RegisterClientesComponent } from "./page/register-clientes/register-clientes.component";
 
 export const CLIENTES_ROUTES: Routes = [
     {
@@ -8,6 +9,17 @@ export const CLIENTES_ROUTES: Routes = [
         data: {
             title: 'Gestión de Clientes',
             breadcrumb: 'Clientes'
-        }
+        },
+
+    },
+    {
+        path: 'nuevo',
+        component: RegisterClientesComponent,
+        data: { title: 'Nuevo Cliente', breadcrumb: 'Nuevo' }
+    },
+    {
+        path: 'editar/:id',
+        component: RegisterClientesComponent,
+        data: { title: 'Editar Cliente', breadcrumb: 'Editar' }
     }
 ];

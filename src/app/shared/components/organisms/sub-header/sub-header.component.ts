@@ -28,6 +28,7 @@ export class SubHeaderComponent {
   @Input() permissionScope?: string;
   @Input() backRoute?: string[];
   @Input() hasBackListener = false;
+  @Input() hasCancelListener = false;
 
   @Input() config: IPageConfig = { ...DEFAULT_PAGE_CONFIG };
 
@@ -66,13 +67,22 @@ export class SubHeaderComponent {
     return this.hasPrimaryActions || this.hasSecondaryActions;
   }
 
+  private goBack(): void {
+    if (this.backRoute) {
+      this.router.navigate(this.backRoute);
+    } else {
+      this.location.back();
+    }
+  }
+
   emitAction(action: AnyPageAction): void {
     if (action === EPageAction.BACK && !this.hasBackListener) {
-      if (this.backRoute) {
-        this.router.navigate(this.backRoute);
-      } else {
-        this.location.back();
-      }
+      this.goBack();
+      return;
+    }
+
+    if (action === EPageAction.CANCEL && !this.hasCancelListener) {
+      this.goBack();
       return;
     }
 
