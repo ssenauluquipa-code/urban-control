@@ -59,10 +59,11 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
       [showOptions]="true"
       (AddNew)="onAddNewLote()"
     >
-      <!-- Filtros en Cascada -->
-      <div class="row mb-3 flex">
-        
-        <div class="col-md-4">
+      <!-- 📌 FILTROS + BOTONES EN UNA SOLA FILA -->
+      <div class="row mb-3 g-2">
+
+        <!-- Columna 1: Manzana (col-md-3) -->
+        <div class="col-md-3 col-sm-6">
           <app-form-field label="Manzana">
             <app-select-data
               [inputControl]="manzanaIdControl"
@@ -75,8 +76,8 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
           </app-form-field>
         </div>
 
-        <!-- 🔍 Buscador -->
-        <div class="col-md-4">
+        <!-- Columna 2: Buscar Lote (col-md-3) -->
+        <div class="col-md-3 col-sm-6">
           <app-form-field label="Buscar Lote" forId="search-lote-id">
             <app-input-text
               inputId="search-lote-id"
@@ -87,28 +88,34 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
             </app-input-text>
           </app-form-field>
         </div>
-      </div>
 
-      <!-- 🆕 BOTONES DE VISTA -->
-      <div class="btn-group mb-3" role="group" aria-label="Cambiar vista">
-        <button
-          type="button"
-          class="btn"
-          [class.btn-primary]="viewMode === 'table'"
-          [class.btn-outline-secondary]="viewMode !== 'table'"
-          (click)="viewMode = 'table'"
-        >
-          <i class="bi bi-table me-1"></i> Lista
-        </button>
-        <button
-          type="button"
-          class="btn"
-          [class.btn-primary]="viewMode === 'map'"
-          [class.btn-outline-secondary]="viewMode !== 'map'"
-          (click)="viewMode = 'map'"
-        >
-          <i class="bi bi-map me-1"></i> Plano
-        </button>
+        <!-- Columna 3: Botones de Vista (Estandarizados) -->
+        <div class="col-md-3 col-sm-12">
+          <app-form-field label="Vista">
+            <div class="btn-group w-100" role="group">
+              <button
+                type="button"
+                class="btn btn-md flex-fill"
+                [class.btn-primary]="viewMode === 'table'"
+                [class.btn-outline-secondary]="viewMode !== 'table'"
+                (click)="viewMode = 'table'"
+                title="Vista de lista"
+              >
+                <i class="bi bi-table me-2"></i> Lista
+              </button>
+              <button
+                type="button"
+                class="btn btn-md flex-fill"
+                [class.btn-primary]="viewMode === 'map'"
+                [class.btn-outline-secondary]="viewMode !== 'map'"
+                (click)="viewMode = 'map'"
+                title="Vista de plano"
+              >
+                <i class="bi bi-map me-2"></i> Plano
+              </button>
+            </div>
+          </app-form-field>
+        </div>
       </div>
 
       <!-- 🆕 VISTA MAPA / PLANO -->
@@ -126,7 +133,6 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
           [rowData]="(lotes$ | async) || []"
           [columnDefs]="columnDefs"
           [loading]="isLoading"
-          height="350px"
           [showCreate]="false"
           [actions]="[tableActionEnum.EDIT, tableActionEnum.DELETE]"
           (actionClicked)="onTableAction($event)"

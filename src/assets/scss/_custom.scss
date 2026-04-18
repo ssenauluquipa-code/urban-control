@@ -55,3 +55,33 @@ $color-placeholder: #565e74;
   align-items: center;
   fill: $color-placeholder;
 }
+/* Alinear botones con el alto de los inputs */
+.btn-group .btn, 
+.ui-button-base {
+  height: $input-height-desktop !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: $input-border-radius !important;
+  
+  @media (max-width: 576px) {
+    height: $input-height-mobile !important;
+  }
+}
+
+.btn-group {
+  border-radius: $input-border-radius !important;
+  overflow: hidden;
+  
+  .btn {
+    border-radius: 0 !important;
+    &:first-child {
+      border-top-left-radius: $input-border-radius !important;
+      border-bottom-left-radius: $input-border-radius !important;
+    }
+    &:last-child {
+      border-top-right-radius: $input-border-radius !important;
+      border-bottom-right-radius: $input-border-radius !important;
+    }
+  }
+}
