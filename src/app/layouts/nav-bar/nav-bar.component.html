@@ -1,13 +1,13 @@
 <header class="pc-header">
   <div class="header-wrapper">
-    <div class="pc-mob-drp">
+    <div class="pc-mob-drp flex-grow-1">
       <app-nav-left
       [navCollapsed]="navCollapsed"
       [isMobOpen]="isMobOpen"
       (NavCollapse)="NavCollapse.emit()"
       (NavCollapsedMob)="NavCollapsedMob.emit()"></app-nav-left>
     </div>
-    <div>
+    <div class="ms-auto">
       <app-nav-right />
     </div>
   </div>

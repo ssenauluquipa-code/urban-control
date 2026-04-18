@@ -29,6 +29,7 @@ import { FormsModule } from '@angular/forms';
         [loadingText]="'Cargando...'"
         [notFoundText]="'No se encontraron resultados'"
         [class.is-invalid]="inputControl.invalid && inputControl.touched"
+        [appendTo]="'body'"
         (blur)="Blur.emit($event)"
         (change)="onSelectChange()">
 
@@ -43,8 +44,11 @@ import { FormsModule } from '@angular/forms';
     </div>
   `,
   styles: `
-
-  .custom-select-container {
+    :host {
+      display: block;
+      width: 100%;
+    }
+    .custom-select-container {
       display: block;
       width: 100%;
     }
@@ -55,6 +59,10 @@ import { FormsModule } from '@angular/forms';
     /* Estilizamos el ng-select para que encaje con el look de UrbanControl */
     ::ng-deep .ng-select.is-invalid .ng-select-container {
       border-color: #e53e3e !important;
+    }
+
+    ::ng-deep .ng-dropdown-panel {
+      z-index: 9999 !important;
     }
 
   `
@@ -79,7 +87,7 @@ export class SelectDataComponent implements OnInit {
 
   // Comportamiento
   @Input() clearable = true;
-  @Input() searchable = true;
+  @Input() searchable = false;
   @Input() isMultiple = false;
   @Input() setFocus = false;
   @Input() appendToStyle: string | null = null;

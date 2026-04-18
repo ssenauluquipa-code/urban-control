@@ -9,6 +9,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { CommonModule } from '@angular/common';
+import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 
 @Component({
   selector: 'app-view-register-proyecto',
@@ -22,7 +23,8 @@ import { CommonModule } from '@angular/common';
     FormFieldComponent,
     ModalContainerComponent,
     InputTextComponent,
-    InputTextareaComponent
+    InputTextareaComponent,
+    CardContainerComponent
   ],
   templateUrl: './view-register-proyecto.component.html',
   styleUrl: './view-register-proyecto.component.scss'

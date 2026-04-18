@@ -22,13 +22,11 @@
 
       <div class="col-12">
         <app-form-field label="Descripción (Opcional)" forId="descManzana">
-          <textarea
-            nz-input
-            formControlName="descripcion"
-            rows="3"
+          <app-input-textarea
+            [input_control]="descripcion"
             placeholder="Ej. Manzana cercana al parque principal..."
           >
-          </textarea>
+          </app-input-textarea>
         </app-form-field>
       </div>
 

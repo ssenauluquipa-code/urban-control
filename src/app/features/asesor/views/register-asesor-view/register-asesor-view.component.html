@@ -1,0 +1,64 @@
+<div class="row">
+  <!-- Columna Izquierda -->
+  <div class="col-md-6">
+    <app-form-field label="Nombre Completo" [required]="true">
+      <app-input-text
+        [input_control]="NombreCompleto"
+        input_placeholder="Ej: Juan Pérez"
+      >
+      </app-input-text>
+    </app-form-field>
+
+    <div class="row">
+      <div class="col-5">
+        <app-form-field label="Tipo Doc." [required]="true">
+          <app-select-document-type
+            [inputControl]="TipoDocumento"
+            [placeholder]="'Seleccione'"
+          >
+          </app-select-document-type>
+        </app-form-field>
+      </div>
+      <div class="col-7">
+        <app-form-field label="Nro. Documento" [required]="true">
+          <app-input-text
+            [input_control]="NroDocumento"
+            input_placeholder="1234567"
+          >
+          </app-input-text>
+        </app-form-field>
+      </div>
+    </div>
+
+    <app-form-field label="Teléfono">
+      <app-input-text [input_control]="Telefono" input_placeholder="71234567">
+      </app-input-text>
+    </app-form-field>
+  </div>
+
+  <!-- Columna Derecha -->
+  <div class="col-md-6">
+    <app-form-field label="Género" [required]="true">
+      <app-select-gender
+        [inputControl]="Genero"
+        [placeholder]="'Seleccione'"
+      >
+      </app-select-gender>
+    </app-form-field>
+
+    <app-form-field label="Fecha Nacimiento" [required]="true">
+      <app-input-date
+        [input_control]="FechaNacimiento"
+        input_placeholder="Seleccione fecha"
+      ></app-input-date>
+    </app-form-field>
+
+    <app-form-field label="Email" [required]="true">
+      <app-input-text
+        [input_control]="Email"
+        input_placeholder="correo@ejemplo.com"
+      >
+      </app-input-text>
+    </app-form-field>
+  </div>
+</div>

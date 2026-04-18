@@ -75,6 +75,10 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
             <!-- <pre>value:{{input_control.value}}</pre> -->
             `,
     styles: `
+      :host {
+        display: block;
+        width: 100%;
+      }
       .text-muted {
         display: block;
         margin-top: 4px;

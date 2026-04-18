@@ -88,8 +88,8 @@ nz-select {
 }
 // ========================= ESTILOS DE DATEPICKER =========================
 .ant-picker {
-  width: 100% !important;
-  height: 34px !important;
+  // width: 100% !important; // Comentado o eliminado para que use ui-input-base
+  // height: 34px !important; // ELIMINADO para usar ui-input-base (44px)
   border-radius: 8px !important; /* Añadido radius */
 
   &-panel {

@@ -9,6 +9,7 @@ import { InputNumberComponent } from 'src/app/shared/components/atoms/input-numb
 import { InputTextareaComponent } from 'src/app/shared/components/atoms/input-textarea/input-textarea.component';
 import { ILote } from 'src/app/core/models/lote/lote.model';
 import { NzCardModule } from "ng-zorro-antd/card";
+import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 
 @Component({
   selector: 'app-view-register-lotes',
@@ -23,6 +24,7 @@ import { NzCardModule } from "ng-zorro-antd/card";
     FormFieldComponent,
     InputNumberComponent,
     InputTextareaComponent,
+    CardContainerComponent
   ],
   templateUrl: './view-register-lotes.component.html',
   styleUrl: './view-register-lotes.component.scss'

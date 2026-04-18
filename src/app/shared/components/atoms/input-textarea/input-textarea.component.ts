@@ -54,6 +54,10 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
               </div>
             `,
   styles: `
+      :host {
+        display: block;
+        width: 100%;
+      }
       .textarea-wrapper {
         width: 100%;
       }

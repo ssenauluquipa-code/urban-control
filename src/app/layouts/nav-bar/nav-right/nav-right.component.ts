@@ -36,16 +36,22 @@ export class NavRightComponent implements OnInit {
   }
   ngOnInit(): void {
     this.projectService.getProyectActive().subscribe(proyectos => {
-      if (proyectos.length > 0) {
+      const currentId = this.globalContext.getCurrentProjectId();
+
+      // Si no hay proyecto seleccionado, o el seleccionado ya no existe en la lista, ponemos el primero
+      const projectExists = proyectos.some(p => p.id === currentId);
+
+      if (proyectos.length > 0 && (!currentId || !projectExists)) {
         const firstId = proyectos[0].id;
         this.globalContext.setSelectedProjectId(firstId);
         this.globalProjectControl.setValue(firstId);
+      } else if (currentId && projectExists) {
+        this.globalProjectControl.setValue(currentId);
       }
-    })
+    });
   }
 
   onProjectChange(projectId: string | null): void {
-    console.log(' proyecto global cambiado a ', projectId);
     this.globalContext.setSelectedProjectId(projectId);
   }
 

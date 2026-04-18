@@ -79,6 +79,15 @@ export const NavigationItems: INavigationItem[] = [
         url: '/clientes',
         icon: 'bi bi-person-lines-fill',
         breadcrumbs: false
+      },
+      {
+        id: 'asesores',
+        title: 'Gestión Asesores',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/asesores',
+        icon: 'bi bi-person-badge-fill',
+        breadcrumbs: false
       }
     ]
   },

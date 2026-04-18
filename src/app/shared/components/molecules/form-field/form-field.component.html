@@ -3,6 +3,9 @@
   @if (label) {
     <label class="form-label-custom" [attr.for]="forId">
       {{ label }}
+      @if (required) {
+        <span class="required-mark">*</span>
+      }
     </label>
   }
 

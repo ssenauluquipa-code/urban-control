@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -29,12 +29,23 @@ import { InputErrorMessagesComponent } from '../input-error-messages/input-error
     </div>
   `,
   styles: [`
+    :host {
+      display: block;
+      width: 100%;
+    }
     .input-date-container {
+      width: 100%;
+    }
+    nz-date-picker {
+      width: 100%;
+      display: block;
+    }
+    ::ng-deep .ant-picker {
       width: 100%;
     }
   `]
 })
-export class InputDateComponent implements OnInit {
+export class InputDateComponent {
 
   @Input() input_control = new FormControl<Date | null>(null);
   @Input() input_size: 'large' | 'default' | 'small' = 'default';
@@ -45,9 +56,6 @@ export class InputDateComponent implements OnInit {
 
   @Output() DateValue = new EventEmitter<Date | null>();
 
-  ngOnInit(): void {
-    console.log(this.input_control);
-  }
 
   onDateChange(date: Date | null): void {
     this.DateValue.emit(date);

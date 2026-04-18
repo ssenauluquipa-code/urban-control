@@ -12,7 +12,7 @@ import {
 import { AgGridAngular } from 'ag-grid-angular';
 import { TableActionsComponent } from '../table-actions/table-actions.component';
 import { TableAction, ITableActionEvent } from '../../../interfaces/table-actions.interface';
-import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-data-table',
@@ -47,7 +47,7 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
   @Output() sortChange = new EventEmitter<SortModelItem[]>();
   @Output() pageSizeChange = new EventEmitter<number>();
 
-  quickFilter = '';
+  //quickFilter = '';
   public gridApi!: GridApi;
   computedColumnDefs: ColDef[] = [];
 
@@ -101,7 +101,7 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
     }
 
     // Debounce búsqueda
-    this.searchTerm$.pipe(
+    /* this.searchTerm$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       takeUntil(this.destroy$)
@@ -110,7 +110,7 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
       if (this.searchChange.observers.length === 0) {
         this.gridApi?.setGridOption('quickFilterText', term);
       }
-    });
+    }); */
   }
 
   onGridReady(params: GridReadyEvent): void {
@@ -170,9 +170,9 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
     }
   }
 
-  onQuickFilterChange(): void {
+  /* onQuickFilterChange(): void {
     this.searchTerm$.next(this.quickFilter);
-  }
+  } */
 
   onPaginationChanged(): void {
     if (this.gridApi) {

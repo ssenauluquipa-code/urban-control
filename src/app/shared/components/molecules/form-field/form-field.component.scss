@@ -4,7 +4,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .form-label-custom {
@@ -13,6 +13,15 @@
   text-transform: uppercase;
   color: #64748b;
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .required-mark {
+    color: #ef4444; /* Rojo vibrante */
+    font-size: 14px;
+    line-height: 1;
+  }
 }
 
 .form-control-wrapper {

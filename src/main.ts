@@ -17,11 +17,12 @@ import {
 } from '@angular/common/http';
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
+import { NZ_I18N, en_US, es_ES, provideNzI18n } from 'ng-zorro-antd/i18n';
 import {
   LocationStrategy,
   PathLocationStrategy,
   CommonModule,
+  registerLocaleData,
 } from '@angular/common';
 
 // AG Grid - Register Community Modules
@@ -39,8 +40,13 @@ import { ManzanaRepository } from './app/core/repository/proyectos/manzana.repos
 import { LoteRepository } from './app/core/repository/proyectos/lote.repository';
 import { ClienteRepository } from './app/core/repository/cliente.repository';
 import { CLIENTE_REPOSITORY_TOKEN } from './app/core/services/cliente.service';
+import { ASESOR_REPOSITORY_TOKEN } from './app/core/services/asesor.service';
+import { AsesorRepository } from './app/core/repository/asesor.repository';
+import es from '@angular/common/locales/es';
 
 ModuleRegistry.registerModules([AllCommunityModule, ClientSideRowModelModule, InfiniteRowModelModule]);
+
+registerLocaleData(es);
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -73,6 +79,7 @@ bootstrapApplication(AppComponent, {
     // 🆕 Lote
     { provide: LOTE_REPOSITORY_TOKEN, useClass: LoteRepository },
     { provide: CLIENTE_REPOSITORY_TOKEN, useClass: ClienteRepository },
+    { provide: ASESOR_REPOSITORY_TOKEN, useClass: AsesorRepository },
     provideAnimationsAsync(),
     importProvidersFrom(NzIconModule, NzModalModule),
     provideAnimations(),
@@ -81,5 +88,6 @@ bootstrapApplication(AppComponent, {
       withInterceptorsFromDi(),
     ),
     provideRouter(Approutes),
+    provideNzI18n(es_ES),
   ],
 }).catch((err) => console.error(err));

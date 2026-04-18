@@ -16,14 +16,13 @@ export class NavGroupComponent implements OnInit {
   //private location = inject(Location);
 
   // public props
-  constructor(private location: Location){}
+  constructor(private location: Location) { }
   // All Version in Group Name
   //item = input.required<INavigationItem>();
-  @Input() item! : INavigationItem;
+  @Input() item!: INavigationItem;
   //@Output() toggleSidebar = new EventEmitter<void>();
   // Life cycle events
   ngOnInit() {
-    console.log("group item ", this.item);
     // at reload time active and trigger link
     let current_url = this.location.path();
     // eslint-disable-next-line

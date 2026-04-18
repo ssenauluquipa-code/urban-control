@@ -1,0 +1,68 @@
+<app-page-container
+  title="Gestión de Asesores"
+  permissionScope="asesores"
+  [showNew]="true"
+  (AddNew)="onAddNew()"
+>
+  <!-- Filtros -->
+  <div class="row mb-3 align-items-end">
+    <div class="col-md-5">
+      <app-form-field label="Buscar Asesor">
+        <app-input-text
+          [input_control]="searchControl"
+          input_placeholder="Nombre, CI o Código..."
+          prefix_icon="search"
+        >
+        </app-input-text>
+      </app-form-field>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end gap-2 mb-1">
+      <button
+        class="btn"
+        [class.btn-primary]="filterActive === true"
+        [class.btn-outline-secondary]="filterActive !== true"
+        (click)="setFilter(true)"
+      >
+        Activos
+      </button>
+      <button
+        class="btn"
+        [class.btn-primary]="filterActive === false"
+        [class.btn-outline-secondary]="filterActive !== false"
+        (click)="setFilter(false)"
+      >
+        Inactivos
+      </button>
+      <button
+        class="btn"
+        [class.btn-primary]="filterActive === undefined"
+        [class.btn-outline-secondary]="filterActive !== undefined"
+        (click)="setFilter(undefined)"
+      >
+        Todos
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <!-- 
+    IMPORTANTE: No ponemos [serverSide]="true".
+    Como el backend devuelve un array simple, el tabla funcionará en modo cliente,
+    paginando y ordenando los datos que le pasamos automáticamente.
+  -->
+  <app-data-table
+    [rowData]="asesores"
+    [columnDefs]="columnDefs"
+    [loading]="loading"
+    height="400px"
+    [showCreate]="false"
+    [actions]="[
+      tableActionEnum.EDIT,
+      tableActionEnum.DEACTIVATE,
+      tableActionEnum.ACTIVATE,
+    ]"
+    (actionClicked)="onTableAction($event)"
+  >
+  </app-data-table>
+</app-page-container>

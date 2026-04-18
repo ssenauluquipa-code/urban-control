@@ -18,7 +18,14 @@ import { IProyectoActivo } from 'src/app/core/models/proyectos/proyecto.model';
       (ChangeValue)="onSelect($event)">
     </app-select-data>
   `,
-  styles: ``
+  styles: [
+    `
+    :host {
+      display: block;
+      width: 100%;
+    }
+  `
+  ]
 })
 export class SelectProjectsComponent implements OnInit {
 

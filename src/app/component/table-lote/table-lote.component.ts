@@ -41,7 +41,6 @@ export class TableLoteComponent {
   public tableActionEnum = TableActionsEnum;
 
   onTableAction(event: ITableActionEvent<ILote>) {
-    console.log('Acción ejecutada:', event.action, 'sobre la fila:', event.row);
 
     if (event.action === 'edit') {
       // Lógica para editar

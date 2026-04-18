@@ -4,68 +4,67 @@
   (onSaveAction)="Save.emit()"
   (onCancelAction)="modal.activeModal.close()"
 >
-  <form nz-form [formGroup]="proyectoForm" nzLayout="vertical">
-    
-    <!-- Sección: Información General -->
-    <nz-card nzSize="small" nzTitle="Información General" class="mb-3">
-      <div class="row">
-        <div class="col-12">
-          <app-form-field label="Nombre del Proyecto" [required]="true">
-            <app-input-text
-              [input_control]="nombre"
-              placeholder="Ej: Residencial Los Pinos">
-            </app-input-text>
-          </app-form-field>
-        </div>
-        <div class="col-12">
-          <app-form-field label="Descripción">
-            <app-input-textarea
-              [input_control]="descripcion"
-              placeholder="Describa el proyecto..."
-              [input_rows]="3">
-            </app-input-textarea>
-          </app-form-field>
-        </div>
+  <!-- Sección: Información General -->
+  <app-card-container title="Información General">
+    <div class="row">
+      <div class="col-12">
+        <app-form-field label="Nombre del Proyecto" [required]="true">
+          <app-input-text
+            [input_control]="nombre"
+            placeholder="Ej: Residencial Los Pinos"
+          >
+          </app-input-text>
+        </app-form-field>
       </div>
-    </nz-card>
-
-    <!-- Sección: Ubicación -->
-    <nz-card nzSize="small" nzTitle="Ubicación Geográfica">
-      <div class="row">
-        <div class="col-md-4">
-          <app-form-field label="Departamento" [required]="true">
-            <app-input-text
-              [input_control]="departamento"
-              placeholder="Santa Cruz">
-            </app-input-text>
-          </app-form-field>
-        </div>
-        <div class="col-md-4">
-          <app-form-field label="Provincia">
-            <app-input-text
-              [input_control]="provincia"
-              placeholder="Andrés Ibáñez">
-            </app-input-text>
-          </app-form-field>
-        </div>
-        <div class="col-md-4">
-          <app-form-field label="Distrito">
-            <app-input-text
-              [input_control]="distrito"
-              placeholder="Distrito 1">
-            </app-input-text>
-          </app-form-field>
-        </div>
-        <div class="col-12">
-          <app-form-field label="Dirección Principal" [required]="true">
-            <app-input-text
-              [input_control]="direccion"
-              placeholder="Av. Principal #123">
-            </app-input-text>
-          </app-form-field>
-        </div>
+      <div class="col-12">
+        <app-form-field label="Descripción">
+          <app-input-textarea
+            [input_control]="descripcion"
+            placeholder="Describa el proyecto..."
+            [input_rows]="3"
+          >
+          </app-input-textarea>
+        </app-form-field>
       </div>
-    </nz-card>
+    </div>
+  </app-card-container>
 
-  </form>
+  <!-- Sección: Ubicación -->
+  <app-card-container title="Ubicación Geográfica">
+    <div class="row">
+      <div class="col-md-4">
+        <app-form-field label="Departamento" [required]="true">
+          <app-input-text
+            [input_control]="departamento"
+            placeholder="Santa Cruz"
+          >
+          </app-input-text>
+        </app-form-field>
+      </div>
+      <div class="col-md-4">
+        <app-form-field label="Provincia">
+          <app-input-text
+            [input_control]="provincia"
+            placeholder="Andrés Ibáñez"
+          >
+          </app-input-text>
+        </app-form-field>
+      </div>
+      <div class="col-md-4">
+        <app-form-field label="Distrito">
+          <app-input-text [input_control]="distrito" placeholder="Distrito 1">
+          </app-input-text>
+        </app-form-field>
+      </div>
+      <div class="col-12">
+        <app-form-field label="Dirección Principal" [required]="true">
+          <app-input-text
+            [input_control]="direccion"
+            placeholder="Av. Principal #123"
+          >
+          </app-input-text>
+        </app-form-field>
+      </div>
+    </div>
+  </app-card-container>
 </app-modal-container>

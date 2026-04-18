@@ -30,6 +30,7 @@ $color-placeholder: #565e74;
 /* Sobrescritura global de Ant-Design (Ng-Zorro) */
 .ant-input-affix-wrapper,
 .ant-input-number,
+.ant-picker,
 .ng-select .ng-select-container {
   @extend .ui-input-base;
 }

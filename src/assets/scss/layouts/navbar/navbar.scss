@@ -93,6 +93,11 @@
     border-radius: $border-radius;
     color: var(--pc-header-color);
     overflow: hidden;
+    
+    @media (min-width: 768px) {
+      height: 40px; /* Un poco mas alto para desktop */
+      width: 40px;
+    }
 
     &.dropdown-toggle::after {
       display: none;
@@ -246,15 +251,14 @@
   .header-user-profile {
     .pc-head-link {
       width: auto;
-      padding: 7px;
+      padding: 5px 12px;
+      height: 48px; /* Asegura que quepa el avatar de 45px */
+      overflow: visible;
 
-      > span > i {
-        font-size: 22px;
-        margin-right: 8px;
-      }
-
-      .user-avatar {
-        width: 34px;
+      > .user-avatar {
+        width: 38px;
+        height: 38px;
+        margin-right: 0;
       }
 
       @include media-breakpoint-down(sm) {

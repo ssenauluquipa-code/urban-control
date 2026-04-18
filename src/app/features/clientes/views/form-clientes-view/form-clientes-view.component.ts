@@ -3,26 +3,23 @@ import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FormFieldComponent } from "src/app/shared/components/molecules/form-field/form-field.component";
 import { InputTextComponent } from "src/app/shared/components/atoms/input-text/input-text.component";
-import { SelectDataComponent } from "src/app/shared/components/atoms/select-data.component";
+import { SelectGenderComponent } from "src/app/shared/components/atoms/select-gender.component";
+import { SelectDocumentTypeComponent } from "src/app/shared/components/atoms/select-document-type.component";
 import { InputTextareaComponent } from "src/app/shared/components/atoms/input-textarea/input-textarea.component";
-import { EGenero, ETipoDocumento } from 'src/app/core/models/cliente.model';
 import { InputDateComponent } from "src/app/shared/components/atoms/input-date/input-date.component";
+import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 @Component({
   selector: 'app-form-clientes-view',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule,
-    FormFieldComponent, InputTextComponent,
-    SelectDataComponent, InputTextareaComponent, InputDateComponent],
+    FormFieldComponent, InputTextComponent, SelectGenderComponent, SelectDocumentTypeComponent,
+    InputTextareaComponent, InputDateComponent, CardContainerComponent],
   templateUrl: './form-clientes-view.component.html',
   styleUrl: './form-clientes-view.component.scss'
 })
 export class FormClientesViewComponent {
 
   @Input() formInput!: FormGroup;
-
-  // Recibimos las opciones desde el Page
-  @Input() generoOptions: { value: EGenero; label: string }[] = [];
-  @Input() tipoDocOptions: { value: ETipoDocumento; label: string }[] = [];
 
   // --- Getters ---
   get NombreCompleto() { return this.formInput.get('nombreCompleto') as FormControl; }

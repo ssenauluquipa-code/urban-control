@@ -115,6 +115,14 @@ export const ROUTES: IRouteInfo[] = [
     submenu: []
   },
   {
+    path: '/asesores',
+    title: 'Gestión de Asesores',
+    icon: 'bi bi-person-badge-fill',
+    class: '',
+    extralink: false,
+    submenu: []
+  },
+  {
     path: '/configuracion/empresa',
     title: 'Configuración',
     icon: 'bi bi-gear',

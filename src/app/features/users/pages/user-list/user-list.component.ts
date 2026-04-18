@@ -114,7 +114,6 @@ export class UserListComponent implements OnInit {
   }
 
   onTableAction(event: ITableActionEvent<IUser>) {
-    console.log(`Acción: ${event.action} para el usuario:`, event.row);
 
     if (!event.row) return;
 

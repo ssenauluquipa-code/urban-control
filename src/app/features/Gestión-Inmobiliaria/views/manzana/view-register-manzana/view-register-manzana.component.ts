@@ -5,11 +5,13 @@ import { InputTextComponent } from "src/app/shared/components/atoms/input-text/i
 import { FormFieldComponent } from "src/app/shared/components/molecules/form-field/form-field.component";
 import { IManzana } from 'src/app/core/models/manzana/manzana.model';
 import { CommonModule } from '@angular/common';
+import { InputTextareaComponent } from "src/app/shared/components/atoms/input-textarea/input-textarea.component";
 
 @Component({
   selector: 'app-view-register-manzana',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ModalContainerComponent, InputTextComponent, FormFieldComponent],
+  imports: [CommonModule, ReactiveFormsModule, ModalContainerComponent,
+    InputTextComponent, FormFieldComponent, InputTextareaComponent],
   templateUrl: './view-register-manzana.component.html',
   styleUrl: './view-register-manzana.component.scss'
 })

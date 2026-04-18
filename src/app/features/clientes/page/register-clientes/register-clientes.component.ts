@@ -33,17 +33,7 @@ export class RegisterClientesComponent implements OnInit {
     this.checkEditMode();
   }
 
-  // Preparamos las opciones para app-select-data
-  // Convertimos los Enums en arrays de objetos { value: 'VALOR', label: 'Valor' }
-  public generoOptions = Object.values(EGenero).map(val => ({
-    value: val,
-    label: val.charAt(0) + val.slice(1).toLowerCase()
-  }));
 
-  public tipoDocOptions = Object.values(ETipoDocumento).map(val => ({
-    value: val,
-    label: val
-  }));
 
   private buildForm(): void {
     this.form = this.fb.group({
@@ -53,10 +43,10 @@ export class RegisterClientesComponent implements OnInit {
       complemento: [''],
       numeroReferencia: [''],
       genero: [EGenero.MASCULINO, Validators.required],
-      fechaNacimiento: [null, Validators.required],
+      fechaNacimiento: [null],
       telefono: [''],
-      email: ['', [Validators.required, Validators.email]],
-      direccion: ['', Validators.required]
+      email: ['', [Validators.email]],
+      direccion: ['']
     });
   }
 

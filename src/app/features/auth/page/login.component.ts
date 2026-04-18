@@ -45,22 +45,21 @@ export class LoginComponent {
   }
 
   handleAuth(credentials: ILoginDto): void {
-    console.log('credentials recibidas:', JSON.stringify(credentials));
     this.isLogin = true;
     this.authService.login(credentials).pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe({
-      next: () => {
-        this.isLogin = false;
-        this.cdr.markForCheck(); // 2. Avisar a Angular que revise la pantalla
-        this.notification.success('¡Bienvenido! Inicio de sesión exitoso.');
-        this.router.navigate(['/dashboard']);
-      },
-      error: (error) => {
-        this.isLogin = false;
-        this.cdr.markForCheck(); // 2. Avisar a Angular que revise la pantalla
-        this.notification.error('Usuario o contraseña incorrectos. Inténtalo de nuevo.');
-        console.error('Error en autenticación:', error);
-      },
-    })
+      .subscribe({
+        next: () => {
+          this.isLogin = false;
+          this.cdr.markForCheck(); // 2. Avisar a Angular que revise la pantalla
+          this.notification.success('¡Bienvenido! Inicio de sesión exitoso.');
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          this.isLogin = false;
+          this.cdr.markForCheck(); // 2. Avisar a Angular que revise la pantalla
+          this.notification.error('Usuario o contraseña incorrectos. Inténtalo de nuevo.');
+          console.error('Error en autenticación:', error);
+        },
+      })
   }
 }

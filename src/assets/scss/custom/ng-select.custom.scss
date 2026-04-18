@@ -31,6 +31,7 @@ ng-select {
     border: 1px solid #d9d9d9;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     border-radius: 8px !important;
+    z-index: 9999 !important;
   }
 
   .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected {
@@ -53,6 +54,20 @@ ng-select {
   //   border-color: #40a9ff;
   //   box-shadow: 0 0 0 2px rgba(24, 144, 255, .2)
   // }
+
+  .ng-input > input {
+    caret-color: transparent !important;
+    opacity: 0 !important;
+    width: 0 !important;
+  }
+
+  &.ng-select-opened {
+    .ng-input > input {
+      caret-color: #17a2b8 !important;
+      opacity: 1 !important;
+      width: 100% !important;
+    }
+  }
 }
 
 .ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
