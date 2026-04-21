@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { IClienteRepository } from '../interfaces/repository/cliente.repository.interface';
 import { Observable } from 'rxjs';
-import { CreateClienteDto, ICliente, IPagedResponse, UpdateClienteDto } from '../models/cliente.model';
+import { CreateClienteDto, ICliente, IClienteSearchResult, IPagedResponse, UpdateClienteDto } from '../models/cliente.model';
 
 export const CLIENTE_REPOSITORY_TOKEN = 'IClienteRepository';
 
@@ -35,7 +35,7 @@ export class ClienteService {
     }
   }
   //Nuevo: Para selectores/autocompletado (búsqueda rápida)
-  searchClients(term: string): Observable<Partial<ICliente>[]> {
+  searchClients(term: string): Observable<IClienteSearchResult[]> {
     return this.repo.search(term);
   }
 }

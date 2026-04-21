@@ -50,3 +50,9 @@ export interface IPagedResponse<T> {
     limit: number;
     totalPages: number;
 }
+
+export interface IClienteSearchResult {
+    id: string;
+    nombreCompleto: string;
+    nroDocumento: string;
+}

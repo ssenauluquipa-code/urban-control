@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "src/environments/environment";
-import { CreateManzanaDto, IManzana, UpdateManzanaDto } from "../../models/manzana/manzana.model";
+import { CreateManzanaDto, IManzana, IManzanaSearchResult, UpdateManzanaDto } from "../../models/manzana/manzana.model";
 import { IManzanaRepository } from "../../interfaces/repository/proyectos/manzana.repository.interface";
 
 @Injectable({
@@ -11,7 +11,7 @@ import { IManzanaRepository } from "../../interfaces/repository/proyectos/manzan
 export class ManzanaRepository implements IManzanaRepository {
   private readonly API_URL = `${environment.apiUrl}/manzanas`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Si pasa proyectoId, agrega el query param ?proyectoId=...
   getAll(proyectoId?: string): Observable<IManzana[]> {
@@ -28,8 +28,8 @@ export class ManzanaRepository implements IManzanaRepository {
 
   delete(id: string): Observable<void> { return this.http.delete<void>(`${this.API_URL}/${id}`); }
 
-  search(proyectoId: string, term: string): Observable<IManzana[]> {
+  search(proyectoId: string, term: string): Observable<IManzanaSearchResult[]> {
     const params = new HttpParams().set('proyectoId', proyectoId).set('term', term);
-    return this.http.get<IManzana[]>(`${this.API_URL}/search`, { params });
+    return this.http.get<IManzanaSearchResult[]>(`${this.API_URL}/search`, { params });
   }
 }

@@ -31,7 +31,8 @@ import { FormsModule } from '@angular/forms';
         [class.is-invalid]="inputControl.invalid && inputControl.touched"
         [appendTo]="'body'"
         (blur)="Blur.emit($event)"
-        (change)="onSelectChange()">
+        (change)="onSelectChange()"
+        (search)="Search.emit($event.term)">
 
         <ng-template ng-notfound-tmp let-searchTerm="searchTerm">
           <div class="p-2 small text-muted">
@@ -94,6 +95,7 @@ export class SelectDataComponent implements OnInit {
 
   @Output() ChangeValue = new EventEmitter<string | null>();
   @Output() Blur = new EventEmitter<string>();
+  @Output() Search = new EventEmitter<string>();
 
   ngOnInit(): void {
     if (this.defaultValue) {

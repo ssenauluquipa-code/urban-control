@@ -1,0 +1,63 @@
+<app-page-container
+  title="Gestión de Reservas"
+  permissionScope="reservas"
+  [showNew]="true"
+  (AddNew)="onAddNew()"
+>
+  <!-- Filtros -->
+  <div class="row mb-3">
+    <div class="col-12 d-flex flex-wrap gap-2">
+      <button
+        class="btn"
+        [class.btn-primary]="estadoFilter === 'ACTIVA'"
+        (click)="setFilter('ACTIVA')"
+      >
+        Activas
+      </button>
+
+      <button
+        class="btn"
+        [class.btn-primary]="estadoFilter === 'VENCIDA'"
+        (click)="setFilter('VENCIDA')"
+      >
+        Vencidas
+      </button>
+
+      <button
+        class="btn"
+        [class.btn-primary]="estadoFilter === 'CONVERTIDA'"
+        (click)="setFilter('CONVERTIDA')"
+      >
+        Convertidas
+      </button>
+
+      <button
+        class="btn"
+        [class.btn-primary]="estadoFilter === 'CANCELADA'"
+        (click)="setFilter('CANCELADA')"
+      >
+        Canceladas
+      </button>
+
+      <button
+        class="btn"
+        [class.btn-primary]="estadoFilter === undefined"
+        (click)="setFilter(undefined)"
+      >
+        Todas
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <app-data-table
+    [rowData]="reservas"
+    [columnDefs]="columnDefs"
+    [loading]="loading"
+    height="400px"
+    [showCreate]="false"
+    [actions]="[tableActionEnum.VIEW, tableActionEnum.ANULAR]"
+    (actionClicked)="onTableAction($event)"
+  >
+  </app-data-table>
+</app-page-container>

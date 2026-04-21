@@ -12,10 +12,6 @@ import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-esta
 import { InputTextComponent } from 'src/app/shared/components/atoms/input-text/input-text.component';
 import { InputNumberComponent } from 'src/app/shared/components/atoms/input-number/input-number.component';
 import { InputTextareaComponent } from 'src/app/shared/components/atoms/input-textarea/input-textarea.component';
-import {
-  ICliente,
-  ClienteSelectorComponent,
-} from 'src/app/shared/components/molecules/cliente-selector/cliente-selector.component';
 import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 import { InputTextInfoComponent } from 'src/app/shared/components/atoms/input-text-info.component';
 import { ImageDisplayComponent } from 'src/app/shared/components/atoms/image-display/image-display.component';
@@ -37,7 +33,6 @@ import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
     InputNumberComponent,
     InputTextareaComponent,
     FormFieldComponent,
-    ClienteSelectorComponent,
     DataTableComponent,
     PageContainerComponent,
     CardContainerComponent,
@@ -65,43 +60,6 @@ export class DesignSystemShowcaseComponent implements OnInit {
 
   public estado = TEstadoLote;
 
-  clientes: ICliente[] = [
-    {
-      id: 1,
-      nombre: 'Juan Perez',
-      ci: '1234567 LP',
-      telefono: '76543210',
-      email: 'juan@email.com',
-    },
-    {
-      id: 2,
-      nombre: 'Maria Garcia',
-      ci: '2345678 CB',
-      telefono: '76543211',
-      email: 'maria@email.com',
-    },
-    {
-      id: 3,
-      nombre: 'Carlos Lopez',
-      ci: '3456789 SC',
-      telefono: '76543212',
-      email: 'carlos@email.com',
-    },
-    {
-      id: 4,
-      nombre: 'Ana Rodriguez',
-      ci: '4567890 LP',
-      telefono: '76543213',
-      email: 'ana@email.com',
-    },
-    {
-      id: 5,
-      nombre: 'Luis Fernandez',
-      ci: '5678901 LP',
-      telefono: '76543214',
-      email: 'luis@email.com',
-    },
-  ];
 
   gridData = [
     {

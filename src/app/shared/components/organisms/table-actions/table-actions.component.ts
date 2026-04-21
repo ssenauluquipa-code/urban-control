@@ -116,6 +116,11 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       if (action === TableActionsEnum.DEACTIVATE) return data?.isActive === true;
       // Si no tiene avatar, no mostramos "Quitar Avatar"
       if (action === TableActionsEnum.REMOVE_IMAGE) return !!data?.avatarUrl;
+      // 👇 Lógica específica para Anular Reservas
+      if (action === TableActionsEnum.ANULAR) {
+        // Solo mostramos Anular si isActive es TRUE (definido en el map del componente lista)
+        return data?.isActive === true;
+      }
       return true;
     });
   }

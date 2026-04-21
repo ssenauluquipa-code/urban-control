@@ -88,6 +88,15 @@ export const NavigationItems: INavigationItem[] = [
         url: '/asesores',
         icon: 'bi bi-person-badge-fill',
         breadcrumbs: false
+      },
+      {
+        id: 'reservas',
+        title: 'Gestión Reservas',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/reservas',
+        icon: 'bi bi-calendar-check',
+        breadcrumbs: false
       }
     ]
   },

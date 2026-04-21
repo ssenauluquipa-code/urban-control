@@ -59,3 +59,8 @@ export interface IManzanaInLote {
     codigo: string;
     proyecto: IProyectoInLote;
 }
+
+export interface ILoteSearchResult {
+    id: string;
+    numero: number;
+}

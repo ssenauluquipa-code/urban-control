@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { CreateManzanaDto, IManzana, UpdateManzanaDto } from "src/app/core/models/manzana/manzana.model";
+import { CreateManzanaDto, IManzana, IManzanaSearchResult, UpdateManzanaDto } from "src/app/core/models/manzana/manzana.model";
 
 export interface IManzanaRepository {
   getAll(proyectoId?: string): Observable<IManzana[]>;
@@ -7,5 +7,5 @@ export interface IManzanaRepository {
   create(dto: CreateManzanaDto): Observable<IManzana>;
   update(id: string, dto: UpdateManzanaDto): Observable<IManzana>;
   delete(id: string): Observable<void>;
-  search(proyectoId: string, term: string): Observable<IManzana[]>;
+  search(proyectoId: string, term: string): Observable<IManzanaSearchResult[]>;
 }

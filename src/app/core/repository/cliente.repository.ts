@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { IClienteRepository } from "../interfaces/repository/cliente.repository.interface";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { CreateClienteDto, ICliente, IPagedResponse, UpdateClienteDto } from "../models/cliente.model";
+import { CreateClienteDto, ICliente, IClienteSearchResult, IPagedResponse, UpdateClienteDto } from "../models/cliente.model";
 import { Observable } from "rxjs";
 
 @Injectable({
@@ -23,9 +23,9 @@ export class ClienteRepository implements IClienteRepository {
     return this.http.get<IPagedResponse<ICliente>>(this.Api_URL, { params });
   }
 
-  search(term: string): Observable<Partial<ICliente>[]> {
+  search(term: string): Observable<IClienteSearchResult[]> {
     const params = new HttpParams().set('term', term);
-    return this.http.get<Partial<ICliente>[]>(`${this.Api_URL}/search`, { params });
+    return this.http.get<IClienteSearchResult[]>(`${this.Api_URL}/search`, { params });
   }
 
   getById(id: string): Observable<ICliente> {

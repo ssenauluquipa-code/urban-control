@@ -18,3 +18,8 @@ export interface CreateManzanaDto {
 }
 
 export type UpdateManzanaDto = Partial<CreateManzanaDto>;
+
+export interface IManzanaSearchResult {
+    id: string;
+    codigo: string;
+}

@@ -8,16 +8,12 @@ import {
   TableActionsEnum,
 } from 'src/app/shared/interfaces/table-actions.interface';
 import {
-  debounceTime,
-  distinctUntilChanged,
   finalize,
   Observable,
   of,
 } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { SelectProjectsComponent } from 'src/app/shared/components/atoms/select-projects.component';
-import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
@@ -26,7 +22,7 @@ import { RegisterLotesComponent } from './register-lotes.component';
 import { IManzana } from 'src/app/core/models/manzana/manzana.model';
 import { ManzanaService } from 'src/app/core/services/proyectos/manzana.service';
 import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
-import { InputTextComponent } from 'src/app/shared/components/atoms/input-text/input-text.component';
+
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { LoteVisualizerComponent } from '../../views/lote-visualizer/lote-visualizer.component';
 import { NzDrawerModule, NzDrawerService } from 'ng-zorro-antd/drawer'; // Importar servicio
@@ -41,13 +37,11 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
     CommonModule,
     PageContainerComponent,
     DataTableComponent,
-    SelectProjectsComponent,
     ReactiveFormsModule,
     FormsModule,
     NzModalModule,
     SelectDataComponent,
     LoteVisualizerComponent,
-    InputTextComponent,
     FormFieldComponent,
     NzDrawerModule,
   ],
@@ -76,21 +70,8 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
           </app-form-field>
         </div>
 
-        <!-- Columna 2: Buscar Lote (col-md-3) -->
-        <div class="col-md-3 col-sm-6">
-          <app-form-field label="Buscar Lote" forId="search-lote-id">
-            <app-input-text
-              inputId="search-lote-id"
-              [input_control]="searchControl"
-              input_placeholder="Escriba el número..."
-              prefix_icon="search"
-            >
-            </app-input-text>
-          </app-form-field>
-        </div>
-
         <!-- Columna 3: Botones de Vista (Estandarizados) -->
-        <div class="col-md-3 col-sm-12">
+        <div class="col-md-6 col-sm-12">
           <app-form-field label="Vista">
             <div class="btn-group w-100" role="group">
               <button
@@ -157,8 +138,7 @@ export class ListLotesComponent implements OnInit {
     disabled: true,
   });
 
-  // 🔍 NUEVO: Control para el buscador
-  public searchControl = new FormControl<string>('');
+
 
   public viewMode: 'table' | 'map' = 'table';
   columnDefs: ColDef[] = [
@@ -224,7 +204,6 @@ export class ListLotesComponent implements OnInit {
   constructor(
     private loteService: LoteService,
     private manzanaService: ManzanaService,
-    private proyectoService: ProyectoService,
     private modalService: NgbModal,
     private notification: NotificationService,
     private nzModal: NzModalService,
@@ -247,9 +226,7 @@ export class ListLotesComponent implements OnInit {
       }
     });
 
-    // 2. Manzana cambia -> Carga Lotes
     this.manzanaIdControl.valueChanges.subscribe((manzanaId) => {
-      this.searchControl.setValue(''); // Limpia búsqueda al cambiar manzana
       if (manzanaId) {
         this.loadLotes(manzanaId);
       } else {
@@ -257,22 +234,6 @@ export class ListLotesComponent implements OnInit {
       }
     });
 
-    // 🔍 4. Lógica del Buscador
-    this.searchControl.valueChanges
-      .pipe(
-        debounceTime(300), // Espera 300ms
-        distinctUntilChanged(), // Evita buscar lo mismo
-      )
-      .subscribe((term) => {
-        const manzanaId = this.manzanaIdControl.value;
-        if (!manzanaId) return;
-
-        if (term && term.length > 0) {
-          this.searchLotes(manzanaId, term);
-        } else {
-          this.loadLotes(manzanaId);
-        }
-      });
   }
 
   private loadLotes(manzanaId: string): void {
@@ -282,13 +243,7 @@ export class ListLotesComponent implements OnInit {
       .pipe(finalize(() => this.isLoading = false));
   }
 
-  // 🔍 Método para búsqueda
-  private searchLotes(manzanaId: string, term: string): void {
-    this.isLoading = true;
-    this.lotes$ = this.loteService
-      .searchLotes(manzanaId, term)
-      .pipe(finalize(() => this.isLoading = false));
-  }
+
 
   // 🚀 Método para cambio de estado rápido
   private cambiarEstadoRapido(lote: ILote): void {
@@ -306,13 +261,7 @@ export class ListLotesComponent implements OnInit {
           this.notification.success(`Estado cambiado a ${nuevoEstado}`);
           // Refrescar lista actual
           const currentManzana = this.manzanaIdControl.value;
-          const currentSearch = this.searchControl.value;
-
-          if (currentSearch) {
-            this.searchLotes(currentManzana!, currentSearch);
-          } else {
-            this.loadLotes(currentManzana!);
-          }
+          this.loadLotes(currentManzana!);
         },
         error: () => this.notification.error('No se pudo cambiar el estado'),
       });
@@ -355,15 +304,7 @@ export class ListLotesComponent implements OnInit {
 
     modalRef.result.then((result) => {
       if (result && this.manzanaIdControl.value) {
-        // Si estábamos buscando, recargamos búsqueda, sino lista normal
-        if (this.searchControl.value) {
-          this.searchLotes(
-            this.manzanaIdControl.value,
-            this.searchControl.value,
-          );
-        } else {
-          this.loadLotes(this.manzanaIdControl.value);
-        }
+        this.loadLotes(this.manzanaIdControl.value);
       }
     });
   }

@@ -43,6 +43,8 @@ import { CLIENTE_REPOSITORY_TOKEN } from './app/core/services/cliente.service';
 import { ASESOR_REPOSITORY_TOKEN } from './app/core/services/asesor.service';
 import { AsesorRepository } from './app/core/repository/asesor.repository';
 import es from '@angular/common/locales/es';
+import { RESERVA_REPOSITORY_TOKEN } from './app/core/services/reserva.service';
+import { ReservaRepository } from './app/core/repository/reserva.repository';
 
 ModuleRegistry.registerModules([AllCommunityModule, ClientSideRowModelModule, InfiniteRowModelModule]);
 
@@ -80,6 +82,7 @@ bootstrapApplication(AppComponent, {
     { provide: LOTE_REPOSITORY_TOKEN, useClass: LoteRepository },
     { provide: CLIENTE_REPOSITORY_TOKEN, useClass: ClienteRepository },
     { provide: ASESOR_REPOSITORY_TOKEN, useClass: AsesorRepository },
+    { provide: RESERVA_REPOSITORY_TOKEN, useClass: ReservaRepository },
     provideAnimationsAsync(),
     importProvidersFrom(NzIconModule, NzModalModule),
     provideAnimations(),

@@ -123,6 +123,14 @@ export const ROUTES: IRouteInfo[] = [
     submenu: []
   },
   {
+    path: '/reservas',
+    title: 'Gestión de Reservas',
+    icon: 'bi bi-calendar-check',
+    class: '',
+    extralink: false,
+    submenu: []
+  },
+  {
     path: '/configuracion/empresa',
     title: 'Configuración',
     icon: 'bi bi-gear',
