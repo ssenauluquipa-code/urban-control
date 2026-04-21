@@ -19,16 +19,14 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
 import { ILote, TEstadoLote } from 'src/app/core/models/lote/lote.model';
 import { RegisterLotesComponent } from './register-lotes.component';
-import { IManzana } from 'src/app/core/models/manzana/manzana.model';
 import { ManzanaService } from 'src/app/core/services/proyectos/manzana.service';
-import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
-
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { LoteVisualizerComponent } from '../../views/lote-visualizer/lote-visualizer.component';
 import { NzDrawerModule, NzDrawerService } from 'ng-zorro-antd/drawer'; // Importar servicio
 import { LoteDetailComponent } from '../../views/lotes/lote-detail/lote-detail.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
+import { SelectManzanasComponent } from "src/app/shared/components/atoms/select-manzanas.component";
 
 @Component({
   selector: 'app-list-lotes',
@@ -40,10 +38,10 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
     ReactiveFormsModule,
     FormsModule,
     NzModalModule,
-    SelectDataComponent,
     LoteVisualizerComponent,
     FormFieldComponent,
     NzDrawerModule,
+    SelectManzanasComponent
   ],
   template: `
     <app-page-container
@@ -56,17 +54,16 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
       <!-- 📌 FILTROS + BOTONES EN UNA SOLA FILA -->
       <div class="row mb-3 g-2">
 
-        <!-- Columna 1: Manzana (col-md-3) -->
+        <!-- Columna 1Property 'proyectoId' does not exist on type 'ListLotesComponent'.ngtsc(2339)
+        any: Manzana (col-md-3) -->
         <div class="col-md-3 col-sm-6">
           <app-form-field label="Manzana">
-            <app-select-data
+            <app-select-manzanas
               [inputControl]="manzanaIdControl"
-              [itemList]="(manzanasList$ | async) || []"
-              [bindValue]="'id'"
-              [bindLabel]="'codigo'"
+              [proyectoId]="proyectoId"
               [placeholder]="'Seleccione manzana'"
             >
-            </app-select-data>
+            </app-select-manzanas>
           </app-form-field>
         </div>
 
@@ -128,8 +125,9 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
 export class ListLotesComponent implements OnInit {
   public tableActionEnum = TableActionsEnum;
   public lotes$!: Observable<ILote[]>;
-  public manzanasList$!: Observable<IManzana[]>;
   public isLoading = false;
+
+  public proyectoId: string | null = null;
 
   // Controles
   //public proyectoIdControl = new FormControl<string>('');
@@ -215,8 +213,8 @@ export class ListLotesComponent implements OnInit {
   ngOnInit(): void {
     // 1. Cargar primer proyecto
     this.globalContext.selectedProjectId$.subscribe((projectId) => {
+      this.proyectoId = projectId;
       if (projectId) {
-        this.manzanasList$ = this.manzanaService.getManzanas(projectId);
         this.manzanaIdControl.enable();
         this.manzanaIdControl.setValue(null);
       } else {
