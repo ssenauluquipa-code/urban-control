@@ -1,17 +1,27 @@
 import { Component, EventEmitter, inject, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { ILoteSearchResult } from 'src/app/core/models/lote/lote.model';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
+import { SelectDataComponent } from './select-data.component';
 
 @Component({
   selector: 'app-select-lotes',
   standalone: true,
-  imports: [],
+  imports: [SelectDataComponent, ReactiveFormsModule],
   template: `
-    <p>
-      select-lotes works!
-    </p>
+     <app-select-data
+      [itemList]="loteList"
+      [inputControl]="inputControl"
+      [placeholder]="placeholder"
+      [bindValue]="'id'"
+      [bindLabel]="'numero'"    
+      [searchable]="true"
+      [loading]="isLoading"
+      (Search)="onSearchInput($event)"
+      (ChangeValue)="onSelect($event)">
+    </app-select-data>
+
   `,
   styles: ``
 })
@@ -19,7 +29,7 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
 
   // Inputs
   @Input() inputControl = new FormControl();
-  @Input() manzanaId: string | null = null; // 👈 Dependencia de cascada
+  @Input() manzanaId: string | null = null; // Dependencia de cascada
   @Input() placeholder = 'Seleccionar Lote';
 
   // Output

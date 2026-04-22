@@ -9,6 +9,8 @@ import { ReservaService } from 'src/app/core/services/reserva.service';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RegisterReservaComponent } from '../register-reserva/register-reserva.component';
 
 @Component({
   selector: 'app-list-reservas',
@@ -18,10 +20,6 @@ import { PageContainerComponent } from "src/app/shared/components/templates/page
   styleUrl: './list-reservas.component.scss'
 })
 export class ListReservasComponent implements OnInit {
-  onAddNew() {
-    throw new Error('Method not implemented.');
-  }
-
   public tableActionEnum = TableActionsEnum;
   public reservas: IReserva[] = [];
   public loading = false;
@@ -101,11 +99,12 @@ export class ListReservasComponent implements OnInit {
   private reservaService = inject(ReservaService);
   private confirmation = inject(ConfirmationService);
   private notification = inject(NotificationService);
-  private globalContext = inject(ProjectStatusGlobalService); // 👈 Inyectar
+  private globalContext = inject(ProjectStatusGlobalService); // Inyectar
+  private modalService = inject(NgbModal);
 
 
   ngOnInit(): void {
-    // 🚀 Nos suscribimos al proyecto GLOBAL
+    // Nos suscribimos al proyecto GLOBAL
     this.globalContext.selectedProjectId$.subscribe(projectId => {
       if (projectId) {
         this.loadReservas(projectId);
@@ -153,5 +152,20 @@ export class ListReservasComponent implements OnInit {
           }
         });
     }
+  }
+
+  onAddNew() {
+    const modalRef = this.modalService.open(RegisterReservaComponent, {
+      size: 'xl',
+      backdrop: 'static' // Evita cerrar al hacer clic fuera
+    });
+    modalRef.result.then((res) => {
+      if (res) {
+        const currentId = this.globalContext.getCurrentProjectId();
+        if (currentId) this.loadReservas(currentId);
+      }
+    }).catch(() => {
+      ///
+    });
   }
 }

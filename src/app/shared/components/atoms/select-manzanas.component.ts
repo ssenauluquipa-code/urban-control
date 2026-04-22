@@ -26,7 +26,7 @@ export class SelectManzanasComponent implements OnInit, OnChanges, OnDestroy {
 
   // Inputs
   @Input() inputControl = new FormControl();
-  @Input() proyectoId: string | null = null; // 👈 Recibe el proyecto para filtrar
+  @Input() proyectoId: string | null = null; // Recibe el proyecto para filtrar
   @Input() placeholder = 'Seleccionar Manzana';
   @Output() Change = new EventEmitter<string | null>();
 

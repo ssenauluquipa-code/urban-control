@@ -1,0 +1,59 @@
+<div class="row">
+  <!-- Columna Izquierda: Selección -->
+  <div class="col-md-6">
+    <!-- Cliente -->
+    <app-form-field label="Cliente" [required]="true">
+      <app-select-clientes [inputControl]="clienteId"></app-select-clientes>
+    </app-form-field>
+
+    <!-- Manzana -->
+    <app-form-field label="Manzana" [required]="true">
+      <app-select-manzanas [inputControl]="manzanaId" [proyectoId]="proyectoId">
+      </app-select-manzanas>
+    </app-form-field>
+
+    <!-- Lote -->
+    <app-form-field label="Lote" [required]="true">
+      <app-select-lotes [inputControl]="loteId" [manzanaId]="manzanaId.value">
+      </app-select-lotes>
+    </app-form-field>
+  </div>
+
+  <!-- Columna Derecha: Detalles -->
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-6">
+        <app-form-field label="Monto Reserva" [required]="true">
+          <app-input-text
+            [input_control]="montoReserva"
+            input_placeholder="0.00"
+          >
+          </app-input-text>
+        </app-form-field>
+      </div>
+      <div class="col-6">
+        <app-form-field label="Moneda" [required]="true">
+          <app-select-moneda [inputControl]="moneda"></app-select-moneda>
+        </app-form-field>
+      </div>
+    </div>
+
+    <!-- 👇 USAMOS TU INPUT DATE -->
+    <app-form-field label="Fecha de Vencimiento" [required]="true">
+      <app-input-date
+        [input_control]="fechaVencimiento"
+        input_placeholder="Seleccionar fecha"
+      >
+      </app-input-date>
+    </app-form-field>
+
+    <app-form-field label="Observaciones">
+      <!-- Si tienes átomo textarea, úsalo. Sino usa nz-input -->
+      <app-input-textarea
+        [input_control]="observaciones"
+        placeholder="Detalles adicionales..."
+      >
+      </app-input-textarea>
+    </app-form-field>
+  </div>
+</div>

@@ -14,18 +14,18 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 })
 export class ModalContainerComponent {
   /** Titulo principal de la ventana modal */
-  @Input({ required: true }) mainTitleModal: string = '';
+  @Input({ required: true }) mainTitleModal = '';
   @Input() subtitle?: string;
-  @Input() loading: boolean = false;
-  
-  // Configuración de Footer
-  @Input() showFooter: boolean = true;
-  @Input() saveButtonName: string = "Guardar";
-  @Input() saveButtonIcon: string = "save";
-  @Input() cancelButtonName: string = "Cancelar";
-  
-  @Output() onSaveAction = new EventEmitter<void>();
-  @Output() onCancelAction = new EventEmitter<void>();
+  @Input() loading = false;
 
-  constructor(public activeModal: NgbActiveModal) {}
+  // Configuración de Footer
+  @Input() showFooter = true;
+  @Input() saveButtonName = "Guardar";
+  @Input() saveButtonIcon = "save";
+  @Input() cancelButtonName = "Cancelar";
+
+  @Output() SaveAction = new EventEmitter<void>();
+  @Output() CancelAction = new EventEmitter<void>();
+
+  constructor(public activeModal: NgbActiveModal) { }
 }

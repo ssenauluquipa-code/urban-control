@@ -11,7 +11,7 @@ export const PROYECTO_REPOSITORY_TOKEN = 'IProyectoRepository';
 export class ProyectoService {
 
   constructor(
-    // 👈 Usamos @Inject con un string o token que Angular sí pueda reconocer
+    // Usamos @Inject con un string o token que Angular sí pueda reconocer
     @Inject('IProyectoRepository') private repo: IProyectoRepository
   ) { }
 

@@ -54,9 +54,9 @@ export class DataTableComponent<T = unknown> implements OnInit, OnChanges, OnDes
   private searchTerm$ = new Subject<string>();
   private destroy$ = new Subject<void>();
   private pendingGetRows: IGetRowsParams | null = null;
-  private internalCurrentPage = 0; // 👈 Trackeamos qué página tenemos en memoria
+  private internalCurrentPage = 0; // Trackeamos qué página tenemos en memoria
 
-  // 🚀 Definimos gridOptions como una propiedad simple
+  //Definimos gridOptions como una propiedad simple
   // La configuración estructural (rowModelType) va aquí, no en setGridOption
   public gridOptions: GridOptions = {
     pagination: true,
