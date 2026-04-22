@@ -1,0 +1,138 @@
+<!-- 👇 Agregamos clases para centrar y dar respiración al contenedor -->
+<div class="container-fluid py-4">
+  <!-- 👇 g-4 agrega separación vertical y horizontal entre columnas -->
+  <div class="row g-4">
+    <!-- SECCIÓN 1: INFO DE LA RESERVA -->
+    <div class="col-lg-6 col-md-12">
+      <app-card-container title="Información de la Reserva">
+        <!-- g-3 separa los inputs internos -->
+        <div class="row g-3">
+          <div class="col-md-6 col-12">
+            <app-input-text-info [label]="'Estado'" [value]="reserva?.estado">
+            </app-input-text-info>
+          </div>
+          <div class="col-md-6 col-12">
+            <app-input-text-info
+              [label]="'Monto'"
+              [value]="reserva?.moneda + ' ' + reserva?.montoReserva"
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-md-6 col-12">
+            <app-input-text-info
+              [label]="'Fecha Reserva'"
+              [value]="reserva?.fechaReserva | date: 'dd/MM/yyyy'"
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-md-6 col-12">
+            <app-input-text-info
+              [label]="'Vencimiento'"
+              [value]="reserva?.fechaVencimiento | date: 'dd/MM/yyyy'"
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-12">
+            <app-input-text-info
+              [label]="'Observaciones'"
+              [value]="reserva?.observaciones || 'Sin observaciones'"
+            >
+            </app-input-text-info>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
+
+    <!-- SECCIÓN 2: INFO DEL CLIENTE -->
+    <div class="col-lg-6 col-md-12">
+      <app-card-container title="Datos del Cliente">
+        <div class="row g-3">
+          <div class="col-md-6 col-12">
+            <app-input-text-info
+              [label]="'Nombre Completo'"
+              [value]="reserva?.cliente?.nombreCompleto"
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-md-6 col-12">
+            <app-input-text-info
+              [label]="'Documento'"
+              [value]="
+                reserva?.cliente?.tipoDocumento +
+                ': ' +
+                reserva?.cliente?.nroDocumento
+              "
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-md-6 col-12">
+            <app-input-text-info
+              [label]="'Teléfono'"
+              [value]="reserva?.cliente?.telefono"
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-md-6 col-12">
+            <app-input-text-info
+              [label]="'Nro. Referencia'"
+              [value]="reserva?.cliente?.numeroReferencia"
+            >
+            </app-input-text-info>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
+
+    <!-- SECCIÓN 3: INFO DEL LOTE Y UBICACIÓN -->
+    <!-- Al estar en una fila nueva, g-4 ya lo separa de las tarjetas de arriba -->
+    <div class="col-12">
+      <app-card-container title="Ubicación y Lote">
+        <!-- Aquí usamos col-sm-6 para que en móvil se vean 2x2 -->
+        <div class="row g-3">
+          <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+            <app-input-text-info
+              [label]="'Proyecto'"
+              [value]="reserva?.lote?.manzana?.proyecto?.nombre"
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+            <app-input-text-info
+              [label]="'Manzana'"
+              [value]="reserva?.lote?.manzana?.codigo"
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+            <app-input-text-info
+              [label]="'Nro. Lote'"
+              [value]="reserva?.lote?.numero"
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+            <app-input-text-info
+              [label]="'Estado Lote'"
+              [value]="reserva?.lote?.estado"
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+            <app-input-text-info
+              [label]="'Área (m²)'"
+              [value]="reserva?.lote?.areaM2"
+            >
+            </app-input-text-info>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+            <app-input-text-info
+              [label]="'Precio Referencial'"
+              [value]="'BS ' + reserva?.lote?.precioReferencial"
+            >
+            </app-input-text-info>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
+  </div>
+</div>

@@ -11,6 +11,7 @@ import { DataTableComponent } from "src/app/shared/components/organisms/data-tab
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RegisterReservaComponent } from '../register-reserva/register-reserva.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-reservas',
@@ -101,7 +102,7 @@ export class ListReservasComponent implements OnInit {
   private notification = inject(NotificationService);
   private globalContext = inject(ProjectStatusGlobalService); // Inyectar
   private modalService = inject(NgbModal);
-
+  private router = inject(Router);
 
   ngOnInit(): void {
     // Nos suscribimos al proyecto GLOBAL
@@ -151,6 +152,8 @@ export class ListReservasComponent implements OnInit {
             if (currentId) this.loadReservas(currentId);
           }
         });
+    } else if (event.action === TableActionsEnum.VIEW && event.row?.id) {
+      this.router.navigate(['/reservas/detail', event.row.id]);
     }
   }
 
