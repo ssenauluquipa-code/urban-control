@@ -1,190 +1,122 @@
-// ── Variables ────────────────────────────────────────────────
-$dt-radius: 12px; // Más redondeado
-$dt-shadow: 0 10px 40px rgba(0, 0, 0, 0.07);
-$dt-border: #eef2f6;
-$dt-toolbar-bg: #ffffff; // Fondo blanco limpio
-$dt-input-bg: #F8FAFC; // Fondo input gris suave
-$dt-input-focus: #2962ff; // Azul UrbanControl
-
-$dt-color-create: #2962ff; // Azul UrbanControl
-$dt-color-view: #0d6efd;
-$dt-color-edit: #fd7e14;
-$dt-color-delete: #dc3545;
-
-// Colores para filas (Zebra)
-$row-odd-bg: #F9FAFB; // Gris muy suave
-$row-even-bg: #FFFFFF; // Blanco
-$row-hover-bg: #F1F5F9; // Gris hover
-
-$dt-font-size: 0.875rem;
-$dt-btn-radius: 50px; // Botones redondeados (Pill)
-
-// ── Wrapper (Estándar) ──────────────────────────────────────
 .dt-wrapper {
-  border-radius: $dt-radius;
-  box-shadow: $dt-shadow;
-  border: 1px solid $dt-border;
-  overflow: hidden;
-  background: #fff;
-}
-
-// ── Toolbar ──────────────────────────────────────────────────
-.dt-toolbar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 24px;
-  background: $dt-toolbar-bg;
-  border-bottom: 1px solid $dt-border;
-}
-
-.dt-search {
-  position: relative;
-  flex: 1;
-  max-width: 400px;
-}
-
-.dt-search-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #94a3b8; // Color de icono más suave
-  font-size: 1rem;
-  pointer-events: none;
-}
-
-.dt-search-input {
+  flex-direction: column;
+  gap: 1rem;
   width: 100%;
-  // Ajuste para altura y padding
-  height: 44px;
-  padding: 0 16px 0 45px;
 
-  border: 1px solid #e2e8f0;
-  border-radius: $dt-btn-radius; // Redondo
-  font-size: $dt-font-size;
-  background: $dt-input-bg;
-  outline: none;
-  transition: all 0.2s ease;
+  .dt-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    align-items: center;
 
-  &:focus {
-    border-color: $dt-input-focus;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(41, 98, 255, 0.1);
+    .dt-btn-create {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: #0b5ed7;
+      }
+
+      i {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .dt-grid-wrapper {
+    position: relative;
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .dt-grid {
+      width: 100%;
+      height: 100%;
+    }
+
+    .dt-loading-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.7);
+      z-index: 10;
+      backdrop-filter: blur(2px);
+
+      .dt-spinner {
+        width: 2rem;
+        height: 2rem;
+        border: 3px solid #e5e7eb;
+        border-top-color: #0d6efd;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+    }
   }
 }
 
-.dt-btn-create {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 44px;
-  padding: 0 24px;
-  background: $dt-color-create;
-  color: #fff;
-  border: none;
-  border-radius: $dt-btn-radius; // Redondo
-  font-size: $dt-font-size;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(41, 98, 255, 0.2);
-
-  &:hover {
-    background: darken($dt-color-create, 8%);
-    transform: translateY(-1px);
-  }
-}
-
-// ── Grid wrapper ─────────────────────────────────────────────
-.dt-grid-wrapper {
-  position: relative;
-}
-
-.dt-grid {
-  width: 100%;
-  height: 100%;
-  // Borde superior para separar del toolbar
-  border-top: 1px solid $dt-border;
-}
-
-// ── Loading overlay ──────────────────────────────────────────
-.dt-loading-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.dt-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid $dt-border;
-  border-top-color: $dt-color-create;
-  border-radius: 50%;
-  animation: dt-spin 0.8s linear infinite;
-}
-
-@keyframes dt-spin {
+@keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// 🎨 ESTILOS ESPECÍFICOS DE AG GRID (USANDO ::ng-deep)
-// Esto es lo que te permite modificar el interior del grid
-// ═══════════════════════════════════════════════════════════════
-
-:host ::ng-deep .ag-theme-quartz {
-
-  // 1. Colores de Filas (Zebra Striping)
-  .ag-root-wrapper {
-    border: none; // Quitamos borde extra del grid
+/* AG Grid custom styles */
+:deep(.ag-theme-quartz) {
+  .ag-root {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.875rem;
   }
 
-  .ag-body-viewport {
-    .ag-row {
-      background-color: $row-even-bg; // Fila par (Blanco)
-      border-bottom: 1px solid $dt-border;
-    }
-
-    .ag-row-odd {
-      background-color: $row-odd-bg; // Fila impar (Gris suave)
-    }
-
-    .ag-row-hover {
-      background-color: $row-hover-bg !important; // Hover
-    }
+  .ag-cell,
+  .ag-header-cell-text {
+    overflow: visible;
   }
 
-  // 2. Cabeceras
-  .ag-header {
-    background-color: #f9f9fb;
-    border-bottom: 2px solid #e2e8f0;
-
-    .ag-header-cell-label {
-      font-weight: 700;
-      color: #475569;
-      text-transform: uppercase;
-      font-size: 11px;
-    }
-  }
-
-  // 3. Centrar contenido de celdas
+  .ag-cell-focus,
   .ag-cell {
+    padding: 0;
     display: flex;
     align-items: center;
   }
 
-  // 4. Columna de acciones (Pinned)
-  .ag-pinned-right-cols-container {
-    background-color: #fff;
-    border-left: 1px solid $dt-border;
+  .ag-header-cell {
+    background-color: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .ag-row {
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .ag-row:hover {
+    background-color: #f9fafb;
+  }
+
+  .ag-pagination {
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+  }
+
+  .ag-paging-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
   }
 }

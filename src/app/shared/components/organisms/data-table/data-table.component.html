@@ -1,16 +1,6 @@
 <div class="dt-wrapper">
   <!-- Toolbar -->
   <div class="dt-toolbar">
-    <!-- <div class="dt-search">
-      <i class="bi bi-search dt-search-icon"></i>
-      <input
-        type="text"
-        class="dt-search-input"
-        placeholder="Buscar..."
-        [(ngModel)]="quickFilter"
-        (ngModelChange)="onQuickFilterChange()"
-      />
-    </div> -->
     @if (showCreate) {
       <button class="dt-btn-create" (click)="onCreateClick()">
         <i class="bi bi-plus-lg"></i> Crear
@@ -28,7 +18,6 @@
       [gridOptions]="gridOptions"
       (gridReady)="onGridReady($event)"
       (rowClicked)="onRowClicked($event)"
-      (paginationChanged)="onPaginationChanged()"
     ></ag-grid-angular>
 
     @if (loading) {

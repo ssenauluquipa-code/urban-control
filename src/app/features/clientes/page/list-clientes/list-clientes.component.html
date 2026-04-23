@@ -47,13 +47,13 @@
     </div>
   </div>
 
-  <!-- Tabla Server Side -->
-  <app-data-table
+  <!-- Tabla Server-Side con búsqueda + paginación -->
+  <!-- 👇 AHORA USA DataTableServerComponent -->
+  <app-data-table-server
     [rowData]="clientes"
     [columnDefs]="columnDefs"
     [loading]="loading"
     [pageSize]="limit"
-    [serverSide]="true"
     [totalRecords]="totalRecords"
     height="400px"
     [showCreate]="false"
@@ -65,8 +65,8 @@
     ]"
     (actionClicked)="onTableAction($event)"
     (pageChange)="onPageChange($event)"
-    (sortChange)="onSortChange($event)"
     (pageSizeChange)="onPageSizeChange($event)"
+    (sortChange)="onSortChange($event)"
   >
-  </app-data-table>
+  </app-data-table-server>
 </app-page-container>
