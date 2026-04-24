@@ -3,27 +3,37 @@
   @if (previewUrl()) {
     <div class="preview-container">
       <img [src]="previewUrl()!" [alt]="fileName()" class="preview-image" />
-      
+
       <div class="preview-overlay">
-        <button nz-button nzShape="circle" nzType="primary" 
-                class="overlay-btn replace-btn" type="button"
-                (click)="clearImage()">
+        <button
+          nz-button
+          nzShape="circle"
+          nzType="primary"
+          class="overlay-btn replace-btn"
+          type="button"
+          (click)="clearImage()"
+        >
           <span nz-icon nzType="swap" nzTheme="outline"></span>
         </button>
       </div>
       @if (fileName()) {
         <div class="file-name-badge">
-        <span nz-icon nzType="file-image" nzTheme="outline"></span>
-        {{ fileName() }}
-      </div>
+          <span nz-icon nzType="file-image" nzTheme="outline"></span>
+          {{ fileName() }}
+        </div>
       }
-      
     </div>
 
     <!-- Botones de acción bajo la imagen -->
     <div class="action-bar">
-      <button nz-button nzType="default" nzSize="small" nzDanger type="button"
-              (click)="clearImage()">
+      <button
+        nz-button
+        nzType="default"
+        nzSize="small"
+        nzDanger
+        type="button"
+        (click)="clearImage()"
+      >
         <span nz-icon nzType="delete" nzTheme="outline"></span>
         Quitar imagen
       </button>
@@ -34,21 +44,22 @@
   @if (!previewUrl()) {
     <nz-upload
       nzType="drag"
-      [nzMultiple]="false"
+      [nzMultiple]="multiple"
       [nzAccept]="acceptTypes"
       [nzBeforeUpload]="beforeUpload"
       [(nzFileList)]="fileList"
       [nzShowUploadList]="false"
-      class="upload-drop-zone">
-      
+      class="upload-drop-zone"
+    >
       @if (uploadProgress() > 0 && uploadProgress() < 100) {
         <!-- Progreso de carga -->
         <div class="progress-area">
-          <nz-progress 
-            [nzPercent]="uploadProgress()" 
-            nzType="circle" 
+          <nz-progress
+            [nzPercent]="uploadProgress()"
+            nzType="circle"
             [nzWidth]="64"
-            nzStatus="active">
+            nzStatus="active"
+          >
           </nz-progress>
           <p class="progress-text">Procesando imagen...</p>
         </div>

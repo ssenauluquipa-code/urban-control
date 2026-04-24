@@ -59,7 +59,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'codigoCliente',
       headerName: 'Código',
-      width: 100,
+      width: 70,
       cellStyle: { fontWeight: 'bold' }
     },
     {
@@ -91,9 +91,13 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'isActive',
       headerName: 'Estado',
-      width: 120,
+      width: 70,
       flex: 1,
       cellRenderer: (params: ICellRendererParams) => {
+        if (!params.data) {
+          return '';
+        }
+
         const isActive = params.value;
         const badgeClass = isActive
           ? 'bg-success-subtle text-success'
@@ -128,7 +132,6 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     // ⏱️ Cargar datos iniciales DESPUÉS de que Angular termine de renderizar
     // Esto asegura que AG Grid ya está listo (onGridReady se ejecutó)
     setTimeout(() => {
-      console.log('🎬 setTimeout: Cargando datos iniciales');
       this.loadClientes();
     }, 100);
   }
@@ -145,25 +148,21 @@ export class ListClientesComponent implements OnInit, OnDestroy {
 
     const term = this.searchControl.value || undefined;
 
-    console.log('📡 Cargando clientes: página', this.currentPage, 'límite', this.limit, 'término:', term);
-
     this.clienteService.getPagedClients(this.currentPage, this.limit, term, this.filterActive)
       .pipe(
         finalize(() => {
           this.loading = false;
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         }),
         takeUntil(this.destroy$)
       )
       .subscribe({
         next: (res) => {
-          console.log('✅ Recibido:', res.data.length, 'clientes');
-
           // ✅ ASIGNACIÓN CON SPREAD: Fuerza que Angular detecte el cambio
           // PERO SOLO cuando los datos reales llegan
           this.clientes = [...res.data];
           this.totalRecords = res.total;
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('ListClientes [load]: ERROR', err);
@@ -197,15 +196,13 @@ export class ListClientesComponent implements OnInit, OnDestroy {
    * 7. Tabla se actualiza con nuevos datos
    */
   onPageChange(newPage: number): void {
-    console.log('📄 onPageChange llamado con página:', newPage);
 
     const pageToLoad = newPage < 1 ? 1 : newPage;
-
-    // 🔑 IMPORTANTE: NO hacer esta validación
     // La tabla puede pedir la misma página en casos especiales
     // SIEMPRE cargar si es una página distinta
     if (pageToLoad !== this.currentPage) {
       this.currentPage = pageToLoad;
+      this.clientes = [];
       this.loadClientes();
     }
   }

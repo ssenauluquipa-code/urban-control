@@ -20,81 +20,59 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageUploaderComponent {
-  /** Texto principal del área de upload */
   @Input() uploadTitle = 'Click o arrastra para subir imagen';
-
-  /** Subtexto con indicaciones */
-  @Input() uploadHint = 'PNG, JPG hasta 5MB (Recomendado: 400×400px)';
-
-  /** Tamaño máximo del archivo en MB */
+  @Input() uploadHint = 'PNG, JPG hasta 5MB';
   @Input() maxSizeMB = 5;
-
-  /** Tipos MIME aceptados */
   @Input() acceptTypes = 'image/png,image/jpeg,image/jpg,image/webp';
-
-  /** URL de preview inicial (por si ya existe una imagen guardada) */
-  @Input() set initialPreview(url: string) {
-    if (url) {
-      this.previewUrl.set(url);
-    }
-  }
-
-  /** Icono del área vacía */
   @Input() uploadIcon = 'cloud-upload';
 
-  /** Emite el File seleccionado */
-  @Output() imageSelected = new EventEmitter<File>();
+  // 🆕 INPUTS NUEVOS
+  @Input() multiple = false; // Permite seleccionar varios archivos en el diálogo
+  @Input() showLocalPreview = true; // Si es false, emite el archivo y resetea el componente (ideal para galerías)
 
-  /** Emite cuando se limpia la imagen */
+  @Input() set initialPreview(url: string) {
+    if (url) this.previewUrl.set(url);
+  }
+
+  @Output() imageSelected = new EventEmitter<File>();
   @Output() imageCleared = new EventEmitter<void>();
 
-  // Signals reactivos
   previewUrl = signal<string>('');
   fileName = signal<string>('');
   uploadProgress = signal<number>(0);
   fileList: NzUploadFile[] = [];
 
-  /**
-   * Intercepta el archivo antes de que nz-upload lo suba.
-   * Retornamos false para manejar la lógica manualmente.
-   */
   beforeUpload = (file: NzUploadFile): boolean => {
     const rawFile = file as unknown as File;
 
-    // Validar tipo
-    if (!rawFile.type?.startsWith('image/')) {
-      console.warn('Solo se permiten imágenes PNG, JPG, JPEG, WEBP');
-      return false;
-    }
-
-    // Validar tamaño
-    if (rawFile.size > this.maxSizeMB * 1024 * 1024) {
-      console.warn(`El archivo no puede exceder ${this.maxSizeMB}MB`);
-      return false;
-    }
+    if (!rawFile.type?.startsWith('image/')) return false;
+    if (rawFile.size > this.maxSizeMB * 1024 * 1024) return false;
 
     this.handleImagePreview(rawFile);
-    return false; // Evitar upload automático
+    return false;
   };
 
-  /**
-   * Genera el preview y emite el archivo
-   */
   private handleImagePreview(file: File): void {
     this.simulateProgress();
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      this.previewUrl.set(e.target?.result as string);
-      this.fileName.set(file.name);
+
+      if (this.showLocalPreview) {
+        // Modo Avatar: Muestra preview y se queda quieto
+        this.previewUrl.set(e.target?.result as string);
+        this.fileName.set(file.name);
+      } else {
+        // Modo Galería: Emite el archivo, resetea y permite seguir subiendo
+        this.previewUrl.set('');
+        this.fileName.set('');
+      }
+
       this.imageSelected.emit(file);
     };
     reader.readAsDataURL(file);
   }
 
-  /**
-   * Simula una barra de progreso visual
-   */
   private simulateProgress(): void {
     this.uploadProgress.set(0);
     let progress = 0;
@@ -111,17 +89,6 @@ export class ImageUploaderComponent {
     }, 150);
   }
 
-  /**
-   * Confirma la imagen seleccionada
-   */
-  confirmImage(): void {
-    // Re-emitir en caso de que el padre quiera escuchar en este momento
-    // (la imagen ya fue emitida en handleImagePreview)
-  }
-
-  /**
-   * Limpia la imagen y resetea el estado
-   */
   clearImage(): void {
     this.fileList = [];
     this.previewUrl.set('');

@@ -73,7 +73,9 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.NUEVO]: 'plus',
       [TableActionsEnum.ACTIVATE]: 'check-circle',
       [TableActionsEnum.DEACTIVATE]: 'close-circle',
-      [TableActionsEnum.REMOVE_IMAGE]: 'file-excel'
+      [TableActionsEnum.REMOVE_IMAGE]: 'file-excel',
+      [TableActionsEnum.BLOQUEADO]: 'lock',
+      [TableActionsEnum.SET_AVAILABLE]: 'unlock'
     };
     return icons[action] || 'question';
   }
@@ -88,7 +90,9 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.NUEVO]: 'Nuevo',
       [TableActionsEnum.ACTIVATE]: 'Activar',
       [TableActionsEnum.DEACTIVATE]: 'Desactivar',
-      [TableActionsEnum.REMOVE_IMAGE]: 'Quitar Avatar'
+      [TableActionsEnum.REMOVE_IMAGE]: 'Quitar Avatar',
+      [TableActionsEnum.BLOQUEADO]: 'Bloquear',
+      [TableActionsEnum.SET_AVAILABLE]: 'Disponible',
     };
     return labels[action] || action;
   }
@@ -107,9 +111,17 @@ export class TableActionsComponent implements ICellRendererAngularComp {
   }
 
   private filterActions(actions: string[]): string[] {
-    const data = this.rowData as { isActive?: boolean; avatarUrl?: string };
+    const data = this.rowData as { isActive?: boolean; avatarUrl?: string, estado?: string };
 
     return actions.filter(action => {
+      if (action === TableActionsEnum.BLOQUEADO) {
+        // Solo mostramos Bloqueado si isActive es TRUE (definido en el map del componente lista)
+        return data?.estado === 'DISPONIBLE';
+      }
+      // Solo mostramos si está BLOQUEADO
+      if (action === TableActionsEnum.SET_AVAILABLE) {
+        return data?.estado === 'BLOQUEADO';
+      }
       // Si el usuario ya está activo, no mostramos "Activar"
       if (action === TableActionsEnum.ACTIVATE) return data?.isActive === false;
       // Si el usuario ya está inactivo, no mostramos "Desactivar"

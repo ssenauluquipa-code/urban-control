@@ -9,7 +9,9 @@ export enum TableActionsEnum {
   NUEVO = 'nuevo',
   ACTIVATE = 'activate',
   DEACTIVATE = 'deactivate',
-  REMOVE_IMAGE = 'remove_image'
+  REMOVE_IMAGE = 'remove_image',
+  BLOQUEADO = 'bloqueado',
+  SET_AVAILABLE = 'set_available'
 }
 
 export type TableAction = TableActionsEnum | string;

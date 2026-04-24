@@ -19,7 +19,7 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
   // --- Inputs Comunes ---
   @Input() columnDefs: ColDef[] = [];
   @Input() loading = false;
-  @Input() height = '480px';
+  @Input() height = '520px';
   @Input() showCreate = true;
   @Input() actions: TableAction[] = ['view', 'edit', 'delete'];
   @Input() pageSizeOptions: number[] = [5, 10, 20, 50, 100];

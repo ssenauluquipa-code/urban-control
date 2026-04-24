@@ -1,55 +1,68 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationService } from 'src/app/core/services/notification.service';
-import { LoteService } from 'src/app/core/services/proyectos/lote.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { switchMap, of } from 'rxjs';
 import { CreateLoteDto, ILote } from 'src/app/core/models/lote/lote.model';
+import { LoteService } from 'src/app/core/services/proyectos/lote.service';
+import { NotificationService } from 'src/app/core/services/notification.service';
+import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { ViewRegisterLotesComponent } from '../../views/lotes/view-register-lotes/view-register-lotes.component';
-import { of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-register-lotes',
   standalone: true,
-  imports: [ViewRegisterLotesComponent],
+  imports: [
+    CommonModule,
+    PageContainerComponent, // Usamos el template de página
+    ViewRegisterLotesComponent
+  ],
   template: `
-    <app-view-register-lotes
-      [loteForm]="loteFormGroup"
-      [loteData]="loteData"
-      (Save)="onSaveLote()"
-      (filesSelected)="onFilesSelected($event)"
-      (deleteImage)="onDeleteImage($event)"
-            ></app-view-register-lotes>
+    <app-page-container
+      [title]="isEditMode ? 'Editando Lote #' + (loteData?.numero || '') : 'Registrar Nuevo Lote'"
+      permissionScope="lotes"
+      [showSave]="true"
+      [showCancel]="true"
+      (Save)="onSave()"
+      (Cancel)="onCancel()"
+    >
+      <!-- Aquí inyectamos tu vista existente -->
+      <app-view-register-lotes
+        [loteForm]="loteFormGroup"
+        [loteData]="loteData"
+        [pendingFiles]="pendingFiles"   
+        (fileSelected)="onFileSelected($event)"
+        (removePendingFile)="onRemovePending($event)"
+        (deleteImage)="onDeleteImage($event)"
+      ></app-view-register-lotes>
+    </app-page-container>
   `,
   styles: ``
 })
 export class RegisterLotesComponent implements OnInit {
 
-  @Input() loteData: ILote | null = null;
-  @Input() manzanaId = '';
-
   public loteFormGroup!: FormGroup;
-  private pendingFiles: File[] = []; // Archivos pendientes de subir (en caso de ser nuevo)
+  public loteData: ILote | null = null;
+  public isEditMode = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private loteService: LoteService,
-    private ngModal: NgbActiveModal,
-    private notification: NotificationService
-  ) { }
+  private manzanaId: string | null = null;
+  public pendingFiles: File[] = [];
+
+  // Inyecciones
+  private fb = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private loteService = inject(LoteService);
+  private notification = inject(NotificationService);
 
   ngOnInit(): void {
     this.buildForm();
-    if (this.loteData) {
-      this.loteFormGroup.patchValue(this.loteData);
-    } else {
-      this.loteFormGroup.get('manzanaId')?.setValue(this.manzanaId);
-    }
+    this.loadInitialData();
   }
 
   private buildForm(): void {
     this.loteFormGroup = this.fb.group({
-      id: [null],
-      manzanaId: [this.manzanaId, Validators.required],
+      manzanaId: [null, Validators.required],
       numero: [null, [Validators.required, Validators.min(1)]],
       areaM2: [null, [Validators.required, Validators.min(0)]],
       precioReferencial: [null],
@@ -62,120 +75,94 @@ export class RegisterLotesComponent implements OnInit {
     });
   }
 
-  // 📸 Manejo de archivos seleccionados desde la vista
-  onFilesSelected(files: FileList): void {
-    this.pendingFiles = Array.from(files);
+  private loadInitialData(): void {
+    // Detectar si es Edición (param :id)
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.isEditMode = true;
+        this.loteService.getLoteById(id).subscribe(data => {
+          this.loteData = data;
+          this.loteFormGroup.patchValue(data);
+        });
+      }
+    });
 
-    // Si ya tenemos un ID (Modo Edición), subimos inmediatamente
-    if (this.loteData?.id) {
-      this.uploadImages(this.loteData.id);
-    } else {
-      this.notification.info('Las imágenes se subirán después de guardar el lote.');
-    }
+    // Detectar si es Creación (queryParam ?manzanaId=...)
+    this.route.queryParamMap.subscribe(params => {
+      const mId = params.get('manzanaId');
+      if (mId && !this.isEditMode) {
+        this.manzanaId = mId;
+        this.loteFormGroup.get('manzanaId')?.setValue(mId);
+      }
+    });
   }
 
-  public onSaveLote(): void {
+  // --- Eventos ---
+
+  public onFileSelected(files: File): void {
+    this.pendingFiles.push(files);
+    //this.notification.info(`${files.length} archivo(s) listo(s) para subir.`);
+  }
+  // 🚀 Método para quitar un archivo de la lista pendiente
+  public onRemovePending(index: number): void {
+    this.pendingFiles.splice(index, 1);
+  }
+
+  public onDeleteImage(imageId: string): void {
+    if (!this.loteData) return;
+    this.loteService.deleteLoteImages(this.loteData.id, [imageId]).subscribe({
+      next: () => {
+        this.notification.success('Imagen eliminada');
+        // Refrescamos los datos para actualizar la galería
+        this.loteService.getLoteById(this.loteData!.id).subscribe(data => this.loteData = data);
+      },
+      error: () => this.notification.error('Error al eliminar')
+    });
+  }
+
+  public onSave(): void {
     if (this.loteFormGroup.invalid) {
       this.loteFormGroup.markAllAsTouched();
-      this.notification.warning('Revise los campos obligatorios.');
+      this.notification.warning('Complete los campos requeridos');
       return;
     }
 
     const formValue = this.loteFormGroup.getRawValue();
-    const isEditMode = !!formValue.id;
-    const payload = this.cleanPayload(formValue);
 
-    if (isEditMode) {
-      // --- ACTUALIZAR ---
-      const updatePayload = { ...payload } as Record<string, unknown>;
-      delete updatePayload['id'];
-      delete updatePayload['manzanaId'];
-      this.loteService.updateLote(formValue.id, updatePayload).subscribe({
-        next: (updatedLote) => {
-          // Si había archivos pendientes, los subimos ahora
-          if (this.pendingFiles.length > 0) {
-            this.uploadImages(updatedLote.id);
-          } else {
-            this.notification.success('Lote actualizado');
-            this.ngModal.close(true);
-          }
-        },
-        error: (err) => this.notification.error(err.error?.message || 'Error al actualizar')
-      });
+    // MODO EDICIÓN
+    if (this.isEditMode && this.loteData) {
+      // MODO EDICIÓN
+      const loteId = this.loteData.id; // Tomamos el ID de la variable del componente
 
-    }
-    else {
-      // --- CREAR ---
-      const createPayload: CreateLoteDto = payload as unknown as CreateLoteDto;
+      // Preparamos el payload limpio (sin ID, sin manzanaId según tu endpoint)
+      const payload = { ...formValue };
+      delete payload['id']; // Por seguridad, aunque no exista
+      delete payload['manzanaId']; // El endpoint PATCH no suele requerir cambiar la manzana
 
-      this.loteService.createLote(createPayload).pipe(
-        // Si hay imágenes, encadenamos la subida después de crear
-        switchMap((newLote: ILote) => {
-          if (this.pendingFiles.length > 0) {
-            return this.loteService.uploadLoteImages(newLote.id, this.pendingFiles);
-          }
-          return of(newLote); // Si no hay imágenes, devolvemos el lote creado
-        })
+      this.loteService.updateLote(loteId, payload).pipe(
+        switchMap(() => this.pendingFiles.length > 0 ? this.loteService.uploadLoteImages(loteId, this.pendingFiles) : of(true))
       ).subscribe({
-        next: () => {
-          this.notification.success('Lote creado exitosamente');
-          this.ngModal.close(true);
-        },
+        next: () => { this.notification.success('Actualizado'); this.onCancel(); },
+        error: () => this.notification.error('Error al actualizar')
+      });
+    }
+    // MODO CREACIÓN
+    else {
+      const payload: CreateLoteDto = formValue as CreateLoteDto;
+      this.loteService.createLote(payload).pipe(
+        switchMap((newLote: ILote) => this.pendingFiles.length > 0 ? this.loteService.uploadLoteImages(newLote.id, this.pendingFiles) : of(newLote))
+      ).subscribe({
+        next: () => { this.notification.success('Lote creado'); this.onCancel(); },
         error: (err) => {
-          if (err.status === 409) this.notification.error('Este número de lote ya existe.');
-          else this.notification.error('Error al crear lote');
+          if (err.status === 409) this.notification.error('El lote ya existe');
+          else this.notification.error('Error inesperado');
         }
       });
     }
   }
-  // 🗑️ Eliminar imagen
-  public onDeleteImage(imageId: string): void {
-    if (!this.loteData?.id) return;
 
-    // Nota: El backend espera un array de IDs
-    this.loteService.deleteLoteImages(this.loteData.id, [imageId]).subscribe({
-      next: () => {
-        this.notification.success('Imagen eliminada');
-        // Actualizamos loteData localmente para que desaparezca de la vista
-        // Sin cerrar el modal.
-        // Como loteData es Input, necesitamos recargar o manipular el objeto.
-        // Idealmente, el servicio devuelve el lote actualizado, aquí simulamos el cambio:
-        if (this.loteData && this.loteData.imagenes) {
-          // Suponiendo que imagenes es un array de objetos { id, url }
-          // this.loteData.imagenes = this.loteData.imagenes.filter(img => img.id !== imageId);
-          // Para refrescar la vista, podríamos usar un Subject o simplemente cerrar el modal.
-          // Por simplicidad, cerramos y abrimos o recargamos:
-          this.ngModal.close(true); // Cerramos para que la lista recargue
-        }
-      },
-      error: () => this.notification.error('Error al eliminar imagen')
-    });
+  public onCancel(): void {
+    this.router.navigate(['/gestion-inmobiliaria/lotes']);
   }
-
-  private uploadImages(loteId: string): void {
-    this.loteService.uploadLoteImages(loteId, this.pendingFiles).subscribe({
-      next: () => {
-        this.notification.success('Imágenes guardadas');
-        this.pendingFiles = []; // Limpiamos buffer
-        this.ngModal.close(true);
-      },
-      error: () => {
-        this.notification.warning('Lote guardado, pero falló la subida de imágenes.');
-        this.ngModal.close(true);
-      }
-    });
-  }
-
-  private cleanPayload(obj: Record<string, unknown>): Record<string, unknown> {
-    const result: Record<string, unknown> = {};
-    Object.keys(obj).forEach(key => {
-      const value = obj[key];
-      if (value !== null && value !== '' && value !== undefined) {
-        result[key] = value;
-      }
-    });
-    return result;
-  }
-
-
 }

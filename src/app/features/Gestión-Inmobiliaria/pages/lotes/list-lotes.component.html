@@ -1,0 +1,78 @@
+<app-page-container
+  title="Gestión de Lotes"
+  permissionScope="lotes"
+  [showNew]="true"
+  [showOptions]="true"
+  (AddNew)="onAddNewLote()"
+>
+  <!-- 📌 FILTROS + BOTONES EN UNA SOLA FILA -->
+  <div class="row mb-3 g-2">
+    <!-- Columna 1Property 'proyectoId' does not exist on type 'ListLotesComponent'.ngtsc(2339)
+        any: Manzana (col-md-3) -->
+    <div class="col-md-3 col-sm-6">
+      <app-form-field label="Manzana">
+        <app-select-manzanas
+          [inputControl]="manzanaIdControl"
+          [proyectoId]="proyectoId"
+          [placeholder]="'Seleccione manzana'"
+        >
+        </app-select-manzanas>
+      </app-form-field>
+    </div>
+
+    <!-- Columna 3: Botones de Vista (Estandarizados) -->
+    <div class="col-md-6 col-sm-12">
+      <app-form-field label="Vista">
+        <div class="btn-group w-100" role="group">
+          <button
+            type="button"
+            class="btn btn-md flex-fill"
+            [class.btn-primary]="viewMode === 'table'"
+            [class.btn-outline-secondary]="viewMode !== 'table'"
+            (click)="viewMode = 'table'"
+            title="Vista de lista"
+          >
+            <i class="bi bi-table me-2"></i> Lista
+          </button>
+          <button
+            type="button"
+            class="btn btn-md flex-fill"
+            [class.btn-primary]="viewMode === 'map'"
+            [class.btn-outline-secondary]="viewMode !== 'map'"
+            (click)="viewMode = 'map'"
+            title="Vista de plano"
+          >
+            <i class="bi bi-map me-2"></i> Plano
+          </button>
+        </div>
+      </app-form-field>
+    </div>
+  </div>
+
+  <!-- 🆕 VISTA MAPA / PLANO -->
+  @if (viewMode === "map") {
+    <app-lote-visualizer
+      [lotes]="(lotes$ | async) || []"
+      (loteClick)="onLoteClick($event)"
+    >
+    </app-lote-visualizer>
+  }
+
+  <!-- VISTA TABLA -->
+  @if (viewMode === "table") {
+    <app-data-table
+      [rowData]="(lotes$ | async) || []"
+      [columnDefs]="columnDefs"
+      [loading]="isLoading"
+      [showCreate]="false"
+      [actions]="[
+        tableActionEnum.EDIT,
+        tableActionEnum.BLOQUEADO,
+        tableActionEnum.SET_AVAILABLE,
+      ]"
+      (actionClicked)="onTableAction($event)"
+      (rowClicked)="openDetailDrawer($event.id)"
+    >
+    </app-data-table>
+  }
+</app-page-container>

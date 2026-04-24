@@ -17,9 +17,7 @@ import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
-import { ILote, TEstadoLote } from 'src/app/core/models/lote/lote.model';
-import { RegisterLotesComponent } from './register-lotes.component';
-import { ManzanaService } from 'src/app/core/services/proyectos/manzana.service';
+import { ILote, TEstadoLote, UpdateEstadoLoteDto } from 'src/app/core/models/lote/lote.model';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { LoteVisualizerComponent } from '../../views/lote-visualizer/lote-visualizer.component';
 import { NzDrawerModule, NzDrawerService } from 'ng-zorro-antd/drawer'; // Importar servicio
@@ -27,6 +25,7 @@ import { LoteDetailComponent } from '../../views/lotes/lote-detail/lote-detail.c
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { SelectManzanasComponent } from "src/app/shared/components/atoms/select-manzanas.component";
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-list-lotes',
@@ -43,84 +42,7 @@ import { SelectManzanasComponent } from "src/app/shared/components/atoms/select-
     NzDrawerModule,
     SelectManzanasComponent
   ],
-  template: `
-    <app-page-container
-      title="Gestión de Lotes"
-      permissionScope="lotes"
-      [showNew]="true"
-      [showOptions]="true"
-      (AddNew)="onAddNewLote()"
-    >
-      <!-- 📌 FILTROS + BOTONES EN UNA SOLA FILA -->
-      <div class="row mb-3 g-2">
-
-        <!-- Columna 1Property 'proyectoId' does not exist on type 'ListLotesComponent'.ngtsc(2339)
-        any: Manzana (col-md-3) -->
-        <div class="col-md-3 col-sm-6">
-          <app-form-field label="Manzana">
-            <app-select-manzanas
-              [inputControl]="manzanaIdControl"
-              [proyectoId]="proyectoId"
-              [placeholder]="'Seleccione manzana'"
-            >
-            </app-select-manzanas>
-          </app-form-field>
-        </div>
-
-        <!-- Columna 3: Botones de Vista (Estandarizados) -->
-        <div class="col-md-6 col-sm-12">
-          <app-form-field label="Vista">
-            <div class="btn-group w-100" role="group">
-              <button
-                type="button"
-                class="btn btn-md flex-fill"
-                [class.btn-primary]="viewMode === 'table'"
-                [class.btn-outline-secondary]="viewMode !== 'table'"
-                (click)="viewMode = 'table'"
-                title="Vista de lista"
-              >
-                <i class="bi bi-table me-2"></i> Lista
-              </button>
-              <button
-                type="button"
-                class="btn btn-md flex-fill"
-                [class.btn-primary]="viewMode === 'map'"
-                [class.btn-outline-secondary]="viewMode !== 'map'"
-                (click)="viewMode = 'map'"
-                title="Vista de plano"
-              >
-                <i class="bi bi-map me-2"></i> Plano
-              </button>
-            </div>
-          </app-form-field>
-        </div>
-      </div>
-
-      <!-- 🆕 VISTA MAPA / PLANO -->
-      @if (viewMode === 'map') {
-        <app-lote-visualizer
-          [lotes]="(lotes$ | async) || []"
-          (loteClick)="onLoteClick($event)"
-        >
-        </app-lote-visualizer>
-      }
-
-      <!-- VISTA TABLA -->
-      @if (viewMode === 'table') {
-        <app-data-table
-          [rowData]="(lotes$ | async) || []"
-          [columnDefs]="columnDefs"
-          [loading]="isLoading"
-          [showCreate]="false"
-          [actions]="[tableActionEnum.EDIT, tableActionEnum.DELETE]"
-          (actionClicked)="onTableAction($event)"
-          (rowClicked)="openDetailDrawer($event.id)"
-        >
-        </app-data-table>
-      }
-    </app-page-container>
-  `,
-  styles: ``,
+  templateUrl: './list-lotes.component.html',
 })
 export class ListLotesComponent implements OnInit {
   public tableActionEnum = TableActionsEnum;
@@ -143,27 +65,38 @@ export class ListLotesComponent implements OnInit {
     {
       field: 'numero',
       headerName: 'Nro. Lote',
-      width: 100,
-      filter: true,
+      width: 60,
       cellStyle: { fontWeight: 'bold' },
     },
     {
       field: 'areaM2',
       headerName: 'Área (m²)',
-      width: 120,
+      width: 100,
       valueFormatter: (p) => (p.value ? p.value.toLocaleString('es-BO') : ''),
     },
     {
       field: 'precioReferencial',
       headerName: 'Precio Ref.',
-      width: 140,
+      width: 120,
       valueFormatter: (p) =>
         p.value ? `Bs. ${p.value.toLocaleString('es-BO')}` : '',
     },
     {
+      field: 'comision',
+      headerName: 'Comisión',
+      width: 70,
+      valueFormatter: (p) => (p.value ? `${p.value}%` : ''),
+    },
+    {
+      field: 'observaciones',
+      headerName: 'Observaciones',
+      flex: 1,
+      minWidth: 200,
+    },
+    {
       field: 'estado',
       headerName: 'Estado',
-      width: 140,
+      width: 120,
       cellRenderer: (params: ICellRendererParams) => {
         const estado = params.value;
         let color = '#64748b'; // Gris por defecto
@@ -191,23 +124,18 @@ export class ListLotesComponent implements OnInit {
         return `<span style="background-color: ${bg}; color: ${color}; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase;">${estado}</span>`;
       },
     },
-    {
-      field: 'comision',
-      headerName: 'Comisión',
-      width: 100,
-      valueFormatter: (p) => (p.value ? `${p.value}%` : ''),
-    },
   ];
 
   constructor(
     private loteService: LoteService,
-    private manzanaService: ManzanaService,
     private modalService: NgbModal,
     private notification: NotificationService,
     private nzModal: NzModalService,
     private drawerService: NzDrawerService,
     private breakpointObserver: BreakpointObserver,
     private globalContext: ProjectStatusGlobalService,
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -243,41 +171,22 @@ export class ListLotesComponent implements OnInit {
 
 
 
-  // 🚀 Método para cambio de estado rápido
-  private cambiarEstadoRapido(lote: ILote): void {
-    // Lógica simple para ciclar estados.
-    // En una app real, aquí podría abrirse un mini-menú contextual.
-    const estados: TEstadoLote[] = Object.values(TEstadoLote);
-    const currentIndex = estados.indexOf(lote.estado);
-    const nextIndex = (currentIndex + 1) % estados.length;
-    const nuevoEstado = estados[nextIndex];
-
-    this.loteService
-      .updateEstadoLote(lote.id, { estado: nuevoEstado })
-      .subscribe({
-        next: () => {
-          this.notification.success(`Estado cambiado a ${nuevoEstado}`);
-          // Refrescar lista actual
-          const currentManzana = this.manzanaIdControl.value;
-          this.loadLotes(currentManzana!);
-        },
-        error: () => this.notification.error('No se pudo cambiar el estado'),
-      });
-  }
-
   public onLoteClick(lote: ILote): void {
     this.openDetailDrawer(lote.id);
   }
 
   onTableAction(event: ITableActionEvent<ILote>): void {
-    const manzanaId = this.manzanaIdControl.value;
-
+    //const manzanaId = this.manzanaIdControl.value;
     if (event.action === TableActionsEnum.EDIT) {
-      this.openModal(event.row, manzanaId!);
+      this.router.navigate(['editar', event.row?.id], { relativeTo: this.route });
     }
 
-    if (event.action === TableActionsEnum.DELETE) {
-      this.confirmDelete(event.row!);
+    if (event.action === TableActionsEnum.BLOQUEADO) {
+      this.confirmBloqueo(event.row!);
+    }
+    // Caso Poner Disponible (Desbloquear)
+    if (event.action === TableActionsEnum.SET_AVAILABLE) {
+      this.confirmDisponible(event.row!);
     }
   }
 
@@ -287,50 +196,50 @@ export class ListLotesComponent implements OnInit {
       this.notification.warning('Seleccione una manzana primero.');
       return;
     }
-    this.openModal(null, manzanaId);
+    this.router.navigate(['crear'], {
+      relativeTo: this.route,
+      queryParams: { manzanaId: manzanaId }
+    });
   }
 
-  private openModal(data: ILote | null, manzanaId: string): void {
-    const modalRef = this.modalService.open(RegisterLotesComponent, {
-      size: 'lg',
-    });
 
-    modalRef.componentInstance.manzanaId = manzanaId;
-    if (data) {
-      modalRef.componentInstance.loteData = data;
-    }
-
-    modalRef.result.then((result) => {
-      if (result && this.manzanaIdControl.value) {
-        this.loadLotes(this.manzanaIdControl.value);
+  private confirmBloqueo(lote: ILote): void {
+    this.nzModal.confirm({
+      nzTitle: `¿Bloquear Lote #${lote.numero}?`,
+      nzContent: 'El lote no estará disponible para ventas.',
+      nzOkText: 'Sí, Bloquear',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        const payload: UpdateEstadoLoteDto = { estado: TEstadoLote.BLOQUEADO };
+        this.executeStatusChange(lote.id, payload);
       }
     });
   }
 
-  private confirmDelete(lote: ILote): void {
+
+  private confirmDisponible(lote: ILote): void {
     this.nzModal.confirm({
-      nzTitle: `¿Eliminar Lote #${lote.numero}?`,
-      nzContent: 'Esta acción no se puede deshacer.',
-      nzOkText: 'Eliminar',
-      nzOkDanger: true,
-      nzOnOk: () =>
-        new Promise((resolve, reject) => {
-          this.loteService.deleteLote(lote.id).subscribe({
-            next: () => {
-              this.notification.success('Lote eliminado');
-              if (this.manzanaIdControl.value)
-                this.loadLotes(this.manzanaIdControl.value);
-              resolve(true);
-            },
-            error: (err) => {
-              this.notification.error('Error al eliminar');
-              reject(err);
-            },
-          });
-        }),
+      nzTitle: `¿Poner Disponible Lote #${lote.numero}?`,
+      nzContent: 'El lote volverá a estar disponible para ventas.',
+      nzOkText: 'Sí, Disponible',
+      nzOnOk: () => {
+        const payload: UpdateEstadoLoteDto = { estado: TEstadoLote.DISPONIBLE };
+        this.executeStatusChange(lote.id, payload);
+      }
     });
   }
 
+  private executeStatusChange(loteId: string, payload: UpdateEstadoLoteDto): void {
+    this.loteService.updateEstadoLote(loteId, payload).subscribe({
+      next: () => {
+        this.notification.success(`Estado actualizado a ${payload.estado}`);
+        if (this.manzanaIdControl.value) {
+          this.loadLotes(this.manzanaIdControl.value);
+        }
+      },
+      error: (err) => this.notification.error(err.error?.message || 'Error')
+    });
+  }
   public openDetailDrawer(loteId: string): void {
     const isMobile = this.breakpointObserver.isMatched(Breakpoints.Handset);
     if (isMobile) {

@@ -3,13 +3,14 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { ModalContainerComponent } from 'src/app/shared/components/organisms/modal-container/modal-container.component';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { InputNumberComponent } from 'src/app/shared/components/atoms/input-number/input-number.component';
 import { InputTextareaComponent } from 'src/app/shared/components/atoms/input-textarea/input-textarea.component';
 import { ILote } from 'src/app/core/models/lote/lote.model';
 import { NzCardModule } from "ng-zorro-antd/card";
 import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
+import { ImageUploaderComponent } from "src/app/shared/components/atoms/image-uploader/image-uploader.component";
+import { ImageDisplayComponent } from 'src/app/shared/components/atoms/image-display/image-display.component';
 
 @Component({
   selector: 'app-view-register-lotes',
@@ -17,14 +18,15 @@ import { CardContainerComponent } from 'src/app/shared/components/atoms/card-con
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ModalContainerComponent,
     NzFormModule,
     NzInputModule,
     NzCardModule,
     FormFieldComponent,
     InputNumberComponent,
     InputTextareaComponent,
-    CardContainerComponent
+    CardContainerComponent,
+    ImageUploaderComponent,
+    ImageDisplayComponent
   ],
   templateUrl: './view-register-lotes.component.html',
   styleUrl: './view-register-lotes.component.scss'
@@ -33,12 +35,13 @@ export class ViewRegisterLotesComponent {
 
   @Input() loteForm!: FormGroup;
   @Input() loteData: ILote | null = null;
-  @Output() Save = new EventEmitter<void>();
+  @Input() pendingFiles: File[] = [];
 
-  // Eventos nuevos para interacción con archivos
-  @Output() filesSelected = new EventEmitter<FileList>();
+  @Output() fileSelected = new EventEmitter<File>();
   @Output() deleteImage = new EventEmitter<string>();
+  @Output() removePendingFile = new EventEmitter<number>();
 
+  // Getters
   get numero() { return this.loteForm.get('numero') as FormControl; }
   get areaM2() { return this.loteForm.get('areaM2') as FormControl; }
   get precioReferencial() { return this.loteForm.get('precioReferencial') as FormControl; }
@@ -49,12 +52,14 @@ export class ViewRegisterLotesComponent {
   get este() { return this.loteForm.get('dimensionEste') as FormControl; }
   get oeste() { return this.loteForm.get('dimensionOeste') as FormControl; }
 
-  // Helper para el input file
-  onFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.filesSelected.emit(input.files);
-    }
+  // 🚀 NUEVO MÉTODO: Conecta con el output del ImageUploaderComponent
+  onFileSelected(file: File): void {
+    this.fileSelected.emit(file);
+  }
+
+  // Helper para crear URL de previsualización del objeto File
+  getFilePreview(file: File): string {
+    return URL.createObjectURL(file);
   }
 
 }

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { CreateLoteDto, UpdateEstadoLoteDto, UpdateLoteDto, ILote, ILoteSearchResult } from '../../models/lote/lote.model';
 import { ILoteRepository } from '../../interfaces/repository/proyectos/lote.repository.interface';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 
 export const LOTE_REPOSITORY_TOKEN = 'ILoteRepository';
 
@@ -14,12 +14,6 @@ export class LoteService {
 
   getLotes(manzanaId: string): Observable<ILote[]> {
     return this.repo.getAll(manzanaId);
-  }
-
-  getLotesInmobiliarios(proyectoId: string): Observable<ILote[]> {
-    return this.repo.getAll().pipe(
-      map(lotes => lotes.filter(lote => lote.proyectoId === proyectoId))
-    );
   }
 
   getLoteById(id: string): Observable<ILote> { return this.repo.getById(id); }

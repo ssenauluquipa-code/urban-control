@@ -119,8 +119,6 @@ export class DataTableServerComponent<T = unknown> extends DataTableBaseComponen
       getRows: (params: IGetRowsParams) => {
         const requestedPage = Math.floor(params.startRow / this.pageSize) + 1;
 
-        console.log('🚀 AG Grid solicita página:', requestedPage, '(startRow:', params.startRow + ')');
-
         // ✅ GUARDAR el params para responder cuando los datos lleguen
         this.pendingParams = params;
 
@@ -139,15 +137,17 @@ export class DataTableServerComponent<T = unknown> extends DataTableBaseComponen
   override ngOnChanges(changes: SimpleChanges): void {
     super.ngOnChanges(changes);
 
+    // 1. Manejar el estado visual de carga (opcional pero recomendado)
+    if (this.gridApi && changes['loading']) {
+      if (this.loading) this.gridApi.showLoadingOverlay();
+      else this.gridApi.hideOverlay();
+    }
+
+    // 2. ACTUALIZACIÓN CRÍTICA:
+    // Quitamos el "if (this.rowData.length > 0)" para permitir que 
+    // la tabla se actualice aunque vengan 0 registros (búsqueda vacía).
     if (this.gridApi && (changes['rowData'] || changes['totalRecords'])) {
-      // 🔑 IMPORTANTE: Solo actualizar si tenemos datos reales
-      if (this.rowData && this.rowData.length > 0) {
-        console.log('📦 ngOnChanges: Tenemos', this.rowData.length, 'datos, actualizando grid');
-        this.updateRowData();
-      } else {
-        console.log('⏳ ngOnChanges: Aún no hay datos, ignorando');
-        // No hacer nada, esperar a que lleguen los datos reales
-      }
+      this.updateRowData();
     }
   }
 
@@ -158,13 +158,21 @@ export class DataTableServerComponent<T = unknown> extends DataTableBaseComponen
   private updateRowData(): void {
     if (!this.gridApi) return;
 
-    console.log('🔄 updateRowData: rowData.length =', this.rowData.length, ', totalRecords =', this.totalRecords);
-
     // 🔑 Si hay un pending request de AG Grid, responder INMEDIATAMENTE
     if (this.pendingParams) {
-      console.log('✅ Respondiendo a pending request con:', this.rowData.length, 'registros');
-      this.pendingParams.successCallback(this.rowData, this.totalRecords);
+
+      // Responder con los nuevos datos
+      this.pendingParams.successCallback(
+        this.rowData || [],
+        this.totalRecords);
+
       this.pendingParams = null;
+
+      // 🟢 NO hacer refreshInfiniteCache() - causa que vuelva a solicitar página 1
+      // Solo responder al grid, es suficiente
+      this.cdr.detectChanges();
+
+      setTimeout(() => this.gridApi.refreshCells(), 0);
     }
   }
 
@@ -190,8 +198,6 @@ export class DataTableServerComponent<T = unknown> extends DataTableBaseComponen
    * Esto asegura que setupDatasource ya se ejecutó
    */
   public initializeDataLoad(): void {
-    console.log('🎬 initializeDataLoad llamado');
-
     // AG Grid solicitará datos automáticamente via pageChange
     // No es necesario hacer nada aquí, AG Grid se encargará
   }

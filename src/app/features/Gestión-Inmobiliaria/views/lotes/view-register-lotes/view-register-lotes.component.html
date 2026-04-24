@@ -1,173 +1,158 @@
-<app-modal-container
-  #modal
-  [mainTitleModal]="loteData ? 'Editar Lote' : 'Registrar Nuevo Lote'"
-  (onSaveAction)="Save.emit()"
-  (onCancelAction)="modal.activeModal.close()"
->
-  <form nz-form [formGroup]="loteForm" nzLayout="vertical">
-    <!-- SECCIÓN 1: IDENTIFICACIÓN -->
-    <app-card-container title="Identificación y Costos">
-      <div class="row">
-        <div class="col-md-4">
-          <app-form-field label="N° de Lote" [required]="true">
-            <app-input-number
-              [input_control]="numero"
-              input_placeholder="Ej. 1"
-              prefix_icon="number"
-            ></app-input-number>
-          </app-form-field>
-        </div>
-        <div class="col-md-4">
-          <app-form-field label="Área (m²)" [required]="true">
-            <app-input-number
-              [input_control]="areaM2"
-              input_placeholder="Ej. 125.50"
-              prefix_icon="border"
-              [allow_decimals]="true"
-            ></app-input-number>
-          </app-form-field>
-        </div>
-        <div class="col-md-4">
-          <app-form-field label="Precio Referencial (Bs.)">
-            <app-input-number
-              [input_control]="precioReferencial"
-              input_placeholder="Ej. 25000"
-              prefix_icon="dollar"
-              [allow_decimals]="true"
-            ></app-input-number>
-          </app-form-field>
-        </div>
-      </div>
-    </app-card-container>
-
-    <!-- SECCIÓN 2: DIMENSIONES -->
-    <app-card-container title="Dimensiones (Metros Lineales)" class="mb-3">
-      <div class="row">
-        <div class="col-md-6">
-          <app-form-field label="Lado Norte">
-            <app-input-number
-              [input_control]="norte"
-              input_placeholder="Ej. 12.50"
-              [allow_decimals]="true"
-            ></app-input-number>
-          </app-form-field>
-        </div>
-        <div class="col-md-6">
-          <app-form-field label="Lado Sur">
-            <app-input-number
-              [input_control]="sur"
-              input_placeholder="Ej. 12.50"
-              [allow_decimals]="true"
-            ></app-input-number>
-          </app-form-field>
-        </div>
-        <div class="col-md-6">
-          <app-form-field label="Lado Este">
-            <app-input-number
-              [input_control]="este"
-              input_placeholder="Ej. 10.00"
-              [allow_decimals]="true"
-            ></app-input-number>
-          </app-form-field>
-        </div>
-        <div class="col-md-6">
-          <app-form-field label="Lado Oeste">
-            <app-input-number
-              [input_control]="oeste"
-              input_placeholder="Ej. 10.00"
-              [allow_decimals]="true"
-            ></app-input-number>
-          </app-form-field>
-        </div>
-      </div>
-    </app-card-container>
-
-    <!-- SECCIÓN 3: INFORMACIÓN ADICIONAL -->
-    <app-card-container title="Información Adicional" class="mb-3">
-      <div class="row">
-        <div class="col-md-6">
-          <app-form-field label="Comisión (%)">
-            <app-input-number
-              [input_control]="comision"
-              input_placeholder="Ej. 5"
-              prefix_icon="percentage"
-              [allow_decimals]="true"
-            ></app-input-number>
-          </app-form-field>
-        </div>
-        <div class="col-12">
-          <app-form-field label="Observaciones">
-            <app-input-textarea
-              [input_control]="observaciones"
-              input_placeholder="Ingrese observaciones del lote..."
-              [show_character_count]="true"
-              [input_maxlength]="500"
-            ></app-input-textarea>
-          </app-form-field>
-        </div>
-      </div>
-    </app-card-container>
-
-    <!-- 📸 SECCIÓN 4: GALERÍA DE IMÁGENES (Solo visible si es Edición) -->
-    <!-- En modo creación, se suben después de guardar por lógica del backend -->
-    @if (loteData) {
-      <app-card-container title="Galería de Imágenes">
-        <!-- Input para subir archivos -->
-        <div class="mb-3">
-          <label class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-upload"></i> Seleccionar Fotos
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              style="display: none"
-              (change)="onFileChange($event)"
-            />
-          </label>
-          <small class="text-muted ms-2">JPG, PNG (Max 5MB)</small>
-        </div>
-
-        <!-- Grid de imágenes actuales -->
+<div class="container-fluid">
+  <div class="row">
+    <!-- COLUMNA 1: IDENTIFICACIÓN -->
+    <div class="col-12 col-lg-6">
+      <app-card-container title="Identificación y Costos" class="mb-3">
         <div class="row">
-          @if (loteData.imagenes && loteData.imagenes.length > 0) {
-            <!-- Aquí asumimos que imagenes es un array de objetos o strings.
-                     Si el backend devuelve strings simples, usamos el string directamente. -->
-            @for (img of loteData.imagenes; track img.id || img.publicUrl) {
-              <div class="col-md-4 mb-2 position-relative">
-                <!-- Mostramos la imagen usando su propiedad publicUrl -->
-                <img
-                  [src]="img.publicUrl"
-                  [alt]="'Foto de lote ' + loteData.numero"
-                  class="img-thumbnail rounded"
-                  style="height: 120px; width: 100%; object-fit: cover"
-                />
+          <div class="col-md-4">
+            <app-form-field label="N° de Lote" [required]="true">
+              <app-input-number
+                [input_control]="numero"
+                input_placeholder="Ej. 1"
+              ></app-input-number>
+            </app-form-field>
+          </div>
+          <div class="col-md-4">
+            <app-form-field label="Área (m²)" [required]="true">
+              <app-input-number
+                [input_control]="areaM2"
+                [allow_decimals]="true"
+              ></app-input-number>
+            </app-form-field>
+          </div>
+          <div class="col-md-4">
+            <app-form-field label="Precio Ref.">
+              <app-input-number
+                [input_control]="precioReferencial"
+                [allow_decimals]="true"
+              ></app-input-number>
+            </app-form-field>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
 
-                <button
-                  class="btn btn-sm btn-danger position-absolute"
-                  style="top: 5px; right: 20px; opacity: 0.8"
-                  (click)="deleteImage.emit(img.id)"
-                >
-                  <!-- Enviamos ID o la URL si no hay ID -->
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
-            }
-          } @else {
-            <div class="col-12 text-center text-muted py-4">
-              <i class="bi bi-image" style="font-size: 2rem"></i>
-              <p>No hay imágenes adjuntas</p>
+    <!-- COLUMNA 2: DIMENSIONES -->
+    <div class="col-12 col-lg-6">
+      <app-card-container title="Dimensiones" class="mb-3">
+        <div class="row">
+          <div class="col-6">
+            <app-form-field label="Norte"
+              ><app-input-number
+                [input_control]="norte"
+                [allow_decimals]="true"
+              ></app-input-number
+            ></app-form-field>
+          </div>
+          <div class="col-6">
+            <app-form-field label="Sur"
+              ><app-input-number
+                [input_control]="sur"
+                [allow_decimals]="true"
+              ></app-input-number
+            ></app-form-field>
+          </div>
+          <div class="col-6">
+            <app-form-field label="Este"
+              ><app-input-number
+                [input_control]="este"
+                [allow_decimals]="true"
+              ></app-input-number
+            ></app-form-field>
+          </div>
+          <div class="col-6">
+            <app-form-field label="Oeste"
+              ><app-input-number
+                [input_control]="oeste"
+                [allow_decimals]="true"
+              ></app-input-number
+            ></app-form-field>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
+
+    <!-- COLUMNA 3: ADICIONAL -->
+    <div class="col-12 col-lg-6">
+      <app-card-container title="Información Adicional" class="mb-3">
+        <div class="row">
+          <div class="col-md-6">
+            <app-form-field label="Comisión (%)">
+              <app-input-number
+                [input_control]="comision"
+                [allow_decimals]="true"
+              ></app-input-number>
+            </app-form-field>
+          </div>
+          <div class="col-12">
+            <app-form-field label="Observaciones">
+              <app-input-textarea
+                [input_control]="observaciones"
+              ></app-input-textarea>
+            </app-form-field>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
+
+    <!-- COLUMNA 4: IMÁGENES -->
+    <div class="col-12 col-lg-6">
+      <app-card-container title="Galería de Imágenes" class="mb-3">
+        <!-- 1. Uploader (Activamos multiple) -->
+        <app-image-uploader
+          [multiple]="true"
+          [showLocalPreview]="false"
+          [uploadTitle]="'Arrastra o haz clic para subir fotos'"
+          [maxSizeMB]="5"
+          (imageSelected)="onFileSelected($event)"
+        >
+        </app-image-uploader>
+
+        <div class="row mt-3">
+          <!-- 2. Mostrar Imágenes EXISTENTES (De la BD) -->
+          @for (img of loteData?.imagenes || []; track img.id) {
+            <div class="col-md-4 mb-3">
+              <app-image-display
+                [imageUrl]="img.publicUrl"
+                [imageName]="'Foto Lote'"
+                [editable]="true"
+                (imageDeleted)="deleteImage.emit(img.id)"
+              ></app-image-display>
+            </div>
+          }
+
+          <!-- 3. Mostrar Imágenes PENDIENTES (Aún no guardadas) -->
+          @for (file of pendingFiles; track file.name; let i = $index) {
+            <div class="col-md-4 mb-3">
+              <app-image-display
+                [imageUrl]="getFilePreview(file)"
+                [imageName]="file.name"
+                [editable]="true"
+                (imageDeleted)="removePendingFile.emit(i)"
+              ></app-image-display>
             </div>
           }
         </div>
-      </app-card-container>
-    }
 
-    @if (!loteData) {
-      <div class="alert alert-info mt-2">
-        <small
-          >ℹ️ Primero debe guardar el lote para poder agregar imágenes.</small
-        >
-      </div>
-    }
-  </form>
-</app-modal-container>
+        @if (!loteData && pendingFiles.length === 0) {
+          <div class="alert alert-info mt-2 py-2">
+            <small
+              >Las imágenes seleccionadas se subirán automáticamente al guardar
+              el lote.</small
+            >
+          </div>
+        }
+
+        <!-- Contador de archivos pendientes -->
+        @if (pendingFiles.length > 0) {
+          <div class="alert alert-primary mt-2 py-2">
+            <small
+              ><strong>{{ pendingFiles.length }}</strong> imagen(es) listas para
+              subir.</small
+            >
+          </div>
+        }
+      </app-card-container>
+    </div>
+  </div>
+</div>
