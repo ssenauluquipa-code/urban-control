@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
 import { ColDef, ICellRendererParams } from 'ag-grid-community';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { IAsesor } from 'src/app/core/models/asesor/asesor.model';
@@ -14,11 +13,14 @@ import { DataTableComponent } from "src/app/shared/components/organisms/data-tab
 import { ConfirmationService } from 'src/app/core/services/confirmation.service';
 import { RegisterAsesorComponent } from '../register-asesor.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { StatusFilterComponent } from "src/app/shared/components/atoms/status-filter/status-filter.component";
+import { ActivatedRoute, Router } from '@angular/router';
+import { AsesorDetailComponent } from '../asesor-detail/asesor-detail.component';
 
 @Component({
   selector: 'app-lista-asesores',
   standalone: true,
-  imports: [PageContainerComponent, FormFieldComponent, InputTextComponent, DataTableComponent],
+  imports: [PageContainerComponent, FormFieldComponent, InputTextComponent, DataTableComponent, StatusFilterComponent],
   templateUrl: './lista-asesores.component.html',
   styleUrl: './lista-asesores.component.scss'
 })
@@ -32,6 +34,7 @@ export class ListaAsesoresComponent implements OnInit {
 
   // Filters
   public searchControl = new FormControl('');
+  public documentControl = new FormControl('');
   public filterActive: boolean | undefined = true;
 
   // Column Definitions
@@ -79,8 +82,9 @@ export class ListaAsesoresComponent implements OnInit {
   private asesorService = inject(AsesorService);
   private confirmation = inject(ConfirmationService);
   private notification = inject(NotificationService);
-  private router = inject(Router);
   private modalService = inject(NgbModal);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   ngOnInit(): void {
     this.loadAsesores();
@@ -92,14 +96,21 @@ export class ListaAsesoresComponent implements OnInit {
     ).subscribe(() => {
       this.loadAsesores();
     });
+
+    this.documentControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.loadAsesores();
+    });
   }
 
   loadAsesores(): void {
     this.loading = true;
     const term = this.searchControl.value || undefined;
-
+    const document = this.documentControl.value || undefined;
     // Llamamos al servicio con los filtros
-    this.asesorService.getAsesores(term, undefined, this.filterActive)
+    this.asesorService.getAsesores(term, document, this.filterActive)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (data) => {
@@ -131,6 +142,9 @@ export class ListaAsesoresComponent implements OnInit {
           }
         });
     }
+    if (event.action === TableActionsEnum.INFO) {
+      this.openDetailModal(event.row!.id);
+    }
   }
 
   onAddNew(): void {
@@ -152,5 +166,10 @@ export class ListaAsesoresComponent implements OnInit {
     }).catch(() => {
       //
     });
+  }
+
+  private openDetailModal(id: string): void {
+    const modalRef = this.modalService.open(AsesorDetailComponent, { size: 'lg', centered: true });
+    modalRef.componentInstance.asesorId = id; // Pasamos el ID
   }
 }

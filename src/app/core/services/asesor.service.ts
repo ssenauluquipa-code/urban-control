@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
-import { AsesorRepository } from '../repository/asesor.repository';
 import { CreateAsesorDto, IAsesor, UpdateAsesorDto } from '../models/asesor/asesor.model';
 import { Observable } from 'rxjs';
+import { IAsesorRepository } from '../interfaces/repository/asesor.repository.interface';
 
 export const ASESOR_REPOSITORY_TOKEN = 'IAsesorRepository';
 
@@ -10,7 +10,7 @@ export const ASESOR_REPOSITORY_TOKEN = 'IAsesorRepository';
 })
 export class AsesorService {
 
-  constructor(@Inject(ASESOR_REPOSITORY_TOKEN) private repo: AsesorRepository) { }
+  constructor(@Inject(ASESOR_REPOSITORY_TOKEN) private repo: IAsesorRepository) { }
 
   // Lista con filtros dinámicos
   getAsesores(term?: string, nroDocumento?: string, isActive?: boolean): Observable<IAsesor[]> {

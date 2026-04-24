@@ -18,8 +18,8 @@ import { CommonModule } from '@angular/common';
     <app-modal-container
       [mainTitleModal]="isEditMode ? 'Editar Asesor' : 'Nuevo Asesor'"
       [loading]="loading"
-      (onSaveAction)="onSubmit()"
-      (onCancelAction)="closeModal()">
+      (SaveAction)="onSubmit()"
+      (CancelAction)="closeModal()">
 
       <app-register-asesor-view
         [form]="form"

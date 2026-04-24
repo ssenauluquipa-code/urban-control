@@ -1,0 +1,84 @@
+<!-- Misma estructura de columnas que el formulario de registro -->
+<div class="row">
+  <!-- COLUMNA IZQUIERDA -->
+  <div class="col-md-6">
+    <!-- Fila 1: Código y Estado -->
+    <div class="row mb-3">
+      <div class="col-6">
+        <app-input-text-info [label]="'Código'" [value]="asesor?.codigoAsesor">
+        </app-input-text-info>
+      </div>
+      <div class="col-6">
+        <app-input-text-info
+          [label]="'Estado'"
+          [value]="asesor?.isActive ? 'Activo' : 'Inactivo'"
+        >
+        </app-input-text-info>
+      </div>
+    </div>
+
+    <!-- Fila 2: Nombre Completo -->
+    <!-- Agregamos mb-3 para separar del siguiente bloque -->
+    <div class="mb-3">
+      <app-input-text-info
+        [label]="'Nombre Completo'"
+        [value]="asesor?.nombreCompleto"
+      >
+      </app-input-text-info>
+    </div>
+
+    <!-- Fila 3: Documentos -->
+    <div class="row mb-3">
+      <div class="col-5">
+        <app-input-text-info
+          [label]="'Tipo Doc.'"
+          [value]="asesor?.tipoDocumento"
+        >
+        </app-input-text-info>
+      </div>
+      <div class="col-7">
+        <app-input-text-info
+          [label]="'Nro. Documento'"
+          [value]="asesor?.nroDocumento"
+        >
+        </app-input-text-info>
+      </div>
+    </div>
+
+    <!-- Fila 4: Teléfono -->
+    <div class="mb-3">
+      <app-input-text-info
+        [label]="'Teléfono'"
+        [value]="asesor?.telefono || 'Sin registro'"
+      >
+      </app-input-text-info>
+    </div>
+  </div>
+
+  <!-- COLUMNA DERECHA -->
+  <div class="col-md-6">
+    <!-- Fila 1: Género -->
+    <div class="mb-3">
+      <app-input-text-info [label]="'Género'" [value]="asesor?.genero">
+      </app-input-text-info>
+    </div>
+
+    <!-- Fila 2: Fecha Nacimiento -->
+    <div class="mb-3">
+      <app-input-text-info
+        [label]="'Fecha Nacimiento'"
+        [value]="asesor?.fechaNacimiento | date: 'dd/MM/yyyy'"
+      >
+      </app-input-text-info>
+    </div>
+
+    <!-- Fila 3: Email -->
+    <div class="mb-3">
+      <app-input-text-info
+        [label]="'Email'"
+        [value]="asesor?.email || 'Sin registro'"
+      >
+      </app-input-text-info>
+    </div>
+  </div>
+</div>

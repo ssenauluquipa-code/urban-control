@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FormFieldComponent } from "src/app/shared/components/molecules/form-field/form-field.component";
 import { InputTextComponent } from "src/app/shared/components/atoms/input-text/input-text.component";
-import { SelectDataComponent } from "src/app/shared/components/atoms/select-data.component";
 import { SelectGenderComponent } from "src/app/shared/components/atoms/select-gender.component";
 import { SelectDocumentTypeComponent } from "src/app/shared/components/atoms/select-document-type.component";
 import { InputDateComponent } from "src/app/shared/components/atoms/input-date/input-date.component";
@@ -10,7 +9,7 @@ import { InputDateComponent } from "src/app/shared/components/atoms/input-date/i
 @Component({
   selector: 'app-register-asesor-view',
   standalone: true,
-  imports: [FormFieldComponent, InputTextComponent, SelectDataComponent, InputDateComponent, SelectGenderComponent, SelectDocumentTypeComponent],
+  imports: [FormFieldComponent, InputTextComponent, InputDateComponent, SelectGenderComponent, SelectDocumentTypeComponent],
   templateUrl: './register-asesor-view.component.html',
   styleUrl: './register-asesor-view.component.scss'
 })
