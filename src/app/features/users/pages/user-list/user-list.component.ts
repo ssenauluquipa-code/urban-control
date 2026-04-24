@@ -32,7 +32,6 @@ import { UserRegisterComponent } from '../user-register.component';
         [rowData]="(users$ | async) || []"
         [columnDefs]="columnDefs"
         [loading]="isLoading"
-        height="350px"
         [showCreate]="false"
         [actions]="[tableActionEnum.EDIT, tableActionEnum.ACTIVATE, tableActionEnum.DEACTIVATE, tableActionEnum.REMOVE_IMAGE]"
         (actionClicked)="onTableAction($event)">
@@ -179,7 +178,17 @@ export class UserListComponent implements OnInit {
           resolve(true);
         },
         error: (err) => {
-          this.notification.error('Error al cambiar estado del usuario');
+          const backendMessage = err.error?.message;
+
+          let displayMessage = 'Error al cambiar estado del usuario';
+
+          if (typeof backendMessage === 'string') {
+            displayMessage = backendMessage;
+          } else if (Array.isArray(backendMessage)) {
+            displayMessage = backendMessage.join(', ');
+          }
+
+          this.notification.error(displayMessage);
           console.error(err);
           reject(err);
         }
