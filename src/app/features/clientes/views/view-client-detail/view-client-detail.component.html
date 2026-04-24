@@ -1,0 +1,111 @@
+<!-- 👇 Contenedor con espaciado vertical y horizontal -->
+<div class="row g-4">
+  <!-- SECCIÓN 1: INFORMACIÓN PERSONAL -->
+  <div class="col-lg-6 col-md-12">
+    <app-card-container title="Datos Personales">
+      <div class="row g-3">
+        <div class="col-md-6 col-12">
+          <app-input-text-info
+            [label]="'Código Cliente'"
+            [value]="cliente?.codigoCliente"
+          >
+          </app-input-text-info>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <app-input-text-info
+            [label]="'Estado'"
+            [value]="cliente?.isActive ? 'Activo' : 'Inactivo'"
+          >
+          </app-input-text-info>
+        </div>
+
+        <div class="col-12">
+          <app-input-text-info
+            [label]="'Nombre Completo'"
+            [value]="cliente?.nombreCompleto"
+          >
+          </app-input-text-info>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <app-input-text-info [label]="'Género'" [value]="cliente?.genero">
+          </app-input-text-info>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <app-input-text-info
+            [label]="'Fecha Nacimiento'"
+            [value]="cliente?.fechaNacimiento | date: 'dd/MM/yyyy'"
+          >
+          </app-input-text-info>
+        </div>
+      </div>
+    </app-card-container>
+  </div>
+
+  <!-- SECCIÓN 2: DOCUMENTACIÓN -->
+  <div class="col-lg-6 col-md-12">
+    <app-card-container title="Documentación e Identificación">
+      <div class="row g-3">
+        <div class="col-md-6 col-12">
+          <app-input-text-info
+            [label]="'Tipo Documento'"
+            [value]="cliente?.tipoDocumento"
+          >
+          </app-input-text-info>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <app-input-text-info
+            [label]="'Nro. Documento'"
+            [value]="
+              cliente?.nroDocumento +
+              (cliente?.complemento ? ' ' + cliente?.complemento : '')
+            "
+          >
+          </app-input-text-info>
+        </div>
+
+        <div class="col-12">
+          <app-input-text-info
+            [label]="'Nro. Referencia'"
+            [value]="cliente?.numeroReferencia || 'Sin referencia'"
+          >
+          </app-input-text-info>
+        </div>
+      </div>
+    </app-card-container>
+  </div>
+
+  <!-- SECCIÓN 3: CONTACTO Y UBICACIÓN (Ancho completo) -->
+  <div class="col-12">
+    <app-card-container title="Contacto y Ubicación">
+      <div class="row g-3">
+        <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+          <app-input-text-info
+            [label]="'Teléfono'"
+            [value]="cliente?.telefono || 'Sin registro'"
+          >
+          </app-input-text-info>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+          <app-input-text-info
+            [label]="'Email'"
+            [value]="cliente?.email || 'Sin registro'"
+          >
+          </app-input-text-info>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+          <app-input-text-info
+            [label]="'Dirección'"
+            [value]="cliente?.direccion || 'Sin registro'"
+          >
+          </app-input-text-info>
+        </div>
+      </div>
+    </app-card-container>
+  </div>
+</div>

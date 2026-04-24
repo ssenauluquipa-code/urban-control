@@ -1,12 +1,16 @@
-// Mejora visual para los badges dentro de AG Grid
-.badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.4em 0.8em;
-  border-radius: 50rem;
+
+/* Ajuste fino para que los botones coincidan con la altura del input de NG-Zorro */
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  /* Ajusta el padding para igualar altura visual */
+  line-height: 1.5;
 }
 
-.bg-danger-subtle {
-  background-color: #f8d7da;
-  color: #dc3545;
+/* Si usas NG-Zorro, su input suele tener ~32px de altura */
+/* Podemos forzar la altura de los botones si es necesario */
+.d-flex.gap-2 .btn {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

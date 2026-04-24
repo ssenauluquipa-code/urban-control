@@ -14,6 +14,7 @@ import { InputTextComponent } from "src/app/shared/components/atoms/input-text/i
 import { FormFieldComponent } from "src/app/shared/components/molecules/form-field/form-field.component";
 import { Router } from '@angular/router';
 import { DataTableServerComponent } from 'src/app/shared/components/organisms/data-table-server/data-table-server.component';
+import { StatusFilterComponent } from 'src/app/shared/components/atoms/status-filter/status-filter.component';
 
 /**
  * LISTA DE CLIENTES - Usa DataTableServerComponent (SERVER-SIDE con búsqueda + paginación)
@@ -29,6 +30,8 @@ import { DataTableServerComponent } from 'src/app/shared/components/organisms/da
     InputTextComponent,
     FormFieldComponent,
     DataTableServerComponent, // 👈 CAMBIO: Ahora usa la versión SERVER
+    StatusFilterComponent,
+    FormFieldComponent
   ],
   templateUrl: './list-clientes.component.html',
   styleUrl: './list-clientes.component.scss'
@@ -126,14 +129,12 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.currentPage = 1; // Reset página al buscar
-      this.loadClientes();
+      this.dataTable.refresh(); // 👈 Usar refresh() para que AG Grid pida datos
     });
 
-    // ⏱️ Cargar datos iniciales DESPUÉS de que Angular termine de renderizar
-    // Esto asegura que AG Grid ya está listo (onGridReady se ejecutó)
-    setTimeout(() => {
-      this.loadClientes();
-    }, 100);
+    // ⏱️ Ya no es necesario llamar a loadClientes() aquí.
+    // DataTableServerComponent disparará el primer pageChange automáticamente
+    // al configurarse el datasource en onGridReady.
   }
 
   /**
@@ -179,7 +180,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
   setFilter(active: boolean | undefined): void {
     this.filterActive = active;
     this.currentPage = 1;
-    this.loadClientes();
+    this.dataTable.refresh(); // 👈 Usar refresh() para que AG Grid pida datos
   }
 
   /**
@@ -196,15 +197,9 @@ export class ListClientesComponent implements OnInit, OnDestroy {
    * 7. Tabla se actualiza con nuevos datos
    */
   onPageChange(newPage: number): void {
-
     const pageToLoad = newPage < 1 ? 1 : newPage;
-    // La tabla puede pedir la misma página en casos especiales
-    // SIEMPRE cargar si es una página distinta
-    if (pageToLoad !== this.currentPage) {
-      this.currentPage = pageToLoad;
-      this.clientes = [];
-      this.loadClientes();
-    }
+    this.currentPage = pageToLoad;
+    this.loadClientes();
   }
 
   /**
@@ -260,7 +255,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
         this.clienteService.toggleStatus(cliente.id, cliente.isActive).subscribe({
           next: () => {
             this.notification.success('Cliente desactivado');
-            this.loadClientes();
+            this.dataTable.refresh();
           },
           error: () => this.notification.error('Error al desactivar')
         });
@@ -280,7 +275,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
         this.clienteService.toggleStatus(cliente.id, cliente.isActive).subscribe({
           next: () => {
             this.notification.success('Cliente reactivado');
-            this.loadClientes();
+            this.dataTable.refresh();
           },
           error: () => this.notification.error('Error al reactivar')
         });

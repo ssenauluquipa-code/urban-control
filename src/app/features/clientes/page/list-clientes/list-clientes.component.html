@@ -5,7 +5,11 @@
   (AddNew)="onAddNew()"
 >
   <!-- Filtros y Buscador -->
-  <div class="row mb-3 align-items-end">
+  <!-- 
+    row g-3: Espaciado uniforme entre columnas (Gutter)
+    align-items-end: Alinea todo al fondo (bottom)
+  -->
+  <div class="row g-3 align-items-end mb-4">
     <!-- Buscador -->
     <div class="col-md-5">
       <app-form-field label="Buscar Cliente">
@@ -13,40 +17,24 @@
           [input_control]="searchControl"
           input_placeholder="Nombre, CI o Email..."
           prefix_icon="search"
-        >
-        </app-input-text>
+        ></app-input-text>
       </app-form-field>
     </div>
 
     <!-- Filtros Rápidos -->
-    <div class="col-md-4 d-flex align-items-end gap-2 mb-1">
-      <button
-        class="btn"
-        [class.btn-primary]="filterActive === true"
-        [class.btn-outline-secondary]="filterActive !== true"
-        (click)="setFilter(true)"
-      >
-        Activos
-      </button>
-      <button
-        class="btn"
-        [class.btn-primary]="filterActive === false"
-        [class.btn-outline-secondary]="filterActive !== false"
-        (click)="setFilter(false)"
-      >
-        Inactivos
-      </button>
-      <button
-        class="btn"
-        [class.btn-primary]="filterActive === undefined"
-        [class.btn-outline-secondary]="filterActive !== undefined"
-        (click)="setFilter(undefined)"
-      >
-        Todos
-      </button>
+    <!-- 
+      col-md-auto: La columna se ajusta al ancho de los botones (no ocupa 4 columnas fijas)
+      d-flex align-items-center gap-2: Agrupa botones con espacio entre ellos
+    -->
+    <div class="col-md-auto">
+      <app-form-field label="Estado">
+        <app-status-filter
+          [currentStatus]="filterActive"
+          (statusChange)="setFilter($event)"
+        ></app-status-filter>
+      </app-form-field>
     </div>
   </div>
-
   <!-- Tabla Server-Side con búsqueda + paginación -->
   <!-- 👇 AHORA USA DataTableServerComponent -->
   <app-data-table-server

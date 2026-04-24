@@ -201,4 +201,14 @@ export class DataTableServerComponent<T = unknown> extends DataTableBaseComponen
     // AG Grid solicitará datos automáticamente via pageChange
     // No es necesario hacer nada aquí, AG Grid se encargará
   }
+
+  /**
+   * Método para forzar la recarga de datos desde afuera (filtros externos, búsquedas)
+   * Esto hará que AG Grid vuelva a solicitar la primera página
+   */
+  public refresh(): void {
+    if (this.gridApi) {
+      this.gridApi.refreshInfiniteCache();
+    }
+  }
 }

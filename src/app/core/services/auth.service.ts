@@ -28,6 +28,7 @@ export class AuthService {
   }
 
   private saveSession(response: ILoginResponse): void {
+    console.log('🔐 [AuthService] Guardando nueva sesión...', { user: response.user.email });
     localStorage.setItem('accessToken', response.accessToken);
     localStorage.setItem('refreshToken', response.refreshToken);
     localStorage.setItem('user', JSON.stringify(response.user));
@@ -35,8 +36,10 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
+    console.warn('🚪 [AuthService] Iniciando cierre de sesión (logout)...');
     return this.repo.logout().pipe(
       tap(() => {
+        console.log('🧹 [AuthService] Sesión limpiada en localStorage.');
         localStorage.clear();
         this._currentUser.set(null);
       })
@@ -66,22 +69,22 @@ export class AuthService {
   }
 
   refreshToken(): Observable<ILoginResponse>{
-    // Obtenemos el token de refresco guardado
     const refreshToken = localStorage.getItem('refreshToken');
+    console.log('🔄 [AuthService] Intentando refrescar token...', refreshToken ? 'Token presente' : 'Token ausente');
 
     if (!refreshToken) {
+      console.error('❌ [AuthService] No hay Refresh Token en Storage.');
       this.logout().subscribe();
       return throwError(() => new Error('No refresh token available'));
     }
 
-    // Llamamos al repo pasando el DTO requerido
     return this.repo.refreshTokens({ refreshToken }).pipe(
       tap(response => {
-        // Usamos tu método existente para actualizar tokens y el Signal del usuario
+        console.log('✅ [AuthService] Token refrescado exitosamente.');
         this.saveSession(response);
       }),
       catchError(err => {
-        // Si el refresh falla (ej: expiró también el refresh token), limpiamos todo
+        console.error('🔥 [AuthService] El refresco de token falló en el servidor.', err);
         this.logout().subscribe();
         return throwError(() => err);
       })
