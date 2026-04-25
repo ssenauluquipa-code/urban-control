@@ -1,13 +1,31 @@
-@import 'src/assets/scss/variable';
-
 .badge-estado {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-weight: 600;
   display: inline-block;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 14px !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 
-  &.disponible { background: #e6fffa; color: #38b2ac; border: 1px solid #b2f5ea; }
-  &.vendido { background: #fff5f5; color: #e53e3e; border: 1px solid #feb2b2; }
-  &.reservado { background: #fffaf0; color: #dd6b20; border: 1px solid #fbd38d; }
+  // ── Booleanos ──────────────────────────────────────
+  &.activo      { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+  &.inactivo    { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+  // ── Lotes ──────────────────────────────────────────
+  &.disponible  { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+  &.reservado   { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  &.vendido     { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+  &.bloqueado   { background: #e5e7eb; color: #374151; border: 1px solid #d1d5db; }
+
+  // ── Reservas ───────────────────────────────────────
+  &.activa      { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  &.vencida     { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+  &.convertida  { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+  &.cancelada   { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+  // ── Proyectos (string ACTIVO / INACTIVO) ───────────
+  // Reutiliza .activo e .inactivo (mismas clases lowercase)
+
+  // ── Fallback ───────────────────────────────────────
+  &.desconocido { background: #f9fafb; color: #9ca3af; border: 1px solid #e5e7eb; }
 }
-

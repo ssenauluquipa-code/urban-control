@@ -21,7 +21,7 @@ import { ITableActionParams, TableActionsEnum } from '../../../interfaces/table-
       }
 
       @if (actions.length > 2) {
-        <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
+        <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" tabindex="0" (click)="stopBubble($event)" (keydown.enter)="stopBubble($event)">
           <i nz-icon nzType="more" style="font-size: 20px;"></i>
         </a>
         <nz-dropdown-menu #menu="nzDropdownMenu">
@@ -53,14 +53,24 @@ export class TableActionsComponent implements ICellRendererAngularComp {
   actions: string[] = [];
   rowData: unknown = null;
   params!: ITableActionParams;
+  private isHandling = false; // Previene doble disparo por clic rápido
 
   handleAction(action: string, event?: MouseEvent) {
     if (event) {
       event.stopPropagation();
     }
+    // Prevenir doble apertura por clics rápidos
+    if (this.isHandling) return;
+    this.isHandling = true;
+    setTimeout(() => this.isHandling = false, 500);
+
     if (this.params && this.params.actionClicked) {
       this.params.actionClicked({ action, data: this.rowData });
     }
+  }
+
+  stopBubble(event: Event) {
+    event.stopPropagation();
   }
 
   getIcon(action: string): string {

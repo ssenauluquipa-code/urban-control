@@ -1,4 +1,5 @@
 import { ColDef } from 'ag-grid-community';
+import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, finalize } from 'rxjs';
@@ -25,8 +26,7 @@ import { RegisterProyectoComponent } from '../register-proyecto/register-proyect
       <app-data-table
         [rowData]="(proyectos$ | async) || []"
         [columnDefs]="columnDefs"
-        [loading]="loading"
-        height="450px"
+        [loading]="loading"        
         [showCreate]="false"
         [actions]="[tableActionEnum.VIEW, tableActionEnum.EDIT, tableActionEnum.DELETE]"
         (actionClicked)="onTableAction($event)">
@@ -41,21 +41,16 @@ export class LisProyectosComponent implements OnInit {
   public loading = false;
 
   columnDefs: ColDef[] = [
-    { field: 'nombre', headerName: 'Nombre del Proyecto', filter: true, width: 200 },
+    { field: 'nombre', headerName: 'Nombre del Proyecto', flex: 1, width: 200 },
     { field: 'departamento', headerName: 'Departamento', width: 150 },
     { field: 'provincia', headerName: 'Provincia', width: 150 },
-    { field: 'distrito', headerName: 'Distrito', width: 150 },
+    { field: 'distrito', headerName: 'Distrito', flex: 1, width: 150 },
     { field: 'direccion', headerName: 'Dirección', width: 250 },
     {
       field: 'estado',
       headerName: 'Estado',
       width: 120,
-      cellStyle: (params) => {
-        const styles: Record<string, string | number> = { fontWeight: 'bold' };
-        if (params.value === 'ACTIVO') styles['color'] = '#10b981';
-        if (params.value === 'INACTIVO') styles['color'] = '#ef4444';
-        return styles;
-      }
+      cellRenderer: BadgeEstadoComponent
     },
     {
       field: 'createdAt',

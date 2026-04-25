@@ -60,8 +60,7 @@ export class DataTableServerComponent<T = unknown> extends DataTableBaseComponen
       sortable: true,
       filter: true,
       resizable: true,
-      flex: 1,
-      minWidth: 150,
+      minWidth: 100,
       suppressMovable: true,
       cellStyle: { display: 'flex', 'align-items': 'center' }
     },

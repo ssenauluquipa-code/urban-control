@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { finalize, Observable } from 'rxjs';
 import { IUser } from 'src/app/core/models/user.model';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
-import { ColDef, ICellRendererParams, CellClassParams } from 'ag-grid-community';
+import { CellClassParams, ColDef, ICellRendererParams } from 'ag-grid-community';
+import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { UserService } from 'src/app/core/services/user.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from 'src/app/core/services/notification.service';
@@ -66,9 +67,9 @@ export class UserListComponent implements OnInit {
         }
       }
     },
-    { field: 'name', headerName: 'Nombre Completo', filter: true, width: 200 },
-    { field: 'email', headerName: 'Correo Electrónico', width: 250 },
-    { field: 'contactNumber', headerName: 'Teléfono', width: 140 },
+    { field: 'name', headerName: 'Nombre Completo', flex: 1, width: 200 },
+    { field: 'email', headerName: 'Correo Electrónico', flex: 1, width: 250 },
+    { field: 'contactNumber', headerName: 'Teléfono', width: 160 },
     {
       field: 'role',
       headerName: 'Rol',
@@ -84,13 +85,8 @@ export class UserListComponent implements OnInit {
     {
       field: 'isActive',
       headerName: 'Estado',
-      width: 120,
-      cellRenderer: (params: ICellRendererParams<IUser>) => {
-        const active = params.value;
-        const color = active ? '#10b981' : '#ef4444'; // Verde : Rojo
-        const text = active ? 'Activo' : 'Inactivo';
-        return `<span style="background: ${color}15; color: ${color}; padding: 4px 10px; border-radius: 20px; font-weight: 500; font-size: 12px;">${text}</span>`;
-      }
+      width: 110,
+      cellRenderer: BadgeEstadoComponent
     }
   ];
 

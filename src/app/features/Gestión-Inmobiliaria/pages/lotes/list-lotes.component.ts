@@ -1,4 +1,5 @@
-import { ColDef, ICellRendererParams } from 'ag-grid-community';
+import { ColDef } from 'ag-grid-community';
+import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
@@ -97,32 +98,7 @@ export class ListLotesComponent implements OnInit {
       field: 'estado',
       headerName: 'Estado',
       width: 120,
-      cellRenderer: (params: ICellRendererParams) => {
-        const estado = params.value;
-        let color = '#64748b'; // Gris por defecto
-        let bg = '#f1f5f9';
-
-        switch (estado) {
-          case TEstadoLote.DISPONIBLE:
-            color = '#059669';
-            bg = '#d1fae5';
-            break; // Verde
-          case TEstadoLote.RESERVADO:
-            color = '#d97706';
-            bg = '#fef3c7';
-            break; // Naranja
-          case TEstadoLote.VENDIDO:
-            color = '#dc2626';
-            bg = '#fee2e2';
-            break; // Rojo
-          case TEstadoLote.BLOQUEADO:
-            color = '#4b5563';
-            bg = '#e5e7eb';
-            break; // Gris oscuro
-        }
-
-        return `<span style="background-color: ${bg}; color: ${color}; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase;">${estado}</span>`;
-      },
+      cellRenderer: BadgeEstadoComponent
     },
   ];
 

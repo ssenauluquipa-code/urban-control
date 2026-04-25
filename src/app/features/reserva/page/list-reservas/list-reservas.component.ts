@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ColDef, ICellRendererParams } from 'ag-grid-community';
+import { ColDef } from 'ag-grid-community';
+import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { finalize } from 'rxjs';
 import { EstadoReserva, IReserva } from 'src/app/core/models/reserva.model';
 import { ConfirmationService } from 'src/app/core/services/confirmation.service';
@@ -90,29 +91,7 @@ export class ListReservasComponent implements OnInit {
       field: 'estado',
       headerName: 'Estado',
       width: 120,
-      cellRenderer: (params: ICellRendererParams) => {
-        const estado = params.value;
-        let badgeClass = 'bg-secondary-subtle text-secondary'; // Default
-
-        switch (estado) {
-          case 'ACTIVA':
-            badgeClass = 'bg-warning-subtle text-warning'; // Amarillo/Naranja para activa
-            break;
-          case 'VENCIDA':
-            badgeClass = 'bg-danger-subtle text-danger'; // Rojo para vencida
-            break;
-          case 'CONVERTIDA':
-            badgeClass = 'bg-success-subtle text-success'; // Verde para convertida (éxito)
-            break;
-          case 'CANCELADA':
-            badgeClass = 'bg-secondary-subtle text-secondary'; // Gris para cancelada
-            break;
-        }
-
-        // Capitalize first letter
-        const text = estado ? estado.charAt(0).toUpperCase() + estado.slice(1).toLowerCase() : '';
-        return `<span class="badge ${badgeClass}">${text}</span>`;
-      }
+      cellRenderer: BadgeEstadoComponent
     }
   ];
 

@@ -1,10 +1,27 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// 1. Importamos las interfaces necesarias
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
-import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
 
+/**
+ * BadgeEstadoComponent
+ *
+ * Componente genérico para renderizar estados.
+ * Funciona de DOS formas:
+ *
+ * 1️⃣ Como cellRenderer de AG Grid (columnDefs):
+ *    { field: 'isActive', headerName: 'Estado', cellRenderer: BadgeEstadoComponent }
+ *
+ * 2️⃣ Como componente Angular en cualquier template:
+ *    <app-badge-estado [estado]="'DISPONIBLE'"></app-badge-estado>
+ *    <app-badge-estado [estado]="true"></app-badge-estado>
+ *
+ * Estados soportados:
+ *  - Booleanos: true → "Activo" | false → "Inactivo"
+ *  - Lotes:     DISPONIBLE | RESERVADO | VENDIDO | BLOQUEADO
+ *  - Reservas:  ACTIVA | VENCIDA | CONVERTIDA | CANCELADA
+ *  - Proyectos: ACTIVO | INACTIVO
+ */
 @Component({
   selector: 'app-badge-estado',
   standalone: true,
@@ -12,27 +29,38 @@ import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
   templateUrl: './badge-estado.component.html',
   styleUrls: ['./badge-estado.component.scss']
 })
-// 2. Implementamos ICellRendererAngularComp
 export class BadgeEstadoComponent implements ICellRendererAngularComp {
-  @Input() estado: TEstadoLote = TEstadoLote.DISPONIBLE;
+  label    = '';
+  cssClass = '';
 
-  // 3. Este método recibe el valor desde AG Grid
+  // ── Uso en template Angular: <app-badge-estado [estado]="'DISPONIBLE'">
+  @Input() set estado(value: string | boolean | null | undefined) {
+    this.setState(value);
+  }
+
+  // ── Uso como cellRenderer de AG Grid
   agInit(params: ICellRendererParams): void {
-    if (params.value) {
-      this.estado = params.value;
-    }
+    this.setState(params.value);
   }
 
-  // 4. Este método permite que la celda se actualice si el dato cambia
   refresh(params: ICellRendererParams): boolean {
-    if (params.value) {
-      this.estado = params.value;
-      return true;
-    }
-    return false;
+    this.setState(params.value);
+    return true;
   }
 
-  getBadgeClass(): string {
-    return this.estado.toLowerCase();
+  private setState(value: string | boolean | null | undefined): void {
+    if (value === true) {
+      this.label    = 'Activo';
+      this.cssClass = 'activo';
+    } else if (value === false) {
+      this.label    = 'Inactivo';
+      this.cssClass = 'inactivo';
+    } else if (typeof value === 'string' && value.length > 0) {
+      this.cssClass = value.toLowerCase();
+      this.label    = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+    } else {
+      this.label    = '—';
+      this.cssClass = 'desconocido';
+    }
   }
 }

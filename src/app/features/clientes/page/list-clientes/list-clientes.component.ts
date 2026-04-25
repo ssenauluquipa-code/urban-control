@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ColDef, ICellRendererParams, SortModelItem } from 'ag-grid-community';
+import { ColDef, SortModelItem } from 'ag-grid-community';
+import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, finalize, Subject, takeUntil } from 'rxjs';
 import { ICliente } from 'src/app/core/models/cliente.model';
@@ -62,7 +63,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'codigoCliente',
       headerName: 'Código',
-      width: 70,
+      width: 120,
       cellStyle: { fontWeight: 'bold' }
     },
     {
@@ -74,7 +75,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'nroDocumento',
       headerName: 'CI / NIT',
-      width: 120,
+      width: 140,
       valueFormatter: (params) => {
         if (!params.data || !params.value) return params.value;
         return params.data.complemento ? `${params.value} ${params.data.complemento}` : params.value;
@@ -83,32 +84,19 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'telefono',
       headerName: 'Teléfono',
-      width: 120
+      width: 140
     },
     {
       field: 'email',
       headerName: 'Email',
-      width: 200,
-      suppressSizeToFit: true
+      width: 220,
+      flex: 1,
     },
     {
       field: 'isActive',
       headerName: 'Estado',
-      width: 70,
-      flex: 1,
-      cellRenderer: (params: ICellRendererParams) => {
-        if (!params.data) {
-          return '';
-        }
-
-        const isActive = params.value;
-        const badgeClass = isActive
-          ? 'bg-success-subtle text-success'
-          : 'bg-danger-subtle text-danger';
-        const text = isActive ? 'Activo' : 'Inactivo';
-
-        return `<span class="badge rounded-pill ${badgeClass}">${text}</span>`;
-      }
+      width: 110,
+      cellRenderer: BadgeEstadoComponent
     }
   ];
 

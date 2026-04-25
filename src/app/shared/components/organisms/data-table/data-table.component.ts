@@ -46,7 +46,6 @@ export class DataTableComponent<T = unknown> extends DataTableBaseComponent<T> i
       sortable: true,
       filter: true,
       resizable: true,
-      flex: 1,
       minWidth: 150,
       suppressMovable: true,
       cellStyle: { display: 'flex', 'align-items': 'center' }

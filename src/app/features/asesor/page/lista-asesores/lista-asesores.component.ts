@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ColDef, ICellRendererParams } from 'ag-grid-community';
+import { ColDef } from 'ag-grid-community';
+import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { IAsesor } from 'src/app/core/models/asesor/asesor.model';
 import { AsesorService } from 'src/app/core/services/asesor.service';
@@ -64,17 +65,13 @@ export class ListaAsesoresComponent implements OnInit {
     {
       field: 'email',
       headerName: 'Email',
-      width: 200
+      width: 250
     },
     {
       field: 'isActive',
       headerName: 'Estado',
-      width: 100,
-      cellRenderer: (params: ICellRendererParams) => {
-        return params.value
-          ? '<span class="badge bg-success-subtle text-success">Activo</span>'
-          : '<span class="badge bg-secondary-subtle text-secondary">Inactivo</span>';
-      }
+      width: 110,
+      cellRenderer: BadgeEstadoComponent
     }
   ];
 
