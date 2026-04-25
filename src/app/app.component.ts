@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
     
     if(token){
       console.log('👤 [AppComponent] Intentando cargar perfil del usuario...');
-      this.authService.getProfile().subscribe({
+      this.authService.getLoggedUser().subscribe({
         next: (user) => console.log('✅ [AppComponent] Perfil cargado para:', user.email),
         error: (err) => console.error('❌ [AppComponent] Error al obtener el perfil:', err),
       })

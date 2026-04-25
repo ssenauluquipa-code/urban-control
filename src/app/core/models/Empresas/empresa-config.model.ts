@@ -1,16 +1,3 @@
-export interface IEmpresaConfig {
-    id?: string;
-    nombreComercial: string;
-    razonSocial: string;
-    nit: string;
-    direccion: string;
-    telefono: string;
-    email: string;
-    diasReservaVencimiento: number;
-    monedaSimbolo: string;
-    fechaActualizacion?: Date;
-}
-
 
 export interface IOrganization {
   id: string;
@@ -21,6 +8,9 @@ export interface IOrganization {
   phone: string;
   currency: string;
   timezone: string;
+  diasVencimientoReserva: number;
+  plazoMaximoMeses: number;
+  horaCronDiario: number;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -33,4 +23,7 @@ export interface UpdateOrganizationDto {
   phone?: string;
   currency?: string;
   timezone?: string;
-}
+  diasVencimientoReserva?: number;
+  plazoMaximoMeses?: number;
+  horaCronDiario?: number;
+}

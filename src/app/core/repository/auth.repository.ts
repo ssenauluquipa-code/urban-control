@@ -12,9 +12,8 @@ import { IUser, IUpdateProfileDto } from '../models/user.model';
 export class AuthRepository implements IAuthRepository {
 
   private http = inject(HttpClient);
-  private readonly TOKEN_KEY = 'urban_control_token';
   private readonly apiUrl = `${environment.apiUrl}/auth`;
-  
+
 
   login(credentials: ILoginDto): Observable<ILoginResponse> {
     return this.http.post<ILoginResponse>(`${this.apiUrl}/login`, credentials);
@@ -24,7 +23,7 @@ export class AuthRepository implements IAuthRepository {
     return this.http.post<void>(`${this.apiUrl}/logout`, {});
   }
 
-  refreshTokens(data: RefreshTokenDto): Observable<ILoginResponse> {
+  refresh(data: RefreshTokenDto): Observable<ILoginResponse> {
     return this.http.post<ILoginResponse>(`${this.apiUrl}/refresh`, data);
   }
 
@@ -32,9 +31,9 @@ export class AuthRepository implements IAuthRepository {
     return this.http.get<IUser>(`${this.apiUrl}/logged-user`);
   }
 
-  updateProfile(data: IUpdateProfileDto): Observable<IUser> {
+  updateLoggedUser(data: IUpdateProfileDto): Observable<IUser> {
     return this.http.patch<IUser>(`${this.apiUrl}/logged-user`, data);
   }
 
-  
+
 }

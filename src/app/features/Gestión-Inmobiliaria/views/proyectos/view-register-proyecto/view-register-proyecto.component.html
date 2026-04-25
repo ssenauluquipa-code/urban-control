@@ -1,8 +1,8 @@
 <app-modal-container
   #modal
   [mainTitleModal]="proyectoData ? 'Editar Proyecto' : 'Nuevo Proyecto'"
-  (onSaveAction)="Save.emit()"
-  (onCancelAction)="modal.activeModal.close()"
+  (SaveAction)="Save.emit()"
+  (CancelAction)="modal.activeModal.close()"
 >
   <!-- Sección: Información General -->
   <app-card-container title="Información General">

@@ -3,32 +3,31 @@
     @for (lote of lotes; track lote.id) {
       <div
         class="lote-box"
+        [ngClass]="lote.estado"
+        [class.selected]="isSelected(lote)"
         role="button"
         tabindex="0"
-        [ngClass]="getStatusClass(lote.estado)"
-        [style.aspectRatio]="getAspectRatio(lote)"
-        (click)="loteClick.emit(lote)"
-        (keydown.enter)="loteClick.emit(lote)"
-        (keydown.space)="loteClick.emit(lote); $event.preventDefault()"
+        (click)="onLoteClick(lote)"
+        (keydown.enter)="onLoteClick(lote)"
         [title]="getTooltip(lote)"
       >
+        <span class="lote-icon">{{ getEstadoIcon(lote.estado) }}</span>
+
         <span class="lote-number">{{ lote.numero }}</span>
-        <small class="lote-status-tag">{{ lote.estado }}</small>
+
+        <span class="lote-status-tag">{{ lote.estado.toLowerCase() }}</span>
       </div>
     }
   </div>
 
-  <!-- Leyenda -->
   <div class="legend">
-    <span class="legend-item">
-      <span class="dot available"></span> Disponible
-    </span>
-    <span class="legend-item">
-      <span class="dot reserved"></span> Reservado
-    </span>
-    <span class="legend-item"> <span class="dot sold"></span> Vendido </span>
-    <span class="legend-item">
-      <span class="dot blocked"></span> Bloqueado
-    </span>
+    <span class="legend-item"
+      ><span class="dot available"></span> Disponible</span
+    >
+    <span class="legend-item"
+      ><span class="dot reserved"></span> Reservado</span
+    >
+    <span class="legend-item"><span class="dot sold"></span> Vendido</span>
+    <span class="legend-item"><span class="dot blocked"></span> Bloqueado</span>
   </div>
 </div>

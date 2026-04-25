@@ -12,8 +12,11 @@ import { ILote } from 'src/app/core/models/lote/lote.model';
 export class LoteVisualizerComponent {
 
   @Input() lotes: ILote[] = [];
+  @Input() selectedLoteId: string | null = null; // Para manejar la selección
   @Output() loteClick = new EventEmitter<ILote>();
 
+  // ID del lote seleccionado internamente para el estilo
+  private internalSelectedId: string | null = null;
   /**
    * Retorna la clase CSS basada en el estado del lote
    */
@@ -26,30 +29,32 @@ export class LoteVisualizerComponent {
       default: return '';
     }
   }
+
+  /* Retorna el icono SVG o emoji correspondiente al estado
+  */
+  getEstadoIcon(estado: string): string {
+    switch (estado) {
+      case 'DISPONIBLE': return ''; // Sin icono para disponible
+      case 'RESERVADO': return '⏳';
+      case 'VENDIDO': return '✓';
+      case 'BLOQUEADO': return '🔒';
+      default: return '';
+    }
+  }
+
   /**
- * Calcula la proporción visual (ancho/alto) basándose en las dimensiones.
- * Esto hace que un lote largo se vea largo y uno cuadrado se vea cuadrado.
- */
-  getAspectRatio(lote: ILote): string {
-    // Promediamos los lados opuestos para obtener ancho y alto promedio
-    // Asumimos Norte/Sur = Ancho, Este/Oeste = Largo (profundidad)
-    const ancho = ((lote.dimensionNorte || 0) + (lote.dimensionSur || 0)) / 2;
-    const alto = ((lote.dimensionEste || 0) + (lote.dimensionOeste || 0)) / 2;
+   * Maneja el click y la selección visual
+   */
+  onLoteClick(lote: ILote): void {
+    this.internalSelectedId = lote.id;
+    this.loteClick.emit(lote);
+  }
 
-    // Si no hay dimensiones, devolvemos un cuadrado perfecto
-    if (ancho === 0 || alto === 0) return '1 / 1';
-
-    // Calculamos la relación simplificada.
-    // Para evitar cajas gigantes, normalizamos dividiendo por el menor.
-    const menor = Math.min(ancho, alto);
-    const ratioW = ancho / menor;
-    const ratioH = alto / menor;
-
-    // Limitamos el ratio máximo para que no rompa el layout (ej. max 3:1)
-    const finalW = Math.min(3, ratioW);
-    const finalH = Math.min(3, ratioH);
-
-    return `${finalW} / ${finalH}`;
+  /**
+   * Verifica si un lote está seleccionado (vía input o internamente)
+   */
+  isSelected(lote: ILote): boolean {
+    return lote.id === this.selectedLoteId || lote.id === this.internalSelectedId;
   }
 
   getTooltip(lote: ILote): string {

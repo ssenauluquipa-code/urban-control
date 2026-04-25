@@ -19,7 +19,7 @@ import { OrganizationService } from 'src/app/core/services/configuracion/organiz
     permissionScope="empresa"
     [showEdit]="true"
     [showOptions]="false"
-    (onEdit)="goToEdita()"
+    (Edit)="goToEdita()"
     >
         <app-empresa-view [empresaData]="empresaData" [isLoading]="isLoading" [autoLoad]="false"></app-empresa-view>
     </app-page-container>

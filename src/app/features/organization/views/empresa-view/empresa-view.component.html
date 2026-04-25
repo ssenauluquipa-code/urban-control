@@ -5,48 +5,113 @@
   </div>
 } @else if (empresaData) {
   <div class="compact-container">
-    
-    <div class="org-header">
-      <div class="avatar">{{ empresaData.name.substring(0, 2).toUpperCase() }}</div>
+    <!-- Cabecera de la Organización -->
+    <div class="org-header mb-4">
+      <div class="avatar">
+        {{ empresaData.name.substring(0, 2).toUpperCase() }}
+      </div>
       <div class="org-meta">
         <h2 class="org-title">{{ empresaData.name }}</h2>
         <p class="org-subtitle">{{ empresaData.subdomain }}.urbancontrol.app</p>
       </div>
       <div class="status-tag" [class.active]="empresaData.isActive">
-        {{ empresaData.isActive ? 'Activo' : 'Inactivo' }}
+        {{ empresaData.isActive ? "Activo" : "Inactivo" }}
       </div>
     </div>
 
-    <div class="divider"></div>
-
-    <div class="info-section">
-      <h3 class="section-title">Información de contacto</h3>
-      <div class="info-grid">
-        <app-input-text-info label="Correo Electrónico" [value]="empresaData.email" [showCopy]="true"></app-input-text-info>
-        <app-input-text-info label="Teléfono" [value]="empresaData.phone"></app-input-text-info>
-        <app-input-text-info label="Dirección Física" [value]="empresaData.address" class="full-width"></app-input-text-info>
+    <!-- Sección: Contacto -->
+    <app-card-container title="Información de contacto" icon="contacts">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <app-input-text-info
+            label="Correo Electrónico"
+            [value]="empresaData.email"
+            [showCopy]="true"
+          ></app-input-text-info>
+        </div>
+        <div class="col-md-6">
+          <app-input-text-info
+            label="Teléfono"
+            [value]="empresaData.phone"
+          ></app-input-text-info>
+        </div>
+        <div class="col-12">
+          <app-input-text-info
+            label="Dirección Física"
+            [value]="empresaData.address"
+          ></app-input-text-info>
+        </div>
+      </div>
+    </app-card-container>
+    <div class="row">
+      <div class="col-md-6">
+        <!-- Sección: Configuración Regional -->
+        <div class="mt-4">
+          <app-card-container title="Configuración Regional" icon="global">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <app-input-text-info
+                  label="Moneda"
+                  [value]="empresaData.currency"
+                ></app-input-text-info>
+              </div>
+              <div class="col-md-6">
+                <app-input-text-info
+                  label="Zona Horaria"
+                  [value]="empresaData.timezone"
+                ></app-input-text-info>
+              </div>
+            </div>
+          </app-card-container>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <!-- Sección: Parámetros de Sistema -->
+        <div class="mt-4">
+          <app-card-container title="Parámetros de Sistema" icon="setting">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <app-input-text-info
+                  label="Vencimiento Reserva"
+                  [value]="empresaData.diasVencimientoReserva + ' Días'"
+                ></app-input-text-info>
+              </div>
+              <div class="col-md-4">
+                <app-input-text-info
+                  label="Plazo Máximo"
+                  [value]="empresaData.plazoMaximoMeses + ' Meses'"
+                ></app-input-text-info>
+              </div>
+              <div class="col-md-4">
+                <app-input-text-info
+                  label="Hora de Ejecución"
+                  [value]="empresaData.horaCronDiario + ':00'"
+                ></app-input-text-info>
+              </div>
+            </div>
+          </app-card-container>
+        </div>
       </div>
     </div>
 
-    <div class="divider"></div>
-
-    <div class="info-section">
-      <h3 class="section-title">Configuración Regional</h3>
-      <div class="info-grid">
-        <app-input-text-info label="Moneda" [value]="empresaData.currency"></app-input-text-info>
-        <app-input-text-info label="Zona Horaria" [value]="empresaData.timezone"></app-input-text-info>
-      </div>
+    <!-- Sección: Auditoría -->
+    <div class="mt-4">
+      <app-card-container title="Registro de Sistema" icon="history">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <app-input-text-info
+              label="Fecha de Creación"
+              [value]="empresaData.createdAt | date: 'dd MMM, yyyy · HH:mm'"
+            ></app-input-text-info>
+          </div>
+          <div class="col-md-6">
+            <app-input-text-info
+              label="Última Actualización"
+              [value]="empresaData.updatedAt | date: 'dd MMM, yyyy · HH:mm'"
+            ></app-input-text-info>
+          </div>
+        </div>
+      </app-card-container>
     </div>
-
-    <div class="divider"></div>
-
-    <div class="info-section">
-      <h3 class="section-title">Registro de Sistema</h3>
-      <div class="info-grid">
-        <app-input-text-info label="Fecha de Creación" [value]="empresaData.createdAt | date:'dd MMM, yyyy · HH:mm'"></app-input-text-info>
-        <app-input-text-info label="Última Actualización" [value]="empresaData.updatedAt | date:'dd MMM, yyyy · HH:mm'"></app-input-text-info>
-      </div>
-    </div>
-
   </div>
 }

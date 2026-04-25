@@ -1,14 +1,14 @@
-import { inject, Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, Inject } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { AuthRepository } from '../repository/auth.repository';
 import { ILoginDto, ILoginResponse } from '../models/auth.model';
 import { IUpdateProfileDto, IUser } from '../models/user.model';
+import { AUTH_REPOSITORY_TOKEN, IAuthRepository } from '../interfaces/repository/auth.repository.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private repo = inject(AuthRepository);
+  constructor(@Inject(AUTH_REPOSITORY_TOKEN) private repo: IAuthRepository) { }
 
   private _currentUser = signal<IUser | null>(this.getUserFromStorage());
   public currentUser = this._currentUser.asReadonly();
@@ -46,7 +46,7 @@ export class AuthService {
     );
   }
 
-  getProfile(): Observable<IUser> {
+  getLoggedUser(): Observable<IUser> {
     return this.repo.getLoggedUser().pipe(
       tap(user => {
         this._currentUser.set(user);
@@ -59,8 +59,8 @@ export class AuthService {
     return localStorage.getItem('accessToken');
   }
 
-  updateProfile(data: IUpdateProfileDto): Observable<IUser> {
-    return this.repo.updateProfile(data).pipe(
+  updateLoggedUser(data: IUpdateProfileDto): Observable<IUser> {
+    return this.repo.updateLoggedUser(data).pipe(
       tap(user => {
         this._currentUser.set(user);
         localStorage.setItem('user', JSON.stringify(user));
@@ -68,7 +68,7 @@ export class AuthService {
     );
   }
 
-  refreshToken(): Observable<ILoginResponse>{
+  refresh(): Observable<ILoginResponse> {
     const refreshToken = localStorage.getItem('refreshToken');
     console.log('🔄 [AuthService] Intentando refrescar token...', refreshToken ? 'Token presente' : 'Token ausente');
 
@@ -78,7 +78,7 @@ export class AuthService {
       return throwError(() => new Error('No refresh token available'));
     }
 
-    return this.repo.refreshTokens({ refreshToken }).pipe(
+    return this.repo.refresh({ refreshToken }).pipe(
       tap(response => {
         console.log('✅ [AuthService] Token refrescado exitosamente.');
         this.saveSession(response);

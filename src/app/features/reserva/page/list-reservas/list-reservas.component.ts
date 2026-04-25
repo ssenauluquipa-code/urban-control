@@ -12,11 +12,28 @@ import { PageContainerComponent } from "src/app/shared/components/templates/page
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RegisterReservaComponent } from '../register-reserva/register-reserva.component';
 import { Router } from '@angular/router';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { SelectClientesComponent } from 'src/app/shared/components/atoms/select-clientes.component';
+import { SelectManzanasComponent } from 'src/app/shared/components/atoms/select-manzanas.component';
+import { SelectEstadoReservaComponent } from 'src/app/shared/components/atoms/select-estado-reserva.component';
+import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-list-reservas',
   standalone: true,
-  imports: [DataTableComponent, PageContainerComponent],
+  imports: [
+    CommonModule,
+    DataTableComponent,
+    PageContainerComponent,
+    ReactiveFormsModule,
+    SelectClientesComponent,
+    SelectManzanasComponent,
+    SelectEstadoReservaComponent,
+    FormFieldComponent
+  ],
   templateUrl: './list-reservas.component.html',
   styleUrl: './list-reservas.component.scss'
 })
@@ -24,9 +41,12 @@ export class ListReservasComponent implements OnInit {
   public tableActionEnum = TableActionsEnum;
   public reservas: IReserva[] = [];
   public loading = false;
+  public proyectoId: string | null = null;
 
-  // Filtro de estado local (solo el estado, el proyecto viene del header)
-  public estadoFilter: string | undefined = 'ACTIVA';
+  // Filtros Reactivos
+  public clienteControl = new FormControl<string | null>(null);
+  public manzanaControl = new FormControl<string | null>(null);
+  public estadoControl = new FormControl<string | null>('ACTIVA');
 
   // Columnas
   columnDefs: ColDef[] = [
@@ -105,21 +125,41 @@ export class ListReservasComponent implements OnInit {
   private router = inject(Router);
 
   ngOnInit(): void {
-    // Nos suscribimos al proyecto GLOBAL
+    // 1. Reaccionar al cambio de Proyecto Global
     this.globalContext.selectedProjectId$.subscribe(projectId => {
+      this.proyectoId = projectId || null;
+      // Al cambiar de proyecto, limpiamos manzana pero mantenemos cliente
+      this.manzanaControl.setValue(null);
       if (projectId) {
-        this.loadReservas(projectId);
+        this.loadReservas();
       } else {
-        this.reservas = []; // Si no hay proyecto, limpiamos la tabla
+        this.reservas = [];
       }
+    });
+
+    // 2. Reaccionar a cambios en los filtros locales
+    combineLatest([
+      this.clienteControl.valueChanges.pipe(distinctUntilChanged()),
+      this.manzanaControl.valueChanges.pipe(distinctUntilChanged()),
+      this.estadoControl.valueChanges.pipe(distinctUntilChanged())
+    ]).pipe(
+      debounceTime(300)
+    ).subscribe(() => {
+      this.loadReservas();
     });
   }
 
-  // Ahora recibimos el ID como argumento
-  loadReservas(proyectoId: string): void {
+  loadReservas(): void {
+    if (!this.proyectoId) return;
+
     this.loading = true;
 
-    this.reservaService.getReservas(proyectoId, this.estadoFilter)
+    this.reservaService.getReservas(
+      this.proyectoId,
+      this.estadoControl.value || undefined,
+      this.clienteControl.value || undefined,
+      this.manzanaControl.value || undefined
+    )
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (data) => {
@@ -133,14 +173,6 @@ export class ListReservasComponent implements OnInit {
       });
   }
 
-  setFilter(estado: string | undefined): void {
-    this.estadoFilter = estado;
-    // Debemos obtener el ID actual para recargar
-    const currentProjectId = this.globalContext.getCurrentProjectId();
-    if (currentProjectId) {
-      this.loadReservas(currentProjectId);
-    }
-  }
 
   onTableAction(event: ITableActionEvent<IReserva>): void {
     if (event.action === TableActionsEnum.ANULAR && event.row?.id) {
@@ -148,8 +180,7 @@ export class ListReservasComponent implements OnInit {
       this.confirmation.toggleStatus('Reserva', `#${event.row.codigoReserva}`, true, request$)
         .subscribe(success => {
           if (success) {
-            const currentId = this.globalContext.getCurrentProjectId();
-            if (currentId) this.loadReservas(currentId);
+            this.loadReservas();
           }
         });
     } else if (event.action === TableActionsEnum.VIEW && event.row?.id) {
@@ -164,8 +195,7 @@ export class ListReservasComponent implements OnInit {
     });
     modalRef.result.then((res) => {
       if (res) {
-        const currentId = this.globalContext.getCurrentProjectId();
-        if (currentId) this.loadReservas(currentId);
+        this.loadReservas();
       }
     }).catch(() => {
       ///

@@ -4,57 +4,51 @@
   [showNew]="true"
   (AddNew)="onAddNew()"
 >
-  <!-- Filtros -->
-  <div class="row mb-3">
-    <div class="col-12 d-flex flex-wrap gap-2">
-      <button
-        class="btn"
-        [class.btn-primary]="estadoFilter === 'ACTIVA'"
-        (click)="setFilter('ACTIVA')"
-      >
-        Activas
-      </button>
+  <!-- 📌 BARRA DE FILTROS -->
+  <div class="row mb-3 g-2">
+    <!-- Cliente -->
+    <div class="col-md-3">
+      <app-form-field label="Cliente">
+        <app-select-clientes [inputControl]="clienteControl" placeholder="Todos los clientes"></app-select-clientes>
+      </app-form-field>
+    </div>
 
-      <button
-        class="btn"
-        [class.btn-primary]="estadoFilter === 'VENCIDA'"
-        (click)="setFilter('VENCIDA')"
-      >
-        Vencidas
-      </button>
+    <!-- Manzana -->
+    <div class="col-md-3">
+      <app-form-field label="Manzana">
+        <app-select-manzanas [inputControl]="manzanaControl" [proyectoId]="proyectoId" placeholder="Todas las manzanas"></app-select-manzanas>
+      </app-form-field>
+    </div>
 
-      <button
-        class="btn"
-        [class.btn-primary]="estadoFilter === 'CONVERTIDA'"
-        (click)="setFilter('CONVERTIDA')"
-      >
-        Convertidas
-      </button>
+    <!-- Estado -->
+    <div class="col-md-3">
+      <app-form-field label="Estado">
+        <app-select-estado-reserva [inputControl]="estadoControl" placeholder="Todos los estados"></app-select-estado-reserva>
+      </app-form-field>
+    </div>
 
-      <button
-        class="btn"
-        [class.btn-primary]="estadoFilter === 'CANCELADA'"
-        (click)="setFilter('CANCELADA')"
-      >
-        Canceladas
-      </button>
-
-      <button
-        class="btn"
-        [class.btn-primary]="estadoFilter === undefined"
-        (click)="setFilter(undefined)"
-      >
-        Todas
-      </button>
+    <!-- Limpiar -->
+    <div class="col-md-3">
+      <app-form-field label="&nbsp;">
+        <button
+          type="button"
+          class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center"
+          style="height: 44px; border-radius: 10px; font-weight: 500;"
+          (click)="clienteControl.setValue(null); manzanaControl.setValue(null); estadoControl.setValue('ACTIVA')"
+        >
+          <span nz-icon nzType="clear" class="me-2"></span>
+          Limpiar Filtros
+        </button>
+      </app-form-field>
     </div>
   </div>
 
-  <!-- Tabla -->
+  <!-- 📌 TABLA DE DATOS -->
   <app-data-table
     [rowData]="reservas"
     [columnDefs]="columnDefs"
     [loading]="loading"
-    height="400px"
+    height="450px"
     [showCreate]="false"
     [actions]="[tableActionEnum.VIEW, tableActionEnum.ANULAR]"
     (actionClicked)="onTableAction($event)"

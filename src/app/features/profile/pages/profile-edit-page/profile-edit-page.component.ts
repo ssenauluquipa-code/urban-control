@@ -1,8 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { IUpdateProfileDto } from 'src/app/core/models/user.model';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ProfileFormComponent } from '../../views/profile-form/profile-form.component';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NotificationService } from 'src/app/core/services/notification.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-edit-page',
@@ -15,10 +17,8 @@ import { NzCardModule } from 'ng-zorro-antd/card';
           <nz-card nzTitle="Configuración de Perfil">
               <app-profile-form
               [userData]="authService.currentUser()"
-              [avatarUrl]="authService.currentUser()?.avatarUrl || ''"
               [loading]="isSaving()"
-              (Save)="saveChanges($event)"
-              (ImageSelected)="onAvatarSelected($event)">
+              (Save)="saveChanges($event)">
             </app-profile-form>
           </nz-card>
         </div>
@@ -28,23 +28,36 @@ import { NzCardModule } from 'ng-zorro-antd/card';
   styles: ``
 })
 export class ProfileEditPageComponent {
-  
+
   isSaving = signal(false);
+  private notification = inject(NotificationService);
+  private router = inject(Router);
 
   constructor(public authService: AuthService) { }
-  
-  onAvatarSelected(file: File) {
-    console.log('Imagen lista para subir:', file);
-    // Aquí puedes llamar a un servicio para subir la imagen y actualizar el perfil
-  }
 
   saveChanges(data: IUpdateProfileDto) {
     this.isSaving.set(true);
-    this.authService.updateProfile(data).subscribe({
+    const isPasswordChange = !!data.newPassword;
+
+    this.authService.updateLoggedUser(data).subscribe({
       next: () => {
         this.isSaving.set(false);
+
+        if (isPasswordChange) {
+          this.notification.success('Tu contraseña ha sido cambiada. Por seguridad, la sesión se cerrará.');
+          setTimeout(() => {
+            this.authService.logout().subscribe(() => {
+              this.router.navigate(['/auth/login']);
+            });
+          }, 2000);
+        } else {
+          this.notification.success('Perfil actualizado correctamente.');
+        }
       },
-      error: () => this.isSaving.set(false)
+      error: () => {
+        this.isSaving.set(false);
+        this.notification.error('Error al actualizar el perfil.');
+      }
     });
   }
 }

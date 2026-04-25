@@ -9,6 +9,7 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
 import { FormControl } from '@angular/forms';
 import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
 import { SelectProjectsComponent } from "src/app/shared/components/atoms/select-projects.component";
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 @Component({
   selector: 'app-nav-right',
@@ -26,6 +27,7 @@ export class NavRightComponent implements OnInit {
   private modalService = inject(NgbModal);
   private globalContext = inject(ProjectStatusGlobalService);
   private projectService = inject(ProyectoService);
+  private notification = inject(NotificationService);
   windowWidth: number;
   screenFull = true;
 
@@ -66,21 +68,21 @@ export class NavRightComponent implements OnInit {
   }
 
   profile = [
-    { icon: 'edit', title: 'Edit Profile' },
-    { icon: 'user', title: 'View Profile' },
-    { icon: 'logout', title: 'Logout' }
+    { icon: 'edit', title: 'Editar Perfil' },
+    /* { icon: 'user', title: 'Ver Perfil' }, */
+    { icon: 'logout', title: 'Cerrar Sesión' }
   ];
 
-  setting = [
+  /* setting = [
     { icon: 'building', title: 'Organización' },
-    { icon: 'user', title: 'Account Settings' },
-    { icon: 'lock', title: 'Privacy Center' }
-  ];
+    { icon: 'user', title: 'Configuración de Cuenta' },
+    { icon: 'lock', title: 'Centro de Privacidad' }
+  ]; */
 
   handleProfileClick(title: string) {
-    if (title === 'Logout') {
+    if (title === 'Cerrar Sesión') {
       this.logout();
-    } else if (title === 'Edit Profile') {
+    } else if (title === 'Editar Perfil') {
       this.openProfileModal();
     }
   }
@@ -94,23 +96,32 @@ export class NavRightComponent implements OnInit {
 
     // Pasar datos al componente
     modalRef.componentInstance.userData = this.currentUser;
-    modalRef.componentInstance.avatarUrl = this.currentUser?.avatarUrl;
 
     // Escuchar eventos del formulario
     modalRef.componentInstance.Save.subscribe((data: IUpdateProfileDto) => {
       modalRef.componentInstance.loading = true;
-      this.authService.updateProfile(data).subscribe({
+      const isPasswordChange = !!data.newPassword;
+
+      this.authService.updateLoggedUser(data).subscribe({
         next: () => {
           modalRef.componentInstance.loading = false;
           modalRef.close();
-        },
-        error: () => modalRef.componentInstance.loading = false
-      });
-    });
 
-    modalRef.componentInstance.ImageSelected.subscribe((file: File) => {
-      console.log('Imagen para subir desde Nav:', file);
-      // Aquí podrías llamar al servicio de subida de imágenes
+          if (isPasswordChange) {
+            this.notification.success('Tu contraseña ha sido cambiada. Por seguridad, la sesión se cerrará.');
+            // Esperamos un poco para que el usuario vea el mensaje
+            setTimeout(() => {
+              this.logout();
+            }, 2000);
+          } else {
+            this.notification.success('Perfil actualizado correctamente.');
+          }
+        },
+        error: (err) => {
+          modalRef.componentInstance.loading = false;
+          this.notification.error('Error al actualizar el perfil.' + err);
+        }
+      });
     });
   }
 

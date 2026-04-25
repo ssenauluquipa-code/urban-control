@@ -7,6 +7,6 @@ export const OrganizationRoutes: Routes = [
   },
   {
     path: 'empresa-edit',
-    loadComponent: () => import('./components/empresa-form/empresa-form.component').then(m => m.EmpresaFormComponent)
+    loadComponent: () => import('./pages/empresa-edit-page.component').then(m => m.EmpresaEditPageComponent)
   }
 ]

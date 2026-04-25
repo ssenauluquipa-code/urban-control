@@ -1,8 +1,8 @@
 <app-modal-container
   #modal
   [mainTitleModal]="manzanaData ? 'Editar Manzana' : 'Nueva Manzana'"
-  (onSaveAction)="Save.emit()"
-  (onCancelAction)="modal.activeModal.close()"
+  (SaveAction)="Save.emit()"
+  (CancelAction)="modal.activeModal.close()"
 >
   <form nz-form [formGroup]="manzanaForm" nzLayout="vertical">
     <div class="row">

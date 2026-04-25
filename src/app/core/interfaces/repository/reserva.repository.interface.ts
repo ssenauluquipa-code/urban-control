@@ -3,7 +3,7 @@ import { CreateReservaDto, ICancelReservaResponse, ICreateReservaResponse, IRese
 
 export interface IReservaRepository {
     create(dto: CreateReservaDto): Observable<ICreateReservaResponse>;
-    getAll(proyectoId?: string, estado?: string): Observable<IReserva[]>;
+    getAll(proyectoId?: string, estado?: string, clienteId?: string, manzanaId?: string): Observable<IReserva[]>;
     getById(id: string): Observable<IReserva>;
     cancel(id: string): Observable<ICancelReservaResponse>;
 }

@@ -49,7 +49,7 @@ function handle401Error(req: HttpRequest<unknown>, next: HttpHandlerFn, authServ
     isRefreshing = true;
     refreshTokenSubject.next(null); // Limpiamos el sujeto para nuevas peticiones
 
-    return authService.refreshToken().pipe(
+    return authService.refresh().pipe(
       switchMap((res) => {
         console.log('✨ [Interceptor] Refresco exitoso. Reintentando petición original:', req.url);
         isRefreshing = false;

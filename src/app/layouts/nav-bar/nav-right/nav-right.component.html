@@ -36,7 +36,7 @@
       <div
         class="dropdown-header d-flex align-items-center justify-content-between"
       >
-        <h5 class="m-0">Notification</h5>
+        <h5 class="m-0">Notificaciones</h5>
         <a class="bg-transparent"
           ><i
             class="text-success d-flex f-20"
@@ -60,7 +60,7 @@
                 <div class="flex-grow-1 ms-3">
                   <span class="float-end text-muted">3:00 AM</span>
                   <p class="text-body mb-0">
-                    It's <b>Cristina danny's</b> birthday today.
+                    Hoy es el cumpleaños de <b>Cristina Danny</b>.
                   </p>
                   <span class="text-muted">2 min ago</span>
                 </div>
@@ -81,7 +81,7 @@
                 <div class="flex-grow-1 ms-3">
                   <span class="float-end text-muted">6:00 PM</span>
                   <p class="text-body mb-1">
-                    <b>Aida Burg</b> commented your post.
+                    <b>Aida Burg</b> comentó tu publicación.
                   </p>
                   <span class="text-muted">5 August</span>
                 </div>
@@ -102,7 +102,7 @@
                 <div class="flex-grow-1 ms-3">
                   <span class="float-end text-muted">2:45 PM</span>
                   <p class="text-body mb-1">
-                    Your Profile is Complete &nbsp; <b>60%</b>
+                    Tu perfil está al &nbsp; <b>60%</b>
                   </p>
                   <span class="text-muted">7 hours ago</span>
                 </div>
@@ -113,7 +113,7 @@
       </div>
       <div class="dropdown-divider mt-0"></div>
       <div class="text-center py-2">
-        <a href="javascript:" class="link-primary">View all</a>
+        <a href="javascript:" class="link-primary">Ver todo</a>
       </div>
     </div>
   </li>
@@ -138,7 +138,9 @@
           border: 1px solid #eef2f6;
         "
       />
-      <span class="f-w-600 ms-2 d-none d-lg-inline-block">{{ currentUser?.name || "Usuario" }}</span>
+      <span class="f-w-600 ms-2 d-none d-lg-inline-block">{{
+        currentUser?.name || "Usuario"
+      }}</span>
     </a>
 
     <div
@@ -178,7 +180,7 @@
       <ul ngbNav #nav="ngbNav" class="nav drp-tabs nav-fill nav-tabs">
         <li ngbNavItem="1">
           <a ngbNavLink>
-            <span nz-icon nzType="user" class="me-2"></span> Profile
+            <span nz-icon nzType="user" class="me-2"></span> Perfil
           </a>
           <ng-template ngbNavContent>
             @for (task of profile; track task) {
@@ -197,9 +199,9 @@
             }
           </ng-template>
         </li>
-        <li ngbNavItem="2">
+        <!-- <li ngbNavItem="2">
           <a ngbNavLink>
-            <span nz-icon nzType="setting" class="me-2"></span> Setting
+            <span nz-icon nzType="setting" class="me-2"></span> Ajustes
           </a>
           <ng-template ngbNavContent>
             @for (task of setting; track task) {
@@ -213,7 +215,7 @@
               </a>
             }
           </ng-template>
-        </li>
+        </li>-->
       </ul>
       <div [ngbNavOutlet]="nav" class="mt-2"></div>
     </div>
