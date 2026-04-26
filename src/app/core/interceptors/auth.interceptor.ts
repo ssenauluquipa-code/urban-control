@@ -22,7 +22,7 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   // 2. Manejar la petición y capturar errores
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      
+
       // 🚩 CONDICIÓN CRÍTICA: No intentar refrescar si el error viene de Login o del propio Refresh
       const isAuthRequest = req.url.includes('/auth/login') || req.url.includes('/auth/refresh');
 
@@ -31,8 +31,11 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
         return handle401Error(req, next, authService);
       }
 
-      if (error.status === 401 && isAuthRequest) {
-        console.error(`🚫 [Interceptor] 401 en ruta de Auth (${req.url}). No se puede refrescar.`);
+      if ((error.status === 401 || error.status === 403) && isAuthRequest) {
+        console.error(`🚫 [Interceptor] ${error.status} en ruta de Auth (${req.url}). Sesión expirada, forzando logout.`);
+        // Forzar logout inmediato sin intentar de nuevo
+        authService.logout().subscribe();
+        return throwError(() => error);
       }
 
       return throwError(() => error);
@@ -54,22 +57,28 @@ function handle401Error(req: HttpRequest<unknown>, next: HttpHandlerFn, authServ
         console.log('✨ [Interceptor] Refresco exitoso. Reintentando petición original:', req.url);
         isRefreshing = false;
         refreshTokenSubject.next(res.accessToken);
-        
+
         // Reintentamos la petición original con el nuevo token obtenido
         return next(req.clone({
           setHeaders: { Authorization: `Bearer ${res.accessToken}` }
         }));
       }),
       catchError((refreshError) => {
-        console.error('💀 [Interceptor] El refresco falló. Cancelando todo y cerrando sesión.');
+        console.error('💀 [Interceptor] El refresco falló. Cancelando todo y cerrando sesión.', refreshError.status);
         isRefreshing = false;
-        authService.logout().subscribe(); // Limpiar sesión si el refresh falla
+        refreshTokenSubject.next(null);
+
+        // Evitar logout múltiple
+        if (refreshError.status === 403 || refreshError.status === 401) {
+          authService.logout().subscribe();
+        }
+
         return throwError(() => refreshError);
       })
     );
   } else {
     console.log('⏳ [Interceptor] Ya hay un refresco en curso. Poniendo petición en espera:', req.url);
-    // 🚦 Cola de espera: Si ya hay un proceso de refresco en curso, 
+    // 🚦 Cola de espera: Si ya hay un proceso de refresco en curso,
     // hacemos que esta petición espere a que termine.
     return refreshTokenSubject.pipe(
       filter(token => token !== null), // Esperar a que el token no sea null
@@ -80,6 +89,11 @@ function handle401Error(req: HttpRequest<unknown>, next: HttpHandlerFn, authServ
         return next(req.clone({
           setHeaders: { Authorization: `Bearer ${newToken}` }
         }));
+      }),
+      catchError((err) => {
+        console.error('❌ [Interceptor] Error en cola de espera. Forzando logout.');
+        authService.logout().subscribe();
+        return throwError(() => err);
       })
     );
   }

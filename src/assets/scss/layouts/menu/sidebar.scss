@@ -49,17 +49,35 @@
       text-decoration: none;
     }
 
-    .logo-main {
-      width: auto;
-      height: 28px;
+    .logo {
+      width: 40px;
+      height: 40px;
       flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+      overflow: hidden;
     }
 
     .brand-name {
       font-weight: 600;
-      font-size: 16px;
+      font-size: 14px;
       color: var(--pc-sidebar-color);
       white-space: nowrap;
+    }
+
+    .brand-subtitle {
+      font-weight: 400;
+      font-size: 11px;
+      color: var(--pc-sidebar-color);
+      opacity: 0.6;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
@@ -362,11 +380,12 @@
         width: 100%;
       }
 
-      .logo-main {
-        height: 28px;
+      .logo {
+        width: 30px;
+        height: 30px;
       }
 
-      .brand-name {
+      .brand-info {
         display: none !important;
       }
     }

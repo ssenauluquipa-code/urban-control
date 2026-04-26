@@ -21,7 +21,7 @@ import { OrganizationService } from 'src/app/core/services/configuracion/organiz
     [showOptions]="false"
     (Edit)="goToEdita()"
     >
-        <app-empresa-view [empresaData]="empresaData" [isLoading]="isLoading" [autoLoad]="false"></app-empresa-view>
+        <app-empresa-view [empresaData]="empresaData" [isLoading]="isLoading" [autoLoad]="false" [editable]="true"></app-empresa-view>
     </app-page-container>
   `,
   styles: ``,

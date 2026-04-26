@@ -1,0 +1,172 @@
+<form nz-form [formGroup]="form" nzLayout="vertical">
+  <div class="row">
+    <div class="col-6">
+      <!-- Información Institucional -->
+      <app-card-container title="Información Institucional" icon="shop">
+        <div class="row">
+          <div class="col-12">
+            <app-form-field
+              label="Nombre de la Organización"
+              forId="name"
+              [required]="true"
+            >
+              <app-input-text
+                [input_control]="nameControl"
+                input_placeholder="Ej. UrbanControl"
+                prefix_icon="shop"
+              >
+              </app-input-text>
+            </app-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <app-image-display
+            [imageUrl]="logoUrl"
+            [imageName]="form.value.name"
+            [editable]="true"
+            [emptyText]="'Sin Logo'"
+            [emptyHint]="'Click para subir logo'"
+            (imageUpdated)="imageUpdated.emit($event)"
+            (imageDeleted)="imageDeleted.emit()"
+          ></app-image-display>
+        </div>
+      </app-card-container>
+    </div>
+    <div class="col-6">
+      <!-- Contacto y Ubicación -->
+      <app-card-container title="Contacto y Ubicación" icon="contacts">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <app-form-field
+              label="Correo Electrónico"
+              forId="email"
+              [required]="true"
+            >
+              <app-input-text
+                [input_control]="emailControl"
+                input_placeholder="Email"
+                input_type="email"
+                prefix_icon="mail"
+              >
+              </app-input-text>
+            </app-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <app-form-field
+              label="Teléfono / WhatsApp"
+              forId="phone"
+              [required]="true"
+            >
+              <app-input-text
+                [input_control]="phoneControl"
+                input_placeholder="Teléfono"
+                prefix_icon="phone"
+              >
+              </app-input-text>
+            </app-form-field>
+          </div>
+
+          <div class="col-12">
+            <app-form-field
+              label="Dirección Física"
+              forId="address"
+              [required]="true"
+            >
+              <app-input-textarea
+                [input_control]="addressControl"
+                input_placeholder="Dirección completa"
+                [input_rows]="2"
+              >
+              </app-input-textarea>
+            </app-form-field>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <!-- Configuración Regional -->
+      <app-card-container title="Configuración Regional" icon="global">
+        <div class="row">
+          <div class="col-md-6">
+            <app-form-field label="Moneda" forId="currency" [required]="true">
+              <app-select-moneda
+                [inputControl]="currencyControl"
+                placeholder="Seleccionar moneda"
+              >
+              </app-select-moneda>
+            </app-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <app-form-field
+              label="Zona Horaria"
+              forId="timezone"
+              [required]="true"
+            >
+              <app-select-data
+                [inputControl]="timezoneControl"
+                [itemList]="timezonesList"
+                bindLabel="label"
+                bindValue="value"
+                placeholder="Seleccionar zona"
+              >
+              </app-select-data>
+            </app-form-field>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
+    <div class="col-md-6">
+      <!-- Parámetros de Sistema -->
+      <app-card-container title="Parámetros de Sistema" icon="setting">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <app-form-field
+              label="Vencimiento de Reserva (Días)"
+              forId="diasVencimiento"
+              [required]="true"
+            >
+              <app-input-number
+                [input_control]="diasVencimientoControl"
+                input_placeholder="Ej. 5"
+              >
+              </app-input-number>
+            </app-form-field>
+          </div>
+
+          <div class="col-md-4">
+            <app-form-field
+              label="Plazo Máximo (Meses)"
+              forId="plazoMax"
+              [required]="true"
+            >
+              <app-input-number
+                [input_control]="plazoMaximoControl"
+                input_placeholder="Ej. 18"
+              >
+              </app-input-number>
+            </app-form-field>
+          </div>
+
+          <div class="col-md-4">
+            <app-form-field
+              label="Hora de Cron Diario (0-23)"
+              forId="horaCron"
+              [required]="true"
+            >
+              <app-input-number
+                [input_control]="horaCronControl"
+                input_placeholder="Ej. 8"
+              >
+              </app-input-number>
+            </app-form-field>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
+  </div>
+</form>

@@ -14,6 +14,8 @@ export class AuthService {
   public currentUser = this._currentUser.asReadonly();
   public isAuthenticated = computed(() => !!this._currentUser());
 
+  private isLoggingOut = false; // Flag para evitar llamadas recursivas
+
   login(credentials: ILoginDto): Observable<ILoginResponse> {
     return this.repo.login(credentials).pipe(
       tap(response => {
@@ -36,15 +38,28 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
+    // Evitar múltiples logouts concurrentes
+    if (this.isLoggingOut) {
+      console.warn('🚪 [AuthService] Logout ya en progreso. Ignorando llamada duplicada.');
+      return of(undefined);
+    }
+
+    this.isLoggingOut = true;
     console.warn('🚪 [AuthService] Iniciando cierre de sesión (logout)...');
+
     // Intentamos avisar al servidor, pero garantizamos la limpieza local pase lo que pase
     return this.repo.logout().pipe(
       finalize(() => {
         console.log('🧹 [AuthService] Sesión limpiada localmente.');
         localStorage.clear();
         this._currentUser.set(null);
+        this.isLoggingOut = false;
       }),
-      catchError(() => of(undefined)) // Evita que errores de red/401 en el logout disparen de nuevo el Interceptor
+      catchError(() => {
+        // Evitar que errores de red/401 en el logout intenten refrescar nuevamente
+        console.error('⚠️ [AuthService] Error al notificar logout al servidor, pero limpieza local completada.');
+        return of(undefined);
+      })
     );
   }
 
@@ -86,8 +101,11 @@ export class AuthService {
         this.saveSession(response);
       }),
       catchError(err => {
-        console.error('🔥 [AuthService] El refresco de token falló en el servidor.', err);
-        this.logout().subscribe();
+        console.error('🔥 [AuthService] El refresco de token falló en el servidor.', {
+          status: err.status,
+          message: err.statusText
+        });
+        // No llamar logout aquí, el interceptor lo hará
         return throwError(() => err);
       })
     );

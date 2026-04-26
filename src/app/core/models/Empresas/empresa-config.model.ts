@@ -6,6 +6,7 @@ export interface IOrganization {
   email: string;
   address: string;
   phone: string;
+  logoUrl: string;
   currency: string;
   timezone: string;
   diasVencimientoReserva: number;
@@ -26,4 +27,22 @@ export interface UpdateOrganizationDto {
   diasVencimientoReserva?: number;
   plazoMaximoMeses?: number;
   horaCronDiario?: number;
+}
+
+export interface UploadLogoResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: string;
+    logoUrl: string;
+  };
+}
+
+export interface DeleteLogoResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: string;
+    logoUrl: null;
+  };
 }

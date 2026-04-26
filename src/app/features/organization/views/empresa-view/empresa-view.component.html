@@ -5,47 +5,66 @@
   </div>
 } @else if (empresaData) {
   <div class="compact-container">
-    <!-- Cabecera de la Organización -->
-    <div class="org-header mb-4">
-      <div class="avatar">
-        {{ empresaData.name.substring(0, 2).toUpperCase() }}
-      </div>
-      <div class="org-meta">
+    <!-- 🔝 HEADER SUPERIOR -->
+    <div class="org-top mb-3">
+      <div class="org-main">
         <h2 class="org-title">{{ empresaData.name }}</h2>
         <p class="org-subtitle">{{ empresaData.subdomain }}.urbancontrol.app</p>
       </div>
+
       <div class="status-tag" [class.active]="empresaData.isActive">
         {{ empresaData.isActive ? "Activo" : "Inactivo" }}
       </div>
     </div>
 
-    <!-- Sección: Contacto -->
-    <app-card-container title="Información de contacto" icon="contacts">
-      <div class="row g-3">
-        <div class="col-md-6">
-          <app-input-text-info
-            label="Correo Electrónico"
-            [value]="empresaData.email"
-            [showCopy]="true"
-          ></app-input-text-info>
-        </div>
-        <div class="col-md-6">
-          <app-input-text-info
-            label="Teléfono"
-            [value]="empresaData.phone"
-          ></app-input-text-info>
-        </div>
-        <div class="col-12">
-          <app-input-text-info
-            label="Dirección Física"
-            [value]="empresaData.address"
-          ></app-input-text-info>
-        </div>
+    <!-- 🔥 ROW PRINCIPAL -->
+    <div class="row g-4">
+      <!-- 🖼 LOGO GRANDE -->
+      <div class="col-md-4">
+          <app-image-display
+            [imageUrl]="empresaData.logoUrl"
+            [imageName]="empresaData.name"
+            [editable]="editable"
+            [emptyText]="'Sin Logo'"
+            [emptyHint]="'Click para cargar logo'"
+            (imageUpdated)="onLogoUpload($event)"
+            (imageDeleted)="onLogoDelete()"
+          ></app-image-display>
       </div>
-    </app-card-container>
+
+      <!-- 📇 CONTACTO AL LADO -->
+      <div class="col-md-8">
+        <app-card-container title="Información de contacto" icon="contacts">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <app-input-text-info
+                label="Correo Electrónico"
+                [value]="empresaData.email"
+                [showCopy]="true"
+              ></app-input-text-info>
+            </div>
+            <div class="col-md-6">
+              <app-input-text-info
+                label="Teléfono"
+                [value]="empresaData.phone"
+              ></app-input-text-info>
+            </div>
+            <div class="col-12">
+              <app-input-text-info
+                label="Dirección Física"
+                [value]="empresaData.address"
+              ></app-input-text-info>
+            </div>
+          </div>
+        </app-card-container>
+      </div>
+    </div>
+
+    <!-- 🔽 TODO LO DEMÁS IGUAL -->
+    <!-- TODO LO DEMÁS LO DEJAS IGUAL 👇 -->
+
     <div class="row">
       <div class="col-md-6">
-        <!-- Sección: Configuración Regional -->
         <div class="mt-4">
           <app-card-container title="Configuración Regional" icon="global">
             <div class="row g-3">
@@ -65,8 +84,8 @@
           </app-card-container>
         </div>
       </div>
+
       <div class="col-md-6">
-        <!-- Sección: Parámetros de Sistema -->
         <div class="mt-4">
           <app-card-container title="Parámetros de Sistema" icon="setting">
             <div class="row g-3">
@@ -94,7 +113,7 @@
       </div>
     </div>
 
-    <!-- Sección: Auditoría -->
+    <!-- Auditoría -->
     <div class="mt-4">
       <app-card-container title="Registro de Sistema" icon="history">
         <div class="row g-3">

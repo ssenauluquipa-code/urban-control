@@ -2,12 +2,24 @@
   <div class="navbar-wrapper">
     <div class="m-header">
       <a href="javascript:" class="b-brand">
-        <img src="../../../assets/images/logo-icon.svg"
-        alt="theme-logo"
-        class="logo logo-dark logo-lg" />
-        <span class="brand-name">NOMBRE EMPRESA</span>
+        <img
+          src="../../../assets/images/logo2_.svg"
+          alt="theme-logo"
+          class="logo logo-dark logo-lg"
+        />
+        <div class="brand-info">
+          <span class="brand-name">{{ organizationName | truncate: 10 }}</span>
+          @if (organizationName.length > 10) {
+            <span class="brand-subtitle">{{
+              organizationName.substring(10)
+            }}</span>
+          }
+        </div>
       </a>
     </div>
-    <app-nav-content (NavCollapsedMob)="navCollapseMob()" class="scroll-div w-100 compact"></app-nav-content>
+    <app-nav-content
+      (NavCollapsedMob)="navCollapseMob()"
+      class="scroll-div w-100 compact"
+    ></app-nav-content>
   </div>
 </nav>
