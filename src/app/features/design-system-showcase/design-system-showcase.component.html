@@ -135,6 +135,39 @@
       </div>
     </div>
 
+    <!-- Select Asesor -->
+    <div class="component-card">
+      <h3>Select Asesor (Domain Specific)</h3>
+      <p>Selector especializado para asesores con búsqueda remota y visualización detallada</p>
+      <div
+        class="demo-area"
+        style="flex-direction: column; align-items: stretch"
+      >
+        <app-select-asesor
+          label="Asesor de Ventas"
+          [control]="asesorControl"
+        >
+        </app-select-asesor>
+      </div>
+    </div>
+
+    <!-- Select Lotes -->
+    <div class="component-card">
+      <h3>Select Lotes (Cascade / Specialized)</h3>
+      <p>Selector de lotes con visualización de precio, área y búsqueda interna.</p>
+      <div
+        class="demo-area"
+        style="flex-direction: column; align-items: stretch"
+      >
+        <app-select-lotes
+          label="Lote Disponible"
+          [inputControl]="loteControl"
+        >
+        </app-select-lotes>
+        <small class="text-muted mt-2">Nota: Este componente requiere un manzanaId para cargar datos.</small>
+      </div>
+    </div>
+
     <!-- Input Text Info -->
     <div class="component-card">
       <h3>Input Text Info</h3>

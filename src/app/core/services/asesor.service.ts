@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { CreateAsesorDto, IAsesor, UpdateAsesorDto } from '../models/asesor/asesor.model';
+import { CreateAsesorDto, IAsesor, IAsesorOption, UpdateAsesorDto } from '../models/asesor/asesor.model';
 import { Observable } from 'rxjs';
 import { IAsesorRepository } from '../interfaces/repository/asesor.repository.interface';
 
@@ -35,6 +35,10 @@ export class AsesorService {
     } else {
       return this.repo.activate(id);
     }
+  }
+
+  searchAsesores(term: string): Observable<IAsesorOption[]> {
+    return this.repo.searchAsesores(term);
   }
 
 }

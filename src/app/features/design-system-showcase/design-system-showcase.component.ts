@@ -17,6 +17,8 @@ import { InputTextInfoComponent } from 'src/app/shared/components/atoms/input-te
 import { ImageDisplayComponent } from 'src/app/shared/components/atoms/image-display/image-display.component';
 import { ImageUploaderComponent } from 'src/app/shared/components/atoms/image-uploader/image-uploader.component';
 import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
+import { SelectAsesorComponent } from 'src/app/shared/components/atoms/select-asesor.component';
+import { SelectLotesComponent } from 'src/app/shared/components/atoms/select-lotes.component';
 import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
 
 @Component({
@@ -40,6 +42,8 @@ import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
     ImageDisplayComponent,
     ImageUploaderComponent,
     SelectDataComponent,
+    SelectAsesorComponent,
+    SelectLotesComponent,
   ],
   templateUrl: './design-system-showcase.component.html',
   styleUrls: ['./design-system-showcase.component.scss'],
@@ -57,6 +61,11 @@ export class DesignSystemShowcaseComponent implements OnInit {
     Validators.maxLength(200),
   ]);
   selectControl = new FormControl(null, [Validators.required]);
+  asesorControl = new FormControl(null);
+  loteControl = new FormControl(null);
+  
+  // ID de ejemplo para que el selector de lotes cargue algo
+  dummyManzanaId = 'a6a7ae9f-e5b5-4a1f-9105-3e418d37b54b'; 
 
   public estado = TEstadoLote;
 

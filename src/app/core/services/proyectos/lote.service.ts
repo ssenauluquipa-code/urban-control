@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { CreateLoteDto, UpdateEstadoLoteDto, UpdateLoteDto, ILote, ILoteSearchResult } from '../../models/lote/lote.model';
+import { CreateLoteDto, UpdateEstadoLoteDto, UpdateLoteDto, ILote, ILoteSearchResult, ILoteByLoteDisponible } from '../../models/lote/lote.model';
 import { ILoteRepository } from '../../interfaces/repository/proyectos/lote.repository.interface';
 import { Observable } from 'rxjs';
 
@@ -25,4 +25,5 @@ export class LoteService {
   deleteLoteImages(id: string, imageIds: string[]): Observable<void> { return this.repo.deleteImages(id, imageIds); }
   searchLotes(manzanaId: string, term: string): Observable<ILoteSearchResult[]> { return this.repo.search(manzanaId, term); }
 
+  getLotesDisponibles(manzanaId?: string): Observable<ILoteByLoteDisponible[]> { return this.repo.disponibles(manzanaId); }
 }

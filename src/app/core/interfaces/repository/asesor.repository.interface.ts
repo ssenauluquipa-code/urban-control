@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { CreateAsesorDto, IAsesor, UpdateAsesorDto } from "../../models/asesor/asesor.model";
+import { CreateAsesorDto, IAsesor, IAsesorOption, UpdateAsesorDto } from "../../models/asesor/asesor.model";
 
 export interface IAsesorRepository {
     /**
@@ -17,4 +17,6 @@ export interface IAsesorRepository {
     delete(id: string): Observable<void>;
 
     activate(id: string): Observable<IAsesor>;
+
+    searchAsesores(term: string): Observable<IAsesorOption[]>;
 }

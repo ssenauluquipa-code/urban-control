@@ -1,18 +1,34 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  TemplateRef,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
-import { InputErrorMessagesComponent } from "./input-error-messages/input-error-messages.component";
+import { InputErrorMessagesComponent } from './input-error-messages/input-error-messages.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-select-data',
   standalone: true,
-  imports: [CommonModule, NgSelectModule, FormsModule, ReactiveFormsModule, InputErrorMessagesComponent],
+  imports: [
+    CommonModule,
+    NgSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    InputErrorMessagesComponent,
+  ],
   template: `
     <div class="form-group custom-select-container">
       @if (label) {
-        <label [for]="selectId" class="form-label fw-bold mb-1">{{ label }}</label>
+        <label [for]="selectId" class="form-label fw-bold mb-1">{{
+          label
+        }}</label>
       }
       <ng-select
         #inputSelect
@@ -32,69 +48,68 @@ import { FormsModule } from '@angular/forms';
         [appendTo]="'body'"
         (blur)="Blur.emit($event)"
         (change)="onSelectChange()"
-        (search)="Search.emit($event.term)">
+        (search)="Search.emit($event.term)"
+        (clear)="Search.emit('')"
+      >
+        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+          @if (customOptionTemplate) {
+            <ng-container
+              *ngTemplateOutlet="
+                customOptionTemplate;
+                context: { $implicit: item, searchTerm: search }
+              "
+            ></ng-container>
+          } @else {
+            {{ item[bindLabel] }}
+          }
+        </ng-template>
 
         <ng-template ng-notfound-tmp let-searchTerm="searchTerm">
           <div class="p-2 small text-muted">
-            No hay resultados para "{{searchTerm}}"
+            No hay resultados para "{{ searchTerm }}"
           </div>
         </ng-template>
       </ng-select>
 
-      <app-input-error-messages [input_control]="inputControl"></app-input-error-messages>
+      <app-input-error-messages
+        [input_control]="inputControl"
+      ></app-input-error-messages>
     </div>
   `,
   styles: `
-    :host {
-      display: block;
-      width: 100%;
-    }
-    .custom-select-container {
-      display: block;
-      width: 100%;
-    }
-    .form-label {
-      font-size: 0.85rem;
-      color: #4a5568;
-    }
-    /* Estilizamos el ng-select para que encaje con el look de UrbanControl */
-    ::ng-deep .ng-select.is-invalid .ng-select-container {
-      border-color: #e53e3e !important;
-    }
-
-    ::ng-deep .ng-dropdown-panel {
-      z-index: 9999 !important;
-    }
-
-  `
+   
+  `,
 })
-export class SelectDataComponent implements OnInit {
-
+export class SelectDataComponent<T = unknown> implements OnInit {
   @ViewChild('inputSelect') inputSelect!: NgSelectComponent;
+
+  // TemplateRef tipado con unknown para evitar el uso de any
+  @Input() customOptionTemplate?: TemplateRef<{
+    $implicit: T;
+    searchTerm: string;
+  }>;
 
   public selectId = 'select-' + Math.random().toString(36).substring(2, 9);
 
-  // Propiedades de configuración
   @Input() label?: string;
-  @Input() itemList: unknown[] = [];
-  @Input() bindValue = 'Id';
-  @Input() bindLabel = 'Name';
+  @Input() itemList: T[] = [];
+  @Input() bindValue = 'id';
+  @Input() bindLabel = 'name';
   @Input() placeholder = 'Seleccionar...';
   @Input() loading = false;
 
-  // Control y validación
-  @Input() inputControl = new FormControl<unknown>(null);
-  @Input() defaultValue: unknown = null;
+  // Tipamos el FormControl para que acepte el valor de bindValue (normalmente string o el objeto T)
+  @Input() inputControl = new FormControl<string | T | null>(null);
+  @Input() defaultValue: string | T | null = null;
 
-  // Comportamiento
   @Input() clearable = true;
   @Input() searchable = false;
   @Input() isMultiple = false;
   @Input() setFocus = false;
-  @Input() appendToStyle: string | null = null;
 
-  @Output() ChangeValue = new EventEmitter<string | null>();
-  @Output() Blur = new EventEmitter<string>();
+  // CORREGIDO: Emitimos el tipo específico del valor del control
+  @Output() ChangeValue = new EventEmitter<string | T | null>();
+  @Output() Blur = new EventEmitter<FocusEvent>();
   @Output() Search = new EventEmitter<string>();
 
   ngOnInit(): void {
@@ -106,8 +121,13 @@ export class SelectDataComponent implements OnInit {
     }
   }
 
-  // Emite el valor real del control (bindValue ya aplicado), no el objeto crudo del ng-select
   onSelectChange(): void {
-    this.ChangeValue.emit(this.inputControl.value as string | null);
+    // Emitimos el valor tipado del control
+    this.ChangeValue.emit(this.inputControl.value);
+    
+    // Quitamos el foco para que desaparezca el puntero |
+    if (this.inputSelect) {
+      this.inputSelect.blur();
+    }
   }
 }

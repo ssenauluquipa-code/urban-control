@@ -64,3 +64,13 @@ export interface ILoteSearchResult {
     id: string;
     numero: number;
 }
+
+export interface ILoteByLoteDisponible {
+    id: string;
+    nroLote: number;
+    areaM2: number;
+    precio: number;
+    manzanaId: string;
+    codigoManzana: string;
+    descripcion: string;
+}

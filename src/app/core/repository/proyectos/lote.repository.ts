@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { CreateLoteDto, ILote, ILoteSearchResult, UpdateEstadoLoteDto, UpdateLoteDto } from "../../models/lote/lote.model";
+import { CreateLoteDto, ILote, ILoteByLoteDisponible, ILoteSearchResult, UpdateEstadoLoteDto, UpdateLoteDto } from "../../models/lote/lote.model";
 import { ILoteRepository } from "../../interfaces/repository/proyectos/lote.repository.interface";
 
 @Injectable({ providedIn: 'root' })
@@ -42,9 +42,17 @@ export class LoteRepository implements ILoteRepository {
     return this.http.request<void>('DELETE', `${this.API_URL}/${id}/imagenes`, { body: { imagenIds: imageIds } });
   }
 
+  /**ya no se usa este se reemplazo por active */
   search(manzanaId: string, term: string): Observable<ILoteSearchResult[]> {
     const params = new HttpParams().set('manzanaId', manzanaId).set('term', term);
     return this.http.get<ILoteSearchResult[]>(`${this.API_URL}/search`, { params });
   }
 
+  disponibles(manzanaId?: string): Observable<ILoteByLoteDisponible[]> {
+    let params = new HttpParams();
+    if (manzanaId && manzanaId.trim() !== '') {
+      params = params.set('manzanaId', manzanaId);
+    }
+    return this.http.get<ILoteByLoteDisponible[]>(`${this.API_URL}/disponibles`, { params });
+  }
 }

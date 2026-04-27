@@ -26,3 +26,9 @@ export interface CreateAsesorDto {
 }
 
 export type UpdateAsesorDto = Partial<CreateAsesorDto>;
+
+export interface IAsesorOption {
+    id: string;
+    nombreCompleto: string;
+    nroDocumento: string;
+}

@@ -2,7 +2,7 @@ import { environment } from "src/environments/environment";
 import { IAsesorRepository } from "../interfaces/repository/asesor.repository.interface";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { CreateAsesorDto, IAsesor, UpdateAsesorDto } from "../models/asesor/asesor.model";
+import { CreateAsesorDto, IAsesor, IAsesorOption, UpdateAsesorDto } from "../models/asesor/asesor.model";
 import { Injectable } from "@angular/core";
 @Injectable({
     providedIn: 'root'
@@ -42,6 +42,14 @@ export class AsesorRepository implements IAsesorRepository {
 
     activate(id: string): Observable<IAsesor> {
         return this.http.patch<IAsesor>(`${this.Api_Url}/${id}/activate`, {});
+    }
+
+    searchAsesores(term: string): Observable<IAsesorOption[]> {
+        let params = new HttpParams();
+        if (term && term.trim() !== '') {
+            params = params.set('term', term);
+        }
+        return this.http.get<IAsesorOption[]>(`${this.Api_Url}/search`, { params });
     }
 
 }
