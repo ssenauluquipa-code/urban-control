@@ -4,36 +4,6 @@
   [showNew]="true"
   (AddNew)="onAddNew()"
 >
-  <!-- Filtros -->
-  <div class="row mb-3 align-items-end">
-    <div class="col-md-5">
-      <app-form-field label="Buscar Asesor">
-        <app-input-text
-          [input_control]="searchControl"
-          input_placeholder="Nombre, CI o Código..."
-          prefix_icon="search"
-        >
-        </app-input-text>
-      </app-form-field>
-    </div>
-    <div class="col-md-3">
-      <app-form-field label="Nro. Documento">
-        <app-input-text
-          [input_control]="documentControl"
-          input_placeholder="Ej: 1234567"
-        ></app-input-text>
-      </app-form-field>
-    </div>
-
-    <div class="col-md-auto">
-      <app-form-field label="Estado">
-        <app-status-filter
-          [currentStatus]="filterActive"
-          (statusChange)="setFilter($event)"
-        ></app-status-filter>
-      </app-form-field>
-    </div>
-  </div>
 
   <!-- Tabla -->
   <!-- 
@@ -53,6 +23,7 @@
       tableActionEnum.INFO,
     ]"
     (actionClicked)="onTableAction($event)"
+    (filterChanged)="onTableFilterChanged($event)"
   >
   </app-data-table>
 </app-page-container>

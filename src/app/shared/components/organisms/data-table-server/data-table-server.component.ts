@@ -49,7 +49,7 @@ export class DataTableServerComponent<T = unknown> extends DataTableBaseComponen
   // --- Configuración específica: server-side ---
   private pendingParams: IGetRowsParams | null = null;
 
-  public gridOptions: GridOptions = {
+  public override gridOptions: GridOptions = {
     rowModelType: 'infinite', // 👈 CLAVE: Infinite scroll / server-side
     cacheBlockSize: this.pageSize,
     maxBlocksInCache: 10,

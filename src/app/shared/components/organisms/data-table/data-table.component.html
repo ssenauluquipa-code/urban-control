@@ -18,6 +18,7 @@
       [gridOptions]="gridOptions"
       (gridReady)="onGridReady($event)"
       (rowClicked)="onRowClicked($event)"
+      (filterChanged)="onFilterChanged($event)"
     ></ag-grid-angular>
 
     @if (loading) {

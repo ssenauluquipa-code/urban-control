@@ -37,7 +37,7 @@ export class DataTableComponent<T = unknown> extends DataTableBaseComponent<T> i
   @Input() pageSize = 10;
 
   // --- Configuración específica: client-side ---
-  public gridOptions: GridOptions = {
+  public override gridOptions: GridOptions = {
     rowModelType: 'clientSide', // 👈 CLAVE: Client-side
     pagination: true,
     rowHeight: 52,
@@ -48,6 +48,9 @@ export class DataTableComponent<T = unknown> extends DataTableBaseComponent<T> i
       resizable: true,
       minWidth: 150,
       suppressMovable: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
+      suppressFloatingFilterButton: true,
       cellStyle: { display: 'flex', 'align-items': 'center' }
     },
     overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Cargando...</span>',

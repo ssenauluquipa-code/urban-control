@@ -3,10 +3,11 @@ import {
   ViewChild, ElementRef, OnDestroy, ChangeDetectorRef, Directive
 } from '@angular/core';
 import {
-  ColDef, GridApi, GridOptions, GridReadyEvent, RowClickedEvent, SortModelItem
+  ColDef, FilterChangedEvent, GridApi, GridOptions, GridReadyEvent, RowClickedEvent, SortModelItem
 } from 'ag-grid-community';
 import { TableAction, ITableActionEvent } from '../../../interfaces/table-actions.interface';
 import { Subject } from 'rxjs';
+import { ITableFilterModel } from 'src/app/shared/interfaces/table-filters.interface';
 
 /**
  * BASE: Componente abstracto que contiene la lógica común de ambas tablas
@@ -23,12 +24,14 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
   @Input() showCreate = true;
   @Input() actions: TableAction[] = ['view', 'edit', 'delete'];
   @Input() pageSizeOptions: number[] = [5, 10, 20, 50, 100];
+  @Input() gridOptions: GridOptions = {};
 
   // --- Outputs Comunes ---
   @Output() actionClicked = new EventEmitter<ITableActionEvent<T>>();
   @Output() rowClicked = new EventEmitter<T>();
   @Output() sortChange = new EventEmitter<SortModelItem[]>();
   @Output() createClick = new EventEmitter<void>();
+  @Output() filterChanged = new EventEmitter<ITableFilterModel>();
 
   // --- Estado Interno ---
   public gridApi!: GridApi;
@@ -36,7 +39,7 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
   protected destroy$ = new Subject<void>();
 
   // GridOptions abstracto - cada hijo lo implementa
-  abstract gridOptions: GridOptions;
+  /* abstract gridOptions: GridOptions; */
 
   constructor(protected cdr: ChangeDetectorRef) { }
 
@@ -130,5 +133,9 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
     if (this.gridApi && !this.gridApi.isDestroyed()) {
       this.gridApi.destroy();
     }
+  }
+  onFilterChanged(event: FilterChangedEvent<T>): void {
+    const model = event.api.getFilterModel() as ITableFilterModel;
+    this.filterChanged.emit(model);
   }
 }
