@@ -167,7 +167,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     if (!cliente) return;
 
     if (event.action === TableActionsEnum.EDIT) {
-      this.router.navigate(['/clientes/edit', cliente.id]);
+      this.router.navigate(['/clientes/editar', cliente.id]);
     } else if (event.action === TableActionsEnum.DEACTIVATE || event.action === TableActionsEnum.ACTIVATE) {
       this.toggleStatus(cliente);
     }
@@ -195,6 +195,6 @@ export class ListClientesComponent implements OnInit, OnDestroy {
   }
 
   onAddNew(): void {
-    this.router.navigate(['/clientes/new']);
+    this.router.navigate(['/clientes/nuevo']);
   }
 }

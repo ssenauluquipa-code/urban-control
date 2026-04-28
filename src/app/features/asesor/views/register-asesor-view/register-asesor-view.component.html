@@ -21,11 +21,12 @@
       </div>
       <div class="col-7">
         <app-form-field label="Nro. Documento" [required]="true">
-          <app-input-text
+          <app-input-documento
             [input_control]="NroDocumento"
-            input_placeholder="1234567"
+            [hasComplemento]="true"
+            [placeholder]="'1234567'"
           >
-          </app-input-text>
+          </app-input-documento>
         </app-form-field>
       </div>
     </div>

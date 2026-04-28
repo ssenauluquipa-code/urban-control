@@ -40,13 +40,13 @@ export class RegisterClientesComponent implements OnInit {
       nombreCompleto: ['', Validators.required],
       tipoDocumento: [ETipoDocumento.CI, Validators.required],
       nroDocumento: ['', Validators.required],
-      complemento: [''],
+      complemento: ['', Validators.required],
       numeroReferencia: [''],
       genero: [EGenero.MASCULINO, Validators.required],
       fechaNacimiento: [null],
-      telefono: [''],
-      email: ['', [Validators.email]],
-      direccion: ['']
+      telefono: ['', Validators.maxLength(20)],
+      email: [''],
+      direccion: ['', Validators.maxLength(250)]
     });
   }
 

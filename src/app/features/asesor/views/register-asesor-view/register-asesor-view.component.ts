@@ -5,11 +5,14 @@ import { InputTextComponent } from "src/app/shared/components/atoms/input-text/i
 import { SelectGenderComponent } from "src/app/shared/components/atoms/select-gender.component";
 import { SelectDocumentTypeComponent } from "src/app/shared/components/atoms/select-document-type.component";
 import { InputDateComponent } from "src/app/shared/components/atoms/input-date/input-date.component";
+import { InputDocumentoComponent } from "src/app/shared/components/atoms/input-documento/input-documento.component";
 
 @Component({
   selector: 'app-register-asesor-view',
   standalone: true,
-  imports: [FormFieldComponent, InputTextComponent, InputDateComponent, SelectGenderComponent, SelectDocumentTypeComponent],
+  imports: [FormFieldComponent, InputTextComponent,
+     InputDateComponent, SelectGenderComponent,
+     SelectDocumentTypeComponent, InputDocumentoComponent],
   templateUrl: './register-asesor-view.component.html',
   styleUrl: './register-asesor-view.component.scss'
 })

@@ -8,12 +8,15 @@ import { SelectDocumentTypeComponent } from "src/app/shared/components/atoms/sel
 import { InputTextareaComponent } from "src/app/shared/components/atoms/input-textarea/input-textarea.component";
 import { InputDateComponent } from "src/app/shared/components/atoms/input-date/input-date.component";
 import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
+import { SelectExpedidoComponent } from "src/app/shared/components/atoms/select-expedido.component";
+import { InputDocumentoComponent } from "src/app/shared/components/atoms/input-documento/input-documento.component";
+import { InputNumberComponent } from "src/app/shared/components/atoms/input-number/input-number.component";
 @Component({
   selector: 'app-form-clientes-view',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule,
     FormFieldComponent, InputTextComponent, SelectGenderComponent, SelectDocumentTypeComponent,
-    InputTextareaComponent, InputDateComponent, CardContainerComponent],
+    InputTextareaComponent, InputDateComponent, CardContainerComponent, SelectExpedidoComponent, InputDocumentoComponent, InputNumberComponent],
   templateUrl: './form-clientes-view.component.html',
   styleUrl: './form-clientes-view.component.scss'
 })

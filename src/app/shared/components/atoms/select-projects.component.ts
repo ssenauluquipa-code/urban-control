@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
 import { SelectDataComponent } from './select-data.component';
 import { IProyectoActivo } from 'src/app/core/models/proyectos/proyecto.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-select-projects',
@@ -15,10 +16,10 @@ import { IProyectoActivo } from 'src/app/core/models/proyectos/proyecto.model';
       [placeholder]="placeholder"
       [bindValue]="'id'"
       [bindLabel]="'nombre'"
-      [customOptionTemplate]="projectTemplate"      
+      [customOptionTemplate]="projectTemplate"
       (ChangeValue)="onSelect($event)">
     </app-select-data>
-    
+
     <ng-template #projectTemplate let-item let-searchTerm="searchTerm">
       <div class="py-1">
         <div class="fw-bold text-primary" [innerHTML]="highlightText(item.nombre, searchTerm)"></div>
@@ -37,17 +38,18 @@ import { IProyectoActivo } from 'src/app/core/models/proyectos/proyecto.model';
 
   `,
   styles: [
-    `    
+    `
   `
   ]
 })
-export class SelectProjectsComponent implements OnInit {
+export class SelectProjectsComponent implements OnInit, OnDestroy {
 
   @Input() inputControl = new FormControl();
   @Input() placeholder = 'Seleccionar Proyecto...';
   @Output() Change = new EventEmitter<string | null>();
 
   public projectList: IProyectoActivo[] = [];
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private proyectoService: ProyectoService,
@@ -55,13 +57,31 @@ export class SelectProjectsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.proyectoService.getProyectActive().subscribe({
-      next: (data) => {
-        this.projectList = [...data];
-        this.cdr.detectChanges();
-      },
-      error: (error) => console.error('Error al cargar proyectos', error)
-    });
+    // Cargar datos iniciales
+    this.subscription.add(
+      this.proyectoService.getProyectActive().subscribe({
+        next: (data) => {
+          this.projectList = [...data];
+          this.cdr.detectChanges();
+        },
+        error: (error) => console.error('Error al cargar proyectos', error)
+      })
+    );
+
+    // Suscribirse a cambios para actualizar automáticamente
+    this.subscription.add(
+      this.proyectoService.proyectosActivos$.subscribe({
+        next: (data) => {
+          this.projectList = [...data];
+          this.cdr.detectChanges();
+        },
+        error: (error) => console.error('Error al actualizar proyectos', error)
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   onSelect(event: string | IProyectoActivo | null): void {

@@ -1,8 +1,8 @@
 <!-- Input oculto para seleccionar archivos -->
-<input 
+<input
   #fileInput
-  type="file" 
-  [accept]="acceptTypes" 
+  type="file"
+  [accept]="acceptTypes"
   class="hidden-input"
   (change)="onFileSelected($event)" />
 
@@ -33,16 +33,16 @@
       }
 
       <!-- Badge con nombre -->
-      <div class="image-name-badge">
+      <!-- <div class="image-name-badge">
         <span nz-icon nzType="file-image" nzTheme="outline"></span>
         {{ imageName }}
-      </div>
+      </div> -->
     </div>
   }
 
   <!-- Estado: Sin imagen -->
   @if (!displayUrl) {
-    <div class="empty-container" 
+    <div class="empty-container"
          [class.is-editable]="editable"
          (click)="onEmptyClick()">
       <div class="empty-icon">

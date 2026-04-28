@@ -120,7 +120,7 @@ nz-input-group {
   /* Estilo cuando tiene prefijo/sufijo */
   &.ant-input-affix-wrapper {
     border-radius: 8px !important;
-    
+
     .ant-input {
       border-radius: 0 !important; /* Elimina el radius interno */
     }
@@ -154,47 +154,54 @@ nz-input-group {
 // ==================== TEXTAREA (NG-ZORRO) ====================
 .ant-input-textarea {
   border-radius: 8px !important;
-  overflow: hidden; /* Necesario para que el radius funcione */
+  // overflow: hidden; /* ELIMINADO: esto cortaba el icono de redimensionamiento */
+}
 
-  /* El textarea dentro del contenedor */
-  textarea.ant-input {
-    border-radius: 8px !important;
-    padding: 8px 12px; /* Ajuste de padding para mejor apariencia */
-    transition: all 0.3s ease;
+textarea.ant-input.ant-input-textarea,
+.ant-input-textarea textarea.ant-input {
+  border-radius: 8px !important;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
 
-    &:hover {
-      border-color: #40a9ff;
-    }
+  resize: vertical !important; /* HABILITA el arrastre manual */
+  min-height: unset !important; /* Permite que el atributo [rows] mande */
+  height: auto !important; /* LIBERA la altura fija para que rows funcione */
+  display: block;
 
-    &:focus {
-      border-color: #17a2b8;
-      box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.2) !important;
-    }
+  &:hover {
+    border-color: #40a9ff;
   }
 
-  /* Estado deshabilitado */
-  &.ant-input-disabled textarea.ant-input {
-    background-color: #f5f5f5 !important;
-    color: #333 !important;
-    border-radius: 8px !important;
-  }
-
-  /* Estado error */
-  &.ant-input-status-error textarea.ant-input {
-    border-color: #ff4d4f;
+  &:focus {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.2) !important;
   }
 }
 
-// ==================== CONTADOR DE CARACTERES (Opcional) ====================
+textarea.ant-input.ant-input-textarea.ant-input-disabled,
+.ant-input-textarea.ant-input-disabled textarea.ant-input {
+  background-color: #f5f5f5 !important;
+  color: #333 !important;
+  border-radius: 8px !important;
+}
+
+textarea.ant-input.ant-input-textarea.ant-input-status-error,
+.ant-input-textarea.ant-input-status-error textarea.ant-input {
+  border-color: #ff4d4f;
+}
+
+// ==================== CONTADOR DE CARACTERES ====================
 .ant-input-textarea-show-count {
-  &::after {
-    bottom: 8px;
-    right: 12px;
-    font-size: 12px;
+  // Aseguramos que el contador no bloquee el icono de resize
+  textarea.ant-input {
+    padding-bottom: 30px !important;
   }
 
-  /* Ajuste cuando tiene contador */
-  textarea.ant-input {
-    padding-bottom: 24px !important;
+  // Posicionamos el contador para que no estorbe
+  .ant-input-textarea-suffix,
+  &::after {
+     right: 12px !important;
+     bottom: 4px !important;
+     pointer-events: none !important; /* Para que no bloquee el click del resize */
   }
 }
