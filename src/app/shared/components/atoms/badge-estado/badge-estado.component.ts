@@ -30,7 +30,7 @@ import { ICellRendererParams } from 'ag-grid-community';
   styleUrls: ['./badge-estado.component.scss']
 })
 export class BadgeEstadoComponent implements ICellRendererAngularComp {
-  label    = '';
+  label = '';
   cssClass = '';
 
   // ── Uso en template Angular: <app-badge-estado [estado]="'DISPONIBLE'">
@@ -50,17 +50,18 @@ export class BadgeEstadoComponent implements ICellRendererAngularComp {
 
   private setState(value: string | boolean | null | undefined): void {
     if (value === true) {
-      this.label    = 'Activo';
+      this.label = 'Activo';
       this.cssClass = 'activo';
     } else if (value === false) {
-      this.label    = 'Inactivo';
+      this.label = 'Inactivo';
       this.cssClass = 'inactivo';
-    } else if (typeof value === 'string' && value.length > 0) {
+    } else if (typeof value === 'string') {
+      this.label = value;
+      // Convertimos a minúsculas para que coincida con las clases del SCSS
       this.cssClass = value.toLowerCase();
-      this.label    = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
     } else {
-      this.label    = '—';
-      this.cssClass = 'desconocido';
+      this.label = '-';
+      this.cssClass = '';
     }
   }
 }

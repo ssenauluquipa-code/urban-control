@@ -1,31 +1,80 @@
 .badge-estado {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 10px;
-  font-size: 14px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 12px; // Un poco más de aire lateral
+  border-radius: 9999px;
+  font-size: 12px !important; // 14px puede verse muy grande en tablas densas, 12px es más elegante
   font-weight: 600;
-  letter-spacing: 0.02em;
+  line-height: 1.25rem;
+  letter-spacing: 0.01em;
   white-space: nowrap;
+  border: 1px solid transparent;
 
-  // ── Booleanos ──────────────────────────────────────
-  &.activo      { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-  &.inactivo    { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+  // ── ESTADOS GENÉRICOS (Booleanos) ─────────────────────
+  &.activo {
+    background-color: #ecfdf5; // Emerald 50
+    color: #065f46; // Emerald 800
+    border-color: #a7f3d0; // Emerald 200
+  }
 
-  // ── Lotes ──────────────────────────────────────────
-  &.disponible  { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-  &.reservado   { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-  &.vendido     { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-  &.bloqueado   { background: #e5e7eb; color: #374151; border: 1px solid #d1d5db; }
+  &.inactivo {
+    background-color: #f8fafc; // Slate 50
+    color: #475569; // Slate 600
+    border-color: #e2e8f0; // Slate 200
+  }
 
-  // ── Reservas ───────────────────────────────────────
-  &.activa      { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-  &.vencida     { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-  &.convertida  { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-  &.cancelada   { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+  // ── LOTES (Urbanismo) ───────────────────────────────
+  &.disponible {
+    background-color: #f0fdf4; // Green 50
+    color: #166534; // Green 800
+    border-color: #bbf7d0; // Green 200
+  }
 
-  // ── Proyectos (string ACTIVO / INACTIVO) ───────────
-  // Reutiliza .activo e .inactivo (mismas clases lowercase)
+  &.reservado {
+    background-color: #fffbeb; // Amber 50
+    color: #92400e; // Amber 800
+    border-color: #fde68a; // Amber 200
+  }
 
-  // ── Fallback ───────────────────────────────────────
-  &.desconocido { background: #f9fafb; color: #9ca3af; border: 1px solid #e5e7eb; }
+  &.vendido {
+    // Usamos Indigo o Violeta para "Vendido" para diferenciarlo de "Error/Rojo"
+    background-color: #eef2ff; // Indigo 50
+    color: #3730a3; // Indigo 800
+    border-color: #c7d2fe; // Indigo 200
+  }
+
+  &.bloqueado {
+    background-color: #fff1f2; // Rose 50 (Indica restricción)
+    color: #9f1239; // Rose 800
+    border-color: #fecdd3; // Rose 200
+  }
+
+  // ── RESERVAS (Flujo de Negocio) ─────────────────────
+  &.activa {
+    // Azul es el color estándar para procesos vigentes
+    background-color: #eff6ff; // Blue 50
+    color: #1e40af; // Blue 800
+    border-color: #bfdbfe; // Blue 200
+  }
+
+  &.vencida {
+    // Naranja/Rojo de advertencia
+    background-color: #fff7ed; // Orange 50
+    color: #9a3412; // Orange 800
+    border-color: #fed7aa; // Orange 200
+  }
+
+  &.convertida {
+    // Púrpura indica un éxito o transformación (Reserva -> Venta)
+    background-color: #faf5ff; // Purple 50
+    color: #6b21a8; // Purple 800
+    border-color: #e9d5ff; // Purple 200
+  }
+
+  &.cancelada {
+    background-color: #f1f5f9; // Slate 100
+    color: #64748b; // Slate 500
+    border-color: #cbd5e1; // Slate 300
+  }
 }
