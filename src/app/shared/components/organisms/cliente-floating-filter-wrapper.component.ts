@@ -20,18 +20,32 @@ import { CommonModule } from '@angular/common';
     </div>
   `,
   styles: `
-  .filter-wrapper {
+    :host {
+      display: block;
+      width: 100%;
+    }
+    .filter-wrapper {
       width: 100%;
       padding: 0 4px; /* Un pequeño margen para que no choque con los bordes */
       display: flex;
       align-items: center;
     }
 
-    /* Forzamos que el selector de clientes se expanda */
+    /* Forzamos que los subcomponentes se expandan */
     app-select-clientes {
       width: 100%;
       display: block;
-    }`
+    }
+    
+    ::ng-deep app-select-data {
+      width: 100%;
+      display: block;
+    }
+    
+    ::ng-deep app-select-data .form-group {
+      margin-bottom: 0 !important;
+    }
+  `
 })
 export class ClienteFloatingFilterWrapperComponent implements IFloatingFilterAngularComp {
 

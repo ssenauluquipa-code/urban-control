@@ -4,56 +4,24 @@
   [showNew]="true"
   (AddNew)="onAddNew()"
 >
-  <!-- Filtros y Buscador -->
-  <!-- 
-    row g-3: Espaciado uniforme entre columnas (Gutter)
-    align-items-end: Alinea todo al fondo (bottom)
-  -->
-  <div class="row g-3 align-items-end mb-4">
-    <!-- Buscador -->
-    <div class="col-md-5">
-      <app-form-field label="Buscar Cliente">
-        <app-input-text
-          [input_control]="searchControl"
-          input_placeholder="Nombre, CI o Email..."
-          prefix_icon="search"
-        ></app-input-text>
-      </app-form-field>
-    </div>
-
-    <!-- Filtros Rápidos -->
-    <!-- 
-      col-md-auto: La columna se ajusta al ancho de los botones (no ocupa 4 columnas fijas)
-      d-flex align-items-center gap-2: Agrupa botones con espacio entre ellos
-    -->
-    <div class="col-md-auto">
-      <app-form-field label="Estado">
-        <app-status-filter
-          [currentStatus]="filterActive"
-          (statusChange)="setFilter($event)"
-        ></app-status-filter>
-      </app-form-field>
-    </div>
+  <div class="mt-2">
+    <app-data-table-server
+      [rowData]="clientes"
+      [columnDefs]="columnDefs"
+      [loading]="loading"
+      [pageSize]="limit"
+      [totalRecords]="totalRecords"
+      [showCreate]="false"
+      [actions]="[
+        tableActionEnum.EDIT,
+        tableActionEnum.DEACTIVATE,
+        tableActionEnum.ACTIVATE,
+        tableActionEnum.INFO,
+      ]"
+      (actionClicked)="onTableAction($event)"
+      (filterChanged)="onTableFilterChanged($event)"
+      (pageChange)="loadClientes($event)"
+    >
+    </app-data-table-server>
   </div>
-  <!-- Tabla Server-Side con búsqueda + paginación -->
-  <!-- 👇 AHORA USA DataTableServerComponent -->
-  <app-data-table-server
-    [rowData]="clientes"
-    [columnDefs]="columnDefs"
-    [loading]="loading"
-    [pageSize]="limit"
-    [totalRecords]="totalRecords"
-    [showCreate]="false"
-    [actions]="[
-      tableActionEnum.EDIT,
-      tableActionEnum.DEACTIVATE,
-      tableActionEnum.ACTIVATE,
-      tableActionEnum.INFO,
-    ]"
-    (actionClicked)="onTableAction($event)"
-    (pageChange)="onPageChange($event)"
-    (pageSizeChange)="onPageSizeChange($event)"
-    (sortChange)="onSortChange($event)"
-  >
-  </app-data-table-server>
 </app-page-container>
