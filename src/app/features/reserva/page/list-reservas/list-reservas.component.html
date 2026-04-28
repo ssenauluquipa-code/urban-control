@@ -7,40 +7,47 @@
   <!-- 📌 BARRA DE FILTROS -->
   <div class="row mb-3 g-2">
     <!-- Cliente -->
-    <div class="col-md-3">
+    <!-- <div class="col-md-3">
       <app-form-field label="Cliente">
-        <app-select-clientes [inputControl]="clienteControl" placeholder="Todos los clientes"></app-select-clientes>
+        <app-select-clientes
+          [inputControl]="clienteControl"
+          placeholder="Todos los clientes"
+        ></app-select-clientes>
       </app-form-field>
-    </div>
+    </div> -->
 
     <!-- Manzana -->
-    <div class="col-md-3">
+    <!--  <div class="col-md-3">
       <app-form-field label="Manzana">
         <app-select-manzanas [inputControl]="manzanaControl" [proyectoId]="proyectoId" placeholder="Todas las manzanas"></app-select-manzanas>
       </app-form-field>
     </div>
-
+ -->
     <!-- Estado -->
-    <div class="col-md-3">
+    <!-- <div class="col-md-3">
       <app-form-field label="Estado">
         <app-select-estado-reserva [inputControl]="estadoControl" placeholder="Todos los estados"></app-select-estado-reserva>
       </app-form-field>
     </div>
-
+ -->
     <!-- Limpiar -->
-    <div class="col-md-3">
+    <!-- <div class="col-md-3">
       <app-form-field label="&nbsp;">
         <button
           type="button"
           class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center"
-          style="height: 44px; border-radius: 10px; font-weight: 500;"
-          (click)="clienteControl.setValue(null); manzanaControl.setValue(null); estadoControl.setValue('ACTIVA')"
+          style="height: 44px; border-radius: 10px; font-weight: 500"
+          (click)="
+            clienteControl.setValue(null);
+            manzanaControl.setValue(null);
+            estadoControl.setValue('ACTIVA')
+          "
         >
           <span nz-icon nzType="clear" class="me-2"></span>
           Limpiar Filtros
         </button>
       </app-form-field>
-    </div>
+    </div> -->
   </div>
 
   <!-- 📌 TABLA DE DATOS -->

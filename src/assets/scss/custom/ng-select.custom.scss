@@ -35,36 +35,6 @@ ng-select {
     color: #d9d9d9;
   }
 
-  .ng-dropdown-panel {
-    border: 1px solid #d9d9d9;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    border-radius: 8px !important;
-    z-index: 9999 !important;
-  }
-
-  /* Item seleccionado en dropdown - COLOR MÁS OSCURO */
-  .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected {
-    background-color: #bae7ff;
-    color: #0050b3;
-    font-weight: 600;
-  }
-
-  /* Item hover en dropdown */
-  .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
-    background-color: #e6f7ff;
-  }
-
-  /* Animación del dropdown */
-  .ng-dropdown-panel {
-    opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-
-    &.ng-select-opened {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
   /* ✅ ARREGLO: Input SIEMPRE visible con cursor azul */
   .ng-input>input {
     font-size: 14px !important;
@@ -193,4 +163,33 @@ ng-select.is-invalid.ng-select-focused>.ng-select-container {
   padding: 8px 12px;
   text-align: center;
   color: #999;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NG-SELECT GLOBAL DROPDOWN (Fuera del ng-select para appendTo="body")
+   ═══════════════════════════════════════════════════════════════ */
+.ng-dropdown-panel {
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 8px !important;
+  z-index: 99999 !important;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  &.ng-select-opened {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Item seleccionado en dropdown - COLOR MÁS OSCURO */
+  .ng-dropdown-panel-items .ng-option.ng-option-selected {
+    background-color: #bae7ff;
+    color: #0050b3;
+    font-weight: 600;
+  }
+
+  /* Item hover en dropdown */
+  .ng-dropdown-panel-items .ng-option.ng-option-marked {
+    background-color: #e6f7ff;
+  }
 }
