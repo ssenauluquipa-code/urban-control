@@ -14,10 +14,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RegisterReservaComponent } from '../register-reserva/register-reserva.component';
 import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { SelectClientesComponent } from 'src/app/shared/components/atoms/select-clientes.component';
-import { SelectManzanasComponent } from 'src/app/shared/components/atoms/select-manzanas.component';
-import { SelectEstadoReservaComponent } from 'src/app/shared/components/atoms/select-estado-reserva.component';
-import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { CommonModule } from '@angular/common';
 import { StatusReservaFloatingFilterComponent, StatusReservaFloatingFilterParams } from 'src/app/shared/components/organisms/status-reserva-floating-filter.component';
 import { ClienteFloatingFilterWrapperComponent } from 'src/app/shared/components/organisms/cliente-floating-filter-wrapper.component';
@@ -30,11 +26,7 @@ import { IClienteFloatingFilterParams } from 'src/app/shared/interfaces/table-fi
     CommonModule,
     DataTableComponent,
     PageContainerComponent,
-    ReactiveFormsModule,
-    SelectClientesComponent,
-    SelectManzanasComponent,
-    SelectEstadoReservaComponent,
-    FormFieldComponent
+    ReactiveFormsModule
   ],
   templateUrl: './list-reservas.component.html',
   styleUrl: './list-reservas.component.scss'

@@ -47,9 +47,9 @@ export class NavCollapseComponent {
     parent = (parent as HTMLElement).parentElement as HTMLElement;
 
     const sections = document.querySelectorAll('.coded-hasmenu');
-    for (let i = 0; i < sections.length; i++) {
-      if (sections[i] !== parent) {
-        sections[i].classList.remove('coded-trigger');
+    for (const section of Array.from(sections)) {
+      if (section !== parent) {
+        section.classList.remove('coded-trigger');
       }
     }
 

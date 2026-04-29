@@ -70,6 +70,11 @@ export class ListLotesComponent implements OnInit {
       cellStyle: { fontWeight: 'bold' },
     },
     {
+      field: 'manzana.codigo',
+      headerName: 'Manzana',
+      width: 80,
+    },
+    {
       field: 'areaM2',
       headerName: 'Área (m²)',
       width: 100,
@@ -79,8 +84,8 @@ export class ListLotesComponent implements OnInit {
       field: 'precioReferencial',
       headerName: 'Precio Ref.',
       width: 120,
-      valueFormatter: (p) =>
-        p.value ? `Bs. ${p.value.toLocaleString('es-BO')}` : '',
+      /* valueFormatter: (p) =>
+        p.value ? `Bs. ${p.value.toLocaleString('es-BO')}` : '', */
     },
     {
       field: 'comision',
@@ -121,6 +126,8 @@ export class ListLotesComponent implements OnInit {
       if (projectId) {
         this.manzanaIdControl.enable();
         this.manzanaIdControl.setValue(null);
+        // Cargar todos los lotes del proyecto inicialmente
+        this.loadLotes(null);
       } else {
         this.manzanaIdControl.disable();
         this.manzanaIdControl.setValue(null);
@@ -129,16 +136,13 @@ export class ListLotesComponent implements OnInit {
     });
 
     this.manzanaIdControl.valueChanges.subscribe((manzanaId) => {
-      if (manzanaId) {
-        this.loadLotes(manzanaId);
-      } else {
-        this.lotes$ = of([]);
-      }
+      // Si hay manzanaId, filtra; si no, carga todos
+      this.loadLotes(manzanaId);
     });
 
   }
 
-  private loadLotes(manzanaId: string): void {
+  private loadLotes(manzanaId: string | null): void {
     this.isLoading = true;
     this.lotes$ = this.loteService
       .getLotes(manzanaId)
@@ -163,6 +167,9 @@ export class ListLotesComponent implements OnInit {
     // Caso Poner Disponible (Desbloquear)
     if (event.action === TableActionsEnum.SET_AVAILABLE) {
       this.confirmDisponible(event.row!);
+    }
+    if(event.action === TableActionsEnum.VIEW){
+      this.openDetailDrawer(event.row!.id);
     }
   }
 
@@ -209,9 +216,8 @@ export class ListLotesComponent implements OnInit {
     this.loteService.updateEstadoLote(loteId, payload).subscribe({
       next: () => {
         this.notification.success(`Estado actualizado a ${payload.estado}`);
-        if (this.manzanaIdControl.value) {
-          this.loadLotes(this.manzanaIdControl.value);
-        }
+        // Recargar con el filtro actual (manzanaId o todos)
+        this.loadLotes(this.manzanaIdControl.value);
       },
       error: (err) => this.notification.error(err.error?.message || 'Error')
     });

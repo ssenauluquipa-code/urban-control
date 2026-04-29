@@ -12,7 +12,7 @@ export class LoteService {
 
   constructor(@Inject(LOTE_REPOSITORY_TOKEN) private repo: ILoteRepository) { }
 
-  getLotes(manzanaId: string): Observable<ILote[]> {
+  getLotes(manzanaId: string | null): Observable<ILote[]> {
     return this.repo.getAll(manzanaId);
   }
 
@@ -25,5 +25,5 @@ export class LoteService {
   deleteLoteImages(id: string, imageIds: string[]): Observable<void> { return this.repo.deleteImages(id, imageIds); }
   searchLotes(manzanaId: string, term: string): Observable<ILoteSearchResult[]> { return this.repo.search(manzanaId, term); }
 
-  getLotesDisponibles(manzanaId?: string): Observable<ILoteByLoteDisponible[]> { return this.repo.disponibles(manzanaId); }
+  getLotesDisponibles(manzanaId: string | null): Observable<ILoteByLoteDisponible[]> { return this.repo.disponibles(manzanaId); }
 }

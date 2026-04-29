@@ -12,7 +12,7 @@ export class LoteRepository implements ILoteRepository {
 
   constructor(private http: HttpClient) { }
 
-  getAll(manzanaId?: string): Observable<ILote[]> {
+  getAll(manzanaId: string | null): Observable<ILote[]> {
     let params = new HttpParams();
     if (manzanaId) params = params.set('manzanaId', manzanaId);
     return this.http.get<ILote[]>(this.API_URL, { params });
@@ -48,7 +48,7 @@ export class LoteRepository implements ILoteRepository {
     return this.http.get<ILoteSearchResult[]>(`${this.API_URL}/search`, { params });
   }
 
-  disponibles(manzanaId?: string): Observable<ILoteByLoteDisponible[]> {
+  disponibles(manzanaId: string | null): Observable<ILoteByLoteDisponible[]> {
     let params = new HttpParams();
     if (manzanaId && manzanaId.trim() !== '') {
       params = params.set('manzanaId', manzanaId);

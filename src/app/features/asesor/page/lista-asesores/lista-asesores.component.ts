@@ -7,13 +7,10 @@ import { AsesorService } from 'src/app/core/services/asesor.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
-import { FormFieldComponent } from "src/app/shared/components/molecules/form-field/form-field.component";
-import { InputTextComponent } from "src/app/shared/components/atoms/input-text/input-text.component";
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
 import { ConfirmationService } from 'src/app/core/services/confirmation.service';
 import { RegisterAsesorComponent } from '../register-asesor.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { StatusFilterComponent } from "src/app/shared/components/atoms/status-filter/status-filter.component";
 import { ActivatedRoute, Router } from '@angular/router';
 import { AsesorDetailComponent } from '../asesor-detail/asesor-detail.component';
 import { ITableFilterModel } from 'src/app/shared/interfaces/table-filters.interface';
@@ -22,7 +19,7 @@ import { StatusFloatingFilterComponent } from 'src/app/shared/components/organis
 @Component({
   selector: 'app-lista-asesores',
   standalone: true,
-  imports: [PageContainerComponent, FormFieldComponent, InputTextComponent, DataTableComponent, StatusFilterComponent],
+  imports: [PageContainerComponent, DataTableComponent],
   templateUrl: './lista-asesores.component.html',
   styleUrl: './lista-asesores.component.scss'
 })

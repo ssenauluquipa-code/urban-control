@@ -30,7 +30,6 @@ export class AuthService {
   }
 
   private saveSession(response: ILoginResponse): void {
-    console.log('🔐 [AuthService] Guardando nueva sesión...', { user: response.user.email });
     localStorage.setItem('accessToken', response.accessToken);
     localStorage.setItem('refreshToken', response.refreshToken);
     localStorage.setItem('user', JSON.stringify(response.user));
@@ -40,24 +39,20 @@ export class AuthService {
   logout(): Observable<void> {
     // Evitar múltiples logouts concurrentes
     if (this.isLoggingOut) {
-      console.warn('🚪 [AuthService] Logout ya en progreso. Ignorando llamada duplicada.');
       return of(undefined);
     }
 
     this.isLoggingOut = true;
-    console.warn('🚪 [AuthService] Iniciando cierre de sesión (logout)...');
 
     // Intentamos avisar al servidor, pero garantizamos la limpieza local pase lo que pase
     return this.repo.logout().pipe(
       finalize(() => {
-        console.log('🧹 [AuthService] Sesión limpiada localmente.');
         localStorage.clear();
         this._currentUser.set(null);
         this.isLoggingOut = false;
       }),
       catchError(() => {
         // Evitar que errores de red/401 en el logout intenten refrescar nuevamente
-        console.error('⚠️ [AuthService] Error al notificar logout al servidor, pero limpieza local completada.');
         return of(undefined);
       })
     );
@@ -87,24 +82,17 @@ export class AuthService {
 
   refresh(): Observable<ILoginResponse> {
     const refreshToken = localStorage.getItem('refreshToken');
-    console.log('🔄 [AuthService] Intentando refrescar token...', refreshToken ? 'Token presente' : 'Token ausente');
 
     if (!refreshToken) {
-      console.error('❌ [AuthService] No hay Refresh Token en Storage.');
       this.logout().subscribe();
       return throwError(() => new Error('No refresh token available'));
     }
 
     return this.repo.refresh({ refreshToken }).pipe(
       tap(response => {
-        console.log('✅ [AuthService] Token refrescado exitosamente.');
         this.saveSession(response);
       }),
       catchError(err => {
-        console.error('🔥 [AuthService] El refresco de token falló en el servidor.', {
-          status: err.status,
-          message: err.statusText
-        });
         // No llamar logout aquí, el interceptor lo hará
         return throwError(() => err);
       })

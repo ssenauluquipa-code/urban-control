@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { NavGroupComponent } from "./nav-group/nav-group.component";
 import { CommonModule, Location, LocationStrategy } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { INavigationItem, NavigationItems } from '../navigation';
+import { NavigationItems } from '../navigation';
 
 @Component({
   selector: 'app-nav-content',

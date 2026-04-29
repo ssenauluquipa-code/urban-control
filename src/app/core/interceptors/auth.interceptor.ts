@@ -23,16 +23,14 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
 
-      // 🚩 CONDICIÓN CRÍTICA: No intentar refrescar si el error viene de Login o del propio Refresh
+      // CONDICIÓN CRÍTICA: No intentar refrescar si el error viene de Login o del propio Refresh
       const isAuthRequest = req.url.includes('/auth/login') || req.url.includes('/auth/refresh');
 
       if (error.status === 401 && !isAuthRequest) {
-        console.warn(`⚠️ [Interceptor] 401 detectado en: ${req.url}. Intentando refrescar token...`);
         return handle401Error(req, next, authService);
       }
 
       if ((error.status === 401 || error.status === 403) && isAuthRequest) {
-        console.error(`🚫 [Interceptor] ${error.status} en ruta de Auth (${req.url}). Sesión expirada, forzando logout.`);
         // Forzar logout inmediato sin intentar de nuevo
         authService.logout().subscribe();
         return throwError(() => error);
@@ -48,13 +46,11 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
  */
 function handle401Error(req: HttpRequest<unknown>, next: HttpHandlerFn, authService: AuthService) {
   if (!isRefreshing) {
-    console.log('🚀 [Interceptor] Iniciando proceso de refresco de token único.');
     isRefreshing = true;
     refreshTokenSubject.next(null); // Limpiamos el sujeto para nuevas peticiones
 
     return authService.refresh().pipe(
       switchMap((res) => {
-        console.log('✨ [Interceptor] Refresco exitoso. Reintentando petición original:', req.url);
         isRefreshing = false;
         refreshTokenSubject.next(res.accessToken);
 
@@ -64,7 +60,6 @@ function handle401Error(req: HttpRequest<unknown>, next: HttpHandlerFn, authServ
         }));
       }),
       catchError((refreshError) => {
-        console.error('💀 [Interceptor] El refresco falló. Cancelando todo y cerrando sesión.', refreshError.status);
         isRefreshing = false;
         refreshTokenSubject.next(null);
 
@@ -77,21 +72,18 @@ function handle401Error(req: HttpRequest<unknown>, next: HttpHandlerFn, authServ
       })
     );
   } else {
-    console.log('⏳ [Interceptor] Ya hay un refresco en curso. Poniendo petición en espera:', req.url);
-    // 🚦 Cola de espera: Si ya hay un proceso de refresco en curso,
+    // Cola de espera: Si ya hay un proceso de refresco en curso,
     // hacemos que esta petición espere a que termine.
     return refreshTokenSubject.pipe(
       filter(token => token !== null), // Esperar a que el token no sea null
       take(1), // Tomar el primer valor válido y completar
       switchMap((newToken) => {
-        console.log('⏩ [Interceptor] Token recibido desde la cola. Reintentando:', req.url);
         // Reintentar con el token que acaba de obtener la otra petición
         return next(req.clone({
           setHeaders: { Authorization: `Bearer ${newToken}` }
         }));
       }),
       catchError((err) => {
-        console.error('❌ [Interceptor] Error en cola de espera. Forzando logout.');
         authService.logout().subscribe();
         return throwError(() => err);
       })

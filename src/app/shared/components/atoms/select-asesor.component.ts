@@ -59,8 +59,7 @@ export class SelectAsesorComponent implements OnInit {
     );
   }
 
-  onSearch(term: string): void {
-    console.log('📝 Término de búsqueda:', `"${term}"`);
+  onSearch(term: string): void {    
     this.searchSubject.next(term);
   }
 

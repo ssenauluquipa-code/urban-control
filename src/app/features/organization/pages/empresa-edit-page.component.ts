@@ -72,13 +72,11 @@ export class EmpresaEditPageComponent implements OnInit {
   private loadFromState(): void {
     const state = history.state;
     if (state && state.empresa) {
-      console.log("estados ", state.empresa);
       this.form.patchValue(state.empresa);
       this.logoUrl = state.empresa.logoUrl || '';
     } else {
       // Si no hay estado, cargamos de la API
-      this.empresaService.getEmpresa().subscribe(empresa => {
-        console.log("datos ", empresa);
+      this.empresaService.getEmpresa().subscribe(empresa => {        
         this.form.patchValue(empresa);
         this.logoUrl = empresa.logoUrl || '';
       });
@@ -94,8 +92,9 @@ export class EmpresaEditPageComponent implements OnInit {
 
     this.isSaving = true;
 
-    // Extraemos el logoUrl para que no se envíe en el body del PATCH, ya que el backend lo rechaza.
-    const { logoUrl, ...empresaData } = this.form.value;
+    // Creamos una copia del body y quitamos logoUrl porque el backend lo rechaza.
+    const empresaData = { ...this.form.value };
+    delete empresaData.logoUrl;
 
     // Encadenamos la actualización de datos con la del logo para tratarlo como una sola acción
     this.empresaService.updateEmpresa(empresaData).pipe(

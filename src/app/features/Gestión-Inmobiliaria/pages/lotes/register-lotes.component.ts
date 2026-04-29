@@ -30,7 +30,7 @@ import { ViewRegisterLotesComponent } from '../../views/lotes/view-register-lote
       <app-view-register-lotes
         [loteForm]="loteFormGroup"
         [loteData]="loteData"
-        [pendingFiles]="pendingFiles"   
+        [pendingFiles]="pendingFiles"
         (fileSelected)="onFileSelected($event)"
         (removePendingFile)="onRemovePending($event)"
         (deleteImage)="onDeleteImage($event)"
@@ -101,12 +101,12 @@ export class RegisterLotesComponent implements OnInit {
   // --- Eventos ---
 
   public onFileSelected(files: File): void {
-    this.pendingFiles.push(files);
+    this.pendingFiles = [...this.pendingFiles, files];
     //this.notification.info(`${files.length} archivo(s) listo(s) para subir.`);
   }
   // 🚀 Método para quitar un archivo de la lista pendiente
   public onRemovePending(index: number): void {
-    this.pendingFiles.splice(index, 1);
+    this.pendingFiles = this.pendingFiles.filter((_, i) => i !== index);
   }
 
   public onDeleteImage(imageId: string): void {

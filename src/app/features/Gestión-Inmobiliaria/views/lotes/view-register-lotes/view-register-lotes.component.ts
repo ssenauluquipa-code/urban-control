@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -11,6 +11,11 @@ import { NzCardModule } from "ng-zorro-antd/card";
 import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 import { ImageUploaderComponent } from "src/app/shared/components/atoms/image-uploader/image-uploader.component";
 import { ImageDisplayComponent } from 'src/app/shared/components/atoms/image-display/image-display.component';
+
+interface FilePreview {
+  file: File;
+  previewUrl: string;
+}
 
 @Component({
   selector: 'app-view-register-lotes',
@@ -31,15 +36,41 @@ import { ImageDisplayComponent } from 'src/app/shared/components/atoms/image-dis
   templateUrl: './view-register-lotes.component.html',
   styleUrl: './view-register-lotes.component.scss'
 })
-export class ViewRegisterLotesComponent {
+
+export class ViewRegisterLotesComponent implements OnDestroy {
 
   @Input() loteForm!: FormGroup;
   @Input() loteData: ILote | null = null;
-  @Input() pendingFiles: File[] = [];
+
+  private _pendingFiles: File[] = [];
+  public pendingFilesPreview: FilePreview[] = [];
+
+  @Input()
+  set pendingFiles(files: File[]) {
+    this.revokePendingPreviews();
+    this._pendingFiles = files || [];
+    this.pendingFilesPreview = this._pendingFiles.map(file => ({
+      file,
+      previewUrl: URL.createObjectURL(file)
+    }));
+  }
+
+  get pendingFiles(): File[] {
+    return this._pendingFiles;
+  }
 
   @Output() fileSelected = new EventEmitter<File>();
   @Output() deleteImage = new EventEmitter<string>();
   @Output() removePendingFile = new EventEmitter<number>();
+
+  ngOnDestroy(): void {
+    this.revokePendingPreviews();
+  }
+
+  private revokePendingPreviews(): void {
+    this.pendingFilesPreview.forEach(item => URL.revokeObjectURL(item.previewUrl));
+    this.pendingFilesPreview = [];
+  }
 
   // Getters
   get numero() { return this.loteForm.get('numero') as FormControl; }
@@ -55,11 +86,6 @@ export class ViewRegisterLotesComponent {
   // 🚀 NUEVO MÉTODO: Conecta con el output del ImageUploaderComponent
   onFileSelected(file: File): void {
     this.fileSelected.emit(file);
-  }
-
-  // Helper para crear URL de previsualización del objeto File
-  getFilePreview(file: File): string {
-    return URL.createObjectURL(file);
   }
 
 }

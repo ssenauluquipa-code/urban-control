@@ -57,12 +57,12 @@ export class RegisterReservaComponent implements OnInit {
   private buildForm(): void {
     this.formGroup = this.fb.group({
       clienteId: [null, Validators.required],
-      manzanaId: [null, Validators.required],
+      manzanaId: [null],
       loteId: [null, Validators.required],
       montoReserva: [null, [Validators.required, Validators.min(1)]],
       moneda: [1],
       fechaVencimiento: [null],
-      observaciones: ['']
+      observaciones: ['', [Validators.maxLength(500), Validators.required]],
     });
   }
 

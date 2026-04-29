@@ -44,7 +44,6 @@ export class EmpresaViewComponent implements OnInit {
   public onLogoUpload(file: File): void {
     this.empresaService.uploadLogo(file).subscribe({
       next: (response) => {
-        console.log('Logo subido exitosamente:', response);
         if (this.empresaData) {
           this.empresaData.logoUrl = response.data.logoUrl;
         }
@@ -57,8 +56,7 @@ export class EmpresaViewComponent implements OnInit {
 
   public onLogoDelete(): void {
     this.empresaService.deleteLogo().subscribe({
-      next: (response) => {
-        console.log('Logo eliminado exitosamente:', response);
+      next: (response) => {        
         if (this.empresaData) {
           this.empresaData.logoUrl = '';
         }

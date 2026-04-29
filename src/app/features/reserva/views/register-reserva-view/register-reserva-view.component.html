@@ -14,7 +14,7 @@
 
     <!-- Lote -->
     <app-form-field label="Lote" [required]="true">
-      <app-select-lotes [inputControl]="loteId" [manzanaId]="manzanaId.value">
+      <app-select-lotes [inputControl]="loteId" [manzanaId]="manzanaId.value" (ManzanaChange)="onManzanaFromLote($event)">
       </app-select-lotes>
     </app-form-field>
   </div>

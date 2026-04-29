@@ -130,14 +130,12 @@ export class UserRegisterComponent {
     }
 
     const formValue = this.userFormGroup.getRawValue();
-    const isEditMode = !!formValue.id;
-    console.log('is edit ', isEditMode);
+    const isEditMode = !!formValue.id;    
 
     // 1. Definir la petición principal (Crear o Actualizar)
     let mainRequest$;
 
     if (isEditMode) {
-      console.log('editar usuario');
       // Payload para actualizar (sin email ni contraseña)
       const payload = {
         name: formValue.name,
@@ -145,8 +143,7 @@ export class UserRegisterComponent {
         role: formValue.role,
       };
       mainRequest$ = this.userService.updateUser(formValue.id, payload);
-    } else {
-      console.log('registrar usuario');
+    } else {      
       // Payload para crear
       const createData = { ...formValue };
       delete createData.id;

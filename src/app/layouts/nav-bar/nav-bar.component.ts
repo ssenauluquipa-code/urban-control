@@ -17,8 +17,8 @@ export class NavBarComponent {
   //NavCollapsedMob = output<void>();
   @Output() NavCollapsedMob = new EventEmitter<void>();
 
-  @Input() isMobOpen: boolean = false;
-  navCollapsed: boolean = false;
+  @Input() isMobOpen = false;
+  navCollapsed = false;
   windowWidth: number;
 
   // Constructor

@@ -42,9 +42,14 @@
 
   <!-- Estado: Sin imagen -->
   @if (!displayUrl) {
-    <div class="empty-container"
-         [class.is-editable]="editable"
-         (click)="onEmptyClick()">
+    <button type="button"
+            class="empty-container"
+            [class.is-editable]="editable"
+            (click)="onEmptyClick()"
+            (keydown.enter)="onEmptyClick()"
+            (keydown.space)="onEmptyClick()"
+            [disabled]="!editable"
+            [attr.aria-label]="emptyText">
       <div class="empty-icon">
         <span nz-icon [nzType]="emptyIcon" nzTheme="outline"></span>
       </div>
@@ -52,7 +57,7 @@
       @if (editable) {
         <p class="empty-hint">{{ emptyHint }}</p>
       }
-    </div>
+    </button>
   }
 
 </div>

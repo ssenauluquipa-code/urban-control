@@ -24,13 +24,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     const token = this.authService.getToken();
-    console.log('🏁 [AppComponent] Iniciando aplicación. ¿Token presente?:', !!token);
-    
     if(token){
-      console.log('👤 [AppComponent] Intentando cargar perfil del usuario...');
       this.authService.getLoggedUser().subscribe({
-        next: (user) => console.log('✅ [AppComponent] Perfil cargado para:', user.email),
-        error: (err) => console.error('❌ [AppComponent] Error al obtener el perfil:', err),
+        next: (user) => console.log('', user),
+        error: (err) => console.error('', err),
       })
     }
   }

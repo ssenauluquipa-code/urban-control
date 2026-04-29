@@ -30,4 +30,11 @@ export class RegisterReservaViewComponent {
   get moneda() { return this.reservaForm.get('moneda') as FormControl; }
   get fechaVencimiento() { return this.reservaForm.get('fechaVencimiento') as FormControl; }
   get observaciones() { return this.reservaForm.get('observaciones') as FormControl; }
+
+  // Método para sincronizar manzana cuando se selecciona un lote
+  onManzanaFromLote(manzanaId: string | null): void {
+    if (manzanaId && manzanaId !== this.manzanaId.value) {
+      this.manzanaId.setValue(manzanaId);
+    }
+  }
 }

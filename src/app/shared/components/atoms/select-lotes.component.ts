@@ -54,6 +54,7 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
 
   // Output
   @Output() Change = new EventEmitter<string | null>();
+  @Output() ManzanaChange = new EventEmitter<string | null>();
 
   // Estado
   public loteList: ILoteByLoteDisponible[] = [];
@@ -65,19 +66,14 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit(): void {
     // Cargamos lotes siempre al inicio (si hay manzanaId filtra, si no trae todos)
-    this.loadLotes(this.manzanaId || undefined);
+    this.loadLotes(this.manzanaId);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Si cambia la manzana, limpiamos y recargamos automáticamente
+    // Si cambia la manzana, recargamos automáticamente
     if (changes['manzanaId'] && !changes['manzanaId'].firstChange) {
       const currentId = changes['manzanaId'].currentValue;
-      this.inputControl.setValue(null);
-      this.loteList = [];
-
-      if (currentId) {
-        this.loadLotes(currentId);
-      }
+      this.loadLotes(currentId);
     }
   }
 
@@ -86,14 +82,22 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
-  private loadLotes(manzanaId?: string): void {
+  private loadLotes(manzanaId: string | null): void {
     this.isLoading = true;
 
     this.loteService.getLotesDisponibles(manzanaId).subscribe({
-      next: (data) => {
-        console.log('Data', data);
+      next: (data) => {        
+        // Asegurar que cada lote tenga descripcion para el bindLabel
+        this.loteList = data.map(lote => ({
+          ...lote,
+          descripcion: lote.descripcion || `Lote ${lote.nroLote} - ${lote.areaM2}m²`
+        }));
 
-        this.loteList = data;
+        // Verificar si el lote seleccionado actual existe en la nueva lista
+        if (this.inputControl.value && !this.loteList.find(l => l.id === this.inputControl.value)) {
+          this.inputControl.setValue(null);
+        }
+
         this.isLoading = false;
       },
       error: (err) => {
@@ -105,6 +109,13 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
 
   onSelect(event: string | null): void {
     this.Change.emit(event);
+    // Emitir el manzanaId del lote seleccionado
+    if (event) {
+      const selectedLote = this.loteList.find(lote => lote.id === event);
+      this.ManzanaChange.emit(selectedLote?.manzanaId || null);
+    } else {
+      this.ManzanaChange.emit(null);
+    }
   }
   highlightText(text: string, term: string): string {
     if (!term || !text) return text;
