@@ -23,7 +23,8 @@
 
             &.coded-trigger {
               > a {
-                color: var(--bs-blue);
+                /* color: var(--bs-blue); */
+                color: var(--pc-sidebar-active-color);
                 background: none;
               }
 
@@ -48,10 +49,10 @@
           &.active {
             > a {
               background: rgba(var(--bs-primary-rgb), 0.1);
-              color: var(--bs-blue);
+              color: var(--pc-sidebar-active-color);
 
               &:before {
-                background: var(--bs-blue);
+                background: var(--pc-sidebar-active-color);
               }
             }
           }
@@ -68,15 +69,15 @@
 
             &.active {
               > a {
-                color: var(--bs-blue);
+                color: var(--pc-sidebar-active-color);
 
                 .coded-micon {
-                  color: var(--bs-blue);
+                  color: var(--pc-sidebar-active-color);
                 }
               }
 
               &:before {
-                background: var(--bs-blue);
+                background: var(--pc-sidebar-active-color);
               }
             }
           }

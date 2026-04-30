@@ -1,16 +1,14 @@
 .pc-sidebar {
-  background: var(--pc-sidebar-background);
+  background: var(--pc-sidebar-background) !important;
   width: $sidebar-width;
   position: fixed;
   top: 0;
   bottom: 0;
-  overflow: hidden;
   z-index: 1026;
-  box-shadow: var(--pc-sidebar-shadow);
-  display: block;
   height: 100vh;
+  box-shadow: var(--pc-sidebar-shadow);
   color: var(--pc-sidebar-color);
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid rgba(255, 255, 255, 0.05); // Borde sutil oscuro
 
   a {
     color: var(--pc-sidebar-color);
@@ -40,7 +38,8 @@
     display: flex;
     align-items: center;
     padding: 16px 24px;
-    position: relative;
+    background: var(--pc-sidebar-background) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
     .b-brand {
       display: flex;
@@ -65,7 +64,7 @@
 
     .brand-name {
       padding-top: 14px;
-      font-weight: 600;
+      font-weight: 900;
       font-size: 16px;
       color: var(--pc-sidebar-color);
       white-space: nowrap;
@@ -75,7 +74,7 @@
       font-weight: 400;
       font-size: 11px;
       color: var(--pc-sidebar-color);
-      opacity: 0.6;
+      opacity: 0.9;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -167,7 +166,7 @@
                 position: absolute;
                 top: 0;
                 right: 0;
-                width: 2px;
+                width: 6px;
                 height: 100%;
               }
             }
@@ -211,7 +210,7 @@
         padding: 12px 24px 12px;
         text-transform: capitalize;
         position: relative;
-        color: $gray-600;
+        color: $gray-500;
 
         &.first-group {
           padding: 0px 24px 12px;
@@ -268,7 +267,7 @@
           position: absolute;
           top: 0;
           right: 0;
-          width: 2px;
+          width: 6px;
           height: 100%;
         }
       }
@@ -453,7 +452,7 @@
 
   /* Scrollbar moderna y profesional */
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 3px;
   }
 
   &::-webkit-scrollbar-track {
@@ -464,8 +463,8 @@
 
   &::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #dee2e6 0%, #adb5bd 100%);
-    border-radius: 10px;
-    border: 2px solid #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #f8f9fa;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 

@@ -16,21 +16,20 @@
   --pc-sidebar-active-color: var(--bs-primary);
   --pc-sidebar-shadow: none;
   --pc-sidebar-caption-color: #{$gray-700}; */
-  --pc-sidebar-background: #ffffff;           // Fondo blanco puro
-  --pc-sidebar-color: #262626;                // Texto gris oscuro
-  --pc-sidebar-color-rgb: #{to-rgb(#262626)};
-  --pc-sidebar-active-color: #4f46e5;         // Azul primario (como en BordUp)
-  --pc-sidebar-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); // Sombra sutil
-  --pc-sidebar-caption-color: #6b7280;        // Gris medio para títulos de sección
+  /* urbanicacion tu futuro */
+  --pc-sidebar-background: #0f172a;    // Azul profundo
+  --pc-sidebar-color: #FFFFFF;         // Letras grisáceas (inactivo)
+  --pc-sidebar-active-color: #00d26a;  // Verde brillante (TU PEDIDO)
+  --pc-sidebar-caption-color: #64748b;
 
   // header
   /* --pc-header-background: #{$white};
   --pc-header-color: #262626;
   --pc-header-shadow: 0 1px 0 0px rgb(240 240 240); */
   --pc-header-background: #ffffff;
-  --pc-header-color: #1f2937;
+  --pc-header-color: #262626;
   --pc-header-shadow: 0 1px 0 0 rgba(229, 231, 235, 1);
-
+  --pc-header-active-color: #0f172a;
   // card
   --pc-card-box-shadow: none;
 }

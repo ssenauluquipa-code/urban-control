@@ -21,7 +21,7 @@ export interface INavigationItem {
 export const NavigationItems: INavigationItem[] = [
   {
     id: 'main',
-    title: 'Main',
+    title: 'Inicio',
     type: 'group',
     icon: 'bi bi-house',
     children: [

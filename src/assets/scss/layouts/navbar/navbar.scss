@@ -93,7 +93,7 @@
     border-radius: $border-radius;
     color: var(--pc-header-color);
     overflow: hidden;
-    
+
     @media (min-width: 768px) {
       height: 40px; /* Un poco mas alto para desktop */
       width: 40px;
@@ -143,13 +143,13 @@
      {
       text-decoration: none;
       //color: var(--pc-header-color);
-      color: var(--pc-sidebar-active-color);
+      color: var(--pc-header-active-color);
       background: #f3f4f6;
 
       > svg,
       > i {
         //color: var(--pc-header-color);
-        color: var(--pc-sidebar-active-color)
+        color: var(--pc-header-active-color)
       }
 
       &::before {

@@ -2,12 +2,10 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NavContentComponent } from './nav-content/nav-content.component';
 import { CommonModule } from '@angular/common';
 import { OrganizationService } from '../../core/services/configuracion/organization.service';
-import { TruncatePipe } from '../../shared/pipes/truncate.pipe';
-
 @Component({
   selector: 'app-navigation',
   standalone: true,
-  imports: [NavContentComponent, CommonModule, TruncatePipe],
+  imports: [NavContentComponent, CommonModule],
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.scss'
 })

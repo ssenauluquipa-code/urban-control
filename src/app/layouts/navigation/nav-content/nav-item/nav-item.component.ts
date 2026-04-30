@@ -5,9 +5,9 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-nav-item',
   standalone: true,
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './nav-item.component.html',
-  styleUrl: './nav-item.component.scss'
+  styleUrl: './nav-item.component.scss',
 })
 export class NavItemComponent {
   // public props
@@ -18,12 +18,14 @@ export class NavItemComponent {
     const ele = event.target as HTMLElement;
     if (ele !== null && ele !== undefined) {
       const parent = ele.parentElement as HTMLElement;
-      const up_parent = ((parent.parentElement as HTMLElement).parentElement as HTMLElement).parentElement as HTMLElement;
+      const up_parent = (
+        (parent.parentElement as HTMLElement).parentElement as HTMLElement
+      ).parentElement as HTMLElement;
       const last_parent = up_parent.parentElement;
-      const sections = document.querySelectorAll('.coded-hasmenu');
-      for (let i = 0; i < sections.length; i++) {
-        sections[i].classList.remove('active');
-        sections[i].classList.remove('coded-trigger');
+      const sections = Array.from(document.querySelectorAll('.coded-hasmenu'));
+      for (const section of sections) {
+        section.classList.remove('active');
+        section.classList.remove('coded-trigger');
       }
 
       if (parent.classList.contains('coded-hasmenu')) {
@@ -38,5 +40,4 @@ export class NavItemComponent {
       }
     }
   }
-
 }
