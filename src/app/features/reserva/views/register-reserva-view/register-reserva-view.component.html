@@ -7,7 +7,7 @@
     </app-form-field>
 
     <!-- Manzana -->
-    <app-form-field label="Manzana" [required]="true">
+    <app-form-field label="Manzana">
       <app-select-manzanas [inputControl]="manzanaId" [proyectoId]="proyectoId">
       </app-select-manzanas>
     </app-form-field>
@@ -24,11 +24,13 @@
     <div class="row">
       <div class="col-6">
         <app-form-field label="Monto Reserva" [required]="true">
-          <app-input-text
+          <app-input-number
             [input_control]="montoReserva"
-            input_placeholder="0.00"
+            [input_placeholder]="'0.00'"
+            [allow_decimals]="true"
+            [decimal_precision]="2"
           >
-          </app-input-text>
+          </app-input-number>
         </app-form-field>
       </div>
       <div class="col-6">
@@ -52,6 +54,8 @@
       <app-input-textarea
         [input_control]="observaciones"
         placeholder="Detalles adicionales..."
+        [input_autosize]="true"
+        [input_maxlength]="500"
       >
       </app-input-textarea>
     </app-form-field>

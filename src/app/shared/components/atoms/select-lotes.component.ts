@@ -12,7 +12,6 @@ import { CommonModule } from '@angular/common';
   imports: [SelectDataComponent, ReactiveFormsModule, CommonModule],
   template: `
     <app-select-data
-      [label]="label"
       [itemList]="loteList"
       [inputControl]="inputControl"
       [placeholder]="placeholder"
@@ -47,7 +46,6 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
   private loteService = inject(LoteService);
 
   // Inputs
-  @Input() label = 'Seleccionar Lote';
   @Input() inputControl = new FormControl<string | null>(null);
   @Input() manzanaId: string | null = null;
   @Input() placeholder = 'Buscar lote...';
@@ -86,7 +84,7 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
     this.isLoading = true;
 
     this.loteService.getLotesDisponibles(manzanaId).subscribe({
-      next: (data) => {        
+      next: (data) => {
         // Asegurar que cada lote tenga descripcion para el bindLabel
         this.loteList = data.map(lote => ({
           ...lote,

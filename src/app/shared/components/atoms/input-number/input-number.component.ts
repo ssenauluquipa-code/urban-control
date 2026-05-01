@@ -36,7 +36,7 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
                   <span nz-icon nzType="check-circle" nzTheme="fill" nzTheme="twotone" nzTwotoneColor="#52c41a"></span>
                   {{help_text}}
                 </small>
-                 }                
+                 }
                 <!-- Error Messages -->
                  @if (show_error_messages) {
                    <app-input-error-messages
@@ -107,6 +107,7 @@ export class InputNumberComponent implements OnInit {
   @Input() customStyles: Record<string, string> = {};
   @Input() customClass = '';
   @Input() allow_decimals = false; // Permitir decimales
+  @Input() decimal_precision = 0; // 0 = ilimitado, >0 limita la cantidad de decimales
   @Input() decimal_separator = '.'; // Separador decimal (. o ,)
 
   public passwordVisible = false;
@@ -128,11 +129,19 @@ export class InputNumberComponent implements OnInit {
   /** Configura la máscara según si permite decimales o no */
   private configureMask(): void {
     if (this.allow_decimals) {
-      // Permite números con decimales (ej: 123.45 o 123,45)
       const separator = this.decimal_separator === ',' ? ',' : '\\.';
-      this.maskitoOptions = {
-        mask: new RegExp(`^\\d+${separator}?\\d*$`)
-      };
+
+      if (this.decimal_precision > 0) {
+        // Limita la cantidad de decimales: 123.45 o 123,45 con hasta N dígitos
+        this.maskitoOptions = {
+          mask: new RegExp(`^\\d+(${separator}\\d{0,${this.decimal_precision}})?$`)
+        };
+      } else {
+        // Permite cualquier cantidad de decimales
+        this.maskitoOptions = {
+          mask: new RegExp(`^\\d+${separator}?\\d*$`)
+        };
+      }
     } else {
       // Solo números enteros
       this.maskitoOptions = {

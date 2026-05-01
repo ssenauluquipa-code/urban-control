@@ -84,6 +84,8 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
       min-height: unset !important;
       height: auto !important;
       overflow: auto;
+      padding: 8px 12px;
+      box-sizing: border-box;
     }
 
     /* Estilo para el texto de ayuda */
