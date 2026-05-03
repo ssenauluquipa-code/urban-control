@@ -122,7 +122,7 @@ export const ROUTES: IRouteInfo[] = [
     extralink: false,
     submenu: []
   },
-  {
+{
     path: '/reservas',
     title: 'Gestión de Reservas',
     icon: 'bi bi-calendar-check',

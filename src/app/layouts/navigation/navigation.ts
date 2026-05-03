@@ -89,13 +89,22 @@ export const NavigationItems: INavigationItem[] = [
         icon: 'bi bi-person-badge-fill',
         breadcrumbs: false
       },
-      {
+{
         id: 'reservas',
         title: 'Gestión Reservas',
         type: 'item',
         classes: 'nav-item',
         url: '/reservas',
         icon: 'bi bi-calendar-check',
+        breadcrumbs: false
+      },
+      {
+        id: 'ventas',
+        title: 'Gestión Ventas',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/ventas',
+        icon: 'bi bi-cart-check',
         breadcrumbs: false
       }
     ]

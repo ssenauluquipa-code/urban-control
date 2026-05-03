@@ -5,6 +5,7 @@ import { IClienteFloatingFilterParams } from '../../interfaces/table-filters.int
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { IFloatingFilterParams, TextFilterModel } from 'ag-grid-community';
 import { CommonModule } from '@angular/common';
+import { SelectClienteOutput } from '../../../core/models/venta.model';
 
 @Component({
   selector: 'app-cliente-floating-filter-wrapper',
@@ -36,12 +37,12 @@ import { CommonModule } from '@angular/common';
       width: 100%;
       display: block;
     }
-    
+
     ::ng-deep app-select-data {
       width: 100%;
       display: block;
     }
-    
+
     ::ng-deep app-select-data .form-group {
       margin-bottom: 0 !important;
     }
@@ -62,7 +63,8 @@ export class ClienteFloatingFilterWrapperComponent implements IFloatingFilterAng
     }
   }
 
-  onClienteSelected(clienteId: string | null) {
+  onClienteSelected(event: SelectClienteOutput) {
+    const clienteId = typeof event === 'string' ? event : null;
     if (this.params.onClienteChange) {
       this.params.onClienteChange(clienteId || undefined);
     }

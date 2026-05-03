@@ -1,0 +1,34 @@
+import { Injectable } from '@angular/core';
+import { IVentaRepository } from '../interfaces/repository/venta.repository.interface';
+import { environment } from 'src/environments/environment.prod';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { CreateVentaDto, IVenta } from '../models/venta.model';
+import { Observable } from 'rxjs';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class VentaRepository implements IVentaRepository {
+
+  private readonly apiUrl = environment.apiUrl + '/ventas';
+
+  constructor(private http: HttpClient) { }
+
+  getAll(manzanaId?: string, term?: string){
+    let params = new HttpParams();
+    if(manzanaId) params = params.set('manzanaId', manzanaId);
+    if(term) params = params.set('term', term);
+    return this.http.get<IVenta[]>(this.apiUrl, { params });
+  }
+
+  create(dto : CreateVentaDto): Observable<IVenta>{
+    return this.http.post<IVenta>(this.apiUrl, dto);
+  }
+  anular(id: string): Observable<void>{
+    return this.http.patch<void>(`${this.apiUrl}/${id}/anular`, {});
+  }
+
+  getById(id: string): Observable<IVenta>{
+    return this.http.get<IVenta>(`${this.apiUrl}/${id}`);
+  }
+}

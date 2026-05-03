@@ -1,0 +1,23 @@
+<!-- src/app/features/gestion-ventas/pages/list-ventas/list-ventas.component.html -->
+
+<app-page-container
+  title="Gestión de Ventas"
+  permissionScope="ventas"
+  [showNew]="true"
+  (AddNew)="onAddNew()"
+>
+  <!-- Espaciado superior mínimo ya que los filtros están en la tabla -->
+    <app-data-table
+      [rowData]="ventas"
+      [columnDefs]="columnDefs"
+      [loading]="loading"
+      [showCreate]="false"
+      [actions]="[
+        tableActionEnum.INFO,
+        tableActionEnum.EDIT,
+        tableActionEnum.ANULAR
+      ]"
+      (actionClicked)="onTableAction($event)"
+    >
+    </app-data-table>
+</app-page-container>

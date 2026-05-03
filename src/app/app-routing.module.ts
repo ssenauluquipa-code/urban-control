@@ -59,9 +59,13 @@ export const Approutes: Routes = [
         path: 'asesores',
         loadChildren: () => import('./features/asesor/asesor.routes').then(m => m.ASESORES_ROUTES)
       },
-      {
+{
         path: 'reservas',
         loadChildren: () => import('./features/reserva/reserva.routes').then(m => m.RESERVA_ROUTES)
+      },
+      {
+        path: 'ventas',
+        loadChildren: () => import('./features/ventas/ventas.routes').then(m => m.VENTAS_ROUTES)
       },
       {
         path: 'profile',
