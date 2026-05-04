@@ -1,156 +1,160 @@
-  <div class="row">
-    <!-- COLUMNA 1: IDENTIFICACIÓN -->
-    <div class="col-12 col-lg-6">
-      <app-card-container title="Identificación y Costos" class="mb-3">
-        <div class="row">
-          <div class="col-md-4">
-            <app-form-field label="N° de Lote" [required]="true">
-              <app-input-number
-                [input_control]="numero"
-                input_placeholder="Ej. 1"
-              ></app-input-number>
-            </app-form-field>
-          </div>
-          <div class="col-md-4">
-            <app-form-field label="Área (m²)" [required]="true">
-              <app-input-number
-                [input_control]="areaM2"
-                [allow_decimals]="true"
-              ></app-input-number>
-            </app-form-field>
-          </div>
-          <div class="col-md-4">
-            <app-form-field label="Precio Ref.">
-              <app-input-number
-                [input_control]="precioReferencial"
-                [allow_decimals]="true"
-              ></app-input-number>
-            </app-form-field>
-          </div>
+<div class="row">
+  <!-- COLUMNA 1: IDENTIFICACIÓN -->
+  <div class="col-12 col-lg-6">
+    <app-card-container title="Identificación y Costos" class="mb-3">
+      <div class="row">
+        <div class="col-md-4">
+          <app-form-field label="N° de Lote" [required]="true">
+            <app-input-number
+              [input_control]="numero"
+              input_placeholder="Ej. 1"
+            ></app-input-number>
+          </app-form-field>
         </div>
-      </app-card-container>
-    </div>
-
-    <!-- COLUMNA 2: DIMENSIONES -->
-    <div class="col-12 col-lg-6">
-      <app-card-container title="Dimensiones" class="mb-3">
-        <div class="row">
-          <div class="col-6">
-            <app-form-field label="Norte"
-              ><app-input-number
-                [input_control]="norte"
-                [allow_decimals]="true"
-              ></app-input-number
-            ></app-form-field>
-          </div>
-          <div class="col-6">
-            <app-form-field label="Sur"
-              ><app-input-number
-                [input_control]="sur"
-                [allow_decimals]="true"
-              ></app-input-number
-            ></app-form-field>
-          </div>
-          <div class="col-6">
-            <app-form-field label="Este"
-              ><app-input-number
-                [input_control]="este"
-                [allow_decimals]="true"
-              ></app-input-number
-            ></app-form-field>
-          </div>
-          <div class="col-6">
-            <app-form-field label="Oeste"
-              ><app-input-number
-                [input_control]="oeste"
-                [allow_decimals]="true"
-              ></app-input-number
-            ></app-form-field>
-          </div>
+        <div class="col-md-4">
+          <app-form-field label="Área (m²)" [required]="true">
+            <app-input-number
+              [input_control]="areaM2"
+              [allow_decimals]="true"
+            ></app-input-number>
+          </app-form-field>
         </div>
-      </app-card-container>
-    </div>
-
-    <!-- COLUMNA 3: ADICIONAL -->
-    <div class="col-12 col-lg-6">
-      <app-card-container title="Información Adicional" class="mb-3">
-        <div class="row">
-          <div class="col-md-6">
-            <app-form-field label="Comisión (%)">
-              <app-input-number
-                [input_control]="comision"
-                [allow_decimals]="true"
-              ></app-input-number>
-            </app-form-field>
-          </div>
-          <div class="col-12">
-            <app-form-field label="Observaciones">
-              <app-input-textarea
-                [input_control]="observaciones"
-              ></app-input-textarea>
-            </app-form-field>
-          </div>
+        <div class="col-md-4">
+          <app-form-field label="Precio">
+            <app-input-number
+              [input_control]="precioReferencial"
+              [allow_decimals]="true"
+            ></app-input-number>
+          </app-form-field>
         </div>
-      </app-card-container>
-    </div>
-
-    <!-- COLUMNA 4: IMÁGENES -->
-    <div class="col-12 col-lg-6">
-      <app-card-container title="Galería de Imágenes" class="mb-3">
-        <!-- 1. Uploader (Activamos multiple) -->
-        <app-image-uploader
-          [multiple]="true"
-          [showLocalPreview]="false"
-          [uploadTitle]="'Arrastra o haz clic para subir fotos'"
-          [maxSizeMB]="5"
-          (imageSelected)="onFileSelected($event)"
-        >
-        </app-image-uploader>
-
-        <div class="row mt-3">
-          <!-- 2. Mostrar Imágenes EXISTENTES (De la BD) -->
-          @for (img of loteData?.imagenes || []; track img.id) {
-            <div class="col-md-4 mb-3">
-              <app-image-display
-                [imageUrl]="img.publicUrl"
-                [imageName]="'Foto Lote'"
-                [editable]="true"
-                (imageDeleted)="deleteImage.emit(img.id)"
-              ></app-image-display>
-            </div>
-          }
-
-          <!-- 3. Mostrar Imágenes PENDIENTES (Aún no guardadas) -->
-          @for (filePreview of pendingFilesPreview; track filePreview.file.name; let i = $index) {
-            <div class="col-md-4 mb-3">
-              <app-image-display
-                [imageUrl]="filePreview.previewUrl"
-                [imageName]="filePreview.file.name"
-                [editable]="true"
-                (imageDeleted)="removePendingFile.emit(i)"
-              ></app-image-display>
-            </div>
-          }
-        </div>
-
-        @if (!loteData && pendingFiles.length === 0) {
-          <div class="alert alert-info mt-2 py-2">
-            <small
-              >Las imágenes seleccionadas se subirán automáticamente al guardar
-              el lote.</small
-            >
-          </div>
-        }
-
-        <!-- Contador de archivos pendientes -->
-        @if (pendingFiles.length > 0) {
-          <div class="alert alert-primary mt-2 py-2">
-            <small
-              ><strong>{{ pendingFiles.length }}</strong> imagen(es) listas para
-              subir.</small
-            >
-          </div>
-        }
-      </app-card-container>
-    </div>
+      </div>
+    </app-card-container>
   </div>
+
+  <!-- COLUMNA 2: DIMENSIONES -->
+  <div class="col-12 col-lg-6">
+    <app-card-container title="Dimensiones" class="mb-3">
+      <div class="row">
+        <div class="col-6">
+          <app-form-field label="Norte"
+            ><app-input-number
+              [input_control]="norte"
+              [allow_decimals]="true"
+            ></app-input-number
+          ></app-form-field>
+        </div>
+        <div class="col-6">
+          <app-form-field label="Sur"
+            ><app-input-number
+              [input_control]="sur"
+              [allow_decimals]="true"
+            ></app-input-number
+          ></app-form-field>
+        </div>
+        <div class="col-6">
+          <app-form-field label="Este"
+            ><app-input-number
+              [input_control]="este"
+              [allow_decimals]="true"
+            ></app-input-number
+          ></app-form-field>
+        </div>
+        <div class="col-6">
+          <app-form-field label="Oeste"
+            ><app-input-number
+              [input_control]="oeste"
+              [allow_decimals]="true"
+            ></app-input-number
+          ></app-form-field>
+        </div>
+      </div>
+    </app-card-container>
+  </div>
+
+  <!-- COLUMNA 3: ADICIONAL -->
+  <div class="col-12 col-lg-6">
+    <app-card-container title="Información Adicional" class="mb-3">
+      <div class="row">
+        <div class="col-md-6">
+          <app-form-field label="Comisión (%)">
+            <app-input-number
+              [input_control]="comision"
+              [allow_decimals]="true"
+            ></app-input-number>
+          </app-form-field>
+        </div>
+        <div class="col-12">
+          <app-form-field label="Observaciones">
+            <app-input-textarea
+              [input_control]="observaciones"
+            ></app-input-textarea>
+          </app-form-field>
+        </div>
+      </div>
+    </app-card-container>
+  </div>
+
+  <!-- COLUMNA 4: IMÁGENES -->
+  <div class="col-12 col-lg-6">
+    <app-card-container title="Galería de Imágenes" class="mb-3">
+      <!-- 1. Uploader (Activamos multiple) -->
+      <app-image-uploader
+        [multiple]="true"
+        [showLocalPreview]="false"
+        [uploadTitle]="'Arrastra o haz clic para subir fotos'"
+        [maxSizeMB]="5"
+        (imageSelected)="onFileSelected($event)"
+      >
+      </app-image-uploader>
+
+      <div class="row mt-3">
+        <!-- 2. Mostrar Imágenes EXISTENTES (De la BD) -->
+        @for (img of loteData?.imagenes || []; track img.id) {
+          <div class="col-md-4 mb-3">
+            <app-image-display
+              [imageUrl]="img.publicUrl"
+              [imageName]="'Foto Lote'"
+              [editable]="true"
+              (imageDeleted)="deleteImage.emit(img.id)"
+            ></app-image-display>
+          </div>
+        }
+
+        <!-- 3. Mostrar Imágenes PENDIENTES (Aún no guardadas) -->
+        @for (
+          filePreview of pendingFilesPreview;
+          track filePreview.file.name;
+          let i = $index
+        ) {
+          <div class="col-md-4 mb-3">
+            <app-image-display
+              [imageUrl]="filePreview.previewUrl"
+              [imageName]="filePreview.file.name"
+              [editable]="true"
+              (imageDeleted)="removePendingFile.emit(i)"
+            ></app-image-display>
+          </div>
+        }
+      </div>
+
+      @if (!loteData && pendingFiles.length === 0) {
+        <div class="alert alert-info mt-2 py-2">
+          <small
+            >Las imágenes seleccionadas se subirán automáticamente al guardar el
+            lote.</small
+          >
+        </div>
+      }
+
+      <!-- Contador de archivos pendientes -->
+      @if (pendingFiles.length > 0) {
+        <div class="alert alert-primary mt-2 py-2">
+          <small
+            ><strong>{{ pendingFiles.length }}</strong> imagen(es) listas para
+            subir.</small
+          >
+        </div>
+      }
+    </app-card-container>
+  </div>
+</div>

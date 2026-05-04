@@ -5,27 +5,25 @@ import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.servic
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { IProyecto } from 'src/app/core/models/proyectos/proyecto.model';
 import { ViewRegisterProyectoComponent } from "../../../views/proyectos/view-register-proyecto/view-register-proyecto.component";
+import { BOLIVIA_UBICACION } from 'src/app/core/constants/bolivia-data';
 
 @Component({
   selector: 'app-register-proyecto',
   standalone: true,
-  imports: [
-    ViewRegisterProyectoComponent
-  ],
+  imports: [ViewRegisterProyectoComponent],
   template: `
     <app-view-register-proyecto
       [proyectoForm]="proyectoFormGroup"
       [proyectoData]="proyectoData || null"
+      [provinciasList]="provinciasFiltradas"
       (Save)="onSaveProyecto()"
     ></app-view-register-proyecto>
-  `,
-  styles: [`
-    
-  `]
+  `
 })
 export class RegisterProyectoComponent implements OnInit {
   @Input() proyectoData: IProyecto | null = null;
   public proyectoFormGroup!: FormGroup;
+  public provinciasFiltradas: string[] = []; // Lista que pasamos al View
 
   constructor(
     private fb: FormBuilder,
@@ -36,8 +34,12 @@ export class RegisterProyectoComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
+    this.setupLocationSubscriptions(); // Inicializar escuchas de ubicación
+
     if (this.proyectoData) {
       this.proyectoFormGroup.patchValue(this.proyectoData);
+      // Al editar, debemos cargar las provincias del departamento guardado
+      this.updateProvincias(this.proyectoData.departamento);
     }
   }
 
@@ -45,12 +47,30 @@ export class RegisterProyectoComponent implements OnInit {
     this.proyectoFormGroup = this.fb.group({
       id: [null],
       nombre: ['', [Validators.required, Validators.maxLength(120)]],
-      departamento: ['', [Validators.required, Validators.maxLength(120)]],
-      provincia: ['', [Validators.maxLength(120)]],
+      departamento: ['', [Validators.required]], // Ahora es obligatorio y controlado por select
+      provincia: ['', [Validators.required]],    // Ahora es obligatorio y controlado por select
       distrito: ['', [Validators.maxLength(120)]],
       direccion: ['', [Validators.required, Validators.maxLength(250)]],
       descripcion: ['', [Validators.maxLength(500)]]
     });
+  }
+
+  private setupLocationSubscriptions(): void {
+    // Escuchar cambios en departamento para actualizar provincias
+    this.proyectoFormGroup.get('departamento')?.valueChanges.subscribe((depto: string | null) => {
+      this.updateProvincias(depto);
+      // Resetear provincia al cambiar departamento para evitar datos inconsistentes
+      this.proyectoFormGroup.get('provincia')?.setValue(null, { emitEvent: false });
+    });
+  }
+
+  private updateProvincias(departamentoNombre: string | null | undefined): void {
+    if (!departamentoNombre) {
+      this.provinciasFiltradas = [];
+      return;
+    }
+    const data = BOLIVIA_UBICACION.find(d => d.nombre === departamentoNombre);
+    this.provinciasFiltradas = data ? data.provincias : [];
   }
 
   public onSaveProyecto(): void {
@@ -62,12 +82,8 @@ export class RegisterProyectoComponent implements OnInit {
 
     const formValue = this.proyectoFormGroup.getRawValue();
     const isEditMode = !!formValue.id;
-
-    // Quitamos 'id' de los datos que enviamos a la API 
-    // ya que el backend no lo admite en el cuerpo del POST/PATCH
     const { id, ...payload } = formValue;
 
-    // Decidimos qué servicio llamar
     const request$ = isEditMode
       ? this.proyectoService.updateProyecto(id, payload)
       : this.proyectoService.createProyecto(payload);
@@ -79,15 +95,12 @@ export class RegisterProyectoComponent implements OnInit {
         this.ngModal.close(true);
       },
       error: (err) => {
-        // Manejo específico para error 409 (Conflicto de nombre único)
         if (err.status === 409) {
           this.notification.error('Ya existe un proyecto con este nombre.');
-          this.proyectoFormGroup.get('nombre')?.setErrors({ duplicate: true });
         } else {
           this.notification.error(err.error?.message || 'Error inesperado.');
         }
       }
     });
   }
-
 }

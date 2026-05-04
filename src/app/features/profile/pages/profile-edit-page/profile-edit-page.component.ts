@@ -45,18 +45,24 @@ export class ProfileEditPageComponent {
 
         if (isPasswordChange) {
           this.notification.success('Tu contraseña ha sido cambiada. Por seguridad, la sesión se cerrará.');
-          setTimeout(() => {
-            this.authService.logout().subscribe(() => {
-              this.router.navigate(['/auth/login']);
-            });
-          }, 2000);
         } else {
-          this.notification.success('Perfil actualizado correctamente.');
+          this.notification.success('Perfil actualizado correctamente. Por seguridad, la sesión se cerrará.');
         }
+
+        setTimeout(() => {
+          this.authService.logout().subscribe(() => {
+            this.router.navigate(['/auth/login']);
+          });
+        }, 2000);
       },
-      error: () => {
+      error: (err) => {
         this.isSaving.set(false);
-        this.notification.error('Error al actualizar el perfil.');
+        if (err.error && err.error.message) {
+          const messages = Array.isArray(err.error.message) ? err.error.message : [err.error.message];
+          messages.forEach((msg: string) => this.notification.error(msg));
+        } else {
+          this.notification.error('Error al actualizar el perfil.');
+        }
       }
     });
   }

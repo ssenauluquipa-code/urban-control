@@ -69,7 +69,7 @@ export class UserListComponent implements OnInit {
     },
     { field: 'name', headerName: 'Nombre Completo', flex: 1, width: 200 },
     { field: 'email', headerName: 'Correo Electrónico', flex: 1, width: 250 },
-    { field: 'contactNumber', headerName: 'Teléfono', width: 160 },
+    { field: 'contactNumber', headerName: 'Teléfono', width: 115 },
     {
       field: 'role',
       headerName: 'Rol',
@@ -85,7 +85,7 @@ export class UserListComponent implements OnInit {
     {
       field: 'isActive',
       headerName: 'Estado',
-      width: 110,
+      width: 100,
       cellRenderer: BadgeEstadoComponent
     }
   ];

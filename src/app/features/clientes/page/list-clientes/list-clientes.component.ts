@@ -49,7 +49,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'codigoCliente',
       headerName: 'Código',
-      width: 120,
+      width: 90,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -70,7 +70,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'nroDocumento',
       headerName: 'Documento',
-      width: 140,
+      width: 110,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -80,7 +80,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'telefono',
       headerName: 'Teléfono',
-      width: 130,
+      width: 110,
       suppressHeaderMenuButton: true
     },
     {
@@ -93,7 +93,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'isActive',
       headerName: 'Estado',
-      width: 130,
+      width: 115,
       cellRenderer: BadgeEstadoComponent,
       filter: true,
       floatingFilter: true,

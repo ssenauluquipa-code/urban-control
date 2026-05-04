@@ -40,7 +40,7 @@ export class ListaAsesoresComponent implements OnInit {
     {
       field: 'codigoAsesor',
       headerName: 'Código',
-      width: 100,
+      width: 80,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -72,7 +72,7 @@ export class ListaAsesoresComponent implements OnInit {
     {
       field: 'telefono',
       headerName: 'Teléfono',
-      width: 120
+      width: 100
     },
     {
       field: 'email',
@@ -82,7 +82,7 @@ export class ListaAsesoresComponent implements OnInit {
     {
       field: 'isActive',
       headerName: 'Estado',
-      width: 130,
+      width: 110,
       cellRenderer: BadgeEstadoComponent,
       filter: true, // Debe ser true para que AG Grid renderice el floatingFilter
       floatingFilter: true,

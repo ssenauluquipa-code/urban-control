@@ -442,46 +442,62 @@
   }
 }
 
-//scroll de menu
+//scroll de menu - HOVER ACTIVATION ✅
 
 #nav-ps-urban-control {
   height: calc(100vh - 120px);
   overflow-y: auto;
   scroll-behavior: smooth;
-  /* Scroll suave */
 
-  /* Scrollbar moderna y profesional */
+  /* SCROLLBAR OCULTA por defecto */
   &::-webkit-scrollbar {
-    width: 3px;
+    width: 0 !important;
+    background: transparent;
   }
 
   &::-webkit-scrollbar-track {
-    background: #f8f9fa;
-    border-radius: 10px;
-    margin: 8px 0;
+    display: none;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #dee2e6 0%, #adb5bd 100%);
-    border-radius: 4px;
-    border: 1px solid #f8f9fa;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: none;
   }
 
-  &::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #adb5bd 0%, #6c757d 100%);
-    transform: scale(1.05);
+  /* HOVER: Mostrar scrollbar elegante */
+  &:hover {
+    &::-webkit-scrollbar {
+      width: 6px !important;
+    }
+
+    &::-webkit-scrollbar-track {
+      display: block !important;
+      background: #f8f9fa;
+      border-radius: 10px;
+      margin: 4px 0;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      display: block !important;
+      background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+      border-radius: 10px;
+      border: 2px solid transparent;
+      background-clip: content-box;
+
+      &:hover {
+        background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+      }
+    }
   }
 
-  &::-webkit-scrollbar-thumb:active {
-    background: linear-gradient(180deg, #6c757d 0%, #495057 100%);
+  /* Firefox: Oculta por defecto, thin en hover */
+  scrollbar-width: none;
+  
+  &:hover {
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #f8f9fa;
   }
 
-  /* Para Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: #adb5bd #f8f9fa;
-
-  /* Mejorar rendimiento del scroll */
+  /* Optimizaciones */
   -webkit-overflow-scrolling: touch;
   will-change: scroll-position;
 }

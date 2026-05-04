@@ -48,8 +48,7 @@ import {
             @if (showCopy) {
               <button 
                 (click)="copyToClipboard($event)"
-                class="opacity-0 group-hover:opacity-100 transition-opacity text-secondary hover:text-primary">
-                <span class="material-symbols-outlined text-sm">content_copy</span>
+                class="opacity-0 group-hover:opacity-100 transition-opacity text-secondary hover:text-primary">                
               </button>
             }
           </div>

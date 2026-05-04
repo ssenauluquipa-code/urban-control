@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ILoginResponse, ILoginDto, RefreshTokenDto } from '../models/auth.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
@@ -32,7 +32,8 @@ export class AuthRepository implements IAuthRepository {
   }
 
   updateLoggedUser(data: IUpdateProfileDto): Observable<IUser> {
-    return this.http.patch<IUser>(`${this.apiUrl}/logged-user`, data);
+    return this.http.patch<{message: string, user: IUser}>(`${this.apiUrl}/logged-user`, data)
+      .pipe(map(res => res.user));
   }
 
 

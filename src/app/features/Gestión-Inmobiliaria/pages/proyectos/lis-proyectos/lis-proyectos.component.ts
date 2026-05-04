@@ -26,7 +26,7 @@ import { RegisterProyectoComponent } from '../register-proyecto/register-proyect
       <app-data-table
         [rowData]="(proyectos$ | async) || []"
         [columnDefs]="columnDefs"
-        [loading]="loading"        
+        [loading]="loading"
         [showCreate]="false"
         [actions]="[tableActionEnum.VIEW, tableActionEnum.EDIT, tableActionEnum.DELETE]"
         (actionClicked)="onTableAction($event)">
@@ -41,22 +41,16 @@ export class LisProyectosComponent implements OnInit {
   public loading = false;
 
   columnDefs: ColDef[] = [
-    { field: 'nombre', headerName: 'Nombre del Proyecto', flex: 1, width: 200 },
-    { field: 'departamento', headerName: 'Departamento', width: 150 },
+    { field: 'nombre', headerName: 'Nombre del Proyecto', width: 180 },
+    { field: 'departamento', headerName: 'Departamento', width: 130 },
     { field: 'provincia', headerName: 'Provincia', width: 150 },
     { field: 'distrito', headerName: 'Distrito', flex: 1, width: 150 },
     { field: 'direccion', headerName: 'Dirección', width: 250 },
     {
       field: 'estado',
       headerName: 'Estado',
-      width: 120,
+      width: 110,
       cellRenderer: BadgeEstadoComponent
-    },
-    {
-      field: 'createdAt',
-      headerName: 'Fecha Creación',
-      width: 150,
-      valueFormatter: p => p.value ? new Date(p.value).toLocaleDateString('es-ES') : ''
     }
   ];
 

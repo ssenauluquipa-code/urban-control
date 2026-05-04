@@ -9,7 +9,8 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { CommonModule } from '@angular/common';
-import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
+import { SelectDepartamentoComponent } from "src/app/shared/components/atoms/select-departamento.component";
+import { SelectProvinciaComponent } from "src/app/shared/components/atoms/select-provincia.component";
 
 @Component({
   selector: 'app-view-register-proyecto',
@@ -24,8 +25,9 @@ import { CardContainerComponent } from 'src/app/shared/components/atoms/card-con
     ModalContainerComponent,
     InputTextComponent,
     InputTextareaComponent,
-    CardContainerComponent
-  ],
+    SelectDepartamentoComponent,
+    SelectProvinciaComponent
+],
   templateUrl: './view-register-proyecto.component.html',
   styleUrl: './view-register-proyecto.component.scss'
 })
@@ -33,6 +35,7 @@ export class ViewRegisterProyectoComponent {
 
   @Input() proyectoForm!: FormGroup;
   @Input() proyectoData: IProyecto | null | undefined;
+  @Input() provinciasList: string[] = [];
   @Output() Save = new EventEmitter<void>();
 
   // Getters para acceso fácil en el HTML

@@ -31,30 +31,43 @@
       </div>
     </div>
 
-    <app-form-field label="Teléfono">
-      <app-input-text [input_control]="Telefono" input_placeholder="71234567">
-      </app-input-text>
+    <app-form-field label="Teléfono" [required]="true">
+      <app-input-number
+        [input_control]="Telefono"
+        [input_placeholder]="'71234567'"
+      >
+      </app-input-number>
     </app-form-field>
   </div>
 
   <!-- Columna Derecha -->
   <div class="col-md-6">
-    <app-form-field label="Género" [required]="true">
-      <app-select-gender
-        [inputControl]="Genero"
+    <div class="row">
+      <div class="col-md-6">
+        <app-form-field label="Género" [required]="true">
+          <app-select-gender
+            [inputControl]="Genero"
+            [placeholder]="'Seleccione'"
+          >
+          </app-select-gender>
+        </app-form-field>
+      </div>
+      <div class="col-md-6">
+        <app-form-field label="Fecha Nacimiento">
+          <app-input-date
+            [input_control]="FechaNacimiento"
+            input_placeholder="Seleccione fecha"
+          ></app-input-date>
+        </app-form-field>
+      </div>
+    </div>
+    <app-form-field label="Complemento">
+      <app-select-expedido
+        [inputControl]="Complemento"
         [placeholder]="'Seleccione'"
-      >
-      </app-select-gender>
+      ></app-select-expedido>
     </app-form-field>
-
-    <app-form-field label="Fecha Nacimiento" [required]="true">
-      <app-input-date
-        [input_control]="FechaNacimiento"
-        input_placeholder="Seleccione fecha"
-      ></app-input-date>
-    </app-form-field>
-
-    <app-form-field label="Email" [required]="true">
+    <app-form-field label="Email">
       <app-input-text
         [input_control]="Email"
         input_placeholder="correo@ejemplo.com"

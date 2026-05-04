@@ -109,17 +109,23 @@ export class NavRightComponent implements OnInit {
 
           if (isPasswordChange) {
             this.notification.success('Tu contraseña ha sido cambiada. Por seguridad, la sesión se cerrará.');
-            // Esperamos un poco para que el usuario vea el mensaje
-            setTimeout(() => {
-              this.logout();
-            }, 2000);
           } else {
-            this.notification.success('Perfil actualizado correctamente.');
+            this.notification.success('Perfil actualizado correctamente. Por seguridad, la sesión se cerrará.');
           }
+
+          // Esperamos un poco para que el usuario vea el mensaje
+          setTimeout(() => {
+            this.logout();
+          }, 2000);
         },
         error: (err) => {
           modalRef.componentInstance.loading = false;
-          this.notification.error('Error al actualizar el perfil.' + err);
+          if (err.error && err.error.message) {
+            const messages = Array.isArray(err.error.message) ? err.error.message : [err.error.message];
+            messages.forEach((msg: string) => this.notification.error(msg));
+          } else {
+            this.notification.error('Error al actualizar el perfil.');
+          }
         }
       });
     });

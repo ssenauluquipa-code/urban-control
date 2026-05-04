@@ -80,7 +80,7 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
    */
   protected buildActionsColumn(): ColDef {
     return {
-      headerName: 'Acciones',
+      headerName: '',
       cellRenderer: 'tableActions',
       cellRendererParams: {
         actions: this.actions,

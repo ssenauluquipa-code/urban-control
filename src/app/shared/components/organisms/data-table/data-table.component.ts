@@ -46,7 +46,6 @@ export class DataTableComponent<T = unknown> extends DataTableBaseComponent<T> i
       sortable: true,
       filter: true,
       resizable: true,
-      minWidth: 150,
       suppressMovable: true,
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,

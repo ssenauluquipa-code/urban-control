@@ -60,10 +60,11 @@ export class RegisterAsesorComponent implements OnInit {
       nombreCompleto: ['', Validators.required],
       tipoDocumento: [ETipoDocumento.CI, Validators.required],
       nroDocumento: ['', Validators.required],
+      complemento: [''],
       genero: [EGenero.MASCULINO, Validators.required],
-      fechaNacimiento: [null, Validators.required],
-      telefono: [''],
-      email: ['', [Validators.required, Validators.email]]
+      fechaNacimiento: [null],
+      telefono: ['', Validators.required],
+      email: ['', [Validators.email]]
     });
   }
 
@@ -90,9 +91,10 @@ export class RegisterAsesorComponent implements OnInit {
     this.loading = true;
     const value = this.form.value;
 
-    // Formatear fecha a ISO String
+    // Formatear fecha a ISO String y manejar email vacío
     const payload = {
       ...value,
+      email: value.email ? value.email : null,
       fechaNacimiento: value.fechaNacimiento ? new Date(value.fechaNacimiento).toISOString() : null
     };
 

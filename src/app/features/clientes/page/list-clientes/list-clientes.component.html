@@ -4,24 +4,22 @@
   [showNew]="true"
   (AddNew)="onAddNew()"
 >
-  <div class="mt-2">
-    <app-data-table-server
-      [rowData]="clientes"
-      [columnDefs]="columnDefs"
-      [loading]="loading"
-      [pageSize]="limit"
-      [totalRecords]="totalRecords"
-      [showCreate]="false"
-      [actions]="[
-        tableActionEnum.EDIT,
-        tableActionEnum.DEACTIVATE,
-        tableActionEnum.ACTIVATE,
-        tableActionEnum.INFO,
-      ]"
-      (actionClicked)="onTableAction($event)"
-      (filterChanged)="onTableFilterChanged($event)"
-      (pageChange)="loadClientes($event)"
-    >
-    </app-data-table-server>
-  </div>
+  <app-data-table-server
+    [rowData]="clientes"
+    [columnDefs]="columnDefs"
+    [loading]="loading"
+    [pageSize]="limit"
+    [totalRecords]="totalRecords"
+    [showCreate]="false"
+    [actions]="[
+      tableActionEnum.EDIT,
+      tableActionEnum.DEACTIVATE,
+      tableActionEnum.ACTIVATE,
+      tableActionEnum.INFO,
+    ]"
+    (actionClicked)="onTableAction($event)"
+    (filterChanged)="onTableFilterChanged($event)"
+    (pageChange)="loadClientes($event)"
+  >
+  </app-data-table-server>
 </app-page-container>

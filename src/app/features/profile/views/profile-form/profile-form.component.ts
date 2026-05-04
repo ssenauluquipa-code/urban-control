@@ -26,7 +26,6 @@ import { ModalContainerComponent } from 'src/app/shared/components/organisms/mod
       (SaveAction)="submit()"
       (CancelAction)="modal.activeModal.close()"
     >
-      <form nz-form nzLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
         <div class="row">
           <!-- Nombre -->
           <div class="col-12">
@@ -70,7 +69,9 @@ import { ModalContainerComponent } from 'src/app/shared/components/organisms/mod
               <app-input-text 
                 [input_control]="currentPassControl" 
                 [input_type]="'password'"
-                input_placeholder="********">
+                input_placeholder="********"
+                [enableCheckPass]="true"
+                >
               </app-input-text>
             </app-form-field>
           </div>
@@ -81,12 +82,13 @@ import { ModalContainerComponent } from 'src/app/shared/components/organisms/mod
               <app-input-text 
                 [input_control]="newPassControl" 
                 [input_type]="'password'"
-                input_placeholder="Mínimo 8 caracteres">
+                input_placeholder="Mínimo 8 caracteres"
+                [enableCheckPass]="true"
+                >
               </app-input-text>
             </app-form-field>
           </div>
-        </div>
-      </form>
+        </div>     
     </app-modal-container>
   `,
   styles: `
@@ -118,7 +120,17 @@ export class ProfileFormComponent {
     contactNumber: [''],
     currentPassword: [''],
     newPassword: ['', [Validators.minLength(8)]]
-  });
+  }, { validators: this.passwordMatchValidator });
+
+  passwordMatchValidator(g: import('@angular/forms').AbstractControl) {
+    const currentPassword = g.get('currentPassword')?.value;
+    const newPassword = g.get('newPassword')?.value;
+
+    if ((currentPassword && !newPassword) || (!currentPassword && newPassword)) {
+      return { passwordMismatch: true };
+    }
+    return null;
+  }
 
   get nameControl() { return this.form.get('name') as FormControl; }
   get emailControl() { return this.form.get('email') as FormControl; }

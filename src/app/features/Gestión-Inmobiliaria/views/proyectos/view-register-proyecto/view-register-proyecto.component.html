@@ -4,67 +4,64 @@
   (SaveAction)="Save.emit()"
   (CancelAction)="modal.activeModal.close()"
 >
-  <!-- Sección: Información General -->
-  <app-card-container title="Información General">
-    <div class="row">
-      <div class="col-12">
-        <app-form-field label="Nombre del Proyecto" [required]="true">
-          <app-input-text
-            [input_control]="nombre"
-            placeholder="Ej: Residencial Los Pinos"
-          >
-          </app-input-text>
-        </app-form-field>
-      </div>
-      <div class="col-12">
-        <app-form-field label="Descripción">
-          <app-input-textarea
-            [input_control]="descripcion"
-            placeholder="Describa el proyecto..."
-            [input_rows]="3"
-          >
-          </app-input-textarea>
-        </app-form-field>
-      </div>
+  <div class="row">
+    <!-- Sección: Información General -->
+    <div class="col-12 mb-1">
+      <h6 class="text-primary">Información General</h6>
     </div>
-  </app-card-container>
 
-  <!-- Sección: Ubicación -->
-  <app-card-container title="Ubicación Geográfica">
-    <div class="row">
-      <div class="col-md-4">
-        <app-form-field label="Departamento" [required]="true">
-          <app-input-text
-            [input_control]="departamento"
-            placeholder="Santa Cruz"
-          >
-          </app-input-text>
-        </app-form-field>
-      </div>
-      <div class="col-md-4">
-        <app-form-field label="Provincia">
-          <app-input-text
-            [input_control]="provincia"
-            placeholder="Andrés Ibáñez"
-          >
-          </app-input-text>
-        </app-form-field>
-      </div>
-      <div class="col-md-4">
-        <app-form-field label="Distrito">
-          <app-input-text [input_control]="distrito" placeholder="Distrito 1">
-          </app-input-text>
-        </app-form-field>
-      </div>
-      <div class="col-12">
-        <app-form-field label="Dirección Principal" [required]="true">
-          <app-input-text
-            [input_control]="direccion"
-            placeholder="Av. Principal #123"
-          >
-          </app-input-text>
-        </app-form-field>
-      </div>
+    <div class="col-12">
+      <app-form-field label="Nombre del Proyecto" [required]="true">
+        <app-input-text
+          [input_control]="nombre"
+          placeholder="Ej: Residencial Los Pinos"
+        >
+        </app-input-text>
+      </app-form-field>
     </div>
-  </app-card-container>
+    <div class="col-12">
+      <app-form-field label="Descripción">
+        <app-input-textarea
+          [input_control]="descripcion"
+          placeholder="Describa el proyecto..."
+          [input_rows]="3"
+        >
+        </app-input-textarea>
+      </app-form-field>
+    </div>
+
+    <!-- Sección: Ubicación -->
+    <div class="col-12 mt-1">
+      <h6 class="text-primary">Ubicación Geográfica</h6>
+    </div>
+
+    <div class="col-md-4">
+      <app-form-field label="Departamento" [required]="true">
+        <app-select-departamento [inputControl]="departamento"></app-select-departamento>
+      </app-form-field>
+    </div>
+    <div class="col-md-4">
+      <app-form-field label="Provincia">
+        <app-select-provincia
+          [inputControl]="provincia"
+          [provincias]="provinciasList">
+        </app-select-provincia>
+      </app-form-field>
+    </div>
+    <div class="col-md-4">
+      <app-form-field label="Distrito">
+        <app-input-text [input_control]="distrito" placeholder="Distrito 1">
+        </app-input-text>
+      </app-form-field>
+    </div>
+    <div class="col-12">
+      <app-form-field label="Dirección Principal" [required]="true">
+        <app-input-text
+          [input_control]="direccion"
+          placeholder="Av. Principal #123"
+        >
+        </app-input-text>
+      </app-form-field>
+    </div>
+  </div>
 </app-modal-container>

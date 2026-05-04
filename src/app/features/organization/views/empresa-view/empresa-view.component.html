@@ -21,20 +21,20 @@
     <div class="row g-4">
       <!-- 🖼 LOGO GRANDE -->
       <div class="col-md-4">
-          <app-image-display
-            [imageUrl]="empresaData.logoUrl"
-            [editable]="editable"
-            [emptyText]="'Sin Logo'"
-            [emptyHint]="'Click para cargar logo'"
-            (imageUpdated)="onLogoUpload($event)"
-            (imageDeleted)="onLogoDelete()"
-          ></app-image-display>
+        <app-image-display
+          [imageUrl]="empresaData.logoUrl"
+          [editable]="editable"
+          [emptyText]="'Sin Logo'"
+          [emptyHint]="'Click para cargar logo'"
+          (imageUpdated)="onLogoUpload($event)"
+          (imageDeleted)="onLogoDelete()"
+        ></app-image-display>
       </div>
 
       <!-- 📇 CONTACTO AL LADO -->
       <div class="col-md-8">
-        <app-card-container title="Información de contacto" icon="contacts">
-          <div class="row g-3">
+        <app-card-container title="Información de contacto">
+          <div class="row">
             <div class="col-md-6">
               <app-input-text-info
                 label="Correo Electrónico"
@@ -58,62 +58,54 @@
         </app-card-container>
       </div>
     </div>
-
-    <!-- 🔽 TODO LO DEMÁS IGUAL -->
-    <!-- TODO LO DEMÁS LO DEJAS IGUAL 👇 -->
-
     <div class="row">
-      <div class="col-md-6">
-        <div class="mt-4">
-          <app-card-container title="Configuración Regional" icon="global">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <app-input-text-info
-                  label="Moneda"
-                  [value]="empresaData.currency"
-                ></app-input-text-info>
-              </div>
-              <div class="col-md-6">
-                <app-input-text-info
-                  label="Zona Horaria"
-                  [value]="empresaData.timezone"
-                ></app-input-text-info>
-              </div>
+      <div class="col-md-4">
+        <app-card-container title="Configuración Regional">
+          <div class="row">
+            <div class="col-md-6">
+              <app-input-text-info
+                label="Moneda"
+                [value]="empresaData.currency"
+              ></app-input-text-info>
             </div>
-          </app-card-container>
-        </div>
+            <!-- <div class="col-md-6">
+              <app-input-text-info
+                label="Zona Horaria"
+                [value]="empresaData.timezone"
+              ></app-input-text-info>
+            </div> -->
+          </div>
+        </app-card-container>
       </div>
 
-      <div class="col-md-6">
-        <div class="mt-4">
-          <app-card-container title="Parámetros de Sistema" icon="setting">
-            <div class="row g-3">
-              <div class="col-md-4">
-                <app-input-text-info
-                  label="Vencimiento Reserva"
-                  [value]="empresaData.diasVencimientoReserva + ' Días'"
-                ></app-input-text-info>
-              </div>
-              <div class="col-md-4">
-                <app-input-text-info
-                  label="Plazo Máximo"
-                  [value]="empresaData.plazoMaximoMeses + ' Meses'"
-                ></app-input-text-info>
-              </div>
-              <div class="col-md-4">
-                <app-input-text-info
-                  label="Hora de Ejecución"
-                  [value]="empresaData.horaCronDiario + ':00'"
-                ></app-input-text-info>
-              </div>
+      <div class="col-md-8">
+        <app-card-container title="Parámetros de Sistema" icon="setting">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <app-input-text-info
+                label="Vencimiento Reserva"
+                [value]="empresaData.diasVencimientoReserva + ' Días'"
+              ></app-input-text-info>
             </div>
-          </app-card-container>
-        </div>
+            <div class="col-md-4">
+              <app-input-text-info
+                label="Plazo Máximo"
+                [value]="empresaData.plazoMaximoMeses + ' Meses'"
+              ></app-input-text-info>
+            </div>
+            <div class="col-md-4">
+              <app-input-text-info
+                label="Hora de Ejecución"
+                [value]="empresaData.horaCronDiario + ':00'"
+              ></app-input-text-info>
+            </div>
+          </div>
+        </app-card-container>
       </div>
     </div>
 
     <!-- Auditoría -->
-    <div class="mt-4">
+    <!--  <div class="mt-4">
       <app-card-container title="Registro de Sistema" icon="history">
         <div class="row g-3">
           <div class="col-md-6">
@@ -130,6 +122,6 @@
           </div>
         </div>
       </app-card-container>
-    </div>
+    </div> -->
   </div>
 }

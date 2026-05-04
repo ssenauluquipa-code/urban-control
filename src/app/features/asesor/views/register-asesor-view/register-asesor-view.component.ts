@@ -6,13 +6,15 @@ import { SelectGenderComponent } from "src/app/shared/components/atoms/select-ge
 import { SelectDocumentTypeComponent } from "src/app/shared/components/atoms/select-document-type.component";
 import { InputDateComponent } from "src/app/shared/components/atoms/input-date/input-date.component";
 import { InputDocumentoComponent } from "src/app/shared/components/atoms/input-documento/input-documento.component";
+import { SelectExpedidoComponent } from "src/app/shared/components/atoms/select-expedido.component";
+import { InputNumberComponent } from "src/app/shared/components/atoms/input-number/input-number.component";
 
 @Component({
   selector: 'app-register-asesor-view',
   standalone: true,
   imports: [FormFieldComponent, InputTextComponent,
-     InputDateComponent, SelectGenderComponent,
-     SelectDocumentTypeComponent, InputDocumentoComponent],
+    InputDateComponent, SelectGenderComponent,
+    SelectDocumentTypeComponent, InputDocumentoComponent, SelectExpedidoComponent, InputNumberComponent],
   templateUrl: './register-asesor-view.component.html',
   styleUrl: './register-asesor-view.component.scss'
 })
@@ -25,6 +27,7 @@ export class RegisterAsesorViewComponent {
   get NombreCompleto() { return this.form.get('nombreCompleto') as FormControl; }
   get TipoDocumento() { return this.form.get('tipoDocumento') as FormControl; }
   get NroDocumento() { return this.form.get('nroDocumento') as FormControl; }
+  get Complemento() { return this.form.get('complemento') as FormControl; }
   get Genero() { return this.form.get('genero') as FormControl; }
   get FechaNacimiento() { return this.form.get('fechaNacimiento') as FormControl; }
   get Telefono() { return this.form.get('telefono') as FormControl; }

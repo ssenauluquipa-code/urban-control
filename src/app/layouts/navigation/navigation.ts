@@ -34,17 +34,17 @@ export const NavigationItems: INavigationItem[] = [
         icon: 'bi bi-speedometer2',
         breadcrumbs: false
       },
-/*
-      {
-        id: 'about',
-        title: 'About',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/about',
-        icon: 'bi bi-people',
-        breadcrumbs: false
-      },
-*/
+      /*
+            {
+              id: 'about',
+              title: 'About',
+              type: 'item',
+              classes: 'nav-item',
+              url: '/about',
+              icon: 'bi bi-people',
+              breadcrumbs: false
+            },
+      */
       {
         id: 'design-system',
         title: 'Design System',
@@ -89,7 +89,7 @@ export const NavigationItems: INavigationItem[] = [
         icon: 'bi bi-person-badge-fill',
         breadcrumbs: false
       },
-{
+      {
         id: 'reservas',
         title: 'Gestión Reservas',
         type: 'item',
@@ -109,7 +109,7 @@ export const NavigationItems: INavigationItem[] = [
       }
     ]
   },
-  {
+  /*{
     id: 'access',
     title: 'Acceso y Privilegios',
     type: 'group',
@@ -151,7 +151,7 @@ export const NavigationItems: INavigationItem[] = [
         ]
       }
     ]
-  },
+  },*/
   {
     id: 'gestion-inmobiliaria',
     title: 'Gestión Inmobiliaria',
@@ -187,115 +187,115 @@ export const NavigationItems: INavigationItem[] = [
       }
     ]
   },
-/*
-  {
-    id: 'ui-components',
-    title: 'UI Components',
-    type: 'group',
-    icon: 'bi bi-layers',
-    children: [
-      {
-        id: 'alert',
-        title: 'Alert',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/component/alert',
-        icon: 'bi bi-bell',
-        breadcrumbs: false
-      },
-      {
-        id: 'badges',
-        title: 'Badges',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/component/badges',
-        icon: 'bi bi-patch-check',
-        breadcrumbs: false
-      },
-      {
-        id: 'buttons',
-        title: 'Button',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/component/buttons',
-        icon: 'bi bi-hdd-stack',
-        breadcrumbs: false
-      },
-      {
-        id: 'card',
-        title: 'Card',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/component/card',
-        icon: 'bi bi-card-text',
-        breadcrumbs: false
-      },
-      {
-        id: 'dropdown',
-        title: 'Dropdown',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/component/dropdown',
-        icon: 'bi bi-menu-app',
-        breadcrumbs: false
-      }
-    ]
-  },
-*/
-/*
-  {
-    id: 'navigation',
-    title: 'Navigation',
-    type: 'group',
-    icon: 'bi bi-compass',
-    children: [
-      {
-        id: 'pagination',
-        title: 'Pagination',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/component/pagination',
-        icon: 'bi bi-dice-1',
-        breadcrumbs: false
-      },
-      {
-        id: 'nav',
-        title: 'Nav',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/component/nav',
-        icon: 'bi bi-pause-btn',
-        breadcrumbs: false
-      }
-    ]
-  },
-  {
-    id: 'data',
-    title: 'Data Display',
-    type: 'group',
-    icon: 'bi bi-table',
-    children: [
-      {
-        id: 'table',
-        title: 'Table',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/component/table',
-        icon: 'bi bi-layout-split',
-        breadcrumbs: false
-      },
-      {
-        id: 'Ag-Grid-Angular',
-        title: 'Table Ag-Grid-Angular',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/component/Ag-Grid-Angular',
-        icon: 'bi bi-table',
-        breadcrumbs: false
-      }
-    ]
-  },
-*/
+  /*
+    {
+      id: 'ui-components',
+      title: 'UI Components',
+      type: 'group',
+      icon: 'bi bi-layers',
+      children: [
+        {
+          id: 'alert',
+          title: 'Alert',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/component/alert',
+          icon: 'bi bi-bell',
+          breadcrumbs: false
+        },
+        {
+          id: 'badges',
+          title: 'Badges',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/component/badges',
+          icon: 'bi bi-patch-check',
+          breadcrumbs: false
+        },
+        {
+          id: 'buttons',
+          title: 'Button',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/component/buttons',
+          icon: 'bi bi-hdd-stack',
+          breadcrumbs: false
+        },
+        {
+          id: 'card',
+          title: 'Card',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/component/card',
+          icon: 'bi bi-card-text',
+          breadcrumbs: false
+        },
+        {
+          id: 'dropdown',
+          title: 'Dropdown',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/component/dropdown',
+          icon: 'bi bi-menu-app',
+          breadcrumbs: false
+        }
+      ]
+    },
+  */
+  /*
+    {
+      id: 'navigation',
+      title: 'Navigation',
+      type: 'group',
+      icon: 'bi bi-compass',
+      children: [
+        {
+          id: 'pagination',
+          title: 'Pagination',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/component/pagination',
+          icon: 'bi bi-dice-1',
+          breadcrumbs: false
+        },
+        {
+          id: 'nav',
+          title: 'Nav',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/component/nav',
+          icon: 'bi bi-pause-btn',
+          breadcrumbs: false
+        }
+      ]
+    },
+    {
+      id: 'data',
+      title: 'Data Display',
+      type: 'group',
+      icon: 'bi bi-table',
+      children: [
+        {
+          id: 'table',
+          title: 'Table',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/component/table',
+          icon: 'bi bi-layout-split',
+          breadcrumbs: false
+        },
+        {
+          id: 'Ag-Grid-Angular',
+          title: 'Table Ag-Grid-Angular',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/component/Ag-Grid-Angular',
+          icon: 'bi bi-table',
+          breadcrumbs: false
+        }
+      ]
+    },
+  */
   {
     id: 'configuracion-group',
     title: 'Configuración',

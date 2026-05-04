@@ -1,12 +1,10 @@
-<!-- 👇 Agregamos clases para centrar y dar respiración al contenedor -->
-<div class="container-fluid py-4">
   <!-- 👇 g-4 agrega separación vertical y horizontal entre columnas -->
-  <div class="row g-4">
+  <div class="row">
     <!-- SECCIÓN 1: INFO DE LA RESERVA -->
     <div class="col-lg-6 col-md-12">
       <app-card-container title="Información de la Reserva">
         <!-- g-3 separa los inputs internos -->
-        <div class="row g-3">
+        <div class="row g-2">
           <div class="col-md-6 col-12">
             <app-input-text-info [label]="'Estado'" [value]="reserva?.estado">
             </app-input-text-info>
@@ -46,7 +44,7 @@
     <!-- SECCIÓN 2: INFO DEL CLIENTE -->
     <div class="col-lg-6 col-md-12">
       <app-card-container title="Datos del Cliente">
-        <div class="row g-3">
+        <div class="row g-2">
           <div class="col-md-6 col-12">
             <app-input-text-info
               [label]="'Nombre Completo'"
@@ -88,7 +86,7 @@
     <div class="col-12">
       <app-card-container title="Ubicación y Lote">
         <!-- Aquí usamos col-sm-6 para que en móvil se vean 2x2 -->
-        <div class="row g-3">
+        <div class="row g-2">
           <div class="col-lg-3 col-md-4 col-sm-6 col-12">
             <app-input-text-info
               [label]="'Proyecto'"
@@ -126,7 +124,7 @@
           </div>
           <div class="col-lg-4 col-md-6 col-sm-6 col-12">
             <app-input-text-info
-              [label]="'Precio Referencial'"
+              [label]="'Precio'"
               [value]="'BS ' + reserva?.lote?.precioReferencial"
             >
             </app-input-text-info>
@@ -135,4 +133,3 @@
       </app-card-container>
     </div>
   </div>
-</div>

@@ -57,7 +57,7 @@ export class ListReservasComponent implements OnInit {
     {
       field: 'codigoReserva',
       headerName: 'Cód. Reserva',
-      width: 120,
+      width: 115,
       cellStyle: { fontWeight: 'bold' }
     },
     {
@@ -95,7 +95,7 @@ export class ListReservasComponent implements OnInit {
     {
       field: 'fechaVencimiento',
       headerName: 'Vencimiento',
-      width: 140,
+      width: 120,
       valueFormatter: (p) => p.value ? new Date(p.value).toLocaleDateString() : ''
     },
     {
