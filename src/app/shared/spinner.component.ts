@@ -12,19 +12,23 @@ import {
   NavigationCancel,
   NavigationError
 } from '@angular/router';
-import { DOCUMENT, NgIf } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 
 @Component({
-    selector: 'app-spinner',
-    template: `<div class="preloader" *ngIf="isSpinnerVisible">
+  selector: 'app-spinner',
+  template: `
+    @if(isSpinnerVisible){
+    <div class="preloader" >
         <div class="spinner">
           <div class="double-bounce1"></div>
           <div class="double-bounce2"></div>
         </div>
-    </div>`,
-    encapsulation: ViewEncapsulation.None,
-    standalone: true,
-    imports: [NgIf]
+    </div>
+    }
+    `,
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule]
 })
 export class SpinnerComponent implements OnDestroy {
   public isSpinnerVisible = true;
@@ -36,11 +40,11 @@ export class SpinnerComponent implements OnDestroy {
       event => {
         if (event instanceof NavigationStart) {
           this.isSpinnerVisible = true;
-        } 
+        }
         else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
           this.isSpinnerVisible = false;
         }
-      },      
+      },
       () => {
         this.isSpinnerVisible = false;
       }

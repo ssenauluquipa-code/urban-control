@@ -7,6 +7,7 @@ import { InputTextComponent } from "src/app/shared/components/atoms/input-text/i
 import { CommonModule } from '@angular/common';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { InputNumberComponent } from "src/app/shared/components/atoms/input-number/input-number.component";
 @Component({
   selector: 'app-view-register-user',
   standalone: true,
@@ -17,7 +18,8 @@ import { NzFormModule } from 'ng-zorro-antd/form';
     NzFormModule,
     ReactiveFormsModule,
     CommonModule,
-    ImageUploaderComponent
+    ImageUploaderComponent,
+    InputNumberComponent
   ],
   templateUrl: './view-register-user.component.html',
   styleUrl: './view-register-user.component.scss'

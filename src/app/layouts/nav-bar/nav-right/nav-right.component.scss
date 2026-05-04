@@ -1,0 +1,76 @@
+// Custom styles for the profile dropdown tabs and items
+
+.drp-tabs {
+  border-bottom: 1px solid #e2e8f0; // Borde inferior suave
+  margin-bottom: 8px;
+
+  .nav-item {
+    .nav-link {
+      color: #0f172a !important; // Azul profundo
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px 20px;
+      border: none;
+      position: relative;
+      transition: color 0.3s ease;
+      background: transparent;
+
+      span[nz-icon] {
+        color: #0f172a !important;
+        font-size: 16px;
+      }
+
+      // Indicador inferior elegante (Active state)
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -1px; // Se alinea con el borde inferior
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background-color: #00d26a; // Verde brillante
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      &.active {
+        color: #0f172a !important;
+        
+        &::after {
+          width: 100%; // Se expande la línea verde con animación
+        }
+      }
+    }
+  }
+}
+
+// Estilos premium para las opciones del menú desplegable
+.dropdown-item {
+  color: #0f172a;
+  font-weight: 500;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); // Animación suave
+  padding: 10px 16px;
+  border-radius: 8px; // Bordes modernos
+  margin: 4px 12px;
+  width: calc(100% - 24px); // Evita que el elemento sobresalga por culpa del margen
+  display: flex;
+  align-items: center;
+
+  // Sobrescribimos el color de Bootstrap (.text-muted) para el icono
+  span[nz-icon] {
+    color: #64748b !important; // Color grisáceo sutil cuando está inactivo
+    transition: all 0.25s ease;
+    font-size: 16px;
+  }
+
+  &:hover, &:focus, &:active {
+    color: #0f172a !important; // Letras verdes
+    background-color: #f8fafc !important; // Fondo azul grisáceo muy elegante (Slate 50)
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.02); // Sombra súper sutil
+    
+    span[nz-icon] {
+      color: #0f172a !important; // Icono se vuelve verde brillante al hacer hover
+      transform: scale(1.1); // El icono crece sutilmente
+    }
+  }
+}

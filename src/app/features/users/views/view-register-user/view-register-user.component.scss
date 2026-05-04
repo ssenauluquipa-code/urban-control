@@ -4,6 +4,11 @@
     flex-direction: row;
     gap: 1.25rem;
     align-items: flex-start;
+    // Pantallas medianas y pequeñas (Tablets/Móviles)
+        @media (max-width: 991.98px) {
+            flex-direction: column; // Cambia a vertical antes
+            align-items: center;
+        }
 }
 
 // Columna del avatar
@@ -16,11 +21,15 @@
         display: block;
         width: 100%;
     }
+        @media (max-width: 991.98px) {
+            width: 180px; // Un poco más pequeño al estar centrado arriba
+        }
 }
 
 // Columna de campos
 .user-fields-col {
     flex: 1;
+    width: 100%;
     min-width: 0; // Evita overflow en flex
 }
 

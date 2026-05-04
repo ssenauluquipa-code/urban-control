@@ -140,7 +140,6 @@ form i {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background-color: $blue;
     opacity: 0.6;
     position: absolute;
     top: 0;
@@ -148,7 +147,12 @@ form i {
     animation: sk-bounce 2s infinite ease-in-out;
   }
 
+  .double-bounce1 {
+    background-color: #00d26a; // Verde brillante
+  }
+
   .double-bounce2 {
+    background-color: #0f172a; // Azul profundo
     animation-delay: -1s;
   }
 }
