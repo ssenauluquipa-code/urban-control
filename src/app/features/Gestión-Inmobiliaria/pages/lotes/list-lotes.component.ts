@@ -20,7 +20,6 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
 import { ILote, TEstadoLote, UpdateEstadoLoteDto } from 'src/app/core/models/lote/lote.model';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
-import { LoteVisualizerComponent } from '../../views/lote-visualizer/lote-visualizer.component';
 import { NzDrawerModule, NzDrawerService } from 'ng-zorro-antd/drawer'; // Importar servicio
 import { LoteDetailComponent } from '../../views/lotes/lote-detail/lote-detail.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -38,7 +37,6 @@ import { Router, ActivatedRoute } from '@angular/router';
     ReactiveFormsModule,
     FormsModule,
     NzModalModule,
-    LoteVisualizerComponent,
     FormFieldComponent,
     NzDrawerModule,
     SelectManzanasComponent
@@ -66,32 +64,24 @@ export class ListLotesComponent implements OnInit {
     {
       field: 'numero',
       headerName: 'Nro. Lote',
-      width: 60,
+      width: 100,
       cellStyle: { fontWeight: 'bold' },
     },
     {
       field: 'manzana.codigo',
       headerName: 'Manzana',
-      width: 80,
+      width: 100,
     },
     {
       field: 'areaM2',
       headerName: 'Área (m²)',
-      width: 100,
+      width: 110,
       valueFormatter: (p) => (p.value ? p.value.toLocaleString('es-BO') : ''),
     },
     {
       field: 'precioReferencial',
-      headerName: 'Precio Ref.',
+      headerName: 'Precio (Bs.)',
       width: 120,
-      /* valueFormatter: (p) =>
-        p.value ? `Bs. ${p.value.toLocaleString('es-BO')}` : '', */
-    },
-    {
-      field: 'comision',
-      headerName: 'Comisión',
-      width: 70,
-      valueFormatter: (p) => (p.value ? `${p.value}%` : ''),
     },
     {
       field: 'observaciones',
@@ -102,7 +92,7 @@ export class ListLotesComponent implements OnInit {
     {
       field: 'estado',
       headerName: 'Estado',
-      width: 120,
+      width: 130,
       cellRenderer: BadgeEstadoComponent
     },
   ];
@@ -168,7 +158,7 @@ export class ListLotesComponent implements OnInit {
     if (event.action === TableActionsEnum.SET_AVAILABLE) {
       this.confirmDisponible(event.row!);
     }
-    if(event.action === TableActionsEnum.VIEW){
+    if (event.action === TableActionsEnum.VIEW) {
       this.openDetailDrawer(event.row!.id);
     }
   }

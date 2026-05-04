@@ -20,7 +20,7 @@
           </app-form-field>
         </div>
         <div class="col-md-4">
-          <app-form-field label="Precio">
+          <app-form-field label="Precio" [required]="true">
             <app-input-number
               [input_control]="precioReferencial"
               [allow_decimals]="true"
@@ -75,14 +75,14 @@
   <div class="col-12 col-lg-6">
     <app-card-container title="Información Adicional" class="mb-3">
       <div class="row">
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <app-form-field label="Comisión (%)">
             <app-input-number
               [input_control]="comision"
               [allow_decimals]="true"
             ></app-input-number>
           </app-form-field>
-        </div>
+        </div> -->
         <div class="col-12">
           <app-form-field label="Observaciones">
             <app-input-textarea

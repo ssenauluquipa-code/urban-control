@@ -5,7 +5,7 @@ import { IUser } from 'src/app/core/models/user.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { ViewRegisterUserComponent } from '../views/view-register-user/view-register-user.component';
-import { catchError, of, switchMap } from 'rxjs';
+import { catchError, finalize, of, switchMap } from 'rxjs';
 import { ModalContainerComponent } from 'src/app/shared/components/organisms/modal-container/modal-container.component';
 @Component({
   selector: 'app-user-register',
@@ -17,6 +17,7 @@ import { ModalContainerComponent } from 'src/app/shared/components/organisms/mod
       [mainTitleModal]="userData ? 'Editar Usuario' : 'Registrar Usuario'"
       (SaveAction)="onSaveUser()"
       (CancelAction)="activeModal.dismiss()"
+      [loading]="loading"
     >
       <app-view-register-user
         [userForm]="userFormGroup"
@@ -30,6 +31,7 @@ import { ModalContainerComponent } from 'src/app/shared/components/organisms/mod
 export class UserRegisterComponent {
   public userFormGroup!: FormGroup;
   private _userData: IUser | null = null;
+  public loading = false;
 
   @Input()
   set userData(data: IUser | null) {
@@ -74,7 +76,7 @@ export class UserRegisterComponent {
           ),
         ],
       ], // Requerido solo al crear
-      contactNumber: [''],
+      contactNumber: ['', [Validators.required]],
       role: ['USER', [Validators.required]], // Cambiado VIEWER -> USER para coincidir con backend
     });
   }
@@ -130,8 +132,9 @@ export class UserRegisterComponent {
     }
 
     const formValue = this.userFormGroup.getRawValue();
-    const isEditMode = !!formValue.id;    
+    const isEditMode = !!formValue.id;
 
+    this.loading = true;
     // 1. Definir la petición principal (Crear o Actualizar)
     let mainRequest$;
 
@@ -143,7 +146,7 @@ export class UserRegisterComponent {
         role: formValue.role,
       };
       mainRequest$ = this.userService.updateUser(formValue.id, payload);
-    } else {      
+    } else {
       // Payload para crear
       const createData = { ...formValue };
       delete createData.id;
@@ -172,6 +175,9 @@ export class UserRegisterComponent {
           // Si no hay archivo, simplemente devolvemos la respuesta original
           return of(userResponse);
         }),
+        finalize(() => {
+          this.loading = false;
+        })
       )
       .subscribe({
         next: () => {

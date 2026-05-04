@@ -91,14 +91,31 @@ export class InputDocumentoComponent implements OnInit {
   public tempCompControl = new FormControl('');
 
   ngOnInit(): void {
-    // Si ya hay un valor inicial (ej. en edición: "7827001-1B")
-    const val = this.input_control.value ? String(this.input_control.value) : '';
-    if (val.includes('-')) {
-      const parts = val.split('-');
-      this.tempMainControl.setValue(parts[0]);
-      this.tempCompControl.setValue(parts[1]);
+    // Si ya hay un valor inicial al cargar (ej. en edición sincrónica)
+    this.updateTempControls(this.input_control.value);
+
+    // Escuchar cambios externos (ej. cuando se hace un patchValue después de una petición HTTP)
+    this.input_control.valueChanges.subscribe((val) => {
+      // Evitar ciclos infinitos si el cambio provino desde este mismo componente
+      const main = this.tempMainControl.value || '';
+      const comp = this.tempCompControl.value || '';
+      const currentFinalValue = comp ? `${main}-${comp}` : main;
+
+      if (val !== currentFinalValue) {
+        this.updateTempControls(val);
+      }
+    });
+  }
+
+  private updateTempControls(val: any): void {
+    const strVal = val ? String(val) : '';
+    if (strVal.includes('-')) {
+      const parts = strVal.split('-');
+      this.tempMainControl.setValue(parts[0], { emitEvent: false });
+      this.tempCompControl.setValue(parts[1], { emitEvent: false });
     } else {
-      this.tempMainControl.setValue(val);
+      this.tempMainControl.setValue(strVal, { emitEvent: false });
+      this.tempCompControl.setValue('', { emitEvent: false });
     }
   }
 

@@ -27,7 +27,7 @@ import { SelectProvinciaComponent } from "src/app/shared/components/atoms/select
     InputTextareaComponent,
     SelectDepartamentoComponent,
     SelectProvinciaComponent
-],
+  ],
   templateUrl: './view-register-proyecto.component.html',
   styleUrl: './view-register-proyecto.component.scss'
 })
@@ -36,6 +36,7 @@ export class ViewRegisterProyectoComponent {
   @Input() proyectoForm!: FormGroup;
   @Input() proyectoData: IProyecto | null | undefined;
   @Input() provinciasList: string[] = [];
+  @Input() loading = false;
   @Output() Save = new EventEmitter<void>();
 
   // Getters para acceso fácil en el HTML

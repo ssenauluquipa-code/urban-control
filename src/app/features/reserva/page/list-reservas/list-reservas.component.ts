@@ -190,7 +190,7 @@ export class ListReservasComponent implements OnInit {
 
   onAddNew() {
     const modalRef = this.modalService.open(RegisterReservaComponent, {
-      size: 'xl',
+      size: 'lg',
       backdrop: 'static'
     });
     modalRef.result.then((res) => {

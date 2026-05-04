@@ -16,6 +16,7 @@ import { BOLIVIA_UBICACION } from 'src/app/core/constants/bolivia-data';
       [proyectoForm]="proyectoFormGroup"
       [proyectoData]="proyectoData || null"
       [provinciasList]="provinciasFiltradas"
+      [loading]="loading"
       (Save)="onSaveProyecto()"
     ></app-view-register-proyecto>
   `
@@ -24,6 +25,7 @@ export class RegisterProyectoComponent implements OnInit {
   @Input() proyectoData: IProyecto | null = null;
   public proyectoFormGroup!: FormGroup;
   public provinciasFiltradas: string[] = []; // Lista que pasamos al View
+  public loading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -47,8 +49,8 @@ export class RegisterProyectoComponent implements OnInit {
     this.proyectoFormGroup = this.fb.group({
       id: [null],
       nombre: ['', [Validators.required, Validators.maxLength(120)]],
-      departamento: ['', [Validators.required]], // Ahora es obligatorio y controlado por select
-      provincia: ['', [Validators.required]],    // Ahora es obligatorio y controlado por select
+      departamento: [null, [Validators.required]],
+      provincia: [null, [Validators.required]],
       distrito: ['', [Validators.maxLength(120)]],
       direccion: ['', [Validators.required, Validators.maxLength(250)]],
       descripcion: ['', [Validators.maxLength(500)]]
@@ -80,6 +82,7 @@ export class RegisterProyectoComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     const formValue = this.proyectoFormGroup.getRawValue();
     const isEditMode = !!formValue.id;
     const { id, ...payload } = formValue;
@@ -90,11 +93,13 @@ export class RegisterProyectoComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        this.loading = false;
         const msg = isEditMode ? 'Proyecto actualizado' : 'Proyecto creado exitosamente';
         this.notification.success(msg);
         this.ngModal.close(true);
       },
       error: (err) => {
+        this.loading = false;
         if (err.status === 409) {
           this.notification.error('Ya existe un proyecto con este nombre.');
         } else {

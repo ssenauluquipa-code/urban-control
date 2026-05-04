@@ -11,7 +11,6 @@ import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.servic
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
 import { RegisterManzanaComponent } from './register-manzana.component';
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
-import { SelectProjectsComponent } from "src/app/shared/components/atoms/select-projects.component";
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
 import { CommonModule } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
@@ -20,7 +19,7 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
 @Component({
   selector: 'app-manzana-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PageContainerComponent, SelectProjectsComponent, DataTableComponent, NzModalModule],
+  imports: [CommonModule, ReactiveFormsModule, PageContainerComponent, DataTableComponent, NzModalModule],
   template: `
     <app-page-container
       title="Gestión de Manzanas"
@@ -33,7 +32,6 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
         [rowData]="(manzanas$ | async) || []"
         [columnDefs]="columnDefs"
         [loading]="isLoading"
-        height="350px"
         [showCreate]="false"
         [actions]="[tableActionEnum.EDIT, tableActionEnum.DELETE]"
         (actionClicked)="onTableAction($event)">

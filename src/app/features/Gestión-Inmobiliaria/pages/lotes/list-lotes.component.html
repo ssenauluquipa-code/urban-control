@@ -5,10 +5,7 @@
   [showOptions]="true"
   (AddNew)="onAddNewLote()"
 >
-  <!-- 📌 FILTROS + BOTONES EN UNA SOLA FILA -->
-  <div class="row mb-3 g-2">
-    <!-- Columna 1Property 'proyectoId' does not exist on type 'ListLotesComponent'.ngtsc(2339)
-        any: Manzana (col-md-3) -->
+  <div class="row mb-3">
     <div class="col-md-3 col-sm-6">
       <app-form-field label="Manzana">
         <app-select-manzanas
@@ -21,7 +18,7 @@
     </div>
 
     <!-- Columna 3: Botones de Vista (Estandarizados) -->
-    <div class="col-md-6 col-sm-12">
+    <!-- <div class="col-md-6 col-sm-12">
       <app-form-field label="Vista">
         <div class="btn-group w-100" role="group">
           <button
@@ -46,34 +43,34 @@
           </button>
         </div>
       </app-form-field>
-    </div>
+    </div> -->
   </div>
 
   <!-- 🆕 VISTA MAPA / PLANO -->
-  @if (viewMode === "map") {
+  <!--   @if (viewMode === "map") {
     <app-lote-visualizer
       [lotes]="(lotes$ | async) || []"
       (loteClick)="onLoteClick($event)"
     >
     </app-lote-visualizer>
-  }
+  } -->
 
   <!-- VISTA TABLA -->
-  @if (viewMode === "table") {
-    <app-data-table
-      [rowData]="(lotes$ | async) || []"
-      [columnDefs]="columnDefs"
-      [loading]="isLoading"
-      [showCreate]="false"
-      [actions]="[
-        tableActionEnum.EDIT,
-        tableActionEnum.BLOQUEADO,
-        tableActionEnum.SET_AVAILABLE,
-        tableActionEnum.VIEW
-      ]"
-      (actionClicked)="onTableAction($event)"
-      (rowClicked)="openDetailDrawer($event.id)"
-    >
-    </app-data-table>
-  }
+  <!--  @if (viewMode === "table") { -->
+  <app-data-table
+    [rowData]="(lotes$ | async) || []"
+    [columnDefs]="columnDefs"
+    [loading]="isLoading"
+    [showCreate]="false"
+    [actions]="[
+      tableActionEnum.EDIT,
+      tableActionEnum.BLOQUEADO,
+      tableActionEnum.SET_AVAILABLE,
+      tableActionEnum.VIEW,
+    ]"
+    (actionClicked)="onTableAction($event)"
+    (rowClicked)="openDetailDrawer($event.id)"
+  >
+  </app-data-table>
+  <!-- } -->
 </app-page-container>

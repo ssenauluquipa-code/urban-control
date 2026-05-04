@@ -1,0 +1,51 @@
+<app-page-container
+  [title]="'Visor de Planos por Manzana'"
+  [showOptions]="false"
+>
+  <div class="col-md-5 mb-4">
+    <app-select-manzanas
+      [inputControl]="manzanaIdControl"
+      [proyectoId]="proyectoId"
+      [placeholder]="'Filtrar por manzana específica'"
+    >
+    </app-select-manzanas>
+  </div>
+  <!-- Área del Plano Agrupada -->
+  <div class="row">
+    @if (groupedLotes$ | async; as groups) {
+      @if (groups.length > 0) {
+        @for (group of groups; track group.nombre) {
+          <div class="col-12 col-md-6">
+            <app-card-container
+              [title]="'Manzana ' + group.nombre"
+              class="h-100 d-block animate__animated animate__fadeIn"
+            >
+              <div card-actions>
+                <span class="badge bg-primary rounded-pill">
+                  {{ group.lotes.length }} Lotes
+                </span>
+              </div>
+              <app-lote-visualizer
+                [lotes]="group.lotes"
+                (loteClick)="onLoteSelected($event)"
+              >
+              </app-lote-visualizer>
+            </app-card-container>
+          </div>
+        }
+      } @else {
+        <div class="col-12">
+          <div class="text-center py-5 bg-white border rounded shadow-sm">
+            <i class="bi bi-map fs-1 text-muted"></i>
+            <p class="mt-3 text-secondary fw-medium">
+              No se encontraron lotes para mostrar.
+            </p>
+            <span class="text-muted small"
+              >Intenta cambiar el filtro o el proyecto seleccionado.</span
+            >
+          </div>
+        </div>
+      }
+    }
+  </div>
+</app-page-container>

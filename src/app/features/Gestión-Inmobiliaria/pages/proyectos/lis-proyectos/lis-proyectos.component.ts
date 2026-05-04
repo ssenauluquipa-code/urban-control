@@ -12,6 +12,7 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
 import { IProyecto } from 'src/app/core/models/proyectos/proyecto.model';
 import { RegisterProyectoComponent } from '../register-proyecto/register-proyecto.component';
+import { ProyectoDetailComponent } from '../proyecto-detail/proyecto-detail.component';
 
 @Component({
   selector: 'app-lis-proyectos',
@@ -75,6 +76,8 @@ export class LisProyectosComponent implements OnInit {
   onTableAction(event: ITableActionEvent<IProyecto>): void {
     if (event.action === TableActionsEnum.EDIT) {
       this.openModal(event.row ?? undefined);
+    } else if (event.action === TableActionsEnum.VIEW || event.action === TableActionsEnum.INFO) {
+      this.openDetailModal(event.row!.id);
     } else if (event.action === TableActionsEnum.DELETE) {
       this.nzModal.confirm({
         nzTitle: '¿Está seguro de eliminar este proyecto?',
@@ -115,6 +118,17 @@ export class LisProyectosComponent implements OnInit {
 
     modalRef.result.then((result) => {
       if (result) this.loadData();
+    }).catch(() => {
+      //
     });
+  }
+
+  private openDetailModal(proyectoId: string): void {
+    const modalRef = this.modalService.open(ProyectoDetailComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false
+    });
+    modalRef.componentInstance.proyectoId = proyectoId;
   }
 }

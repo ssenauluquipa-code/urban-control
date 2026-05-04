@@ -19,7 +19,8 @@ import { CommonModule } from '@angular/common';
       [mainTitleModal]="isEditMode ? 'Editar Asesor' : 'Nuevo Asesor'"
       [loading]="loading"
       (SaveAction)="onSubmit()"
-      (CancelAction)="closeModal()">
+      (CancelAction)="closeModal()"      
+      >
 
       <app-register-asesor-view
         [form]="form"
@@ -57,13 +58,13 @@ export class RegisterAsesorComponent implements OnInit {
 
   private buildForm(): void {
     this.form = this.fb.group({
-      nombreCompleto: ['', Validators.required],
+      nombreCompleto: ['', [Validators.required, Validators.maxLength(180)]],
       tipoDocumento: [ETipoDocumento.CI, Validators.required],
-      nroDocumento: ['', Validators.required],
-      complemento: [''],
+      nroDocumento: ['', [Validators.required, Validators.maxLength(30)]],
+      complemento: ['', [Validators.maxLength(20)]],
       genero: [EGenero.MASCULINO, Validators.required],
       fechaNacimiento: [null],
-      telefono: ['', Validators.required],
+      telefono: ['', [Validators.required, Validators.maxLength(30)]],
       email: ['', [Validators.email]]
     });
   }

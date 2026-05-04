@@ -64,14 +64,14 @@ export class RegisterLotesComponent implements OnInit {
     this.loteFormGroup = this.fb.group({
       manzanaId: [null, Validators.required],
       numero: [null, [Validators.required, Validators.min(1)]],
-      areaM2: [null, [Validators.required, Validators.min(0)]],
-      precioReferencial: [null],
+      areaM2: [null, [Validators.min(0)]],
+      precioReferencial: [null, [Validators.required, Validators.min(0.01)]],
       dimensionNorte: [null],
       dimensionSur: [null],
       dimensionEste: [null],
       dimensionOeste: [null],
       comision: [null, [Validators.max(100)]],
-      observaciones: ['']
+      observaciones: ['', [Validators.maxLength(500)]]
     });
   }
 
@@ -136,7 +136,19 @@ export class RegisterLotesComponent implements OnInit {
       const loteId = this.loteData.id; // Tomamos el ID de la variable del componente
 
       // Preparamos el payload limpio (sin ID, sin manzanaId según tu endpoint)
-      const payload = { ...formValue };
+      const payload = {
+        ...formValue,
+        numero: Number(formValue.numero) || 0,
+        areaM2: Number(formValue.areaM2) || 0,
+        precioReferencial: Number(formValue.precioReferencial) || 0,
+        comision: Number(formValue.comision) || 0,
+        // ⬇️ REEMPLAZAR NULL POR "0" ⬇️
+        dimensionNorte: formValue.dimensionNorte || 0,
+        dimensionSur: formValue.dimensionSur || 0,
+        dimensionEste: formValue.dimensionEste || 0,
+        dimensionOeste: formValue.dimensionOeste || 0,
+        observaciones: formValue.observaciones || "-"
+      };
       delete payload['id']; // Por seguridad, aunque no exista
       delete payload['manzanaId']; // El endpoint PATCH no suele requerir cambiar la manzana
 
@@ -149,7 +161,19 @@ export class RegisterLotesComponent implements OnInit {
     }
     // MODO CREACIÓN
     else {
-      const payload: CreateLoteDto = formValue as CreateLoteDto;
+      const payload: CreateLoteDto = {
+        ...formValue,
+        numero: Number(formValue.numero) || 0,
+        areaM2: Number(formValue.areaM2) || 0,
+        precioReferencial: Number(formValue.precioReferencial) || 0,
+        comision: Number(formValue.comision) || 0,
+        // ⬇️ REEMPLAZAR NULL POR "0" ⬇️
+        dimensionNorte: formValue.dimensionNorte || 0,
+        dimensionSur: formValue.dimensionSur || 0,
+        dimensionEste: formValue.dimensionEste || 0,
+        dimensionOeste: formValue.dimensionOeste || 0,
+        observaciones: formValue.observaciones || "-"
+      } as CreateLoteDto;
       this.loteService.createLote(payload).pipe(
         switchMap((newLote: ILote) => this.pendingFiles.length > 0 ? this.loteService.uploadLoteImages(newLote.id, this.pendingFiles) : of(newLote))
       ).subscribe({

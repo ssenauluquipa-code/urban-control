@@ -37,15 +37,15 @@ export class RegisterClientesComponent implements OnInit {
 
   private buildForm(): void {
     this.form = this.fb.group({
-      nombreCompleto: ['', Validators.required],
-      tipoDocumento: [ETipoDocumento.CI, Validators.required],
-      nroDocumento: ['', Validators.required],
-      complemento: ['', Validators.required],
-      numeroReferencia: [''],
+      nombreCompleto: ['', [Validators.required, Validators.maxLength(180)]],
+      tipoDocumento: [ETipoDocumento.CI, [Validators.required]],
+      nroDocumento: ['', [Validators.required, Validators.maxLength(30)]],
+      complemento: ['', [Validators.required, Validators.maxLength(20)]],
+      numeroReferencia: ['', [Validators.maxLength(50)]],
       genero: [EGenero.MASCULINO, Validators.required],
       fechaNacimiento: [null],
-      telefono: ['', Validators.maxLength(20)],
-      email: [''],
+      telefono: ['', Validators.maxLength(30)],
+      email: ['', Validators.email],
       direccion: ['', Validators.maxLength(250)]
     });
   }
@@ -80,7 +80,7 @@ export class RegisterClientesComponent implements OnInit {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       Object.values(this.form.controls).forEach(c => c.markAsDirty());
-      this.notification.warning('Complete los campos obligatorios');
+      this.notification.warning('Complete los campos obligatorios' + JSON.stringify(this.form.errors));
       return;
     }
 
@@ -90,6 +90,12 @@ export class RegisterClientesComponent implements OnInit {
       ...value,
       fechaNacimiento: value.fechaNacimiento ? new Date(value.fechaNacimiento).toISOString() : null
     };
+
+    // Limpiar campos vacíos para que el backend no falle
+    if (!payload.telefono) delete payload.telefono;
+    if (!payload.email) delete payload.email;
+    if (!payload.numeroReferencia) delete payload.numeroReferencia;
+    if (!payload.direccion) delete payload.direccion;
 
     const request$ = this.isEditMode
       ? this.clienteService.updateClient(this.clienteId!, payload)

@@ -1,6 +1,7 @@
 <app-modal-container
   #modal
   [mainTitleModal]="proyectoData ? 'Editar Proyecto' : 'Nuevo Proyecto'"
+  [loading]="loading"
   (SaveAction)="Save.emit()"
   (CancelAction)="modal.activeModal.close()"
 >

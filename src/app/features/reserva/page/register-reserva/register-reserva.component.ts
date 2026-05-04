@@ -59,10 +59,10 @@ export class RegisterReservaComponent implements OnInit {
       clienteId: [null, Validators.required],
       manzanaId: [null],
       loteId: [null, Validators.required],
-      montoReserva: [null, [Validators.required, Validators.min(1)]],
+      montoReserva: [null, [Validators.required, Validators.min(0.01)]],
       moneda: [1],
-      fechaVencimiento: [null],
-      observaciones: ['', [Validators.maxLength(500), Validators.required]],
+      fechaVencimiento: [null, [Validators.required]],
+      observaciones: ['', [Validators.maxLength(500)]],
     });
   }
 
@@ -81,7 +81,7 @@ export class RegisterReservaComponent implements OnInit {
       loteId: formValue.loteId,
       montoReserva: formValue.montoReserva,
       moneda: formValue.moneda,
-      fechaVencimiento: formValue.fechaVencimiento ? new Date(formValue.fechaVencimiento).toISOString() : '',
+      fechaVencimiento: formValue.fechaVencimiento,
       observaciones: formValue.observaciones,
     };
     this.reservaService.createReserva(payload).subscribe({

@@ -24,13 +24,13 @@ export class RegisterReservaViewComponent {
   @Input() proyectoId: string | null = null;
 
   // Getters para controles
-  get clienteId() { return this.reservaForm.get('clienteId') as FormControl; }
-  get manzanaId() { return this.reservaForm.get('manzanaId') as FormControl; }
-  get loteId() { return this.reservaForm.get('loteId') as FormControl; }
-  get montoReserva() { return this.reservaForm.get('montoReserva') as FormControl; }
-  get moneda() { return this.reservaForm.get('moneda') as FormControl; }
-  get fechaVencimiento() { return this.reservaForm.get('fechaVencimiento') as FormControl; }
-  get observaciones() { return this.reservaForm.get('observaciones') as FormControl; }
+  get clienteId() { return this.reservaForm.get('clienteId') as FormControl<string>; }
+  get manzanaId() { return this.reservaForm.get('manzanaId') as FormControl<string>; }
+  get loteId() { return this.reservaForm.get('loteId') as FormControl<string>; }
+  get montoReserva() { return this.reservaForm.get('montoReserva') as FormControl<number>; }
+  get moneda() { return this.reservaForm.get('moneda') as FormControl<number>; }
+  get fechaVencimiento() { return this.reservaForm.get('fechaVencimiento') as FormControl<Date>; }
+  get observaciones() { return this.reservaForm.get('observaciones') as FormControl<string>; }
 
   // Método para sincronizar manzana cuando se selecciona un lote
   onManzanaFromLote(manzanaId: string | null): void {

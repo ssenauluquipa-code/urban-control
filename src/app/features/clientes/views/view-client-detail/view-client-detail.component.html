@@ -48,7 +48,7 @@
   <div class="col-lg-6 col-md-12">
     <app-card-container title="Documentación e Identificación">
       <div class="row g-3">
-        <div class="col-md-6 col-12">
+        <div class="col-md-3 col-12">
           <app-input-text-info
             [label]="'Tipo Documento'"
             [value]="cliente?.tipoDocumento"
@@ -59,17 +59,21 @@
         <div class="col-md-6 col-12">
           <app-input-text-info
             [label]="'Nro. Documento'"
-            [value]="
-              cliente?.nroDocumento +
-              (cliente?.complemento ? ' ' + cliente?.complemento : '')
-            "
+            [value]="cliente?.nroDocumento"
+          >
+          </app-input-text-info>
+        </div>
+        <div class="col-md-3 col-12">
+          <app-input-text-info
+            [label]="'Complemento'"
+            [value]="cliente?.complemento ?? '-'"
           >
           </app-input-text-info>
         </div>
 
         <div class="col-12">
           <app-input-text-info
-            [label]="'Nro. Referencia'"
+            [label]="'Nro. Celular'"
             [value]="cliente?.numeroReferencia || 'Sin referencia'"
           >
           </app-input-text-info>

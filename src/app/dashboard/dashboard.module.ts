@@ -19,21 +19,22 @@ const routes: Routes = [
     },
     component: DashboardComponent,
   },
+  { path: 'plano', loadComponent: () => import('../features/Gestión-Inmobiliaria/pages/plano-lotes/plano-lotes.component').then(m => m.PlanoLotesComponent) },
 ];
 
 @NgModule({
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        CommonModule,
-        RouterModule.forChild(routes),
-        NgApexchartsModule,
-        DashboardComponent,
-        SalesSummaryComponent,
-        FeedsComponent,
-        TopSellingComponent,
-        TopCardsComponent,
-        BlogCardsComponent,
-    ],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    RouterModule.forChild(routes),
+    NgApexchartsModule,
+    DashboardComponent,
+    SalesSummaryComponent,
+    FeedsComponent,
+    TopSellingComponent,
+    TopCardsComponent,
+    BlogCardsComponent,
+  ],
 })
-export class DashboardModule {}
+export class DashboardModule { }

@@ -73,15 +73,15 @@ export class ViewRegisterLotesComponent implements OnDestroy {
   }
 
   // Getters
-  get numero() { return this.loteForm.get('numero') as FormControl; }
-  get areaM2() { return this.loteForm.get('areaM2') as FormControl; }
-  get precioReferencial() { return this.loteForm.get('precioReferencial') as FormControl; }
-  get comision() { return this.loteForm.get('comision') as FormControl; }
-  get observaciones() { return this.loteForm.get('observaciones') as FormControl; }
-  get norte() { return this.loteForm.get('dimensionNorte') as FormControl; }
-  get sur() { return this.loteForm.get('dimensionSur') as FormControl; }
-  get este() { return this.loteForm.get('dimensionEste') as FormControl; }
-  get oeste() { return this.loteForm.get('dimensionOeste') as FormControl; }
+  get numero() { return this.loteForm.get('numero') as FormControl<number | null>; }
+  get areaM2() { return this.loteForm.get('areaM2') as FormControl<number | null>; }
+  get precioReferencial() { return this.loteForm.get('precioReferencial') as FormControl<number | null>; }
+  get comision() { return this.loteForm.get('comision') as FormControl<number | null>; }
+  get observaciones() { return this.loteForm.get('observaciones') as FormControl<string | null>; }
+  get norte() { return this.loteForm.get('dimensionNorte') as FormControl<number | null>; }
+  get sur() { return this.loteForm.get('dimensionSur') as FormControl<number | null>; }
+  get este() { return this.loteForm.get('dimensionEste') as FormControl<number | null>; }
+  get oeste() { return this.loteForm.get('dimensionOeste') as FormControl<number | null>; }
 
   // 🚀 NUEVO MÉTODO: Conecta con el output del ImageUploaderComponent
   onFileSelected(file: File): void {

@@ -8,20 +8,27 @@
     <div class="row">
       <div class="col-md-5 col-12">
         <!-- Manzana -->
-    <app-form-field label="Manzana">
-      <app-select-manzanas [inputControl]="manzanaId" [proyectoId]="proyectoId">
-      </app-select-manzanas>
-    </app-form-field>
+        <app-form-field label="Manzana">
+          <app-select-manzanas
+            [inputControl]="manzanaId"
+            [proyectoId]="proyectoId"
+          >
+          </app-select-manzanas>
+        </app-form-field>
       </div>
 
       <div class="col-md-7 col-12">
         <!-- Lote -->
-    <app-form-field label="Lote" [required]="true">
-      <app-select-lotes [inputControl]="loteId" [manzanaId]="manzanaId.value" (ManzanaChange)="onManzanaFromLote($event)">
-      </app-select-lotes>
-    </app-form-field>
+        <app-form-field label="Lote" [required]="true">
+          <app-select-lotes
+            [inputControl]="loteId"
+            [manzanaId]="manzanaId.value"
+            (ManzanaChange)="onManzanaFromLote($event)"
+          >
+          </app-select-lotes>
+        </app-form-field>
       </div>
-    </div>    
+    </div>
   </div>
 
   <!-- Columna Derecha: Detalles -->
@@ -39,7 +46,7 @@
         </app-form-field>
       </div>
       <div class="col-6">
-        <app-form-field label="Moneda" [required]="true">
+        <app-form-field label="Moneda">
           <app-select-moneda [inputControl]="moneda"></app-select-moneda>
         </app-form-field>
       </div>
@@ -52,16 +59,16 @@
         input_placeholder="Seleccionar fecha"
       >
       </app-input-date>
-    </app-form-field>    
+    </app-form-field>
   </div>
   <app-form-field label="Observaciones">
-      <!-- Si tienes átomo textarea, úsalo. Sino usa nz-input -->
-      <app-input-textarea
-        [input_control]="observaciones"
-        placeholder="Detalles adicionales..."
-        [input_autosize]="true"
-        [input_maxlength]="500"
-      >
-      </app-input-textarea>
-    </app-form-field>
+    <!-- Si tienes átomo textarea, úsalo. Sino usa nz-input -->
+    <app-input-textarea
+      [input_control]="observaciones"
+      placeholder="Detalles adicionales..."
+      [input_autosize]="true"
+      [input_maxlength]="500"
+    >
+    </app-input-textarea>
+  </app-form-field>
 </div>

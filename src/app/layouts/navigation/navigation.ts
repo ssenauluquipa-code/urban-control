@@ -32,7 +32,16 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/dashboard',
         icon: 'bi bi-speedometer2',
-        breadcrumbs: false
+        breadcrumbs: false,
+        exactMatch: true
+      },
+      {
+        id: 'plano-lotes-nav',
+        title: 'Plano de Lotes',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/dashboard/plano',
+        icon: 'bi bi-map',
       },
       /*
             {

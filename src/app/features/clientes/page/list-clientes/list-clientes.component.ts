@@ -171,6 +171,9 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     } else if (event.action === TableActionsEnum.DEACTIVATE || event.action === TableActionsEnum.ACTIVATE) {
       this.toggleStatus(cliente);
     }
+    else if (event.action === TableActionsEnum.INFO) {
+      this.router.navigate(['/clientes/ver', cliente.id]);
+    }
   }
 
   private toggleStatus(cliente: ICliente): void {
