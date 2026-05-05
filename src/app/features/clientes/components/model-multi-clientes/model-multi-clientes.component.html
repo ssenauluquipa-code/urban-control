@@ -1,0 +1,65 @@
+<app-modal-container
+  [mainTitleModal]="'Creación Rápida de Cliente'"
+  [saveButtonName]="'Registrar Cliente'"
+  [saveButtonIcon]="'save'"
+  [loading]="loading"
+  (SaveAction)="guardarCliente()"
+  (CancelAction)="activeModal.dismiss()"
+>
+  <div class="row g-2">
+    <!-- Nombre Completo -->
+    <div class="col-12">
+      <app-form-field [label]="'Nombre Completo'" [required]="true">
+        <app-input-text
+          [input_control]="NombreCompleto"
+          [input_placeholder]="'Ej: Juan Perez Mamani'"
+          [prefix_icon]="'user'"
+        ></app-input-text>
+      </app-form-field>
+    </div>
+
+    <!-- Tipo de Documento -->
+    <div class="col-md-6">
+      <app-form-field [label]="'Tipo de Documento'" [required]="true">
+        <app-select-document-type
+          [inputControl]="TipoDocumento"
+        ></app-select-document-type>
+      </app-form-field>
+    </div>
+
+    <!-- Nro Documento -->
+    <div class="col-md-6">
+      <app-form-field [label]="'Nro. Documento'" [required]="true">
+        <app-input-documento
+          [input_control]="NroDocumento"
+          [placeholder]="'Ej: 8345214'"
+          [hasComplemento]="true"
+        ></app-input-documento>
+      </app-form-field>
+    </div>
+
+    <!-- Complemento / Expedido -->
+    <div class="col-md-6">
+      <app-form-field [label]="'Expedido / Complemento'">
+        <app-select-expedido [inputControl]="Complemento"></app-select-expedido>
+      </app-form-field>
+    </div>
+
+    <!-- Género -->
+    <div class="col-md-6">
+      <app-form-field [label]="'Género'" [required]="true">
+        <app-select-gender [inputControl]="Genero"></app-select-gender>
+      </app-form-field>
+    </div>
+
+    <!-- Número de Referencia -->
+    <div class="col-12">
+      <app-form-field [label]="'Número Celular'" [required]="true">
+        <app-input-number
+          [input_control]="Telefono"
+          [input_placeholder]="'Ej: 77889900'"
+        ></app-input-number>
+      </app-form-field>
+    </div>
+  </div>
+</app-modal-container>

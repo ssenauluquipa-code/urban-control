@@ -5,6 +5,7 @@ import { CreateReservaDto, Moneda } from 'src/app/core/models/reserva.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { ReservaService } from 'src/app/core/services/reserva.service';
+import { finalize } from 'rxjs';
 import { ModalContainerComponent } from "src/app/shared/components/organisms/modal-container/modal-container.component";
 import { RegisterReservaViewComponent } from "../../views/register-reserva-view/register-reserva-view.component";
 
@@ -15,6 +16,7 @@ import { RegisterReservaViewComponent } from "../../views/register-reserva-view/
   template: `
     <app-modal-container
       mainTitleModal="Registrar Reserva"
+      [loading]="loading"
       (SaveAction)="onSave()"
       (CancelAction)="onCancel()"
     >
@@ -29,6 +31,7 @@ export class RegisterReservaComponent implements OnInit {
 
   public formGroup!: FormGroup;
   public proyectoId: string | null = null;
+  public loading = false;
 
   private fb = inject(FormBuilder);
   private activeModal = inject(NgbActiveModal);
@@ -84,19 +87,22 @@ export class RegisterReservaComponent implements OnInit {
       fechaVencimiento: formValue.fechaVencimiento,
       observaciones: formValue.observaciones,
     };
-    this.reservaService.createReserva(payload).subscribe({
-      next: () => {
-        this.notification.success('Reserva creada exitosamente');
-        this.activeModal.close(true);
-      },
-      error: (err) => {
-        if (err.status === 409) {
-          this.notification.error(err.error?.message || 'Conflicto al reservar');
-        } else {
-          this.notification.error('Error inesperado');
+    this.loading = true;
+    this.reservaService.createReserva(payload)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: () => {
+          this.notification.success('Reserva creada exitosamente');
+          this.activeModal.close(true);
+        },
+        error: (err) => {
+          if (err.status === 409) {
+            this.notification.error(err.error?.message || 'Conflicto al reservar');
+          } else {
+            this.notification.error('Error inesperado al crear reserva');
+          }
         }
-      }
-    });
+      });
   }
 
   public onCancel(): void {

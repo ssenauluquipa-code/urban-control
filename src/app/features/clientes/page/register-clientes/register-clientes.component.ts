@@ -44,7 +44,7 @@ export class RegisterClientesComponent implements OnInit {
       numeroReferencia: ['', [Validators.maxLength(50)]],
       genero: [EGenero.MASCULINO, Validators.required],
       fechaNacimiento: [null],
-      telefono: ['', Validators.maxLength(30)],
+      telefono: ['', [Validators.required, Validators.maxLength(30)]],
       email: ['', Validators.email],
       direccion: ['', Validators.maxLength(250)]
     });

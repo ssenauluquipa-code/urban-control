@@ -89,9 +89,14 @@
         </section>
       </div>
     </div>
+  }
 
+  <!-- Footer estable fuera del loading para evitar saltos de layout -->
+  @if (lote || loading) {
     <footer class="blueprint-footer">
-      <button class="btn-terraform-action">GESTIONAR OPERACIÓN</button>
+      <button class="btn-terraform-action" [disabled]="loading">
+        {{ loading ? 'SINCRONIZANDO...' : 'GESTIONAR RESERVA' }}
+      </button>
     </footer>
   }
 </div>

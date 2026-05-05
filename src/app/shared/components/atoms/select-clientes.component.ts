@@ -15,6 +15,8 @@ import { IClienteSearchResult } from 'src/app/core/models/cliente.model';
 import { ClienteService } from 'src/app/core/services/cliente.service';
 import { SelectDataComponent } from './select-data.component';
 import { CreateVentaPropietarioDto, RolPropietario, SelectClienteOutput } from 'src/app/core/models/venta.model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModelMultiClientesComponent } from 'src/app/features/clientes/components/model-multi-clientes/model-multi-clientes.component';
 
 @Component({
   selector: 'app-select-clientes',
@@ -30,6 +32,9 @@ import { CreateVentaPropietarioDto, RolPropietario, SelectClienteOutput } from '
       [searchable]="true"
       [loading]="isLoading"
       [customOptionTemplate]="clienteTemplate"
+      [isMultiple]="multiple"
+      [addTag]="true"
+      (AddTag)="abrirModalCrearCliente($event)"
       (Search)="onSearchInput($event)"
       (ChangeValue)="onSelect($event)"
     >
@@ -92,7 +97,7 @@ export class SelectClientesComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private clienteService = inject(ClienteService);
   private cdr = inject(ChangeDetectorRef);
-
+  private modalService = inject(NgbModal);
   ngOnInit(): void {
     this.searchSubject$
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
@@ -182,5 +187,36 @@ export class SelectClientesComponent implements OnInit, OnDestroy {
     if (!searchTerm || !fullText) return fullText;
     const regex = new RegExp(`(${searchTerm})`, 'gi');
     return fullText.replace(regex, `<span class="highlight-match">$1</span>`);
+  }
+
+  abrirModalCrearCliente(nombreCompleto: string): void {
+    const modalRef = this.modalService.open(ModelMultiClientesComponent, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static'
+    });
+
+    modalRef.componentInstance.nombrePrellenado = nombreCompleto;
+
+    modalRef.result.then((nuevoCliente: IClienteSearchResult) => {
+      if (nuevoCliente && nuevoCliente.id) {
+        // Añadir a la lista local para que aparezca en el select
+        this.clientList = [nuevoCliente, ...this.clientList];
+
+        // Seleccionarlo automáticamente
+        if (this.multiple) {
+          const currentValues = (this.inputControl.value as string[]) || [];
+          this.inputControl.setValue([...currentValues, nuevoCliente.id]);
+        } else {
+          this.inputControl.setValue(nuevoCliente.id);
+        }
+
+        // Forzar actualización y emitir cambio
+        this.onSelect(this.inputControl.value);
+        this.cdr.detectChanges();
+      }
+    }).catch(() => {
+      // Modal cerrado sin guardar (cancelado)
+    });
   }
 }

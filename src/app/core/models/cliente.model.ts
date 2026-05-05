@@ -56,3 +56,13 @@ export interface IClienteSearchResult {
     nombreCompleto: string;
     nroDocumento: string;
 }
+
+
+export interface CreateClienteRapidoDto {
+    nombreCompleto: string;
+    tipoDocumento: string; // Usar tus Enums aquí si es posible
+    nroDocumento: string;
+    complemento?: string;
+    numeroReferencia?: string;
+    genero: string;
+}

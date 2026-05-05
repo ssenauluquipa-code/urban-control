@@ -46,6 +46,7 @@ import { FormsModule } from '@angular/forms';
         [notFoundText]="'No se encontraron resultados'"
         [class.is-invalid]="inputControl.invalid && inputControl.touched"
         [appendTo]="'body'"
+        [addTag]="addTagProp"
         (blur)="Blur.emit($event)"
         (change)="onSelectChange()"
         (search)="Search.emit($event.term)"
@@ -64,9 +65,19 @@ import { FormsModule } from '@angular/forms';
           }
         </ng-template>
 
+        
         <ng-template ng-notfound-tmp let-searchTerm="searchTerm">
           <div class="p-2 small text-muted">
             No hay resultados para "{{ searchTerm }}"
+          </div>
+        </ng-template>
+
+        <ng-template ng-tag-tmp let-searchTerm="searchTerm">
+          <div class="p-2 border-top bg-light">
+            <span class="text-primary fw-bold">
+              <i class="ph ph-plus-circle me-1"></i>
+              Crear nuevo: <b>{{ searchTerm }}</b>
+            </span>
           </div>
         </ng-template>
       </ng-select>
@@ -106,11 +117,12 @@ export class SelectDataComponent<T = unknown> implements OnInit {
   @Input() searchable = false;
   @Input() isMultiple = false;
   @Input() setFocus = false;
-
+  @Input() addTag: boolean | ((term: string) => unknown) = false;
   // CORREGIDO: Emitimos el tipo específico del valor del control
   @Output() ChangeValue = new EventEmitter<string | T | null>();
   @Output() Blur = new EventEmitter<FocusEvent>();
   @Output() Search = new EventEmitter<string>();
+  @Output() AddTag = new EventEmitter<string>();
 
   ngOnInit(): void {
     if (this.defaultValue) {
@@ -124,10 +136,35 @@ export class SelectDataComponent<T = unknown> implements OnInit {
   onSelectChange(): void {
     // Emitimos el valor tipado del control
     this.ChangeValue.emit(this.inputControl.value);
-    
+
     // Quitamos el foco para que desaparezca el puntero |
     if (this.inputSelect) {
       this.inputSelect.blur();
     }
+  }
+
+  /**
+   * Propiedad computada para manejar addTag.
+   * Si es true, usamos una función interna para emitir el evento y retornar null
+   * (evitando que ng-select añada el tag automáticamente antes de que el modal lo cree).
+   */
+  get addTagProp(): boolean | ((term: string) => unknown) {
+    if (typeof this.addTag === 'function') {
+      return this.addTag;
+    }
+    if (this.addTag === true) {
+      return (term: string) => {
+        this.AddTag.emit(term);
+
+        // Cerrar el dropdown y limpiar búsqueda para mejorar UX
+        if (this.inputSelect) {
+          this.inputSelect.close();
+          this.inputSelect.searchTerm = '';
+        }
+
+        return null; // No añadir el tag directamente a la lista
+      };
+    }
+    return false;
   }
 }

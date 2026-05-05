@@ -1,12 +1,11 @@
 import { Component, Input, OnChanges, OnInit, Optional, SimpleChanges } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
 import { ILote, TEstadoLote } from 'src/app/core/models/lote/lote.model';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { CurrencyLabelComponent } from 'src/app/shared/components/atoms/currency-label/currency-label.component';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -16,11 +15,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   standalone: true,
   imports: [
     CommonModule,
-    DecimalPipe,
     NzDescriptionsModule,
     NzImageModule,
     NzSpinModule,
-    BadgeEstadoComponent,
     CurrencyLabelComponent,
   ],
   templateUrl: './lote-detail.component.html',
