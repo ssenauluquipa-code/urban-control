@@ -10,7 +10,7 @@ import { SelectDataComponent } from "./select-data.component";
   template: `
     <app-select-data
       [itemList]="monedaList"
-      [inputControl]="inputControl"
+      [inputControl]="input_control"
       [placeholder]="placeholder"
       [bindValue]="'value'"
       [bindLabel]="'label'"
@@ -22,7 +22,7 @@ import { SelectDataComponent } from "./select-data.component";
 })
 export class SelectMonedaComponent {
 
-  @Input() inputControl = new FormControl();
+  @Input() input_control = new FormControl();
 
   // Input para el placeholder (texto por defecto)
   @Input() placeholder = 'Moneda';

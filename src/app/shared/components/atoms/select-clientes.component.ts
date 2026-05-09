@@ -25,18 +25,18 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
   template: `
     <app-select-data
       [itemList]="clientList"
-      [inputControl]="inputControl"
-      [placeholder]="placeholder"
+      [inputControl]="internal_control"
+      [placeholder]="input_placeholder"
       [bindValue]="'id'"
       [bindLabel]="'nombreCompleto'"
       [searchable]="true"
       [loading]="isLoading"
       [customOptionTemplate]="clienteTemplate"
+      [customLabelTemplate]="clienteLabelTemplate"
       [isMultiple]="multiple"
       [addTag]="true"
       (AddTag)="abrirModalCrearCliente($event)"
       (Search)="onSearchInput($event)"
-      (ChangeValue)="onSelect($event)"
     >
     </app-select-data>
 
@@ -51,43 +51,142 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
       </div>
     </ng-template>
 
-    @if (withRoles && selectedClientes.length) {
-      <div class="mt-2">
-        @for (c of selectedClientes; track c.id; let i = $index) {
-          <div class="d-flex justify-content-between align-items-center border rounded px-2 py-1 mb-1 bg-white shadow-sm">
-            <div>
-              <div class="fw-bold" style="font-size: 13px;">{{ c.nombreCompleto }}</div>
-              <div class="text-primary fw-medium" style="font-size: 11px;">
-                {{ i === 0 ? 'TITULAR' : 'COTITULAR' }}
-              </div>
-            </div>
-            <button type="button" class="btn btn-sm text-danger border-0" (click)="removeCliente(i)">
-              <i class="ph ph-x-circle fs-5"></i>
-            </button>
-          </div>
-        }
+    <ng-template #clienteLabelTemplate let-item let-clear="clear">
+      <div class="cliente-tag d-flex align-items-center gap-1 px-2 py-1 rounded-2"
+           [class.is-titular]="isTitular(item.id)"
+           [class.is-cotitular]="!isTitular(item.id)">
+        <i class="ph ph-user-circle" [class.text-white]="true"></i>
+        <span class="tag-label text-truncate" style="max-width: 120px;">
+          {{ item.nombreCompleto }}
+        </span>
+        <span class="role-badge ms-1">
+          {{ isTitular(item.id) ? 'T' : 'C' }}
+        </span>
+        <span class="tag-remove ms-1 d-flex align-items-center justify-content-center" 
+              role="button"
+              tabindex="0"
+              style="cursor: pointer; width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,0.2);"
+              (click)="clear(item); $event.stopPropagation()" 
+              (keydown.enter)="clear(item); $event.stopPropagation()"
+              (keydown.space)="clear(item); $event.preventDefault(); $event.stopPropagation()"
+              (mousedown)="$event.stopPropagation()"
+              title="Quitar">
+          <i class="bi bi-x-lg text-white" style="font-size: 8px;"></i>
+        </span>
       </div>
-    }
+    </ng-template>
   `,
   styles: [`
     :host ::ng-deep .highlight-match {
       background-color: #fff3cd;
-      font-weight: bold;
-      padding: 0 2px;
+      font-weight: bold;      
       border-radius: 2px;
+    }
+
+    .cliente-tag {
+      color: white;
+      font-size: 12px;
+      font-weight: 500;
+      margin-right: 4px;
+      margin-bottom: 2px;
+      border: 1px solid transparent;
+
+      &.is-titular {
+        background-color: #198754; /* Success / Verde */
+        border-color: #157347;
+      }
+
+      &.is-cotitular {
+        background-color: #0d6efd; /* Primary / Azul */
+        border-color: #0b5ed7;
+      }
+
+      .tag-label {
+        color: white;
+      }
+
+      .role-badge {
+        background: rgba(255,255,255,0.2);
+        padding: 0 5px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .tag-remove {
+        cursor: pointer;
+        opacity: 0.7;
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    :host ::ng-deep .ng-select.ng-select-multiple .ng-select-container .ng-value {
+      background-color: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 2px 0 !important;
+    }
+
+    :host ::ng-deep .ng-select.ng-select-multiple .ng-select-container .ng-value .ng-value-label {
+      padding: 0 !important;
+    }
+
+    /* Limpieza y centrado vertical robusto */
+    :host ::ng-deep .ng-select .ng-select-container {
+      min-height: 42px !important;
+      border-radius: 8px !important;
+    }
+
+    /* Contenedor de valores (donde vive el placeholder y los tags) */
+    :host ::ng-deep .ng-select .ng-value-container {
+      align-items: center !important;
+      padding-left: 8px !important;
+      display: flex !important;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    /* Asegurar que el placeholder esté perfectamente centrado verticalmente */
+    :host ::ng-deep .ng-select .ng-placeholder {
+      color: #999;
+      z-index: 1;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      padding-left: 12px !important;
+      margin-top: 0 !important;
+      border: none !important;
+      background: transparent !important;
+    }
+
+    /* Ocultar placeholder si hay valor o si se está buscando */
+    :host ::ng-deep .ng-select.ng-has-value .ng-placeholder,
+    :host ::ng-deep .ng-select.ng-select-opened.ng-select-searching .ng-placeholder {
+      display: none !important;
+    }
+
+    /* El input de búsqueda también debe estar alineado */
+    :host ::ng-deep .ng-select .ng-input {
+      display: flex !important;
+      align-items: center !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
     }
   `]
 })
-export class SelectClientesComponent implements OnInit, OnDestroy {
-  // InputControl tipado para aceptar string (simple) o string[] (múltiple)
-  @Input() inputControl = new FormControl<string | string[] | null>(null);
-  @Input() placeholder = 'Buscar Cliente...';
+export class SelectClientesComponent<T = string | string[] | CreateVentaPropietarioDto[]> implements OnInit, OnDestroy {
+  // InputControl del padre (puede contener IDs o DTOs complejos)
+  @Input() input_control = new FormControl<T | null>(null);
+  @Input() input_placeholder = 'Buscar Cliente...';
   @Input() multiple = false;
-  @Input() maxSelection = 3; // Límite del DTO de ventas
+  @Input() maxSelection = 3; 
   @Input() withRoles = false;
 
-  //EventEmitter con tipo definido para evitar 'any'
   @Output() Change = new EventEmitter<SelectClienteOutput>();
+
+  // Control interno para el ng-select (solo maneja IDs para no confundir al buscador)
+  public internal_control = new FormControl<string | string[] | null>(null);
 
   public clientList: IClienteSearchResult[] = [];
   public selectedClientes: IClienteSearchResult[] = [];
@@ -98,17 +197,43 @@ export class SelectClientesComponent implements OnInit, OnDestroy {
   private clienteService = inject(ClienteService);
   private cdr = inject(ChangeDetectorRef);
   private modalService = inject(NgbModal);
+
   ngOnInit(): void {
+    // 1. Sincronización Inicial: Si el padre ya tiene datos, extraemos los IDs
+    const initialValue = this.input_control.value;
+    if (initialValue) {
+      this.internal_control.setValue(this.extractIds(initialValue), { emitEvent: false });
+    }
+
+    // 2. Búsqueda reactiva
     this.searchSubject$
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((term: string) => this.searchClients(term));
 
     this.searchClients('');
+
+    // 3. Sincronización continua: Cuando el selector interno cambia, actualizamos el padre con la estructura correcta
+    this.internal_control.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        this.processSelectionChange(value);
+      });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Extrae IDs de cualquier estructura (string, string[] o DTO[])
+   */
+  private extractIds(value: any): string | string[] | null {
+    if (!value) return null;
+    if (Array.isArray(value)) {
+      return value.map(v => typeof v === 'string' ? v : v.clienteId);
+    }
+    return typeof value === 'string' ? value : value.clienteId;
   }
 
   onSearchInput(term: string): void {
@@ -128,59 +253,41 @@ export class SelectClientesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Maneja la selección de items desde el componente base
+   * Procesa el cambio de IDs internos y actualiza el control externo con la estructura final
    */
-  onSelect(value: string | string[] | null): void {
+  private processSelectionChange(value: string | string[] | null): void {
     if (!this.multiple) {
-      this.Change.emit(value as string | null);
+      this.input_control.setValue(value as unknown as T);
+      this.Change.emit(value as SelectClienteOutput);
       return;
     }
 
     const selectedIds: string[] = (value as string[]) || [];
 
-    // Sincronizar objetos completos para la previsualización de roles
-    this.selectedClientes = this.clientList.filter((c: IClienteSearchResult) =>
-      selectedIds.includes(c.id)
-    );
+    // Actualizar lista de objetos para previsualización
+    this.selectedClientes = this.clientList.filter(c => selectedIds.includes(c.id));
 
-    // Aplicar restricción de máximo de propietarios
+    // Aplicar tope de selección
     if (this.selectedClientes.length > this.maxSelection) {
       this.selectedClientes = this.selectedClientes.slice(0, this.maxSelection);
-      const finalIds: string[] = this.selectedClientes.map((c: IClienteSearchResult) => c.id);
-      this.inputControl.setValue(finalIds, { emitEvent: false });
+      const limitedIds = this.selectedClientes.map(c => c.id);
+      this.internal_control.setValue(limitedIds, { emitEvent: false });
     }
 
-    this.emitirCambio();
-  }
-
-  /**
-   * Elimina un cliente seleccionado y actualiza el formulario
-   */
-  removeCliente(index: number): void {
-    this.selectedClientes.splice(index, 1);
-
-    const currentIds: string[] = this.selectedClientes.map((c: IClienteSearchResult) => c.id);
-    this.inputControl.setValue(currentIds, { emitEvent: false });
-
-    this.emitirCambio();
-    this.cdr.detectChanges();
-  }
-
-  /**
-   * Centraliza la lógica de emisión según la configuración del componente
-   */
-  private emitirCambio(): void {
+    // Generar valor final según modo
+    let finalValue: any;
     if (this.withRoles) {
-      // ✅ Transformación estricta al formato de Propietarios del DTO de Ventas
-      const propietarios: CreateVentaPropietarioDto[] = this.selectedClientes.map((c: IClienteSearchResult, index: number) => ({
+      finalValue = this.selectedClientes.map((c, index) => ({
         clienteId: c.id,
         rol: index === 0 ? RolPropietario.TITULAR : RolPropietario.COTITULAR
       }));
-      this.Change.emit(propietarios);
     } else {
-      const ids: string[] = this.selectedClientes.map((c: IClienteSearchResult) => c.id);
-      this.Change.emit(ids);
+      finalValue = this.selectedClientes.map(c => c.id);
     }
+
+    // Actualizar control externo y emitir
+    this.input_control.setValue(finalValue as unknown as T);
+    this.Change.emit(finalValue);
   }
 
   highlightText(fullText: string, searchTerm: string): string {
@@ -191,32 +298,32 @@ export class SelectClientesComponent implements OnInit, OnDestroy {
 
   abrirModalCrearCliente(nombreCompleto: string): void {
     const modalRef = this.modalService.open(ModelMultiClientesComponent, {
-      size: 'lg',
-      centered: true,
-      backdrop: 'static'
+      size: 'lg', centered: true, backdrop: 'static'
     });
 
     modalRef.componentInstance.nombrePrellenado = nombreCompleto;
 
     modalRef.result.then((nuevoCliente: IClienteSearchResult) => {
       if (nuevoCliente && nuevoCliente.id) {
-        // Añadir a la lista local para que aparezca en el select
         this.clientList = [nuevoCliente, ...this.clientList];
-
-        // Seleccionarlo automáticamente
+        
         if (this.multiple) {
-          const currentValues = (this.inputControl.value as string[]) || [];
-          this.inputControl.setValue([...currentValues, nuevoCliente.id]);
+          const current = (this.internal_control.value as string[]) || [];
+          this.internal_control.setValue([...current, nuevoCliente.id]);
         } else {
-          this.inputControl.setValue(nuevoCliente.id);
+          this.internal_control.setValue(nuevoCliente.id);
         }
-
-        // Forzar actualización y emitir cambio
-        this.onSelect(this.inputControl.value);
         this.cdr.detectChanges();
       }
-    }).catch(() => {
-      // Modal cerrado sin guardar (cancelado)
-    });
+    }).catch(() => {});
+  }
+
+  isTitular(clientId: string): boolean {
+    if (!this.withRoles) return false;
+    const val = this.internal_control.value;
+    if (Array.isArray(val) && val.length > 0) {
+      return val[0] === clientId;
+    }
+    return false;
   }
 }

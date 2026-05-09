@@ -1,1 +1,245 @@
-<p>register-venta-view works!</p>
+<form [formGroup]="form" class="fade-in">
+  <div class="container-fluid p-0">
+    <!-- ==========================================
+         SECCIÓN 1: DATOS DE OPERACIÓN
+         (Simplificada: Solo Identificación)
+    =========================================== -->
+    <app-card-container title="1. Datos de la Operación">
+      <div class="row g-3">
+        <!-- loteId* : REQUERIDO -->
+        <div class="col-md-4">
+          <app-form-field label="Lote" [required]="true">
+            <app-select-lotes [input_control]="loteId"></app-select-lotes>
+          </app-form-field>
+        </div>
+
+        <!-- asesorId* : REQUERIDO -->
+        <div class="col-md-4">
+          <app-form-field label="Asesor" [required]="true">
+            <app-select-asesor [input_control]="asesorId"></app-select-asesor>
+          </app-form-field>
+        </div>
+
+        <!-- reservaId : NO REQUERIDO -->
+        <div class="col-md-4">
+          <app-form-field label="Reserva (Opcional)">
+            <app-select-data
+              [inputControl]="reservaId"
+              input_placeholder="Buscar reserva..."
+            >
+            </app-select-data>
+          </app-form-field>
+        </div>
+
+        <!-- observaciones : NO REQUERIDO -->
+        <div class="col-12">
+          <app-form-field label="Observaciones">
+            <app-input-textarea
+              [input_control]="observaciones"
+              input_placeholder="Notas importantes..."
+            >
+            </app-input-textarea>
+          </app-form-field>
+        </div>
+      </div>
+    </app-card-container>
+
+    <!-- ==========================================
+         SECCIÓN 2: FINANZAS (CONFIGURACIÓN BASE)
+    =========================================== -->
+    <app-card-container title="2. Configuración Financiera">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-8">
+          <div class="row g-3">
+            <!-- tipoPago* : REQUERIDO -->
+            <div class="col-md-6">
+              <app-form-field label="Tipo de Pago" [required]="true">
+                <app-tipo-pago-selector
+                  [input_control]="tipoPago"
+                ></app-tipo-pago-selector>
+              </app-form-field>
+            </div>
+
+            <!-- moneda : NO REQUERIDO (Default: BS) -->
+            <div class="col-md-6">
+              <app-form-field label="Moneda">
+                <app-select-moneda [input_control]="moneda"></app-select-moneda>
+              </app-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- montoTotal* : REQUERIDO (Solo lectura, destacado) -->
+        <div class="col-md-4">
+          <div
+            class="bg-light p-3 rounded border d-flex flex-column align-items-center justify-content-center text-center"
+          >
+            <span class="text-uppercase text-muted fw-bold small"
+              >Monto Total</span
+            >
+            <app-currency-label
+              [input_value]="montoTotal.value || 0"
+              [currency]="moneda.value || 'BS'"
+              size="large"
+              class="mt-2"
+            ></app-currency-label>
+            <!-- Indicador visual según tipo de pago -->
+            @if (tipoPago.value === "CONTADO") {
+              <small class="text-muted mt-1 small-text-info"
+                >Pago único al contado</small
+              >
+            }
+            @if (tipoPago.value === "CUOTAS") {
+              <small class="text-primary mt-1 small-text-info"
+                >Plan de financiamiento</small
+              >
+            }
+          </div>
+        </div>
+      </div>
+    </app-card-container>
+
+    <!-- ==========================================
+         SECCIÓN 3: CRONOGRAMA (SOLO CUOTAS)
+         Aquí se mueve CUOTA INICIAL y los campos de fechas
+    =========================================== -->
+    @if (tipoPago.value === "CUOTAS") {
+      <app-card-container title="3. Detalles del Plan de Pagos">
+        <div class="row g-3">
+          <!-- Columna Izquierda: Datos Generales del Plan -->
+          <div class="col-md-6">
+            <div class="row g-3">
+              <!-- nroCuotas -->
+              <div class="col-md-6">
+                <app-form-field label="Nro. Cuotas">
+                  <app-input-number
+                    [input_control]="nroCuotas"
+                    [input_maxvalue]="600"
+                    input_placeholder="Ej: 12"
+                  >
+                  </app-input-number>
+                </app-form-field>
+              </div>
+
+              <!-- frecuenciaPago -->
+              <div class="col-md-6">
+                <app-form-field label="Frecuencia">
+                  <app-select-frecuencia-pago
+                    [input_control]="frecuenciaPago"
+                  ></app-select-frecuencia-pago>
+                </app-form-field>
+              </div>
+
+              <!-- fechaPagoInicial -->
+              <div class="col-12">
+                <app-form-field label="Fecha Inicial">
+                  <app-input-date
+                    [input_control]="fechaPagoInicial"
+                  ></app-input-date>
+                </app-form-field>
+              </div>
+
+              <!-- cuotaInicial* : MOVIDO AQUÍ (Solo para CUOTAS) -->
+              <div class="col-12 mt-2">
+                <app-form-field
+                  label="Cuota Inicial / Adelanto"
+                  [required]="true"
+                >
+                  <app-input-number
+                    [input_control]="cuotaInicial"
+                    input_placeholder="0.00"
+                  ></app-input-number>
+                </app-form-field>
+                <small class="text-muted"
+                  >Monto descontado del total para el crédito.</small
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Configuración Específica del Calendario -->
+          <div class="col-md-6">
+            <div class="bg-white p-3 rounded h-100 border border-light">
+              <h6 class="text-muted small fw-bold mb-3">
+                AJUSTES DE CALENDARIO
+              </h6>
+
+              <!-- Lógica SEMANAL -->
+              @if (frecuenciaPago.value === "SEMANAL") {
+                <app-form-field label="Día de Vencimiento">
+                  <app-select-dia-semana
+                    [input_control]="diaSemanaPago"
+                  ></app-select-dia-semana>
+                </app-form-field>
+              }
+
+              <!-- Lógica QUINCENAL -->
+              @if (frecuenciaPago.value === "QUINCENAL") {
+                <app-form-field label="Modalidad">
+                  <app-modalidad-calendario-selector
+                    [input_control]="modalidadCalendarioPago"
+                  ></app-modalidad-calendario-selector>
+                </app-form-field>
+
+                @if (modalidadCalendarioPago.value === "DIAS_FIJOS_MES") {
+                  <div class="row g-2 mt-2">
+                    <div class="col-6">
+                      <app-form-field label="Día Pago 1">
+                        <app-input-dia-pago
+                          [input_control]="diaPagoMes1"
+                        ></app-input-dia-pago>
+                      </app-form-field>
+                    </div>
+                    <div class="col-6">
+                      <app-form-field label="Día Pago 2">
+                        <app-input-dia-pago
+                          [input_control]="diaPagoMes2"
+                        ></app-input-dia-pago>
+                      </app-form-field>
+                    </div>
+                  </div>
+                }
+              }
+
+              <!-- Lógica MENSUAL/BIMESTRAL/TRIMESTRAL -->
+              @if (
+                frecuenciaPago.value === "MENSUAL" ||
+                frecuenciaPago.value === "BIMESTRAL" ||
+                frecuenciaPago.value === "TRIMESTRAL"
+              ) {
+                <div class="text-center text-muted py-4">
+                  <i class="bi bi-calendar-check display-4"></i>
+                  <p class="mt-2 mb-0">
+                    Calendario automático generado por fecha.
+                  </p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </app-card-container>
+    }
+
+    <!-- ==========================================
+         SECCIÓN 4: PROPIETARIOS
+    =========================================== -->
+    <app-card-container title="4. Propietarios">
+      <div class="row">
+        <div class="col-12">
+          <app-form-field label="Clientes" [required]="true">
+            <app-select-clientes
+              [input_control]="propietarios"
+              [multiple]="true"
+              [withRoles]="true"
+              [maxSelection]="5"
+              input_placeholder="Buscar y agregar cliente..."
+            ></app-select-clientes>
+          </app-form-field>
+          <div class="alert alert-info py-2 px-3 small d-inline-block">
+            <i class="bi bi-info-circle me-1"></i> Seleccione mínimo 1 Titular.
+          </div>
+        </div>
+      </div>
+    </app-card-container>
+  </div>
+</form>

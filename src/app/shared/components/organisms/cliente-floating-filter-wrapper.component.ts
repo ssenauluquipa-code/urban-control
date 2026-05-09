@@ -14,7 +14,7 @@ import { SelectClienteOutput } from '../../../core/models/venta.model';
   template: `
     <div class="filter-wrapper">
       <app-select-clientes
-        [inputControl]="clienteControl"
+        [input_control]="clienteControl"
         placeholder="Filtrar cliente..."
         (Change)="onClienteSelected($event)">
       </app-select-clientes>

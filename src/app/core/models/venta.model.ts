@@ -61,9 +61,21 @@ export interface IVenta {
 export interface ClienteVenta {
   id: string;
   nombre: string;
+  rol?: RolPropietario;
 }
 
 /**
  * Tipo unión para el evento de salida, asegurando que no haya ambigüedad
  */
 export type SelectClienteOutput = string | string[] | CreateVentaPropietarioDto[] | null;
+
+
+export enum DiaSemanaPago {
+  LUNES = 'LUNES',
+  MARTES = 'MARTES',
+  MIERCOLES = 'MIERCOLES',
+  JUEVES = 'JUEVES',
+  VIERNES = 'VIERNES',
+  SABADO = 'SABADO',
+  DOMINGO = 'DOMINGO'
+}

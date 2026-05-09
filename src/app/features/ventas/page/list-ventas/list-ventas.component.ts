@@ -10,6 +10,8 @@ import { FormControl } from '@angular/forms';
 import { ManzanaFloatingFilterWrapperComponent } from 'src/app/shared/components/organisms/manzana-floating-filter-wrapper.component';
 import { debounceTime, distinctUntilChanged, finalize, merge } from 'rxjs';
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
+import { Router } from '@angular/router';
+import { VentaPropietariosCellComponent } from 'src/app/shared/components/atoms/venta-propietarios-cell/venta-propietarios-cell.component';
 
 @Component({
   selector: 'app-list-ventas',
@@ -25,6 +27,7 @@ export class ListVentasComponent implements OnInit {
   private globalContext = inject(ProjectStatusGlobalService);
   private notification = inject(NotificationService);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
 
   // Estado
   public tableActionEnum = TableActionsEnum;
@@ -150,7 +153,7 @@ export class ListVentasComponent implements OnInit {
       headerName: 'Propietario(s)',
       flex: 1,
       minWidth: 250,
-      /* valueFormatter: (p) => p.data?.clientes?.map((c: any) => c.nombre).join(', ') || '' */
+      cellRenderer: VentaPropietariosCellComponent
     },
     {
       field: 'montoTotal',
@@ -221,7 +224,7 @@ export class ListVentasComponent implements OnInit {
   }
 
   onAddNew(): void {
-    // Navegar a formulario de nueva venta
+    this.router.navigate(['/ventas/register']);
   }
 
 }

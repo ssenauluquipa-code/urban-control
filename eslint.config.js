@@ -37,6 +37,8 @@ module.exports = defineConfig([
 
       // ❌ Desactivar sugerencia de inject()
       "@angular-eslint/prefer-inject": "off",
+      "@angular-eslint/template/accessibility-label-has-associated-control": "off",
+      "@angular-eslint/template/label-has-associated-control": "off",
 
       // (opcional) puedes agregar más reglas aquí
       // "@typescript-eslint/no-explicit-any": "off",
@@ -51,7 +53,8 @@ module.exports = defineConfig([
       angular.configs.templateAccessibility,
     ],
     rules: {
-      // ❌ Desactivar regla si te molesta
+      "@angular-eslint/template/accessibility-label-has-associated-control": "off",
+      "@angular-eslint/template/label-has-associated-control": "off",
       "@typescript-eslint/ban-types": "off",
       "no-unused-vars": "off",
     },

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { ListVentasComponent } from './page/list-ventas/list-ventas.component';
+import { RegisterVentasComponent } from './page/register-ventas.component';
 
 export const VENTAS_ROUTES: Routes = [
     {
@@ -10,4 +11,8 @@ export const VENTAS_ROUTES: Routes = [
             breadcrumb: 'Ventas',
         },
     },
+    {
+        path: 'register',
+        component: RegisterVentasComponent,
+    }
 ];

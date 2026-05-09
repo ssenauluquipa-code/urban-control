@@ -65,6 +65,20 @@ import { FormsModule } from '@angular/forms';
           }
         </ng-template>
 
+        <ng-template ng-label-tmp let-item="item" let-clear="clear">
+          @if (customLabelTemplate) {
+            <ng-container
+              *ngTemplateOutlet="
+                customLabelTemplate;
+                context: { $implicit: item, clear: clear, label: item[bindLabel] }
+              "
+            ></ng-container>
+          } @else {
+            <span class="ng-value-label">{{ item[bindLabel] }}</span>
+            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          }
+        </ng-template>
+
         
         <ng-template ng-notfound-tmp let-searchTerm="searchTerm">
           <div class="p-2 small text-muted">
@@ -98,6 +112,12 @@ export class SelectDataComponent<T = unknown> implements OnInit {
   @Input() customOptionTemplate?: TemplateRef<{
     $implicit: T;
     searchTerm: string;
+  }>;
+
+  @Input() customLabelTemplate?: TemplateRef<{
+    $implicit: T;
+    clear: (item: T) => void;
+    label: string;
   }>;
 
   public selectId = 'select-' + Math.random().toString(36).substring(2, 9);

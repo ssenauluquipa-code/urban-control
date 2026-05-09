@@ -12,7 +12,7 @@ export type CurrencySize = 'small' | 'default' | 'large';
   styleUrls: ['./currency-label.component.scss']
 })
 export class CurrencyLabelComponent implements OnChanges, OnInit {
-  @Input() value = 0;
+  @Input() input_value = 0;
   @Input() currency = 'BS';
   @Input() size = 'default';
   @Input() prefix = '';
@@ -25,7 +25,7 @@ export class CurrencyLabelComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['value'] || changes['currency'] || changes['decimals']) {
+    if (changes['input_value'] || changes['currency'] || changes['decimals']) {
       this.formatValue();
     }
   }
@@ -34,7 +34,7 @@ export class CurrencyLabelComponent implements OnChanges, OnInit {
     const formatted = new Intl.NumberFormat('es-BO', {
       minimumFractionDigits: this.decimals,
       maximumFractionDigits: this.decimals
-    }).format(this.value);
+    }).format(this.input_value);
 
     this.formattedValue = this.currency === 'USD' ? formatted : formatted;
   }

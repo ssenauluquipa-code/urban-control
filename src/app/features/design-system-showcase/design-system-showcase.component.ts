@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormsModule, Validators } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TipoPago, FrecuenciaPago, DiaSemanaPago } from 'src/app/core/models/venta.model';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { ColDef, GridApi, ICellRendererParams } from 'ag-grid-community';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
@@ -20,6 +21,11 @@ import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data
 import { SelectAsesorComponent } from 'src/app/shared/components/atoms/select-asesor.component';
 import { SelectLotesComponent } from 'src/app/shared/components/atoms/select-lotes.component';
 import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
+import { TipoPagoSelectorComponent } from 'src/app/shared/components/molecules/tipo-pago-selector.component';
+import { ModalidadCalendarioSelectorComponent } from 'src/app/shared/components/molecules/modalidad-calendario-selector.component';
+import { SelectDiaSemanaComponent } from 'src/app/shared/components/molecules/select-dia-semana.component';
+import { InputDiaPagoComponent } from 'src/app/shared/components/molecules/input-dia-pago.component';
+import { SelectFrecuenciaPagoComponent } from 'src/app/shared/components/molecules/select-frecuencia-pago.component';
 
 @Component({
   selector: 'app-design-system-showcase',
@@ -27,6 +33,7 @@ import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     NzInputModule,
     BadgeEstadoComponent,
     ButtonActionComponent,
@@ -44,6 +51,11 @@ import { TEstadoLote } from 'src/app/core/models/lote/lote.model';
     SelectDataComponent,
     SelectAsesorComponent,
     SelectLotesComponent,
+    TipoPagoSelectorComponent,
+    SelectFrecuenciaPagoComponent,
+    ModalidadCalendarioSelectorComponent,
+    SelectDiaSemanaComponent,
+    InputDiaPagoComponent,
   ],
   templateUrl: './design-system-showcase.component.html',
   styleUrls: ['./design-system-showcase.component.scss'],
@@ -63,9 +75,15 @@ export class DesignSystemShowcaseComponent implements OnInit {
   selectControl = new FormControl(null, [Validators.required]);
   asesorControl = new FormControl(null);
   loteControl = new FormControl(null);
-  
+  // Define el control con su tipo explícito
+  public tipoPagoControl = new FormControl<TipoPago>(TipoPago.CONTADO, { nonNullable: true });
+  frecuenciaControl = new FormControl<FrecuenciaPago>(FrecuenciaPago.MENSUAL);
+  modalidadControl = new FormControl<string | null>('INTERVALO_15_DIAS');
+  diaSemanaControl = new FormControl<DiaSemanaPago>(DiaSemanaPago.LUNES, { nonNullable: true });
+  diaPagoControl = new FormControl<number>(15, { nonNullable: true });
+
   // ID de ejemplo para que el selector de lotes cargue algo
-  dummyManzanaId = 'a6a7ae9f-e5b5-4a1f-9105-3e418d37b54b'; 
+  dummyManzanaId = 'a6a7ae9f-e5b5-4a1f-9105-3e418d37b54b';
 
   public estado = TEstadoLote;
 

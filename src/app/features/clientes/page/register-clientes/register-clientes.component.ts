@@ -41,10 +41,10 @@ export class RegisterClientesComponent implements OnInit {
       tipoDocumento: [ETipoDocumento.CI, [Validators.required]],
       nroDocumento: ['', [Validators.required, Validators.maxLength(30)]],
       complemento: ['', [Validators.required, Validators.maxLength(20)]],
-      numeroReferencia: ['', [Validators.maxLength(50)]],
+      numeroReferencia: ['', [Validators.required, Validators.maxLength(50)]],
       genero: [EGenero.MASCULINO, Validators.required],
       fechaNacimiento: [null],
-      telefono: ['', [Validators.required, Validators.maxLength(30)]],
+      telefono: ['', [Validators.maxLength(30)]],
       email: ['', Validators.email],
       direccion: ['', Validators.maxLength(250)]
     });

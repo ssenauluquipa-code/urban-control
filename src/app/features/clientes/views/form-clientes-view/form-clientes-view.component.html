@@ -88,7 +88,7 @@
     <app-card-container title="Contacto y Ubicación">
       <div class="row">
         <div class="col-md-6">
-          <app-form-field label="Teléfono">
+          <app-form-field label="Celular" [required]="true">
             <app-input-number
               [input_control]="Telefono"
               [input_placeholder]="'71234567'"
@@ -98,7 +98,7 @@
         </div>
 
         <div class="col-md-6">
-          <app-form-field label="Nro. Celular" [required]="true">
+          <app-form-field label="Celular opcional">
             <app-input-number
               [input_control]="NumeroReferencia"
               [input_placeholder]="'00000000'"

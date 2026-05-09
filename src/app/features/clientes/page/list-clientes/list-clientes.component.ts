@@ -79,7 +79,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     },
     {
       field: 'telefono',
-      headerName: 'Teléfono',
+      headerName: 'Celular',
       width: 110,
       suppressHeaderMenuButton: true
     },

@@ -3,7 +3,7 @@
   <div class="col-md-6">
     <!-- Cliente -->
     <app-form-field label="Cliente" [required]="true">
-      <app-select-clientes [inputControl]="clienteId"></app-select-clientes>
+      <app-select-clientes [input_control]="clienteId"></app-select-clientes>
     </app-form-field>
     <div class="row">
       <div class="col-md-5 col-12">
@@ -21,7 +21,7 @@
         <!-- Lote -->
         <app-form-field label="Lote" [required]="true">
           <app-select-lotes
-            [inputControl]="loteId"
+            [input_control]="loteId"
             [manzanaId]="manzanaId.value"
             (ManzanaChange)="onManzanaFromLote($event)"
           >
@@ -47,7 +47,7 @@
       </div>
       <div class="col-6">
         <app-form-field label="Moneda">
-          <app-select-moneda [inputControl]="moneda"></app-select-moneda>
+          <app-select-moneda [input_control]="moneda"></app-select-moneda>
         </app-form-field>
       </div>
     </div>

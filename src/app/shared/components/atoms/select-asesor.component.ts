@@ -12,13 +12,12 @@ import { catchError, debounce, Observable, of, startWith, Subject, switchMap, ta
   imports: [SelectDataComponent, CommonModule, ReactiveFormsModule],
   template: `
     <app-select-data
-      [label]="label"
       [itemList]="(asesores$ | async) || []"
       bindLabel="nombreCompleto"
       bindValue="id"
       [searchable]="true"
       [loading]="isLoading"
-      [inputControl]="control"
+      [inputControl]="input_control"
       [customOptionTemplate]="asesorTemplate"
       (Search)="onSearch($event)">
     </app-select-data>
@@ -38,8 +37,7 @@ export class SelectAsesorComponent implements OnInit {
 
   private asesorService = inject(AsesorService);
 
-  @Input() label = 'Asesor';
-  @Input() control = new FormControl<string | null>(null);
+  @Input() input_control = new FormControl<string | null>(null);
 
   asesores$!: Observable<IAsesorOption[]>;
   private searchSubject = new Subject<string>();
@@ -59,7 +57,7 @@ export class SelectAsesorComponent implements OnInit {
     );
   }
 
-  onSearch(term: string): void {    
+  onSearch(term: string): void {
     this.searchSubject.next(term);
   }
 

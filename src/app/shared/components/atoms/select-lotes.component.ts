@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
   template: `
     <app-select-data
       [itemList]="loteList"
-      [inputControl]="inputControl"
+      [inputControl]="input_control"
       [placeholder]="placeholder"
       bindValue="id"
       bindLabel="descripcion"
@@ -46,7 +46,7 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
   private loteService = inject(LoteService);
 
   // Inputs
-  @Input() inputControl = new FormControl<string | null>(null);
+  @Input() input_control = new FormControl<string | null>(null);
   @Input() manzanaId: string | null = null;
   @Input() placeholder = 'Buscar lote...';
 
@@ -92,8 +92,8 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
         }));
 
         // Verificar si el lote seleccionado actual existe en la nueva lista
-        if (this.inputControl.value && !this.loteList.find(l => l.id === this.inputControl.value)) {
-          this.inputControl.setValue(null);
+        if (this.input_control.value && !this.loteList.find(l => l.id === this.input_control.value)) {
+          this.input_control.setValue(null);
         }
 
         this.isLoading = false;

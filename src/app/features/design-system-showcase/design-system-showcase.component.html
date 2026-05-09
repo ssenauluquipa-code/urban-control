@@ -39,12 +39,18 @@
       <h3>Currency Label</h3>
       <p>Formateo de moneda Boliviana (BS) y dólares (USD)</p>
       <div class="demo-area">
-        <app-currency-label [value]="50000" currency="BS"></app-currency-label>
         <app-currency-label
-          [value]="1500.5"
+          [input_value]="50000"
+          currency="BS"
+        ></app-currency-label>
+        <app-currency-label
+          [input_value]="1500.5"
           currency="USD"
         ></app-currency-label>
-        <app-currency-label [value]="75000" currency="BS"></app-currency-label>
+        <app-currency-label
+          [input_value]="75000"
+          currency="BS"
+        ></app-currency-label>
       </div>
     </div>
 
@@ -138,14 +144,17 @@
     <!-- Select Asesor -->
     <div class="component-card">
       <h3>Select Asesor (Domain Specific)</h3>
-      <p>Selector especializado para asesores con búsqueda remota y visualización detallada</p>
+      <p>
+        Selector especializado para asesores con búsqueda remota y visualización
+        detallada
+      </p>
       <div
         class="demo-area"
         style="flex-direction: column; align-items: stretch"
       >
         <app-select-asesor
           label="Asesor de Ventas"
-          [control]="asesorControl"
+          [input_control]="asesorControl"
         >
         </app-select-asesor>
       </div>
@@ -154,17 +163,18 @@
     <!-- Select Lotes -->
     <div class="component-card">
       <h3>Select Lotes (Cascade / Specialized)</h3>
-      <p>Selector de lotes con visualización de precio, área y búsqueda interna.</p>
+      <p>
+        Selector de lotes con visualización de precio, área y búsqueda interna.
+      </p>
       <div
         class="demo-area"
         style="flex-direction: column; align-items: stretch"
       >
-        <app-select-lotes
-          label="Lote Disponible"
-          [inputControl]="loteControl"
-        >
+        <app-select-lotes label="Lote Disponible" [input_control]="loteControl">
         </app-select-lotes>
-        <small class="text-muted mt-2">Nota: Este componente requiere un manzanaId para cargar datos.</small>
+        <small class="text-muted mt-2"
+          >Nota: Este componente requiere un manzanaId para cargar datos.</small
+        >
       </div>
     </div>
 
@@ -238,6 +248,92 @@
         class="demo-area"
         style="flex-direction: column; align-items: stretch"
       ></div>
+    </div>
+    <h1>pruea</h1>
+    <!-- Tipo Pago Selector -->
+    <div class="component-card">
+      <h3>Tipo Pago Selector</h3>
+      <p>Selector de tipo de pago (Contado / Cuotas) con estilo de botones</p>
+      <div
+        class="demo-area"
+        style="flex-direction: column; align-items: stretch"
+      >
+        <app-tipo-pago-selector
+          [input_control]="tipoPagoControl"
+        ></app-tipo-pago-selector>
+        <small class="mt-2 text-muted"
+          >Valor seleccionado: {{ tipoPagoControl.value }}</small
+        >
+      </div>
+    </div>
+
+    <!-- Select Frecuencia Pago -->
+    <div class="component-card">
+      <h3>Select Frecuencia Pago</h3>
+      <p>Selector de frecuencia de pago (Mensual, Quincenal, etc.)</p>
+      <div
+        class="demo-area"
+        style="flex-direction: column; align-items: stretch"
+      >
+        <app-select-frecuencia-pago
+          [input_control]="frecuenciaControl"
+        ></app-select-frecuencia-pago>
+        <small class="mt-2 text-muted"
+          >Valor seleccionado: {{ frecuenciaControl.value }}</small
+        >
+      </div>
+    </div>
+
+    <!-- Modalidad Calendario Selector -->
+    <div class="component-card">
+      <h3>Modalidad Calendario Selector</h3>
+      <p>Selector de lógica para el calendario de pagos</p>
+      <div
+        class="demo-area"
+        style="flex-direction: column; align-items: stretch"
+      >
+        <app-modalidad-calendario-selector
+          [input_control]="modalidadControl"
+        ></app-modalidad-calendario-selector>
+        <small class="mt-2 text-muted"
+          >Valor seleccionado: {{ modalidadControl.value }}</small
+        >
+      </div>
+    </div>
+
+    <!-- Select Dia Semana -->
+    <div class="component-card">
+      <h3>Select Dia Semana</h3>
+      <p>Selector de día de la semana para vencimientos</p>
+      <div
+        class="demo-area"
+        style="flex-direction: column; align-items: stretch"
+      >
+        <app-select-dia-semana
+          [input_control]="diaSemanaControl"
+        ></app-select-dia-semana>
+        <small class="mt-2 text-muted"
+          >Valor seleccionado: {{ diaSemanaControl.value }}</small
+        >
+      </div>
+    </div>
+
+    <!-- Input Dia Pago -->
+    <div class="component-card">
+      <h3>Input Dia Pago</h3>
+      <p>Campo numérico para el día del mes (1-31)</p>
+      <div
+        class="demo-area"
+        style="flex-direction: column; align-items: stretch"
+      >
+        <app-input-dia-pago
+          [input_control]="diaPagoControl"
+          label="Día de Vencimiento Mensual"
+        ></app-input-dia-pago>
+        <small class="mt-2 text-muted"
+          >Valor seleccionado: {{ diaPagoControl.value }}</small
+        >
+      </div>
     </div>
   </div>
 
