@@ -1,42 +1,66 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { ColDef } from "ag-grid-community";
-import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
 import { finalize } from "rxjs";
+import { ActivatedRoute, Router } from "@angular/router";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+
 import { EAsesorType, IAsesor } from "src/app/core/models/asesor/asesor.model";
 import { AsesorService } from "src/app/core/services/asesor.service";
+import { ConfirmationService } from "src/app/core/services/confirmation.service";
 import { NotificationService } from "src/app/core/services/notification.service";
+import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
+import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
+import { StatusFloatingFilterComponent } from "src/app/shared/components/organisms/status-floating-filter.component";
 import {
   ITableActionEvent,
   TableActionsEnum,
 } from "src/app/shared/interfaces/table-actions.interface";
-import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
-import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
-import { ConfirmationService } from "src/app/core/services/confirmation.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ActivatedRoute, Router } from "@angular/router";
-import { AsesorDetailComponent } from "../asesor-detail/asesor-detail.component";
 import { ITableFilterModel } from "src/app/shared/interfaces/table-filters.interface";
-import { StatusFloatingFilterComponent } from "src/app/shared/components/organisms/status-floating-filter.component";
+import { AsesorDetailComponent } from "src/app/features/asesor/page/asesor-detail/asesor-detail.component";
 
 @Component({
-  selector: "app-lista-asesores",
+  selector: "app-list-propietario",
   standalone: true,
-  imports: [PageContainerComponent, DataTableComponent],
-  templateUrl: "./lista-asesores.component.html",
-  styleUrl: "./lista-asesores.component.scss",
+  imports: [DataTableComponent],
+  template: `
+    <app-data-table
+      [rowData]="asesores"
+      [columnDefs]="columnDefs"
+      [loading]="loading"
+      [showCreate]="false"
+      [actions]="[
+        tableActionEnum.EDIT,
+        tableActionEnum.DEACTIVATE,
+        tableActionEnum.ACTIVATE,
+        tableActionEnum.INFO,
+      ]"
+      height="350px"
+      (actionClicked)="onTableAction($event)"
+      (filterChanged)="onTableFilterChanged($event)"
+    >
+    </app-data-table>
+  `,
+  styles: ``,
 })
-export class ListaAsesoresComponent implements OnInit {
+export class ListPropietarioComponent implements OnInit, OnChanges {
+  @Input() refreshToken = 0;
+
   public tableActionEnum = TableActionsEnum;
 
-  // Data
   public asesores: IAsesor[] = [];
   public loading = false;
 
-  // Estado local para los filtros
   private currentFilterModel: ITableFilterModel = {};
   private currentStatusFilter: boolean | undefined = undefined;
 
-  // Column Definitions
   columnDefs: ColDef[] = [
     {
       field: "codigoAsesor",
@@ -51,7 +75,7 @@ export class ListaAsesoresComponent implements OnInit {
     },
     {
       field: "nombreCompleto",
-      headerName: "Nombre Completo del asesor",
+      headerName: "Nombre Completo del propietario",
       flex: 1,
       minWidth: 200,
       filter: "agTextColumnFilter",
@@ -106,7 +130,6 @@ export class ListaAsesoresComponent implements OnInit {
     },
   ];
 
-  // Inyecciones
   private asesorService = inject(AsesorService);
   private confirmation = inject(ConfirmationService);
   private notification = inject(NotificationService);
@@ -116,19 +139,25 @@ export class ListaAsesoresComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
-    this.loadAsesores();
+    this.loadPropietarios();
   }
 
-  loadAsesores(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["refreshToken"] && !changes["refreshToken"].firstChange) {
+      this.loadPropietarios();
+    }
+  }
+
+  loadPropietarios(): void {
     this.loading = true;
     this.asesorService
-      .getAsesores()
+      .getAsesores(undefined, undefined, undefined, EAsesorType.PROPIETARIO)
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (data) => {
           this.asesores = data;
         },
-        error: () => this.notification.error("Error al cargar asesores"),
+        error: () => this.notification.error("Error al cargar propietarios"),
       });
   }
 
@@ -150,24 +179,21 @@ export class ListaAsesoresComponent implements OnInit {
 
       this.confirmation
         .toggleStatus(
-          "Asesor",
+          "Propietario",
           event.row!.nombreCompleto,
           event.row!.isActive,
           request$,
         )
         .subscribe((wasSuccessful) => {
           if (wasSuccessful) {
-            this.loadAsesores();
+            this.loadPropietarios();
           }
         });
     }
+
     if (event.action === TableActionsEnum.INFO) {
       this.openDetailModal(event.row!.id);
     }
-  }
-
-  onAddNew(): void {
-    this.router.navigate(["registrar"], { relativeTo: this.route });
   }
 
   private openDetailModal(id: string): void {
@@ -199,7 +225,7 @@ export class ListaAsesoresComponent implements OnInit {
 
     this.loading = true;
     this.asesorService
-      .getAsesores(term, nroDocumento, active, EAsesorType.EMPLEADO)
+      .getAsesores(term, nroDocumento, active, EAsesorType.PROPIETARIO)
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -211,7 +237,7 @@ export class ListaAsesoresComponent implements OnInit {
           this.asesores = [...data];
         },
         error: (err) => {
-          console.error("Error al filtrar asesores", err);
+          console.error("Error al filtrar propietarios", err);
         },
       });
   }

@@ -1,22 +1,32 @@
 import { Observable } from "rxjs";
-import { CreateAsesorDto, IAsesor, IAsesorOption, UpdateAsesorDto } from "../../models/asesor/asesor.model";
+import {
+  CreateAsesorDto,
+  IAsesor,
+  IAsesorOption,
+  UpdateAsesorDto,
+} from "../../models/asesor/asesor.model";
 
 export interface IAsesorRepository {
-    /**
-     * Obtiene la lista de asesores.
-     * Nota: A diferencia de Clientes, este endpoint devuelve un Array simple, no está paginado.
-     */
-    getAll(term?: string, nroDocumento?: string, isActive?: boolean): Observable<IAsesor[]>;
+  /**
+   * Obtiene la lista de asesores.
+   * Nota: A diferencia de Clientes, este endpoint devuelve un Array simple, no está paginado.
+   */
+  getAll(
+    term?: string,
+    nroDocumento?: string,
+    isActive?: boolean,
+    tipo?: string,
+  ): Observable<IAsesor[]>;
 
-    getById(id: string): Observable<IAsesor>;
+  getById(id: string): Observable<IAsesor>;
 
-    create(dto: CreateAsesorDto): Observable<IAsesor>;
+  create(dto: CreateAsesorDto): Observable<IAsesor>;
 
-    update(id: string, dto: UpdateAsesorDto): Observable<IAsesor>;
+  update(id: string, dto: UpdateAsesorDto): Observable<IAsesor>;
 
-    delete(id: string): Observable<void>;
+  delete(id: string): Observable<void>;
 
-    activate(id: string): Observable<IAsesor>;
+  activate(id: string): Observable<IAsesor>;
 
-    searchAsesores(term: string): Observable<IAsesorOption[]>;
+  searchAsesores(term: string, tipo?: string): Observable<IAsesorOption[]>;
 }

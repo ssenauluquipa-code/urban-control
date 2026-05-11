@@ -38,4 +38,12 @@ export class ClienteService {
   searchClients(term: string): Observable<IClienteSearchResult[]> {
     return this.repo.search(term);
   }
+
+  uploadFoto(id: string, file: File): Observable<ICliente> {
+    return this.repo.uploadFoto(id, file);
+  }
+
+  deleteFoto(id: string): Observable<void> {
+    return this.repo.deleteFoto(id);
+  }
 }

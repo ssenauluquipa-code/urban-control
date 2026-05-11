@@ -8,13 +8,16 @@ import { InputDateComponent } from "src/app/shared/components/atoms/input-date/i
 import { InputDocumentoComponent } from "src/app/shared/components/atoms/input-documento/input-documento.component";
 import { SelectExpedidoComponent } from "src/app/shared/components/atoms/select-expedido.component";
 import { InputNumberComponent } from "src/app/shared/components/atoms/input-number/input-number.component";
+import { SelectEstadoCivilComponent } from "src/app/shared/components/atoms/select-estado-civil.component";
+import { InputTextareaComponent } from "src/app/shared/components/atoms/input-textarea/input-textarea.component";
+import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 
 @Component({
   selector: 'app-register-asesor-view',
   standalone: true,
   imports: [FormFieldComponent, InputTextComponent,
     InputDateComponent, SelectGenderComponent,
-    SelectDocumentTypeComponent, InputDocumentoComponent, SelectExpedidoComponent, InputNumberComponent],
+    SelectDocumentTypeComponent, InputDocumentoComponent, SelectExpedidoComponent, InputNumberComponent, SelectEstadoCivilComponent, InputTextareaComponent, CardContainerComponent],
   templateUrl: './register-asesor-view.component.html',
   styleUrl: './register-asesor-view.component.scss'
 })
@@ -32,5 +35,9 @@ export class RegisterAsesorViewComponent {
   get FechaNacimiento() { return this.form.get('fechaNacimiento') as FormControl; }
   get Telefono() { return this.form.get('telefono') as FormControl; }
   get Email() { return this.form.get('email') as FormControl; }
+  get EstadoCivil() { return this.form.get('estadoCivil') as FormControl; }
+  get Ocupacion() { return this.form.get('ocupacion') as FormControl; }
+  get Direccion() { return this.form.get('direccion') as FormControl; }
+
 
 }

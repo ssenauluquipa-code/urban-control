@@ -1,7 +1,6 @@
 //
 // Xtreme Angular
 //
-
 //(Required file)
 @import "variable";
 
@@ -27,9 +26,9 @@
 @import 'node_modules/bootstrap/scss/variables';
 //@import 'node_modules/bootstrap/scss/variables-dark';
 //
-@import '../scss/settings/color-variables.scss';
-@import '../scss//settings/theme-variables.scss';
-@import '../scss/settings/bootstrap-variables.scss';
+@import 'settings/color-variables';
+@import 'settings/theme-variables';
+@import 'settings/bootstrap-variables';
 //
 ////bootstrap import creo que este es el problema
 //@import '../scss/bootstrap/bootstrap.scss';

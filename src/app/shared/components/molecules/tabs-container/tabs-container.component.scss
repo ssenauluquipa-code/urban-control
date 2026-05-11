@@ -1,0 +1,97 @@
+.custom-tab-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 999px;
+  padding: 0 6px;
+  font-size: 10px;
+  line-height: 16px;
+  min-width: 16px;
+  text-align: center;
+  margin-left: 4px;
+  backdrop-filter: blur(4px);
+}
+
+:host ::ng-deep {
+  .ant-tabs-nav {
+    margin-bottom: 15px;
+
+    &::before {
+      display: none; // Eliminamos la línea gris de fondo de Ng-Zorro
+    }
+  }
+
+  // EL CONTENEDOR TIPO CÁPSULA
+  .ant-tabs-nav-wrap {
+    border-radius: 14px;
+    display: inline-flex;
+    padding: 4px;
+  }
+
+  .ant-tabs-nav-list {
+    gap: 4px;
+  }
+
+  // ESTILO DE CADA PESTAÑA (BOTÓN)
+  .ant-tabs-tab {
+    padding: 8px 20px !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    border: none !important;
+    background: transparent !important;
+    transition: all 0.25s ease !important;
+
+    .ant-tabs-tab-btn {
+      color: #475569; // Azul gris suave inactivo
+    }
+
+    &:hover {
+      background: #2a427a !important;
+      .ant-tabs-tab-btn {
+        color: #ffffff;
+      }
+    }
+
+    // Badge cuando la pestaña está inactiva
+    .tab-badge {
+      background: #cbd5e1;
+      color: #12223b;
+    }
+  }
+
+  // PESTAÑA ACTIVA (EL PILL SE VUELVE OSCURO)
+  .ant-tabs-tab-active {
+    background: #12223b !important;
+    box-shadow: 0 4px 12px rgba(30, 52, 103, 0.24);
+    z-index: 2;
+
+    .ant-tabs-tab-btn {
+      color: #ffffff !important;
+    }
+
+    // Badge cuando la pestaña está activa
+    .tab-badge {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+  }
+
+  // OCULTAR LA LÍNEA AZUL DE NG-ZORRO
+  .ant-tabs-ink-bar {
+    display: none !important;
+  }
+
+  // CAMBIO DE TAB INMEDIATO
+  .ant-tabs-content-holder {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -160,13 +160,8 @@ nz-input-group {
 textarea.ant-input.ant-input-textarea,
 .ant-input-textarea textarea.ant-input {
   border-radius: 8px !important;
-  padding: 8px 12px;
-  transition: all 0.3s ease;
-
   resize: vertical !important; /* HABILITA el arrastre manual */
-  min-height: unset !important; /* Permite que el atributo [rows] mande */
-  height: auto !important; /* LIBERA la altura fija para que rows funcione */
-  display: block;
+  transition: all 0.3s ease;
 
   &:hover {
     border-color: #40a9ff;

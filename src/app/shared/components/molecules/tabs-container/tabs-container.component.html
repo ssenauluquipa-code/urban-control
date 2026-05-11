@@ -1,0 +1,31 @@
+<nz-tabset
+  [nzSelectedIndex]="selectedIndex"
+  (nzSelectedIndexChange)="onSelectedIndexChange($event)"
+  [nzAnimated]="false"
+  nzType="line"
+  nzSize="large"
+>
+  @for (tab of tabs; track tab.title) {
+    <nz-tab [nzDisabled]="tab.disabled" [nzTitle]="titleTemplate">
+      <!-- TITLE TEMPLATE -->
+      <ng-template #titleTemplate>
+        <div class="custom-tab-title">
+          @if (tab.icon) {
+            <span nz-icon [nzType]="tab.icon"></span>
+          }
+          <span>{{ tab.title }}</span>
+          @if (tab.badge) {
+            <span class="tab-badge">
+              {{ tab.badge }}
+            </span>
+          }
+        </div>
+      </ng-template>
+
+      <!-- CONTENT -->
+      <ng-template nz-tab>
+        <ng-container *ngTemplateOutlet="tab.templateRef"></ng-container>
+      </ng-template>
+    </nz-tab>
+  }
+</nz-tabset>

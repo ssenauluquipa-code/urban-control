@@ -6,17 +6,20 @@ import { ICliente } from 'src/app/core/models/cliente.model';
 import { ClienteService } from 'src/app/core/services/cliente.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
+import { HttpErrorResponse } from '@angular/common/http';
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { DataTableServerComponent } from 'src/app/shared/components/organisms/data-table-server/data-table-server.component';
 import { Router } from '@angular/router';
 import { ITableFilterModel } from 'src/app/shared/interfaces/table-filters.interface';
 import { StatusFloatingFilterComponent } from 'src/app/shared/components/organisms/status-floating-filter.component';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { ImageDisplayComponent } from 'src/app/shared/components/atoms/image-display/image-display.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-list-clientes',
   standalone: true,
-  imports: [PageContainerComponent, DataTableServerComponent],
+  imports: [PageContainerComponent, DataTableServerComponent, CommonModule],
   templateUrl: './list-clientes.component.html',
   styleUrls: ['./list-clientes.component.scss']
 })
@@ -58,7 +61,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     },
     {
       field: 'nombreCompleto',
-      headerName: 'Cliente',
+      headerName: 'Nombre de Cliente',
       flex: 2,
       minWidth: 200,
       filter: 'agTextColumnFilter',
@@ -70,7 +73,15 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'nroDocumento',
       headerName: 'Documento',
-      width: 110,
+      width: 150,
+      valueFormatter: (params) => {
+        if (!params.data) return '';
+        const data = params.data;
+        const tipo = data.tipoDocumento ?? '';
+        const nro = data.nroDocumento ?? '';
+        const comp = data.complemento ? ` ${data.complemento}` : '';
+        return `${tipo} ${nro}${comp}`.trim();
+      },
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -84,8 +95,8 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       suppressHeaderMenuButton: true
     },
     {
-      field: 'email',
-      headerName: 'Email',
+      field: 'direccion',
+      headerName: 'Dirección',
       flex: 1,
       minWidth: 200,
       suppressHeaderMenuButton: true
@@ -148,15 +159,12 @@ export class ListClientesComponent implements OnInit, OnDestroy {
 
   onTableFilterChanged(filterModel: ITableFilterModel): void {
     this.currentFilterModel = { ...filterModel };
-    // AG Grid's native filter change will automatically request new rows via getRows,
-    // but just in case, we can rely on its native behavior or force refresh.
-    // However, for custom filters that bypass AG Grid's model, we MUST call refresh().
   }
 
   onStatusFilterChanged(status: boolean | undefined): void {
     this.currentStatusFilter = status;
     if (this.dataTable) {
-      this.dataTable.refresh(); // 👈 Esto hace que AG Grid vuelva a pedir los datos (gatillando pageChange)
+      this.dataTable.refresh();
     } else {
       this.loadClientes(1);
     }
@@ -170,10 +178,83 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       this.router.navigate(['/clientes/editar', cliente.id]);
     } else if (event.action === TableActionsEnum.DEACTIVATE || event.action === TableActionsEnum.ACTIVATE) {
       this.toggleStatus(cliente);
-    }
-    else if (event.action === TableActionsEnum.INFO) {
+    } else if (event.action === TableActionsEnum.INFO) {
       this.router.navigate(['/clientes/ver', cliente.id]);
+    } else if (event.action === TableActionsEnum.UPLOAD_PHOTO) {
+      this.openUploadPhotoModal(cliente);
+    } else if (event.action === TableActionsEnum.REMOVE_IMAGE) {
+      this.confirmDeletePhoto(cliente);
     }
+  }
+
+  /** Abre un modal con app-image-display para subir la foto del cliente */
+  private openUploadPhotoModal(cliente: ICliente): void {
+    let selectedFile: File | null = null;
+
+    const modal: NzModalRef<ImageDisplayComponent> = this.nzModal.create({
+      nzTitle: `Subir foto — ${cliente.nombreCompleto}`,
+      nzContent: ImageDisplayComponent,
+      nzData: {
+        imageUrl: cliente.fotoUrl || '',
+        editable: true,
+        imageName: cliente.nombreCompleto,
+        emptyText: 'Sin foto',
+        emptyHint: 'Click para seleccionar una imagen'
+      },
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => modal.destroy()
+        },
+        {
+          label: 'Guardar foto',
+          type: 'primary',
+          disabled: () => !selectedFile,
+          onClick: () => {
+            if (!selectedFile) return;
+            this.clienteService.uploadFoto(cliente.id, selectedFile)
+              .pipe(finalize(() => modal.destroy()))
+              .subscribe({
+                next: () => {
+                  this.notification.success('Foto subida correctamente');
+                  if (this.dataTable) this.dataTable.refresh();
+                },
+                error: () => this.notification.error('Error al subir la foto')
+              });
+          }
+        }
+      ],
+      nzWidth: 360
+    });
+
+    // Capturar el archivo cuando el usuario lo selecciona en app-image-display
+    modal.afterOpen.subscribe(() => {
+      const comp = modal.getContentComponent();
+      if (comp) {
+        comp.imageUpdated.subscribe((file: File) => {
+          selectedFile = file;
+        });
+      }
+    });
+  }
+
+  /** Confirma y elimina la foto del cliente llamando al endpoint DELETE */
+  private confirmDeletePhoto(cliente: ICliente): void {
+    this.nzModal.confirm({
+      nzTitle: '¿Eliminar foto?',
+      nzContent: `Se quitará la foto del cliente <strong>${cliente.nombreCompleto}</strong>.`,
+      nzOkDanger: true,
+      nzOkText: 'Eliminar',
+      nzOnOk: () => {
+        this.clienteService.deleteFoto(cliente.id).subscribe({
+          next: () => {
+            this.notification.success('Foto eliminada');
+            if (this.dataTable) this.dataTable.refresh();
+          },
+          error: () => this.notification.error('Error al eliminar la foto')
+        });
+      }
+    });
   }
 
   private toggleStatus(cliente: ICliente): void {
@@ -186,12 +267,15 @@ export class ListClientesComponent implements OnInit, OnDestroy {
           next: () => {
             this.notification.success('Estado actualizado');
             if (this.dataTable) {
-              this.dataTable.refresh(); // Gatilla la petición al servidor a través de AG Grid
+              this.dataTable.refresh();
             } else {
               this.loadClientes(this.currentPage);
             }
           },
-          error: () => this.notification.error('Error al actualizar')
+          error: (err: HttpErrorResponse) => {
+            const msg = err?.error?.message || 'Error al actualizar el estado del cliente';
+            this.notification.error(msg);
+          }
         });
       }
     });

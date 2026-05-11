@@ -1,78 +1,113 @@
-<div class="row">
-  <!-- Columna Izquierda -->
+<form class="row align-items-stretch">
+  <!-- Columna Izquierda: Identificación -->
   <div class="col-md-6">
-    <app-form-field label="Nombre Completo" [required]="true">
-      <app-input-text
-        [input_control]="NombreCompleto"
-        input_placeholder="Ej: Juan Pérez"
-      >
-      </app-input-text>
-    </app-form-field>
+    <app-card-container title="Identificación">
+      <div class="row">
+        <div class="col-12">
+          <app-form-field label="Nombre Completo" [required]="true">
+            <app-input-text
+              [input_control]="NombreCompleto"
+              input_placeholder="Ej. Juan Pérez"
+            ></app-input-text>
+          </app-form-field>
+        </div>
 
-    <div class="row">
-      <div class="col-5">
-        <app-form-field label="Tipo Doc." [required]="true">
-          <app-select-document-type
-            [inputControl]="TipoDocumento"
-            [placeholder]="'Seleccione'"
-          >
-          </app-select-document-type>
-        </app-form-field>
-      </div>
-      <div class="col-7">
-        <app-form-field label="Nro. Documento" [required]="true">
-          <app-input-documento
-            [input_control]="NroDocumento"
-            [hasComplemento]="true"
-            [placeholder]="'1234567'"
-          >
-          </app-input-documento>
-        </app-form-field>
-      </div>
-    </div>
+        <div class="col-5">
+          <app-form-field label="Tipo Doc." [required]="true">
+            <app-select-document-type
+              [inputControl]="TipoDocumento"
+              [placeholder]="'Tipo'"
+            ></app-select-document-type>
+          </app-form-field>
+        </div>
+        <div class="col-7">
+          <app-form-field label="Nro. Documento" [required]="true">
+            <app-input-documento
+              [input_control]="NroDocumento"
+              [hasComplemento]="true"
+              [placeholder]="'1234567'"
+            ></app-input-documento>
+          </app-form-field>
+        </div>
 
-    <app-form-field label="Teléfono" [required]="true">
-      <app-input-number
-        [input_control]="Telefono"
-        [input_placeholder]="'71234567'"
-      >
-      </app-input-number>
-    </app-form-field>
+        <div class="col-6">
+          <app-form-field label="Expedido" [required]="true">
+            <app-select-expedido
+              [inputControl]="Complemento"
+              [placeholder]="'Seleccione'"
+            ></app-select-expedido>
+          </app-form-field>
+        </div>
+        <div class="col-6">
+          <app-form-field label="Género" [required]="true">
+            <app-select-gender [inputControl]="Genero"></app-select-gender>
+          </app-form-field>
+        </div>
+
+        <div class="col-6">
+          <app-form-field label="Estado Civil" [required]="true">
+            <app-select-estado-civil
+              [inputControl]="EstadoCivil"
+              [placeholder]="'Seleccione'"
+            ></app-select-estado-civil>
+          </app-form-field>
+        </div>
+        <div class="col-6">
+          <app-form-field label="Fecha Nacimiento">
+            <app-input-date
+              [input_control]="FechaNacimiento"
+              input_placeholder="Seleccione"
+            ></app-input-date>
+          </app-form-field>
+        </div>
+      </div>
+    </app-card-container>
   </div>
 
-  <!-- Columna Derecha -->
+  <!-- Columna Derecha: Contacto y Ubicación -->
   <div class="col-md-6">
-    <div class="row">
-      <div class="col-md-6">
-        <app-form-field label="Género" [required]="true">
-          <app-select-gender
-            [inputControl]="Genero"
-            [placeholder]="'Seleccione'"
-          >
-          </app-select-gender>
-        </app-form-field>
+    <app-card-container title="Contacto y Ubicación">
+      <div class="row">
+        <div class="col-12">
+          <app-form-field label="Ocupación" [required]="true">
+            <app-input-text
+              [input_control]="Ocupacion"
+              input_placeholder="Ej. Asesor Comercial"
+              [input_maxlength]="150"
+            ></app-input-text>
+          </app-form-field>
+        </div>
+
+        <div class="col-6">
+          <app-form-field label="Teléfono" [required]="true">
+            <app-input-number
+              [input_control]="Telefono"
+              [input_placeholder]="'71234567'"
+            ></app-input-number>
+          </app-form-field>
+        </div>
+        <div class="col-6">
+          <app-form-field label="Correo Electrónico">
+            <app-input-text
+              [input_control]="Email"
+              input_placeholder="ejemplo@correo.com"
+            ></app-input-text>
+          </app-form-field>
+        </div>
+
+        <div class="col-12">
+          <app-form-field label="Dirección" [required]="true">
+            <app-input-textarea
+              [input_control]="Direccion"
+              input_placeholder="Av. Principal #123"
+              [input_rows]="3"
+              [input_maxlength]="250"
+              [show_character_count]="true"
+              [input_autosize]="{ minRows: 3, maxRows: 3 }"
+            ></app-input-textarea>
+          </app-form-field>
+        </div>
       </div>
-      <div class="col-md-6">
-        <app-form-field label="Fecha Nacimiento">
-          <app-input-date
-            [input_control]="FechaNacimiento"
-            input_placeholder="Seleccione fecha"
-          ></app-input-date>
-        </app-form-field>
-      </div>
-    </div>
-    <app-form-field label="Complemento">
-      <app-select-expedido
-        [inputControl]="Complemento"
-        [placeholder]="'Seleccione'"
-      ></app-select-expedido>
-    </app-form-field>
-    <app-form-field label="Email">
-      <app-input-text
-        [input_control]="Email"
-        input_placeholder="correo@ejemplo.com"
-      >
-      </app-input-text>
-    </app-form-field>
+    </app-card-container>
   </div>
-</div>
+</form>

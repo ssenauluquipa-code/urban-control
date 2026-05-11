@@ -59,14 +59,20 @@
 }
 
 // Media Queries 
-// Tablet (768px - 1024px): Hide secondary
+// Tablet y Desktop pequeño: Mantener botones visibles si hay espacio
 @media (max-width: 1024px) {
-  .secondary-actions {
-    display: none;
+  .sub-header {
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+  }
+  
+  .sub-header__title {
+    font-size: 1.1rem;
   }
 }
 
-// Mobile (< 768px): Hide individuals, show grouped dropdown
+// Mobile (< 768px): Ocultar textos de botones secundarios para ahorrar espacio, 
+// o moverlos a un dropdown si son demasiados.
 @media (max-width: 767px) {
   .sub-header__left {
     flex: 1;
@@ -74,23 +80,15 @@
   }
 
   .sub-header__title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: 1rem;
   }
 
-  .btn-options {
-    width: 32px !important;
-    padding: 0 !important;
-    min-width: 0 !important;
-    display: inline-flex !important;
-  }
-
-  /* ocultar: Editar, Eliminar, Cancelar, Actualizar */
-  .sub-header__right button[nzDanger],
-  .sub-header__right button:not([nzType="primary"]):not(.btn-options) {
-    display: none;
+  // En móvil muy pequeño, ocultamos el texto de los botones secundarios pero dejamos el icono
+  .secondary-actions button {
+    padding: 0 8px;
+    .btn-text, span:not([nz-icon]) {
+      display: none;
+    }
   }
 
   .btn-back {
@@ -99,3 +97,4 @@
     }
   }
 }
+

@@ -16,4 +16,8 @@ export interface IClienteRepository {
     delete(id: string): Observable<void>;
 
     activate(id: string): Observable<ICliente>;
+
+    uploadFoto(id: string, file: File): Observable<ICliente>;
+
+    deleteFoto(id: string): Observable<void>;
 }

@@ -29,6 +29,7 @@ export class SubHeaderComponent {
   @Input() backRoute?: string[];
   @Input() hasBackListener = false;
   @Input() hasCancelListener = false;
+  @Input() loading = false;
 
   @Input() config: IPageConfig = { ...DEFAULT_PAGE_CONFIG };
 

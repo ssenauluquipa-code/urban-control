@@ -7,6 +7,7 @@ import { UserService } from 'src/app/core/services/user.service';
 import { ViewRegisterUserComponent } from '../views/view-register-user/view-register-user.component';
 import { catchError, finalize, of, switchMap } from 'rxjs';
 import { ModalContainerComponent } from 'src/app/shared/components/organisms/modal-container/modal-container.component';
+import { IAsesorOption } from 'src/app/core/models/asesor/asesor.model';
 @Component({
   selector: 'app-user-register',
   standalone: true,
@@ -23,6 +24,8 @@ import { ModalContainerComponent } from 'src/app/shared/components/organisms/mod
         [userForm]="userFormGroup"
         [userData]="userData"
         (imageSelected)="onAvatarSelected($event)"
+        (imageDeleted)="onAvatarDeleted()"
+        (asesorSelected)="onAsesorSelected($event)"
       ></app-view-register-user>
     </app-modal-container>
   `,
@@ -64,7 +67,7 @@ export class UserRegisterComponent {
   private buildForm(): void {
     this.userFormGroup = this.fb.group({
       id: [null], // Campo oculto para saber si es edición
-      name: ['', [Validators.required]],
+      name: ['', [Validators.required, Validators.maxLength(120)]],
       email: ['', [Validators.required, Validators.email]],
       password: [
         '',
@@ -78,6 +81,7 @@ export class UserRegisterComponent {
       ], // Requerido solo al crear
       contactNumber: ['', [Validators.required]],
       role: ['USER', [Validators.required]], // Cambiado VIEWER -> USER para coincidir con backend
+      asesorId: [null],
     });
   }
 
@@ -101,10 +105,11 @@ export class UserRegisterComponent {
       email: data.email,
       contactNumber: data.contactNumber,
       role: data.role, // 🔥 Esto es clave para que el select tome el valor
+      asesorId: data.asesorId,
     });
 
     // 4. Deshabilitar email (lógica de negocio)
-    this.userFormGroup.get('email')?.disable();
+    //this.userFormGroup.get('email')?.disable();
   }
 
   /**
@@ -114,6 +119,28 @@ export class UserRegisterComponent {
    */
   public onAvatarSelected(file: File): void {
     this.selectedAvatarFile = file;
+  }
+
+  /**
+   * Resetea el archivo seleccionado si el usuario elimina la imagen en el componente.
+   */
+  public onAvatarDeleted(): void {
+    this.selectedAvatarFile = null;
+  }
+
+  /**
+   * Al seleccionar un asesor, auto-completamos los campos de contacto del usuario.
+   * @param asesor Datos del asesor seleccionado.
+   */
+  public onAsesorSelected(asesor: IAsesorOption | null): void {
+    if (asesor) {
+      this.userFormGroup.patchValue({
+        name: asesor.nombreCompleto,
+        email: asesor.email,
+        contactNumber: asesor.telefono,
+      });
+      this.notification.info(`Datos cargados desde el asesor: ${asesor.nombreCompleto}`);
+    }
   }
 
   /**
@@ -143,7 +170,9 @@ export class UserRegisterComponent {
       const payload = {
         name: formValue.name,
         contactNumber: formValue.contactNumber,
+        email: formValue.email,
         role: formValue.role,
+        asesorId: formValue.asesorId,
       };
       mainRequest$ = this.userService.updateUser(formValue.id, payload);
     } else {

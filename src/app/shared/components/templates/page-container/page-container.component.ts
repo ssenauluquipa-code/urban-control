@@ -18,7 +18,8 @@ import { IPageConfig, DEFAULT_PAGE_CONFIG } from 'src/app/core/models/page-confi
         [backRoute]="backRoute"
         [hasBackListener]="hasBackListener"
         [hasCancelListener]="hasCancelListener"
-        [config]="mergedConfig">
+        [config]="mergedConfig"
+        [loading]="loading">
         <div custom-actions style="display: contents;">
           <ng-content select="[custom-actions]"></ng-content>
         </div>
@@ -40,6 +41,7 @@ export class PageContainerComponent implements OnInit, OnChanges {
   @Input() title = '';
   @Input() permissionScope?: string;
   @Input() backRoute?: string[];
+  @Input() loading = false;
 
   // Objeto de configuración unificado
   @Input() config?: IPageConfig;

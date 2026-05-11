@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { SelectDataComponent } from './select-data.component';
 import { CommonModule } from '@angular/common';
 import { IAsesorOption } from 'src/app/core/models/asesor/asesor.model';
@@ -19,7 +19,9 @@ import { catchError, debounce, Observable, of, startWith, Subject, switchMap, ta
       [loading]="isLoading"
       [inputControl]="input_control"
       [customOptionTemplate]="asesorTemplate"
-      (Search)="onSearch($event)">
+      (Search)="onSearch($event)"
+      (SelectionChange)="onSelectionChange($event)"
+      >
     </app-select-data>
 
     <ng-template #asesorTemplate let-item let-searchTerm="searchTerm">
@@ -38,6 +40,7 @@ export class SelectAsesorComponent implements OnInit {
   private asesorService = inject(AsesorService);
 
   @Input() input_control = new FormControl<string | null>(null);
+  @Output() SelectionChange = new EventEmitter<IAsesorOption | null>();
 
   asesores$!: Observable<IAsesorOption[]>;
   private searchSubject = new Subject<string>();
@@ -69,6 +72,11 @@ export class SelectAsesorComponent implements OnInit {
     if (!searchTerm || !fullText) return fullText;
     const regex = new RegExp(`(${searchTerm})`, 'gi');
     return fullText.replace(regex, `<span class="highlight-match">$1</span>`);
+  }
+
+  onSelectionChange(asesor: IAsesorOption | null) {
+    console.log(asesor);
+    this.SelectionChange.emit(asesor);
   }
 
 }

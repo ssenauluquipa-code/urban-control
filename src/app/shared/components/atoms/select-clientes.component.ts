@@ -77,12 +77,14 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
     </ng-template>
   `,
   styles: [`
+    /* Resaltado de búsqueda — específico de este componente */
     :host ::ng-deep .highlight-match {
       background-color: #fff3cd;
-      font-weight: bold;      
+      font-weight: bold;
       border-radius: 2px;
     }
 
+    /* Tags de clientes seleccionados */
     .cliente-tag {
       color: white;
       font-size: 12px;
@@ -92,12 +94,12 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
       border: 1px solid transparent;
 
       &.is-titular {
-        background-color: #198754; /* Success / Verde */
+        background-color: #198754;
         border-color: #157347;
       }
 
       &.is-cotitular {
-        background-color: #0d6efd; /* Primary / Azul */
+        background-color: #0d6efd;
         border-color: #0b5ed7;
       }
 
@@ -122,6 +124,7 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
       }
     }
 
+    /* Eliminar el fondo/borde del ng-value wrapper en modo múltiple */
     :host ::ng-deep .ng-select.ng-select-multiple .ng-select-container .ng-value {
       background-color: transparent !important;
       border: none !important;
@@ -133,45 +136,10 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
       padding: 0 !important;
     }
 
-    /* Limpieza y centrado vertical robusto */
-    :host ::ng-deep .ng-select .ng-select-container {
-      min-height: 42px !important;
-      border-radius: 8px !important;
-    }
-
-    /* Contenedor de valores (donde vive el placeholder y los tags) */
-    :host ::ng-deep .ng-select .ng-value-container {
-      align-items: center !important;
-      padding-left: 8px !important;
-      display: flex !important;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    /* Asegurar que el placeholder esté perfectamente centrado verticalmente */
-    :host ::ng-deep .ng-select .ng-placeholder {
-      color: #999;
-      z-index: 1;
-      top: 50% !important;
-      transform: translateY(-50%) !important;
-      padding-left: 12px !important;
-      margin-top: 0 !important;
-      border: none !important;
-      background: transparent !important;
-    }
-
-    /* Ocultar placeholder si hay valor o si se está buscando */
-    :host ::ng-deep .ng-select.ng-has-value .ng-placeholder,
-    :host ::ng-deep .ng-select.ng-select-opened.ng-select-searching .ng-placeholder {
-      display: none !important;
-    }
-
-    /* El input de búsqueda también debe estar alineado */
-    :host ::ng-deep .ng-select .ng-input {
-      display: flex !important;
-      align-items: center !important;
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
+    /* En modo múltiple necesitamos flex-wrap para los tags */
+    :host ::ng-deep .ng-select.ng-select-multiple .ng-value-container {
+      flex-wrap: wrap !important;
+      gap: 4px !important;
     }
   `]
 })

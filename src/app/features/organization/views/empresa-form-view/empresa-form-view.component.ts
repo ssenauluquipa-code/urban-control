@@ -5,7 +5,6 @@ import { FormFieldComponent } from 'src/app/shared/components/molecules/form-fie
 import { InputTextComponent } from 'src/app/shared/components/atoms/input-text/input-text.component';
 import { InputTextareaComponent } from 'src/app/shared/components/atoms/input-textarea/input-textarea.component';
 import { SelectMonedaComponent } from 'src/app/shared/components/atoms/select-moneda.component';
-import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
 import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 
 import { InputNumberComponent } from 'src/app/shared/components/atoms/input-number/input-number.component';
@@ -22,7 +21,6 @@ import { ImageDisplayComponent } from "src/app/shared/components/atoms/image-dis
     InputNumberComponent,
     InputTextareaComponent,
     SelectMonedaComponent,
-    SelectDataComponent,
     CardContainerComponent,
     ImageDisplayComponent
   ],

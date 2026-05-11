@@ -7,7 +7,6 @@ export enum ETipoDocumento {
 export enum EGenero {
     MASCULINO = "MASCULINO",
     FEMENINO = "FEMENINO",
-    OTRO = "OTRO"
 }
 export interface ICliente {
     id: string;
@@ -19,6 +18,7 @@ export interface ICliente {
     numeroReferencia?: string;
     genero: EGenero; // Uso del Enum
     fechaNacimiento?: string;
+    fotoUrl?: string;
     telefono?: string;
     email?: string;
     direccion?: string;
@@ -35,6 +35,8 @@ export interface CreateClienteDto {
     numeroReferencia?: string;
     genero: EGenero;
     fechaNacimiento?: string;
+    estadoCivil?: string;
+    ocupacion?: string;
     telefono?: string;
     email?: string;
     direccion?: string;
@@ -65,4 +67,12 @@ export interface CreateClienteRapidoDto {
     complemento?: string;
     numeroReferencia?: string;
     genero: string;
+}
+
+
+export enum EEstadoCivil {
+    SOLTERO = "SOLTERO",
+    CASADO = "CASADO",
+    DIVORCIADO = "DIVORCIADO",
+    VIUDO = "VIUDO"
 }

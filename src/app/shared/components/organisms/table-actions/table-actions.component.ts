@@ -84,6 +84,7 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.ACTIVATE]: 'check-circle',
       [TableActionsEnum.DEACTIVATE]: 'close-circle',
       [TableActionsEnum.REMOVE_IMAGE]: 'file-excel',
+      [TableActionsEnum.UPLOAD_PHOTO]: 'upload',
       [TableActionsEnum.BLOQUEADO]: 'lock',
       [TableActionsEnum.SET_AVAILABLE]: 'unlock'
     };
@@ -100,7 +101,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.NUEVO]: 'Nuevo',
       [TableActionsEnum.ACTIVATE]: 'Activar',
       [TableActionsEnum.DEACTIVATE]: 'Desactivar',
-      [TableActionsEnum.REMOVE_IMAGE]: 'Quitar Avatar',
+      [TableActionsEnum.REMOVE_IMAGE]: 'Quitar Foto',
+      [TableActionsEnum.UPLOAD_PHOTO]: 'Subir Foto',
       [TableActionsEnum.BLOQUEADO]: 'Bloquear',
       [TableActionsEnum.SET_AVAILABLE]: 'Disponible',
     };
@@ -136,8 +138,12 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       if (action === TableActionsEnum.ACTIVATE) return data?.isActive === false;
       // Si el usuario ya está inactivo, no mostramos "Desactivar"
       if (action === TableActionsEnum.DEACTIVATE) return data?.isActive === true;
-      // Si no tiene avatar, no mostramos "Quitar Avatar"
-      if (action === TableActionsEnum.REMOVE_IMAGE) return !!data?.avatarUrl;
+      // Si no tiene foto/avatar, no mostramos "Quitar Foto"
+      if (action === TableActionsEnum.REMOVE_IMAGE || action === 'remove_image') {
+        return !!(data?.avatarUrl || (data as Record<string, unknown>)?.['fotoUrl']);
+      }
+      // Siempre mostramos "Subir Foto"
+      if (action === TableActionsEnum.UPLOAD_PHOTO || action === 'upload_photo') return true;
       // 👇 Lógica específica para Anular Reservas
       if (action === TableActionsEnum.ANULAR) {
         // Solo mostramos Anular si isActive es TRUE (definido en el map del componente lista)

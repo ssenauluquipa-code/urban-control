@@ -31,4 +31,11 @@ export interface IAsesorOption {
     id: string;
     nombreCompleto: string;
     nroDocumento: string;
+    telefono: string;
+    email: string;
+}
+
+export enum EAsesorType {
+    PROPIETARIO = "PROPIETARIO",
+    EMPLEADO = "EMPLEADO"
 }

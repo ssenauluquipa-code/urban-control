@@ -17,6 +17,7 @@ import { InputErrorMessagesComponent } from '../input-error-messages/input-error
         [formControl]="input_control"
         [nzFormat]="input_format"
         [nzStatus]="input_control.invalid && input_control.touched ? 'error' : ''"
+        [nzDisabledDate]="disabled_date!"
         style="width: 100%"
         (ngModelChange)="onDateChange($event)"
       >
@@ -53,6 +54,7 @@ export class InputDateComponent {
   @Input() input_placeholder = 'Seleccionar fecha';
   @Input() input_format = 'yyyy-MM-dd';
   @Input() show_error_messages = true;
+  @Input() disabled_date?: (current: Date) => boolean;
 
   @Output() DateValue = new EventEmitter<Date | null>();
 

@@ -8,13 +8,27 @@ export interface IOrganization {
   phone: string;
   logoUrl: string;
   currency: string;
-  timezone: string;
+  tipoDeCambio: number;
   diasVencimientoReserva: number;
   plazoMaximoMeses: number;
   horaCronDiario: number;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  asesores: IOrganizationAsesor[];
+}
+
+export interface IOrganizationAsesor {
+  id: string;
+  codigoAsesor: number;
+  nombreCompleto: string;
+  tipo: string;
+  tipoDocumento: string;
+  nroDocumento: string;
+  complemento: string;
+  telefono: string;
+  email: string;
+  isActive: boolean;
 }
 
 export interface UpdateOrganizationDto {
@@ -23,7 +37,6 @@ export interface UpdateOrganizationDto {
   address?: string;
   phone?: string;
   currency?: string;
-  timezone?: string;
   diasVencimientoReserva?: number;
   plazoMaximoMeses?: number;
   horaCronDiario?: number;

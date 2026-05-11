@@ -6,7 +6,7 @@
   [showCancel]="true"
   [showSave]="true"
   (Save)="onSubmit()"
+  [loading]="loading"
 >
-  <!-- Pasamos las opciones formateadas -->
-  <app-form-clientes-view [formInput]="form"> </app-form-clientes-view>
+  <app-form-clientes-view [formInput]="form"></app-form-clientes-view>
 </app-page-container>

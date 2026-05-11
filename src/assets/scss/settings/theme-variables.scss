@@ -17,9 +17,12 @@
   --pc-sidebar-shadow: none;
   --pc-sidebar-caption-color: #{$gray-700}; */
   /* urbanicacion tu futuro */
-  --pc-sidebar-background: #0f172a;    // Azul profundo
-  --pc-sidebar-color: #FFFFFF;         // Letras grisáceas (inactivo)
-  --pc-sidebar-active-color: #00d26a;  // Verde brillante (TU PEDIDO)
+  --pc-sidebar-background: #0f172a; // Azul profundo
+  --pc-sidebar-background-tab: #1e293b;
+  --pc-sidebar-background-soft: rgba(30, 41, 59, 0.12);
+  --pc-sidebar-background-hover: #334155;
+  --pc-sidebar-color: #ffffff; // Letras grisáceas (inactivo)
+  --pc-sidebar-active-color: #00d26a; // Verde brillante (TU PEDIDO)
   --pc-sidebar-caption-color: #64748b;
 
   // header
@@ -107,6 +110,6 @@ $dark-border-subtle: $gray-500;
 
 $preset-colors: (
   preset-1: (
-    primary: #1677ff
-  )
+    primary: #1677ff,
+  ),
 );

@@ -47,4 +47,14 @@ export class ClienteRepository implements IClienteRepository {
     return this.http.patch<ICliente>(`${this.Api_URL}/${id}/activate`, {});
   }
 
+  uploadFoto(id: string, file: File): Observable<ICliente> {
+    const formData = new FormData();
+    formData.append('foto', file);
+    return this.http.post<ICliente>(`${this.Api_URL}/${id}/foto`, formData);
+  }
+
+  deleteFoto(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.Api_URL}/${id}/foto`);
+  }
+
 }

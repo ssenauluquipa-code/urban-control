@@ -21,25 +21,26 @@
     <div class="secondary-actions">
       @if (canShowCancel) {
         <button nz-button nzType="default" (click)="emitAction(A.CANCEL)">
-          <span nz-icon nzType="close-circle"></span> Cancelar
+          <span nz-icon nzType="close-circle"></span> <span class="btn-text">Cancelar</span>
         </button>
       }
       @if (canShowDelete) {
-        <button nz-button nzDanger nzType="default" (click)="emitAction(A.DELETE)">
-          <span nz-icon nzType="delete"></span> Eliminar
+        <button nz-button nzDanger nzType="default" (click)="emitAction(A.DELETE)" [nzLoading]="loading">
+          <span nz-icon nzType="delete"></span> <span class="btn-text">Eliminar</span>
         </button>
       }
       @if (canShowEdit) {
-        <button nz-button nzType="default" (click)="emitAction(A.EDIT)">
-          <span nz-icon nzType="edit"></span> Editar
+        <button nz-button nzType="default" (click)="emitAction(A.EDIT)" [nzLoading]="loading">
+          <span nz-icon nzType="edit"></span> <span class="btn-text">Editar</span>
         </button>
       }
       @if (canShowUpdate) {
-        <button nz-button nzType="default" (click)="emitAction(A.UPDATE)">
-          <span nz-icon nzType="sync"></span> Actualizar
+        <button nz-button nzType="default" (click)="emitAction(A.UPDATE)" [nzLoading]="loading">
+          <span nz-icon nzType="sync"></span> <span class="btn-text">Actualizar</span>
         </button>
       }
     </div>
+
 
     <!-- Botones Primarios: Ocultar en mobile (<=768px) -->
     <div class="primary-actions">
@@ -50,12 +51,12 @@
       }
 
       @if (canShowSend) {
-        <button nz-button nzType="primary" (click)="emitAction(A.SEND)">
+        <button nz-button nzType="primary" (click)="emitAction(A.SEND)" [nzLoading]="loading">
           <span nz-icon nzType="send"></span> Enviar
         </button>
       }
       @if (canShowSave) {
-        <button nz-button nzType="primary" (click)="emitAction(A.SAVE)">
+        <button nz-button nzType="primary" (click)="emitAction(A.SAVE)" [nzLoading]="loading">
           <span nz-icon nzType="save"></span> Guardar
         </button>
       }

@@ -48,7 +48,7 @@ import { FormsModule } from '@angular/forms';
         [appendTo]="'body'"
         [addTag]="addTagProp"
         (blur)="Blur.emit($event)"
-        (change)="onSelectChange()"
+        (change)="onSelectChange($event)"
         (search)="Search.emit($event.term)"
         (clear)="Search.emit('')"
       >
@@ -140,6 +140,7 @@ export class SelectDataComponent<T = unknown> implements OnInit {
   @Input() addTag: boolean | ((term: string) => unknown) = false;
   // CORREGIDO: Emitimos el tipo específico del valor del control
   @Output() ChangeValue = new EventEmitter<string | T | null>();
+  @Output() SelectionChange = new EventEmitter<T | T[] | null>();
   @Output() Blur = new EventEmitter<FocusEvent>();
   @Output() Search = new EventEmitter<string>();
   @Output() AddTag = new EventEmitter<string>();
@@ -153,9 +154,10 @@ export class SelectDataComponent<T = unknown> implements OnInit {
     }
   }
 
-  onSelectChange(): void {
+  onSelectChange(item: T | T[] | null): void {
     // Emitimos el valor tipado del control
     this.ChangeValue.emit(this.inputControl.value);
+    this.SelectionChange.emit(item);
 
     // Quitamos el foco para que desaparezca el puntero |
     if (this.inputSelect) {

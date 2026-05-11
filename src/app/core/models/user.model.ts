@@ -6,6 +6,7 @@ export interface IUser {
   avatarUrl: string | null;
   role: 'SUPER_ADMIN' | 'ADMIN' | 'USER' | 'EDITOR' | 'OPERADOR' | string; // Permitimos más roles y fallback de string
   isActive?: boolean; // Si el backend lo devuelve
+  asesorId?: string;
 }
 
 export interface ICreateUserDto {
@@ -14,12 +15,14 @@ export interface ICreateUserDto {
   name: string;
   contactNumber: string;
   role?: string;
+  asesorId?: string;
 }
 
 export interface IUpdateUserDto {
   name?: string;
   contactNumber?: string;
   role?: string;
+  asesorId?: string;
 }
 
 export interface IUpdateProfileDto {

@@ -10,6 +10,7 @@ export enum TableActionsEnum {
   ACTIVATE = 'activate',
   DEACTIVATE = 'deactivate',
   REMOVE_IMAGE = 'remove_image',
+  UPLOAD_PHOTO = 'upload_photo',
   BLOQUEADO = 'bloqueado',
   SET_AVAILABLE = 'set_available'
 }

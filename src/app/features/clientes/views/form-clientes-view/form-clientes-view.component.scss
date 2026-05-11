@@ -1,0 +1,44 @@
+.form-clientes-layout {
+
+    // Igualar altura de cards en desktop
+    .row.align-items-stretch>[class*='col'] {
+        display: flex;
+        flex-direction: column;
+    }
+
+    app-card-container {
+        display: block;
+        height: 100%;
+    }
+
+    // En móvil la imagen se centra sola con col-12
+    // En md+ se pone al lado con col-md-auto
+    // Diseño mejorado para el avatar del cliente
+    app-image-display {
+        display: block;
+        width: 100%; // Llenar el col-md-4
+        margin-bottom: 1rem; // Espacio en móvil cuando se apile
+
+        ::ng-deep {
+            .image-display-wrapper,
+            .empty-container,
+            .image-container {
+                width: 100% !important;
+                min-height: 220px;
+                height: 220px; // Altura fija para que sea cuadrado/proporcional
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                border-radius: 12px;
+                background-color: #f8f9fa;
+            }
+            .display-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 12px;
+            }
+        }
+    }
+}

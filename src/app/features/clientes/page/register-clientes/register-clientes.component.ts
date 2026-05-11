@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { EGenero, ETipoDocumento } from 'src/app/core/models/cliente.model';
+import { EEstadoCivil, EGenero, ETipoDocumento } from 'src/app/core/models/cliente.model';
 import { ClienteService } from 'src/app/core/services/cliente.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
@@ -33,20 +33,21 @@ export class RegisterClientesComponent implements OnInit {
     this.checkEditMode();
   }
 
-
-
   private buildForm(): void {
     this.form = this.fb.group({
       nombreCompleto: ['', [Validators.required, Validators.maxLength(180)]],
       tipoDocumento: [ETipoDocumento.CI, [Validators.required]],
       nroDocumento: ['', [Validators.required, Validators.maxLength(30)]],
       complemento: ['', [Validators.required, Validators.maxLength(20)]],
-      numeroReferencia: ['', [Validators.required, Validators.maxLength(50)]],
+      numeroReferencia: ['', [Validators.maxLength(50)]],
       genero: [EGenero.MASCULINO, Validators.required],
       fechaNacimiento: [null],
-      telefono: ['', [Validators.maxLength(30)]],
+      fotoUrl: [''],  // Solo para previsualización, no se envía al backend
+      estadoCivil: [EEstadoCivil.SOLTERO, Validators.required],
+      ocupacion: ['', [Validators.required, Validators.maxLength(150)]],
+      telefono: ['', [Validators.required, Validators.maxLength(30)]],
       email: ['', Validators.email],
-      direccion: ['', Validators.maxLength(250)]
+      direccion: ['', [Validators.required, Validators.maxLength(250)]]
     });
   }
 
@@ -72,7 +73,6 @@ export class RegisterClientesComponent implements OnInit {
           this.notification.error('Error al cargar datos');
           this.goBack();
         }
-
       });
   }
 
@@ -80,22 +80,23 @@ export class RegisterClientesComponent implements OnInit {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       Object.values(this.form.controls).forEach(c => c.markAsDirty());
-      this.notification.warning('Complete los campos obligatorios' + JSON.stringify(this.form.errors));
+      this.notification.warning('Complete los campos obligatorios');
       return;
     }
 
     this.loading = true;
     const value = this.form.value;
+
+    // Construir payload SIN fotoUrl (la foto se gestiona desde la lista con endpoints dedicados)
     const payload = {
       ...value,
       fechaNacimiento: value.fechaNacimiento ? new Date(value.fechaNacimiento).toISOString() : null
     };
+    delete payload.fotoUrl;
 
-    // Limpiar campos vacíos para que el backend no falle
-    if (!payload.telefono) delete payload.telefono;
+    // Limpiar campos opcionales vacíos
     if (!payload.email) delete payload.email;
     if (!payload.numeroReferencia) delete payload.numeroReferencia;
-    if (!payload.direccion) delete payload.direccion;
 
     const request$ = this.isEditMode
       ? this.clienteService.updateClient(this.clienteId!, payload)

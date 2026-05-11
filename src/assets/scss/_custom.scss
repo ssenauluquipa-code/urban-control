@@ -1,8 +1,8 @@
 // In this scss you can overwrite all our scss, we suggested you to add your scss into this, so whenever the update comes it will not affect your code.
 
 // 1. Variables
-$input-height-desktop: 44px;
-$input-height-mobile: 48px;
+$input-height-desktop: 36px;
+$input-height-mobile: 36px;
 $input-border-radius: 10px;
 $input-font-size: 0.875rem;
 
@@ -17,7 +17,7 @@ $color-placeholder: #565e74;
   font-size: $input-font-size !important;
   border-radius: $input-border-radius !important;
   line-height: normal !important;
-  padding: 0 1rem !important;
+  padding: 0 12px !important;
   box-sizing: border-box;
   width: 100%;
   
@@ -35,9 +35,155 @@ $color-placeholder: #565e74;
   @extend .ui-input-base;
 }
 
-.ant-input {
+/* Aplica ui-input-base solo a inputs, NO a textareas */
+.ant-input:not(textarea) {
   @extend .ui-input-base;
 }
+
+/* Reset explícito para textarea.ant-input (excluido del ui-input-base) */
+textarea.ant-input {
+  display: block !important;
+  height: auto !important;
+  min-height: unset !important;
+  line-height: 1.5715 !important; /* line-height nativo de Ant Design */
+  align-items: unset !important;
+  padding: 8px 12px !important;
+  box-sizing: border-box;
+  width: 100%;
+  font-size: $input-font-size;
+  border-radius: $input-border-radius !important;
+}
+
+/* Ajustes específicos para NZ-SELECT (Ng-Zorro) */
+.ant-select {
+  width: 100%;
+  height: $input-height-desktop !important;
+  
+  @media (max-width: 576px) {
+    height: $input-height-mobile !important;
+  }
+
+  .ant-select-selector {
+    @extend .ui-input-base;
+    padding: 0 12px !important; 
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+  }
+
+  // Neutralizar contenedores internos que desplazan el texto
+  .ant-select-selection-search,
+  .ant-select-selection-item,
+  .ant-select-selection-placeholder {
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    line-height: 1 !important; // Evitar que el line-height empuje el texto
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  // Ajustar la flecha del select
+  .ant-select-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* Ajustes específicos para NG-SELECT (Librería aparte) */
+.ng-select {
+  &.ng-select-opened {
+    > .ng-select-container {
+      z-index: 1001;
+    }
+  }
+
+  .ng-select-container {
+    @extend .ui-input-base;
+    padding: 0 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    border: 1px solid #d9d9d9 !important;
+    background-color: #fff !important;
+    
+    .ng-value-container {
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 !important;
+      height: 100% !important;
+      border: none !important;
+
+      .ng-placeholder {
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        padding: 0 !important;
+      }
+
+      /* Modo SINGLE: .ng-input es position:absolute */
+      &.ng-select-single .ng-input {
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+
+        > input {
+          height: 100% !important;
+          line-height: 1 !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+      }
+
+      /* Modo MULTIPLE: .ng-input en flujo flex, sin transform */
+      &.ng-select-multiple .ng-input {
+        top: auto !important;
+        transform: none !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+
+        > input {
+          height: auto !important;
+          line-height: 1 !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+      }
+
+      .ng-value {
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+      }
+    }
+  }
+
+  .ng-arrow-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    bottom: 0 !important;
+  }
+  
+  .ng-clear-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    bottom: 0 !important;
+  }
+}
+
+
+
 
 /* El input nativo que vive dentro de affix-wrapper */
 .ant-input-affix-wrapper > input.ant-input {
