@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-6">
+  <div class="col-5">
     <!-- Información Institucional -->
     <app-card-container title="Información Institucional" icon="shop">
       <div class="row">
@@ -31,10 +31,10 @@
       </div>
     </app-card-container>
   </div>
-  <div class="col-6">
+  <div class="col-7">
     <!-- Contacto y Ubicación -->
     <app-card-container title="Contacto y Ubicación" icon="contacts">
-      <div class="row g-3">
+      <div class="row">
         <div class="col-md-6">
           <app-form-field
             label="Correo Electrónico"
@@ -86,11 +86,11 @@
 </div>
 
 <div class="row">
-  <div class="col-md-4">
-    <!-- Configuración Regional -->
-    <app-card-container title="Configuración Regional" icon="global">
+  <div class="col-md-6">
+    <!-- Parámetros de Sistema -->
+    <app-card-container title="Parámetros de Sistema" icon="setting">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-3">
           <app-form-field label="Moneda" forId="currency" [required]="true">
             <app-select-moneda
               [input_control]="currencyControl"
@@ -99,31 +99,7 @@
             </app-select-moneda>
           </app-form-field>
         </div>
-
-        <!--  <div class="col-md-6">
-          <app-form-field
-            label="Zona Horaria"
-            forId="timezone"
-            [required]="true"
-          >
-            <app-select-data
-              [inputControl]="timezoneControl"
-              [itemList]="timezonesList"
-              bindLabel="label"
-              bindValue="value"
-              placeholder="Seleccionar zona"
-            >
-            </app-select-data>
-          </app-form-field>
-        </div> -->
-      </div>
-    </app-card-container>
-  </div>
-  <div class="col-md-8">
-    <!-- Parámetros de Sistema -->
-    <app-card-container title="Parámetros de Sistema" icon="setting">
-      <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <app-form-field
             label="Vencimiento de Reserva (Días)"
             forId="diasVencimiento"
@@ -137,7 +113,7 @@
           </app-form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <app-form-field
             label="Plazo Máximo (Meses)"
             forId="plazoMax"
@@ -151,7 +127,7 @@
           </app-form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <app-form-field
             label="Hora de Cron Diario (0-23)"
             forId="horaCron"

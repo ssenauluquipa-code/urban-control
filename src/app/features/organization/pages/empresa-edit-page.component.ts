@@ -19,6 +19,7 @@ import { of } from 'rxjs';
       permissionScope="empresa"
       [showSave]="true"
       [showBack]="true"
+      [loading]="loading"
       (Save)="onSubmit()"
       (Back)="goBack()"
     >
@@ -30,7 +31,6 @@ import { of } from 'rxjs';
 export class EmpresaEditPageComponent implements OnInit {
   form!: FormGroup;
   loading = false;
-  isSaving = false;
 
   logoUrl: string | '' = '';
   logoFile: File | '' = '';
@@ -53,7 +53,6 @@ export class EmpresaEditPageComponent implements OnInit {
       address: ['', [Validators.required]],
       phone: ['', [Validators.required]],
       currency: ['BS', [Validators.required]],
-      timezone: ['America/La_Paz', [Validators.required]],
       diasVencimientoReserva: [5, [Validators.required, Validators.min(1)]],
       plazoMaximoMeses: [18, [Validators.required, Validators.min(1)]],
       horaCronDiario: [8, [Validators.required, Validators.min(0), Validators.max(23)]],
@@ -76,7 +75,7 @@ export class EmpresaEditPageComponent implements OnInit {
       this.logoUrl = state.empresa.logoUrl || '';
     } else {
       // Si no hay estado, cargamos de la API
-      this.empresaService.getEmpresa().subscribe(empresa => {        
+      this.empresaService.getEmpresa().subscribe(empresa => {
         this.form.patchValue(empresa);
         this.logoUrl = empresa.logoUrl || '';
       });
@@ -90,7 +89,7 @@ export class EmpresaEditPageComponent implements OnInit {
   onSubmit() {
     if (this.form.invalid) return;
 
-    this.isSaving = true;
+    this.loading = true;
 
     // Creamos una copia del body y quitamos logoUrl porque el backend lo rechaza.
     const empresaData = { ...this.form.value };
@@ -112,9 +111,10 @@ export class EmpresaEditPageComponent implements OnInit {
         this.notificationService.success('Configuración de empresa guardada exitosamente');
         this.finishSave();
       },
-      error: () => {
-        this.notificationService.error('Ocurrió un error al guardar los cambios');
-        this.isSaving = false;
+      error: (error) => {
+        const msg = error.error?.message || 'Ocurrió un error al guardar los cambios';
+        this.notificationService.error(msg);
+        this.loading = false;
       }
     });
   }
@@ -126,7 +126,7 @@ export class EmpresaEditPageComponent implements OnInit {
   }
 
   private finishSave() {
-    this.isSaving = false;
+    this.loading = false;
     this.router.navigate(['/configuracion/empresa']);
   }
 }

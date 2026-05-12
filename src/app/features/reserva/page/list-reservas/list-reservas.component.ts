@@ -62,7 +62,7 @@ export class ListReservasComponent implements OnInit {
     },
     {
       field: 'nombreCliente',
-      headerName: 'Cliente',
+      headerName: 'Nombre del Cliente',
       flex: 1,
       minWidth: 250,
       filter: true,

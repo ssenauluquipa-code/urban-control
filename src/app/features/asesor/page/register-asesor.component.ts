@@ -127,8 +127,12 @@ export class RegisterAsesorComponent implements OnInit {
         this.goBack();
       },
       error: (err) => {
-        if (err.status === 409) this.notification.error('El documento ya existe');
-        else this.notification.error('Error al guardar');
+        if (err.status === 409) {
+          this.notification.error('El documento ya existe');
+        } else {
+          const msg = err.error?.message || 'Error al guardar';
+          this.notification.error(msg);
+        }
       }
     });
   }

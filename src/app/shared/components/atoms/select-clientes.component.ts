@@ -32,7 +32,7 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
       [searchable]="true"
       [loading]="isLoading"
       [customOptionTemplate]="clienteTemplate"
-      [customLabelTemplate]="clienteLabelTemplate"
+      [customLabelTemplate]="multiple ? clienteLabelTemplate : undefined"
       [isMultiple]="multiple"
       [addTag]="true"
       (AddTag)="abrirModalCrearCliente($event)"
@@ -289,9 +289,11 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
   isTitular(clientId: string): boolean {
     if (!this.withRoles) return false;
     const val = this.internal_control.value;
-    if (Array.isArray(val) && val.length > 0) {
-      return val[0] === clientId;
+    
+    if (Array.isArray(val)) {
+      return val.length > 0 && val[0] === clientId;
     }
-    return false;
+    
+    return val === clientId;
   }
 }

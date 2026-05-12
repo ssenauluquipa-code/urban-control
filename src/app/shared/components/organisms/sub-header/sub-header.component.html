@@ -52,17 +52,17 @@
 
       @if (canShowSend) {
         <button nz-button nzType="primary" (click)="emitAction(A.SEND)" [nzLoading]="loading">
-          <span nz-icon nzType="send"></span> Enviar
+          <span nz-icon nzType="send"></span> <span class="btn-text">Enviar</span>
         </button>
       }
       @if (canShowSave) {
         <button nz-button nzType="primary" (click)="emitAction(A.SAVE)" [nzLoading]="loading">
-          <span nz-icon nzType="save"></span> Guardar
+          <span nz-icon nzType="save"></span> <span class="btn-text">Guardar</span>
         </button>
       }
       @if (canShowNew) {
         <button nz-button nzType="primary" (click)="emitAction(A.NEW)">
-          <span nz-icon nzType="plus"></span> Nuevo
+          <span nz-icon nzType="plus"></span> <span class="btn-text">Nuevo</span>
         </button>
       }
     </div>

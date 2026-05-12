@@ -96,8 +96,9 @@
 // LEYENDA (Tus estilos originales)
 .legend {
     display: flex;
+    flex-wrap: wrap; // Permitir que los elementos bajen si no caben
     justify-content: center;
-    gap: 20px;
+    gap: 15px;      // Un poco menos de espacio para que quepan mejor
     margin-top: 24px;
     padding-top: 15px;
     border-top: 1px solid #e2e8f0;

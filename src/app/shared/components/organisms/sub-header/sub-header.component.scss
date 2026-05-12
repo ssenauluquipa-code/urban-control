@@ -58,9 +58,8 @@
   display: none; // Hidden by default on desktop/tablet
 }
 
-// Media Queries 
-// Tablet y Desktop pequeño: Mantener botones visibles si hay espacio
-@media (max-width: 1024px) {
+// Tablet (>= 600px y <= 1024px)
+@media (min-width: 600px) and (max-width: 1024px) {
   .sub-header {
     padding: 0.75rem 1rem;
     gap: 0.5rem;
@@ -69,32 +68,51 @@
   .sub-header__title {
     font-size: 1.1rem;
   }
+
+  .btn-text {
+    display: inline !important; // Asegurar texto en tablet
+  }
 }
 
-// Mobile (< 768px): Ocultar textos de botones secundarios para ahorrar espacio, 
-// o moverlos a un dropdown si son demasiados.
-@media (max-width: 767px) {
+// Mobile (< 600px)
+@media (max-width: 599px) {
+  .sub-header {
+    flex-wrap: nowrap; // Todo en una sola línea
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+
   .sub-header__left {
     flex: 1;
     min-width: 0;
+    gap: 0.5rem;
   }
 
   .sub-header__title {
     font-size: 1rem;
   }
 
-  // En móvil muy pequeño, ocultamos el texto de los botones secundarios pero dejamos el icono
-  .secondary-actions button {
+  .sub-header__right {
+    flex-shrink: 0; // Que los botones no se achiquen
+    gap: 4px;
+    border: none;
+    padding: 0;
+  }
+
+  // Solo iconos en móvil para ahorrar espacio
+  .btn-text {
+    display: none !important;
+  }
+  
+  button[nz-button] {
     padding: 0 8px;
-    .btn-text, span:not([nz-icon]) {
-      display: none;
-    }
+    height: 32px;
+    width: 32px; // Botones cuadrados tipo icono
   }
 
   .btn-back {
-    .btn-text {
-      display: none;
-    }
+    width: auto !important; // El botón atrás puede ser un poco más ancho si tiene icono
+    padding: 0 6px !important;
   }
 }
 

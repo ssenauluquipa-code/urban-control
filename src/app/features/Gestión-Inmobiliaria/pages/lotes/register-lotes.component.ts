@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { switchMap, of } from 'rxjs';
+import { switchMap, of, finalize } from 'rxjs';
 import { CreateLoteDto, ILote } from 'src/app/core/models/lote/lote.model';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
@@ -23,6 +23,7 @@ import { ViewRegisterLotesComponent } from '../../views/lotes/view-register-lote
       permissionScope="lotes"
       [showSave]="true"
       [showCancel]="true"
+      [loading]="loading"
       (Save)="onSave()"
       (Cancel)="onCancel()"
     >
@@ -47,6 +48,7 @@ export class RegisterLotesComponent implements OnInit {
 
   private manzanaId: string | null = null;
   public pendingFiles: File[] = [];
+  public loading = false;
 
   // Inyecciones
   private fb = inject(FormBuilder);
@@ -128,6 +130,7 @@ export class RegisterLotesComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     const formValue = this.loteFormGroup.getRawValue();
 
     // MODO EDICIÓN
@@ -153,10 +156,14 @@ export class RegisterLotesComponent implements OnInit {
       delete payload['manzanaId']; // El endpoint PATCH no suele requerir cambiar la manzana
 
       this.loteService.updateLote(loteId, payload).pipe(
-        switchMap(() => this.pendingFiles.length > 0 ? this.loteService.uploadLoteImages(loteId, this.pendingFiles) : of(true))
+        switchMap(() => this.pendingFiles.length > 0 ? this.loteService.uploadLoteImages(loteId, this.pendingFiles) : of(true)),
+        finalize(() => this.loading = false)
       ).subscribe({
         next: () => { this.notification.success('Actualizado'); this.onCancel(); },
-        error: () => this.notification.error('Error al actualizar')
+        error: (err) => {
+          const msg = err.error?.message || 'Error al actualizar';
+          this.notification.error(msg);
+        }
       });
     }
     // MODO CREACIÓN
@@ -175,12 +182,17 @@ export class RegisterLotesComponent implements OnInit {
         observaciones: formValue.observaciones || "-"
       } as CreateLoteDto;
       this.loteService.createLote(payload).pipe(
-        switchMap((newLote: ILote) => this.pendingFiles.length > 0 ? this.loteService.uploadLoteImages(newLote.id, this.pendingFiles) : of(newLote))
+        switchMap((newLote: ILote) => this.pendingFiles.length > 0 ? this.loteService.uploadLoteImages(newLote.id, this.pendingFiles) : of(newLote)),
+        finalize(() => this.loading = false)
       ).subscribe({
         next: () => { this.notification.success('Lote creado'); this.onCancel(); },
         error: (err) => {
-          if (err.status === 409) this.notification.error('El lote ya existe');
-          else this.notification.error('Error inesperado');
+          if (err.status === 409) {
+            this.notification.error('El lote ya existe');
+          } else {
+            const msg = err.error?.message || 'Error inesperado';
+            this.notification.error(msg);
+          }
         }
       });
     }

@@ -70,8 +70,12 @@ export class RegisterManzanaComponent implements OnInit {
           this.ngModal.close(true);
         },
         error: (err) => {
-          if (err.status === 409) this.notification.error('El código de manzana ya existe en este proyecto.');
-          else this.notification.error('Error al actualizar');
+          if (err.status === 409) {
+            this.notification.error('El código de manzana ya existe en este proyecto.');
+          } else {
+            const msg = err.error?.message || 'Error al actualizar';
+            this.notification.error(msg);
+          }
         }
       });
     } else {
@@ -87,8 +91,12 @@ export class RegisterManzanaComponent implements OnInit {
           this.ngModal.close(true);
         },
         error: (err) => {
-          if (err.status === 409) this.notification.error('El código de manzana ya existe en este proyecto.');
-          else this.notification.error('Error al crear');
+          if (err.status === 409) {
+            this.notification.error('El código de manzana ya existe en este proyecto.');
+          } else {
+            const msg = err.error?.message || 'Error al crear';
+            this.notification.error(msg);
+          }
         }
       });
     }

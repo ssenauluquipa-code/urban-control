@@ -183,7 +183,8 @@ export class RegisterPropietarioModalComponent implements OnInit {
           if (err.status === 409) {
             this.notification.error('El documento ya existe');
           } else {
-            this.notification.error('Error al registrar propietario');
+            const msg = err.error?.message || 'Error al registrar propietario';
+            this.notification.error(msg);
           }
         },
       });
