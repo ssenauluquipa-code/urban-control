@@ -7,6 +7,7 @@ import {
   OnInit,
   Output,
   ChangeDetectorRef,
+  DoCheck,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -35,6 +36,8 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
       [customLabelTemplate]="multiple ? clienteLabelTemplate : undefined"
       [isMultiple]="multiple"
       [addTag]="true"
+      [minLength]="1"
+      [maxLength]="maxSelection"
       (AddTag)="abrirModalCrearCliente($event)"
       (Search)="onSearchInput($event)"
     >
@@ -143,12 +146,12 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
     }
   `]
 })
-export class SelectClientesComponent<T = string | string[] | CreateVentaPropietarioDto[]> implements OnInit, OnDestroy {
+export class SelectClientesComponent<T = string | string[] | CreateVentaPropietarioDto[]> implements OnInit, OnDestroy, DoCheck {
   // InputControl del padre (puede contener IDs o DTOs complejos)
   @Input() input_control = new FormControl<T | null>(null);
   @Input() input_placeholder = 'Buscar Cliente...';
   @Input() multiple = false;
-  @Input() maxSelection = 3; 
+  @Input() maxSelection = 3;
   @Input() withRoles = false;
 
   @Output() Change = new EventEmitter<SelectClienteOutput>();
@@ -186,11 +189,63 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
       .subscribe(value => {
         this.processSelectionChange(value);
       });
+
+    // 4. Sincronización de validación y estado "touched":
+    // Si el control del padre cambia de estado (invocado por markAllAsTouched o validación), 
+    // replicamos el estado en el control interno para que app-select-data lo visualice.
+    this.input_control.statusChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.syncStatus();
+      });
+
+    // También escuchamos cambios de valor por si acaso la validación depende del contenido
+    this.input_control.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.syncStatus();
+      });
+
+    // Ejecutar sincronización inicial
+    this.syncStatus();
+  }
+
+  private syncStatus(): void {
+    // 1. Sincronizar Valor (IMPORTANTE: Para que se vea cuando cargamos una reserva)
+    const currentExternalValue = this.input_control.value;
+    const internalIds = this.extractIds(currentExternalValue);
+
+    // Solo actualizamos si son diferentes para evitar bucles infinitos
+    if (JSON.stringify(this.internal_control.value) !== JSON.stringify(internalIds)) {
+      this.internal_control.setValue(internalIds, { emitEvent: false });
+    }
+
+    // 2. Sincronizar errores
+    if (this.input_control.invalid) {
+      this.internal_control.setErrors(this.input_control.errors, { emitEvent: false });
+    } else {
+      this.internal_control.setErrors(null, { emitEvent: false });
+    }
+
+    // 3. Sincronizar estado "touched"
+    if (this.input_control.touched) {
+      this.internal_control.markAsTouched({ onlySelf: true });
+    } else {
+      this.internal_control.markAsUntouched({ onlySelf: true });
+    }
+
+    this.cdr.markForCheck();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  ngDoCheck(): void {
+    // Sincronización forzada en cada ciclo para capturar cambios en 'touched' e 'invalid'
+    // que no disparan eventos de statusChanges.
+    this.syncStatus();
   }
 
   /**
@@ -274,7 +329,7 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
     modalRef.result.then((nuevoCliente: IClienteSearchResult) => {
       if (nuevoCliente && nuevoCliente.id) {
         this.clientList = [nuevoCliente, ...this.clientList];
-        
+
         if (this.multiple) {
           const current = (this.internal_control.value as string[]) || [];
           this.internal_control.setValue([...current, nuevoCliente.id]);
@@ -283,17 +338,17 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
         }
         this.cdr.detectChanges();
       }
-    }).catch(() => {});
+    }).catch(() => { });
   }
 
   isTitular(clientId: string): boolean {
     if (!this.withRoles) return false;
     const val = this.internal_control.value;
-    
+
     if (Array.isArray(val)) {
       return val.length > 0 && val[0] === clientId;
     }
-    
+
     return val === clientId;
   }
 }

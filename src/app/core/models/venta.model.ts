@@ -7,7 +7,6 @@ export interface CreateVentaPropietarioDto {
 
 export interface CreateVentaDto {
   loteId: string;
-  asesorId?: string;
   reservaId?: string;
   tipoPago: TipoPago;
   frecuenciaPago?: FrecuenciaPago;
@@ -26,37 +25,99 @@ export interface CreateVentaDto {
 }
 
 export enum TipoPago {
-  CONTADO = 'CONTADO',
-  CUOTAS = 'CUOTAS'
+  CONTADO = "CONTADO",
+  CUOTAS = "CUOTAS",
 }
 
 export enum FrecuenciaPago {
-  SEMANAL = 'SEMANAL',
-  QUINCENAL = 'QUINCENAL',
-  MENSUAL = 'MENSUAL',
-  BIMESTRAL = 'BIMESTRAL',
-  TRIMESTRAL = 'TRIMESTRAL'
+  SEMANAL = "SEMANAL",
+  QUINCENAL = "QUINCENAL",
+  MENSUAL = "MENSUAL",
+  BIMESTRAL = "BIMESTRAL",
+  TRIMESTRAL = "TRIMESTRAL",
 }
 
 export enum RolPropietario {
-  TITULAR = 'TITULAR',
-  COTITULAR = 'COTITULAR'
+  TITULAR = "TITULAR",
+  COTITULAR = "COTITULAR",
 }
-
 
 export interface IVenta {
   ventaId: string;
   nroVenta: number;
+  reservaId?: string;
+  codReserva?: number;
   fechaVenta: string;
   tipoPago: TipoPago;
+  frecuenciaPago?: FrecuenciaPago;
   montoTotal: number;
+  cuotaInicial?: number;
   saldoPendiente: number;
   moneda: string;
+  createdAt?: string;
+  loteId?: string;
   manzana: string;
   numeroLote: number;
   clientes: ClienteVenta[];
+  asesorId?: string;
   nombreAsesor: string;
+  nroDocumentoAsesor?: string;
 }
+
+export interface IVentaActivaCliente {
+  ventaId: string;
+  nroVenta: number;
+  tipoPago: TipoPago;
+  frecuenciaPago?: FrecuenciaPago;
+  saldoPendiente: number;
+  lote: string;
+}
+
+export interface IVentaDetalle {
+  ventaId: string;
+  nroVenta: number;
+  estado: string;
+  fechaVenta: string;
+  reservaId?: string;
+  codReserva?: number;
+  tipoPago: TipoPago;
+  frecuenciaPago?: FrecuenciaPago;
+  fechaPagoInicial?: string;
+  nroCuotas?: number;
+  modalidadCalendarioPago?: string;
+  diaSemanaPago?: string;
+  diaPagoMes1?: number;
+  diaPagoMes2?: number;
+  montoTotal: number;
+  cuotaInicial: number;
+  saldoPendiente: number;
+  moneda: Moneda;
+  observaciones?: string;
+  createdAt: string;
+  updatedAt: string;
+  loteId: string;
+  numeroLote: number;
+  estadoLote?: string;
+  areaM2?: number;
+  precioReferencial?: number;
+  manzanaId?: string;
+  manzana: string;
+  clientes: ClienteVenta[];
+  asesorId?: string;
+  nombreAsesor?: string;
+  nroDocumentoAsesor?: string;
+}
+
+export interface IVentaSaldoResumen {
+  ventaId: string;
+  nroVenta: number;
+  montoTotal: string;
+  cuotaInicial: string;
+  totalPagado: string;
+  saldoPendiente: string;
+}
+
+export type IVentaCuota = Record<string, unknown>;
 
 export interface ClienteVenta {
   id: string;
@@ -67,15 +128,18 @@ export interface ClienteVenta {
 /**
  * Tipo unión para el evento de salida, asegurando que no haya ambigüedad
  */
-export type SelectClienteOutput = string | string[] | CreateVentaPropietarioDto[] | null;
-
+export type SelectClienteOutput =
+  | string
+  | string[]
+  | CreateVentaPropietarioDto[]
+  | null;
 
 export enum DiaSemanaPago {
-  LUNES = 'LUNES',
-  MARTES = 'MARTES',
-  MIERCOLES = 'MIERCOLES',
-  JUEVES = 'JUEVES',
-  VIERNES = 'VIERNES',
-  SABADO = 'SABADO',
-  DOMINGO = 'DOMINGO'
+  LUNES = "LUNES",
+  MARTES = "MARTES",
+  MIERCOLES = "MIERCOLES",
+  JUEVES = "JUEVES",
+  VIERNES = "VIERNES",
+  SABADO = "SABADO",
+  DOMINGO = "DOMINGO",
 }

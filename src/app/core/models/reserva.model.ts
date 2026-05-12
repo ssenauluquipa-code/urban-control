@@ -29,7 +29,12 @@ export interface IReserva {
 
     // Campos planos (Lista)
     nombreCliente?: string;
-    // ... resto de campos planos
+    nroDocumento?: string;
+    nroContacto?: string;
+    numeroLote?: number;
+    manzana?: string;
+    precioLote?: number;
+    areaLote?: number;
 
     // Objetos anidados (Detalle)
     cliente?: ICliente;

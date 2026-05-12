@@ -98,6 +98,8 @@ import { FormsModule } from '@angular/forms';
 
       <app-input-error-messages
         [input_control]="inputControl"
+        [minLength]="minLength"
+        [maxLength]="maxLength"
       ></app-input-error-messages>
     </div>
   `,
@@ -138,6 +140,9 @@ export class SelectDataComponent<T = unknown> implements OnInit {
   @Input() isMultiple = false;
   @Input() setFocus = false;
   @Input() addTag: boolean | ((term: string) => unknown) = false;
+
+  @Input() minLength = 0;
+  @Input() maxLength = 0;
   // CORREGIDO: Emitimos el tipo específico del valor del control
   @Output() ChangeValue = new EventEmitter<string | T | null>();
   @Output() SelectionChange = new EventEmitter<T | T[] | null>();

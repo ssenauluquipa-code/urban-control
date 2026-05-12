@@ -4,17 +4,23 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { ITableActionParams, TableActionsEnum } from '../../../interfaces/table-actions.interface';
 
 @Component({
   selector: 'app-table-actions',
   standalone: true,
-  imports: [CommonModule, NzDropDownModule, NzButtonModule, NzIconModule],
+  imports: [CommonModule, NzDropDownModule, NzButtonModule, NzIconModule, NzToolTipModule],
   template: `
     <div class="actions-container">
       @if (actions.length <= 2) {
         @for (act of actions; track act) {
-          <button nz-button nzType="text" (click)="handleAction(act, $event)">
+          <button 
+            nz-button 
+            nzType="text" 
+            (click)="handleAction(act, $event)"
+            nz-tooltip
+            [nzTooltipTitle]="getLabel(act)">
             <i nz-icon [nzType]="getIcon(act)"></i>
           </button>
         }
@@ -86,7 +92,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.REMOVE_IMAGE]: 'file-excel',
       [TableActionsEnum.UPLOAD_PHOTO]: 'upload',
       [TableActionsEnum.BLOQUEADO]: 'lock',
-      [TableActionsEnum.SET_AVAILABLE]: 'unlock'
+      [TableActionsEnum.SET_AVAILABLE]: 'unlock',
+      [TableActionsEnum.VENTA]: 'shopping-cart'
     };
     return icons[action] || 'question';
   }
@@ -105,6 +112,7 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.UPLOAD_PHOTO]: 'Subir Foto',
       [TableActionsEnum.BLOQUEADO]: 'Bloquear',
       [TableActionsEnum.SET_AVAILABLE]: 'Disponible',
+      [TableActionsEnum.VENTA]: 'Venta',
     };
     return labels[action] || action;
   }
@@ -145,8 +153,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       // Siempre mostramos "Subir Foto"
       if (action === TableActionsEnum.UPLOAD_PHOTO || action === 'upload_photo') return true;
       // 👇 Lógica específica para Anular Reservas
-      if (action === TableActionsEnum.ANULAR) {
-        // Solo mostramos Anular si isActive es TRUE (definido en el map del componente lista)
+      if (action === TableActionsEnum.ANULAR || action === TableActionsEnum.VENTA) {
+        // Solo mostramos Anular o Venta si isActive es TRUE (definido en el map del componente lista)
         return data?.isActive === true;
       }
       return true;

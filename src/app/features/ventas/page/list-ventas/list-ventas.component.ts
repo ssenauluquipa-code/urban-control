@@ -1,33 +1,42 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { ColDef } from 'ag-grid-community';
-import { IVenta } from 'src/app/core/models/venta.model';
-import { VentaService } from 'src/app/core/services/venta.service';
-import { NotificationService } from 'src/app/core/services/notification.service';
-import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
+import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ColDef } from "ag-grid-community";
+import { IVenta } from "src/app/core/models/venta.model";
+import { VentaService } from "src/app/core/services/venta.service";
+import { NotificationService } from "src/app/core/services/notification.service";
+import {
+  ITableActionEvent,
+  TableActionsEnum,
+} from "src/app/shared/interfaces/table-actions.interface";
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
-import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
-import { FormControl } from '@angular/forms';
-import { ManzanaFloatingFilterWrapperComponent } from 'src/app/shared/components/organisms/manzana-floating-filter-wrapper.component';
-import { debounceTime, distinctUntilChanged, finalize, merge } from 'rxjs';
+import { ProjectStatusGlobalService } from "src/app/core/services/project-status-global.service";
+import { FormControl } from "@angular/forms";
+import { ManzanaFloatingFilterWrapperComponent } from "src/app/shared/components/organisms/manzana-floating-filter-wrapper.component";
+import { debounceTime, distinctUntilChanged, finalize, merge } from "rxjs";
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
-import { Router } from '@angular/router';
-import { VentaPropietariosCellComponent } from 'src/app/shared/components/atoms/venta-propietarios-cell/venta-propietarios-cell.component';
+import { Router } from "@angular/router";
+import { VentaPropietariosCellComponent } from "src/app/shared/components/atoms/venta-propietarios-cell/venta-propietarios-cell.component";
+import { AnularVentaModalComponent } from "../anular-venta-modal.component";
 
 @Component({
-  selector: 'app-list-ventas',
+  selector: "app-list-ventas",
   standalone: true,
-  imports: [PageContainerComponent, DataTableComponent],
-  templateUrl: './list-ventas.component.html',
-  styleUrls: ['./list-ventas.component.scss']
+  imports: [
+    PageContainerComponent,
+    DataTableComponent,
+    AnularVentaModalComponent,
+  ],
+  templateUrl: "./list-ventas.component.html",
+  styleUrls: ["./list-ventas.component.scss"],
 })
 export class ListVentasComponent implements OnInit {
-
   // Inyecciones[cite: 21, 22]
   private ventaService = inject(VentaService);
   private globalContext = inject(ProjectStatusGlobalService);
   private notification = inject(NotificationService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private modalService = inject(NgbModal);
 
   // Estado
   public tableActionEnum = TableActionsEnum;
@@ -124,19 +133,21 @@ export class ListVentasComponent implements OnInit {
 
   columnDefs: ColDef[] = [
     {
-      field: 'nroVenta',
-      headerName: 'Nro. Venta',
+      field: "nroVenta",
+      headerName: "Nro. Venta",
       width: 120,
-      cellStyle: { fontWeight: 'bold' },
+      cellStyle: { fontWeight: "bold" },
       filter: true,
-      floatingFilter: true
+      floatingFilter: true,
     },
     {
-      headerName: 'Ubicación',
-      field: 'manzana',
+      headerName: "Ubicación",
+      field: "manzana",
       width: 180,
       valueGetter: (params) => {
-        return params.data ? `Mza ${params.data.manzana} - Lt ${params.data.numeroLote}` : '';
+        return params.data
+          ? `Mza ${params.data.manzana} - Lt ${params.data.numeroLote}`
+          : "";
       },
       filter: true,
       floatingFilter: true,
@@ -149,35 +160,37 @@ export class ListVentasComponent implements OnInit {
       } as IManzanaFloatingFilterParams */
     },
     {
-      field: 'clientes',
-      headerName: 'Propietario(s)',
+      field: "clientes",
+      headerName: "Propietario(s)",
       flex: 1,
       minWidth: 250,
-      cellRenderer: VentaPropietariosCellComponent
+      cellRenderer: VentaPropietariosCellComponent,
     },
     {
-      field: 'montoTotal',
-      headerName: 'Total',
+      field: "montoTotal",
+      headerName: "Total",
       width: 130,
-      valueFormatter: (p) => p.data ? `${p.data.moneda} ${p.value.toLocaleString()}` : ''
+      valueFormatter: (p) =>
+        p.data ? `${p.data.moneda} ${p.value.toLocaleString()}` : "",
     },
     {
-      field: 'tipoPago',
-      headerName: 'Tipo Pago',
+      field: "tipoPago",
+      headerName: "Tipo Pago",
       width: 130,
       // Aquí podrías usar tu BadgeEstadoComponent si lo adaptas para tipos de pago
-    }
+    },
   ];
 
   ngOnInit(): void {
     // 1. Escuchar Proyecto Global
-    this.globalContext.selectedProjectId$.subscribe(projectId => {
+    this.globalContext.selectedProjectId$.subscribe((projectId) => {
       this.proyectoId = projectId || null;
       this.manzanaControl.setValue(null, { emitEvent: false }); // Reset local
 
       // Actualizar params del filtro de la tabla
       if (this.columnDefs[1].floatingFilterComponentParams) {
-        this.columnDefs[1].floatingFilterComponentParams.proyectoId = this.proyectoId;
+        this.columnDefs[1].floatingFilterComponentParams.proyectoId =
+          this.proyectoId;
       }
 
       if (projectId) {
@@ -190,12 +203,12 @@ export class ListVentasComponent implements OnInit {
     // 2. Escuchar cambios en filtros (Termino y Manzana)[cite: 22]
     merge(
       this.termControl.valueChanges.pipe(distinctUntilChanged()),
-      this.manzanaControl.valueChanges.pipe(distinctUntilChanged())
-    ).pipe(
-      debounceTime(400)
-    ).subscribe(() => {
-      this.loadVentas();
-    });
+      this.manzanaControl.valueChanges.pipe(distinctUntilChanged()),
+    )
+      .pipe(debounceTime(400))
+      .subscribe(() => {
+        this.loadVentas();
+      });
   }
 
   loadVentas(): void {
@@ -205,26 +218,59 @@ export class ListVentasComponent implements OnInit {
     const term = this.termControl.value || undefined;
     const manzanaId = this.manzanaControl.value || undefined;
 
-    this.ventaService.listarVentas(manzanaId, term)
-      .pipe(finalize(() => {
-        this.loading = false;
-        this.cdr.detectChanges();
-      }))
+    this.ventaService
+      .listarVentas(manzanaId, term)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        }),
+      )
       .subscribe({
         next: (data) => {
-          this.ventas = data;
+          this.ventas = data.map((venta) => ({
+            ...venta,
+            isActive:
+              (venta as IVenta & { estado?: string }).estado !== "ANULADA",
+          }));
         },
-        error: () => this.notification.error('Error al cargar el listado de ventas')
+        error: () =>
+          this.notification.error("Error al cargar el listado de ventas"),
       });
   }
 
   onTableAction(event: ITableActionEvent<IVenta>): void {
-    // Lógica para editar, ver info o anular venta
-    console.log('Acción:', event.action, 'Data:', event.row);
+    if (event.action === TableActionsEnum.ANULAR && event.row?.ventaId) {
+      const modalRef = this.modalService.open(AnularVentaModalComponent, {
+        size: "md",
+        backdrop: "static",
+        keyboard: false,
+      });
+
+      modalRef.componentInstance.ventaId = event.row.ventaId;
+      modalRef.componentInstance.nroVenta = event.row.nroVenta;
+
+      modalRef.result
+        .then((result) => {
+          if (result) {
+            this.loadVentas();
+          }
+        })
+        .catch(() => undefined);
+      return;
+    }
+
+    if (event.action === TableActionsEnum.EDIT && event.row?.ventaId) {
+      this.router.navigate(["/ventas/editar", event.row.ventaId]);
+      return;
+    }
+
+    if (event.action === TableActionsEnum.INFO && event.row?.ventaId) {
+      this.router.navigate(["/ventas/detail", event.row.ventaId]);
+    }
   }
 
   onAddNew(): void {
-    this.router.navigate(['/ventas/register']);
+    this.router.navigate(["/ventas/register"]);
   }
-
 }

@@ -63,10 +63,9 @@ function handle401Error(req: HttpRequest<unknown>, next: HttpHandlerFn, authServ
         isRefreshing = false;
         refreshTokenSubject.next(null);
 
-        // Evitar logout múltiple
-        if (refreshError.status === 403 || refreshError.status === 401) {
-          authService.logout().subscribe();
-        }
+        // Si el refresco falla por cualquier motivo (ej: No hay token, token expirado, etc.)
+        // cerramos sesión inmediatamente.
+        authService.logout().subscribe();
 
         return throwError(() => refreshError);
       })

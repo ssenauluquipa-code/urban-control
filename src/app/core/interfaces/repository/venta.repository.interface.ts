@@ -1,9 +1,21 @@
 import { Observable } from "rxjs";
-import { CreateVentaDto, IVenta } from "../../models/venta.model";
+import {
+  CreateVentaDto,
+  IVenta,
+  IVentaActivaCliente,
+  IVentaCuota,
+  IVentaDetalle,
+  IVentaSaldoResumen,
+} from "../../models/venta.model";
 
 export interface IVentaRepository {
   getAll(manzanaId?: string, term?: string): Observable<IVenta[]>;
-  getById(id: string): Observable<IVenta>;
+  getById(id: string): Observable<IVentaDetalle>;
+  getVentasActivasByCliente(
+    clienteId: string,
+  ): Observable<IVentaActivaCliente[]>;
+  getCuotasByVenta(id: string): Observable<IVentaCuota[]>;
+  getSaldoByVenta(id: string): Observable<IVentaSaldoResumen>;
   create(dto: CreateVentaDto): Observable<IVenta>;
   anular(id: string): Observable<void>;
 }

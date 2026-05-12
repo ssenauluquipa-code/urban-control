@@ -1,0 +1,192 @@
+:host {
+  display: block;
+}
+
+.venta-form-layout {
+  .finance-highlight-card,
+  .calendar-setup-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1rem 1.1rem;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+  }
+
+  .venta-sidebar-sticky {
+    position: sticky;
+    top: 1rem;
+  }
+
+
+  .venta-hero-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .venta-kicker {
+    display: inline-block;
+    margin-bottom: 0.35rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    font-weight: 700;
+  }
+
+  .venta-state-badge {
+    min-width: 120px;
+    text-align: center;
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: #e2e8f0;
+    color: #334155;
+  }
+
+  .venta-state-badge.is-contado {
+    background: rgba(15, 23, 42, 0.08);
+    color: #0f172a;
+  }
+
+  .venta-state-badge.is-cuotas {
+    background: rgba(30, 52, 103, 0.12);
+    color: #1e3467;
+  }
+
+  .summary-row,
+  .owner-stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.42rem 0;
+    border-bottom: 1px dashed #e2e8f0;
+    font-size: 0.95rem;
+  }
+
+  .summary-row:last-child,
+  .owner-stat-row:last-child {
+    border-bottom: none;
+  }
+
+  .summary-row.highlighted,
+  .owner-stat-row.highlighted {
+    color: #1e3467;
+    font-weight: 700;
+  }
+
+  .summary-row.muted-row {
+    font-size: 0.9rem;
+    color: #64748b;
+  }
+
+  .payment-mode-helper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    border: 1px solid #dbeafe;
+    background: #f8fafc;
+  }
+
+  .payment-mode-helper.is-contado {
+    border-color: rgba(15, 23, 42, 0.12);
+    background: rgba(15, 23, 42, 0.03);
+  }
+
+  .payment-mode-helper.is-cuotas {
+    border-color: rgba(30, 52, 103, 0.15);
+    background: rgba(30, 52, 103, 0.05);
+  }
+
+  .finance-highlight-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .mini-finance-resume {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .mini-finance-resume div {
+    border-radius: 10px;
+    background: #f8fafc;
+    padding: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .mini-finance-resume span {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .calendar-state-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+  }
+
+  .owners-rule-box {
+    border-radius: 12px;
+    padding: 0.85rem 0.95rem;
+    background: rgba(30, 52, 103, 0.05);
+    border: 1px solid rgba(30, 52, 103, 0.1);
+    color: #334155;
+    font-size: 0.9rem;
+  }
+
+  .owner-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    margin-right: 0.6rem;
+  }
+
+  .owner-chip-primary {
+    background: rgba(30, 52, 103, 0.12);
+    color: #1e3467;
+  }
+
+  .owner-chip-secondary {
+    background: #edf2f7;
+    color: #334155;
+  }
+
+  .helper-text,
+  .small-text-info {
+    display: inline-block;
+    line-height: 1.45;
+  }
+}
+
+@media (max-width: 1199.98px) {
+  .venta-form-layout {
+    .venta-sidebar-sticky {
+      position: static;
+    }
+  }
+}

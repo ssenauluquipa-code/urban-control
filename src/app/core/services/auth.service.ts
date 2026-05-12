@@ -1,4 +1,5 @@
-import { Injectable, signal, computed, Inject } from '@angular/core';
+import { Injectable, signal, computed, Inject, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { catchError, finalize, Observable, of, tap, throwError } from 'rxjs';
 import { ILoginDto, ILoginResponse } from '../models/auth.model';
 import { IUpdateProfileDto, IUser } from '../models/user.model';
@@ -8,6 +9,7 @@ import { AUTH_REPOSITORY_TOKEN, IAuthRepository } from '../interfaces/repository
   providedIn: 'root'
 })
 export class AuthService {
+  private router = inject(Router);
   constructor(@Inject(AUTH_REPOSITORY_TOKEN) private repo: IAuthRepository) { }
 
   private _currentUser = signal<IUser | null>(this.getUserFromStorage());
@@ -50,6 +52,7 @@ export class AuthService {
         localStorage.clear();
         this._currentUser.set(null);
         this.isLoggingOut = false;
+        this.router.navigate(['/auth/login']);
       }),
       catchError(() => {
         // Evitar que errores de red/401 en el logout intenten refrescar nuevamente

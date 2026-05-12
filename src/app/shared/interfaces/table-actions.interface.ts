@@ -12,7 +12,8 @@ export enum TableActionsEnum {
   REMOVE_IMAGE = 'remove_image',
   UPLOAD_PHOTO = 'upload_photo',
   BLOQUEADO = 'bloqueado',
-  SET_AVAILABLE = 'set_available'
+  SET_AVAILABLE = 'set_available',
+  VENTA = 'venta'
 }
 
 export type TableAction = TableActionsEnum | string;

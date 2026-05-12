@@ -49,6 +49,7 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
   @Input() input_control = new FormControl<string | null>(null);
   @Input() manzanaId: string | null = null;
   @Input() placeholder = 'Buscar lote...';
+  @Input() forcedLote: any = null; // Lote que debe mostrarse sí o sí (ej: desde reserva)
 
   // Output
   @Output() Change = new EventEmitter<string | null>();
@@ -73,6 +74,11 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
       const currentId = changes['manzanaId'].currentValue;
       this.loadLotes(currentId);
     }
+
+    // Si cambia el lote forzado (desde reserva), recargamos para incluirlo en la lista
+    if (changes['forcedLote'] && !changes['forcedLote'].firstChange) {
+      this.loadLotes(this.manzanaId);
+    }
   }
 
   ngOnDestroy(): void {
@@ -91,9 +97,9 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
           descripcion: lote.descripcion || `Lote ${lote.nroLote} - ${lote.areaM2}m²`
         }));
 
-        // Verificar si el lote seleccionado actual existe en la nueva lista
-        if (this.input_control.value && !this.loteList.find(l => l.id === this.input_control.value)) {
-          this.input_control.setValue(null);
+        // Si tenemos un lote forzado (ej: de una reserva), lo añadimos a la lista si no está
+        if (this.forcedLote && !this.loteList.find(l => l.id === this.forcedLote.id)) {
+          this.loteList.unshift(this.forcedLote);
         }
 
         this.isLoading = false;

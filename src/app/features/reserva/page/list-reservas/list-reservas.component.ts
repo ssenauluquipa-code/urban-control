@@ -50,7 +50,7 @@ export class ListReservasComponent implements OnInit {
   // Filtros Reactivos (Única fuente de verdad)
   public clienteControl = new FormControl<string | null>(null);
   public manzanaControl = new FormControl<string | null>(null);
-  public estadoControl = new FormControl<string | null>('ACTIVA');
+  public estadoControl = new FormControl<string | null>(null);
 
   // Definición de Columnas para AG Grid
   columnDefs: ColDef[] = [
@@ -185,6 +185,10 @@ export class ListReservasComponent implements OnInit {
         });
     } else if (event.action === TableActionsEnum.VIEW && event.row?.id) {
       this.router.navigate(['/reservas/detail', event.row.id]);
+    } else if (event.action === TableActionsEnum.VENTA && event.row?.reservaId) {
+      this.router.navigate(['/ventas/register'], {
+        queryParams: { reservaId: event.row.reservaId }
+      });
     }
   }
 
