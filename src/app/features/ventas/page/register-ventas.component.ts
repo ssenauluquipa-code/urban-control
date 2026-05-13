@@ -130,7 +130,6 @@ export class RegisterVentasComponent implements OnInit {
 
     this.form.get("tipoPago")?.valueChanges.subscribe((tipo) => {
       this.updateFinancingValidators(tipo);
-      this.cdr.detectChanges();
     });
 
     this.form.get("frecuenciaPago")?.valueChanges.subscribe(() => {
@@ -174,7 +173,6 @@ export class RegisterVentasComponent implements OnInit {
 
       fieldsToClear.forEach((field) => {
         this.form.get(field)?.clearValidators();
-        this.form.get(field)?.updateValueAndValidity({ emitEvent: false });
       });
     } else {
       this.form
@@ -255,6 +253,7 @@ export class RegisterVentasComponent implements OnInit {
       }
     }
 
+    // Call updateValueAndValidity only ONCE for each affected field
     this.form.get("cuotaInicial")?.updateValueAndValidity({ emitEvent: false });
     fieldsToClear.forEach((field) =>
       this.form.get(field)?.updateValueAndValidity({ emitEvent: false }),

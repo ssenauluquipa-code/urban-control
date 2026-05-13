@@ -161,7 +161,7 @@ export class ListaAsesoresComponent implements OnInit {
           }
         });
     }
-    if (event.action === TableActionsEnum.INFO) {
+    if (event.action === TableActionsEnum.VIEW) {
       this.openDetailModal(event.row!.id);
     }
   }

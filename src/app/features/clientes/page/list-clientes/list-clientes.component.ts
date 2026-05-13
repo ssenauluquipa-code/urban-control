@@ -1,27 +1,38 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ColDef } from 'ag-grid-community';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { ColDef, ICellRendererParams } from 'ag-grid-community';
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { ICliente } from 'src/app/core/models/cliente.model';
 import { ClienteService } from 'src/app/core/services/cliente.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
-import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
+import {
+  ITableActionEvent,
+  TableActionsEnum,
+} from 'src/app/shared/interfaces/table-actions.interface';
 import { HttpErrorResponse } from '@angular/common/http';
-import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
+import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DataTableServerComponent } from 'src/app/shared/components/organisms/data-table-server/data-table-server.component';
 import { Router } from '@angular/router';
 import { ITableFilterModel } from 'src/app/shared/interfaces/table-filters.interface';
 import { StatusFloatingFilterComponent } from 'src/app/shared/components/organisms/status-floating-filter.component';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { ImageDisplayComponent } from 'src/app/shared/components/atoms/image-display/image-display.component';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { CommonModule } from '@angular/common';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ClienteFotoUploadComponent } from '../../components/cliente-foto-upload/cliente-foto-upload.component';
 
 @Component({
   selector: 'app-list-clientes',
   standalone: true,
   imports: [PageContainerComponent, DataTableServerComponent, CommonModule],
   templateUrl: './list-clientes.component.html',
-  styleUrls: ['./list-clientes.component.scss']
+  styleUrls: ['./list-clientes.component.scss'],
 })
 export class ListClientesComponent implements OnInit, OnDestroy {
   @ViewChild(DataTableServerComponent) dataTable!: DataTableServerComponent;
@@ -44,6 +55,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
   private clienteService = inject(ClienteService);
   private notification = inject(NotificationService);
   private nzModal = inject(NzModalService);
+  private ngbModal = inject(NgbModal);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
@@ -57,7 +69,21 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       floatingFilter: true,
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true
+      suppressHeaderFilterButton: true,
+    },
+    {
+      field: 'fotoUrl',
+      headerName: 'Foto',
+      width: 90,
+      cellRenderer: (params: ICellRendererParams<ICliente>) => {
+        const url = params.value;
+        const name = params.data?.nombreCompleto || 'U';
+        if (url) {
+          return `<img src="${url}" alt="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">`;
+        } else {
+          return `<div style="width: 35px; height: 35px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #64748b;">${name.substring(0, 2).toUpperCase()}</div>`;
+        }
+      },
     },
     {
       field: 'nombreCompleto',
@@ -68,7 +94,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       floatingFilter: true,
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true
+      suppressHeaderFilterButton: true,
     },
     {
       field: 'nroDocumento',
@@ -86,20 +112,20 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       floatingFilter: true,
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true
+      suppressHeaderFilterButton: true,
     },
     {
       field: 'telefono',
       headerName: 'Celular',
       width: 110,
-      suppressHeaderMenuButton: true
+      suppressHeaderMenuButton: true,
     },
     {
       field: 'direccion',
       headerName: 'Dirección',
       flex: 1,
       minWidth: 200,
-      suppressHeaderMenuButton: true
+      suppressHeaderMenuButton: true,
     },
     {
       field: 'isActive',
@@ -110,12 +136,13 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       floatingFilter: true,
       floatingFilterComponent: StatusFloatingFilterComponent,
       floatingFilterComponentParams: {
-        onStatusChange: (status: boolean | undefined) => this.onStatusFilterChanged(status)
+        onStatusChange: (status: boolean | undefined) =>
+          this.onStatusFilterChanged(status),
       },
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true
-    }
+      suppressHeaderFilterButton: true,
+    },
   ];
 
   ngOnInit(): void {
@@ -139,13 +166,14 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     // Si todo está vacío al borrar, 'term' será "" y traerá todo
     const term = (nombre || codigo || documento).trim();
 
-    this.clienteService.getPagedClients(page, this.limit, term, this.currentStatusFilter)
+    this.clienteService
+      .getPagedClients(page, this.limit, term, this.currentStatusFilter)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
           this.loading = false;
           this.cdr.detectChanges();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -153,7 +181,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
           this.totalRecords = res.total;
           this.cdr.detectChanges();
         },
-        error: () => this.notification.error('Error al cargar clientes')
+        error: () => this.notification.error('Error al cargar clientes'),
       });
   }
 
@@ -176,9 +204,12 @@ export class ListClientesComponent implements OnInit, OnDestroy {
 
     if (event.action === TableActionsEnum.EDIT) {
       this.router.navigate(['/clientes/editar', cliente.id]);
-    } else if (event.action === TableActionsEnum.DEACTIVATE || event.action === TableActionsEnum.ACTIVATE) {
+    } else if (
+      event.action === TableActionsEnum.DEACTIVATE ||
+      event.action === TableActionsEnum.ACTIVATE
+    ) {
       this.toggleStatus(cliente);
-    } else if (event.action === TableActionsEnum.INFO) {
+    } else if (event.action === TableActionsEnum.VIEW) {
       this.router.navigate(['/clientes/ver', cliente.id]);
     } else if (event.action === TableActionsEnum.UPLOAD_PHOTO) {
       this.openUploadPhotoModal(cliente);
@@ -187,55 +218,25 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Abre un modal con app-image-display para subir la foto del cliente */
+  /** Abre un modal con ClienteFotoUploadComponent para subir la foto del cliente */
   private openUploadPhotoModal(cliente: ICliente): void {
-    let selectedFile: File | null = null;
+    const modalRef = this.ngbModal.open(ClienteFotoUploadComponent, {
+      centered: true,
+      size: 'md',
+      backdrop: 'static',
+    });
 
-    const modal: NzModalRef<ImageDisplayComponent> = this.nzModal.create({
-      nzTitle: `Subir foto — ${cliente.nombreCompleto}`,
-      nzContent: ImageDisplayComponent,
-      nzData: {
-        imageUrl: cliente.fotoUrl || '',
-        editable: true,
-        imageName: cliente.nombreCompleto,
-        emptyText: 'Sin foto',
-        emptyHint: 'Click para seleccionar una imagen'
-      },
-      nzFooter: [
-        {
-          label: 'Cancelar',
-          onClick: () => modal.destroy()
-        },
-        {
-          label: 'Guardar foto',
-          type: 'primary',
-          disabled: () => !selectedFile,
-          onClick: () => {
-            if (!selectedFile) return;
-            this.clienteService.uploadFoto(cliente.id, selectedFile)
-              .pipe(finalize(() => modal.destroy()))
-              .subscribe({
-                next: () => {
-                  this.notification.success('Foto subida correctamente');
-                  if (this.dataTable) this.dataTable.refresh();
-                },
-                error: () => this.notification.error('Error al subir la foto')
-              });
-          }
+    modalRef.componentInstance.cliente = cliente;
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          if (this.dataTable) this.dataTable.refresh();
         }
-      ],
-      nzWidth: 360
-    });
-
-    // Capturar el archivo cuando el usuario lo selecciona en app-image-display
-    modal.afterOpen.subscribe(() => {
-      const comp = modal.getContentComponent();
-      if (comp) {
-        comp.imageUpdated.subscribe((file: File) => {
-          selectedFile = file;
-        });
-      }
-    });
+      })
+      .catch(() => {
+        // Modal dismissed
+      });
   }
 
   /** Confirma y elimina la foto del cliente llamando al endpoint DELETE */
@@ -251,9 +252,9 @@ export class ListClientesComponent implements OnInit, OnDestroy {
             this.notification.success('Foto eliminada');
             if (this.dataTable) this.dataTable.refresh();
           },
-          error: () => this.notification.error('Error al eliminar la foto')
+          error: () => this.notification.error('Error al eliminar la foto'),
         });
-      }
+      },
     });
   }
 
@@ -263,21 +264,25 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       nzTitle: isActivating ? '¿Reactivar cliente?' : '¿Desactivar cliente?',
       nzContent: `El cliente ${cliente.nombreCompleto} cambiará de estado.`,
       nzOnOk: () => {
-        this.clienteService.toggleStatus(cliente.id, cliente.isActive).subscribe({
-          next: () => {
-            this.notification.success('Estado actualizado');
-            if (this.dataTable) {
-              this.dataTable.refresh();
-            } else {
-              this.loadClientes(this.currentPage);
-            }
-          },
-          error: (err: HttpErrorResponse) => {
-            const msg = err?.error?.message || 'Error al actualizar el estado del cliente';
-            this.notification.error(msg);
-          }
-        });
-      }
+        this.clienteService
+          .toggleStatus(cliente.id, cliente.isActive)
+          .subscribe({
+            next: () => {
+              this.notification.success('Estado actualizado');
+              if (this.dataTable) {
+                this.dataTable.refresh();
+              } else {
+                this.loadClientes(this.currentPage);
+              }
+            },
+            error: (err: HttpErrorResponse) => {
+              const msg =
+                err?.error?.message ||
+                'Error al actualizar el estado del cliente';
+              this.notification.error(msg);
+            },
+          });
+      },
     });
   }
 

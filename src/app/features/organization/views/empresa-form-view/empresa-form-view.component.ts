@@ -65,4 +65,7 @@ export class EmpresaFormViewComponent {
   get horaCronControl() {
     return this.form.get('horaCronDiario') as FormControl;
   }
+  get tipoDeCambioControl() {
+    return this.form.get('tipoDeCambio') as FormControl;
+  }
 }

@@ -22,6 +22,7 @@ export class ModalContainerComponent {
   @Input() showFooter = true;
   @Input() saveButtonName = "Guardar";
   @Input() saveButtonIcon = "save";
+  @Input() saveButtonDanger = false;
   @Input() cancelButtonName = "Cancelar";
 
   @Output() SaveAction = new EventEmitter<void>();

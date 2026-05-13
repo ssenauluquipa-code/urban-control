@@ -40,7 +40,7 @@ export class DataTableServerComponent<T = unknown> extends DataTableBaseComponen
   // --- Inputs Específicos para server-side ---
   @Input() rowData: T[] = [];
   @Input() totalRecords = 0;
-  @Input() pageSize = 10;
+  @Input() pageSize = 25;
 
   // --- Outputs Específicos para server-side ---
   @Output() pageChange = new EventEmitter<number>();

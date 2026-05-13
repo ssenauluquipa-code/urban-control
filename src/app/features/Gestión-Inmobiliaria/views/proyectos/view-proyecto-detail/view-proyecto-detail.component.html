@@ -2,28 +2,28 @@
   <div class="col-md-6">
     <div class="row mb-3">
       <div class="col-6">
-        <app-input-text-info [label]="'Nombre'" [value]="proyecto?.nombre"></app-input-text-info>
+        <app-input-text-info [label]="'Nombre'" [value]="proyecto?.nombre" [loading]="loading"></app-input-text-info>
       </div>
       <div class="col-6">
-        <app-input-text-info [label]="'Estado'" [value]="proyecto?.estado"></app-input-text-info>
+        <app-input-text-info [label]="'Estado'" [value]="proyecto?.estado" [loading]="loading"></app-input-text-info>
       </div>
     </div>
     <div class="mb-3">
-      <app-input-text-info [label]="'Descripción'" [value]="proyecto?.descripcion || 'Sin descripción'"></app-input-text-info>
+      <app-input-text-info [label]="'Descripción'" [value]="proyecto?.descripcion || 'Sin descripción'" [loading]="loading"></app-input-text-info>
     </div>
     <div class="mb-3">
-      <app-input-text-info [label]="'Dirección'" [value]="proyecto?.direccion"></app-input-text-info>
+      <app-input-text-info [label]="'Dirección'" [value]="proyecto?.direccion" [loading]="loading"></app-input-text-info>
     </div>
   </div>
   <div class="col-md-6">
     <div class="mb-3">
-      <app-input-text-info [label]="'Departamento'" [value]="proyecto?.departamento"></app-input-text-info>
+      <app-input-text-info [label]="'Departamento'" [value]="proyecto?.departamento" [loading]="loading"></app-input-text-info>
     </div>
     <div class="mb-3">
-      <app-input-text-info [label]="'Provincia'" [value]="proyecto?.provincia"></app-input-text-info>
+      <app-input-text-info [label]="'Provincia'" [value]="proyecto?.provincia" [loading]="loading"></app-input-text-info>
     </div>
     <div class="mb-3">
-      <app-input-text-info [label]="'Distrito'" [value]="proyecto?.distrito || 'Sin registro'"></app-input-text-info>
+      <app-input-text-info [label]="'Distrito'" [value]="proyecto?.distrito || 'Sin registro'" [loading]="loading"></app-input-text-info>
     </div>
   </div>
 </div>

@@ -3,10 +3,10 @@
     <div class="row g-3 align-items-start">
       <div class="col-xl-9 col-lg-8 col-12 order-2 order-lg-1">
         <app-card-container title="1. Datos de la Operación">
-          <div class="row g-3">
+          <div class="row">
             <div class="col-md-6">
               <app-form-field label="Lote" [required]="true">
-                <app-select-lotes 
+                <app-select-lotes
                   [input_control]="loteId"
                   [forcedLote]="currentReservedLote"
                 ></app-select-lotes>
@@ -21,10 +21,10 @@
                   (OnClear)="onReservaCleared()"
                 ></app-input-search-reserva>
               </app-form-field>
-              <small class="text-muted helper-text">
+              <!--               <small class="text-muted helper-text">
                 Si más adelante la venta viene desde una reserva, este campo
                 será la base para autocompletar datos comerciales.
-              </small>
+              </small> -->
             </div>
 
             <div class="col-12">
@@ -40,9 +40,9 @@
         </app-card-container>
 
         <app-card-container title="2. Configuración Financiera">
-          <div class="row g-4 align-items-stretch">
+          <div class="row align-items-stretch">
             <div class="col-lg-7 col-12">
-              <div class="row g-3">
+              <div class="row">
                 <div class="col-md-7">
                   <app-form-field label="Tipo de Pago" [required]="true">
                     <app-tipo-pago-selector
@@ -99,7 +99,9 @@
                 @if (isCuotas || reservaId.value) {
                   <div class="mini-finance-resume">
                     <div>
-                      <span>{{ reservaId.value ? 'Adelanto (Reserva)' : 'Inicial' }}</span>
+                      <span>{{
+                        reservaId.value ? "Adelanto (Reserva)" : "Inicial"
+                      }}</span>
                       <strong
                         >{{ moneda.value || "BS" }}
                         {{ cuotaInicialValue | number: "1.2-2" }}</strong
@@ -161,7 +163,11 @@
 
                   <div class="col-md-6">
                     <app-form-field
-                      [label]="reservaId.value ? 'Monto de Reserva / Adelanto' : 'Cuota Inicial / Adelanto'"
+                      [label]="
+                        reservaId.value
+                          ? 'Monto de Reserva / Adelanto'
+                          : 'Cuota Inicial / Adelanto'
+                      "
                       [required]="true"
                     >
                       <app-input-number
@@ -171,9 +177,11 @@
                     </app-form-field>
                     <small class="text-muted helper-text">
                       @if (isCuotas) {
-                        Este monto se descuenta del total y solo el saldo restante entra al plan de pagos.
+                        Este monto se descuenta del total y solo el saldo
+                        restante entra al plan de pagos.
                       } @else {
-                        Monto ya entregado que se descontará del pago total al contado.
+                        Monto ya entregado que se descontará del pago total al
+                        contado.
                       }
                     </small>
                   </div>
@@ -183,69 +191,69 @@
               @if (isCuotas) {
                 <div class="col-lg-5 col-12">
                   <div class="calendar-setup-card h-100">
-                  <h6 class="text-muted small fw-bold mb-3">
-                    AJUSTES DE CALENDARIO
-                  </h6>
+                    <h6 class="text-muted small fw-bold mb-3">
+                      AJUSTES DE CALENDARIO
+                    </h6>
 
-                  <div class="calendar-state-card mb-3">
-                    <strong>Resumen del calendario</strong>
-                    <span>{{ resumenCalendario }}</span>
-                  </div>
+                    <div class="calendar-state-card mb-3">
+                      <strong>Resumen del calendario</strong>
+                      <span>{{ resumenCalendario }}</span>
+                    </div>
 
-                  @if (frecuenciaPago.value === FrecuenciaPago.SEMANAL) {
-                    <app-form-field label="Día de Vencimiento">
-                      <app-select-dia-semana
-                        [input_control]="diaSemanaPago"
-                      ></app-select-dia-semana>
-                    </app-form-field>
-                  }
+                    @if (frecuenciaPago.value === FrecuenciaPago.SEMANAL) {
+                      <app-form-field label="Día de Vencimiento">
+                        <app-select-dia-semana
+                          [input_control]="diaSemanaPago"
+                        ></app-select-dia-semana>
+                      </app-form-field>
+                    }
 
-                  @if (frecuenciaPago.value === FrecuenciaPago.QUINCENAL) {
-                    <app-form-field label="Modalidad">
-                      <app-modalidad-calendario-selector
-                        [input_control]="modalidadCalendarioPago"
-                      ></app-modalidad-calendario-selector>
-                    </app-form-field>
+                    @if (frecuenciaPago.value === FrecuenciaPago.QUINCENAL) {
+                      <app-form-field label="Modalidad">
+                        <app-modalidad-calendario-selector
+                          [input_control]="modalidadCalendarioPago"
+                        ></app-modalidad-calendario-selector>
+                      </app-form-field>
 
-                    @if (modalidadCalendarioPago.value === "DIAS_FIJOS_MES") {
-                      <div class="row g-2 mt-2">
-                        <div class="col-6">
-                          <app-form-field label="Día Pago 1">
-                            <app-input-dia-pago
-                              [input_control]="diaPagoMes1"
-                            ></app-input-dia-pago>
-                          </app-form-field>
+                      @if (modalidadCalendarioPago.value === "DIAS_FIJOS_MES") {
+                        <div class="row g-2 mt-2">
+                          <div class="col-6">
+                            <app-form-field label="Día Pago 1">
+                              <app-input-dia-pago
+                                [input_control]="diaPagoMes1"
+                              ></app-input-dia-pago>
+                            </app-form-field>
+                          </div>
+                          <div class="col-6">
+                            <app-form-field label="Día Pago 2">
+                              <app-input-dia-pago
+                                [input_control]="diaPagoMes2"
+                              ></app-input-dia-pago>
+                            </app-form-field>
+                          </div>
                         </div>
-                        <div class="col-6">
-                          <app-form-field label="Día Pago 2">
-                            <app-input-dia-pago
-                              [input_control]="diaPagoMes2"
-                            ></app-input-dia-pago>
-                          </app-form-field>
-                        </div>
+                      }
+                    }
+
+                    @if (
+                      frecuenciaPago.value === FrecuenciaPago.MENSUAL ||
+                      frecuenciaPago.value === FrecuenciaPago.BIMESTRAL ||
+                      frecuenciaPago.value === FrecuenciaPago.TRIMESTRAL
+                    ) {
+                      <div class="text-center text-muted py-4">
+                        <i class="bi bi-calendar-check display-4"></i>
+                        <p class="mt-2 mb-0">
+                          Calendario automático generado desde la fecha inicial
+                          de pago.
+                        </p>
                       </div>
                     }
-                  }
-
-                  @if (
-                    frecuenciaPago.value === FrecuenciaPago.MENSUAL ||
-                    frecuenciaPago.value === FrecuenciaPago.BIMESTRAL ||
-                    frecuenciaPago.value === FrecuenciaPago.TRIMESTRAL
-                  ) {
-                    <div class="text-center text-muted py-4">
-                      <i class="bi bi-calendar-check display-4"></i>
-                      <p class="mt-2 mb-0">
-                        Calendario automático generado desde la fecha inicial de
-                        pago.
-                      </p>
-                    </div>
-                  }
+                  </div>
                 </div>
-              </div>
-            }
-          </div>
-        </app-card-container>
-      }
+              }
+            </div>
+          </app-card-container>
+        }
 
         <app-card-container title="4. Propietarios">
           <div class="row g-3 align-items-start">
@@ -262,13 +270,13 @@
             </div>
 
             <div class="col-lg-4 col-12">
-              <app-card-container>
-                <strong class="d-block mb-2">Resumen de propietarios</strong>
-                <div class="owners-rule-box mb-3">
-                  Debe existir exactamente <strong>un titular</strong> y hasta
-                  <strong>2 propietarios</strong> en total.
-                </div>
-              </app-card-container>
+              <!-- <app-card-container> -->
+              <!-- <strong class="d-block mb-2">Resumen de propietarios</strong> -->
+              <div class="owners-rule-box mb-3">
+                Debe existir exactamente <strong>un titular</strong> y hasta
+                <strong>2 propietarios</strong> en total.
+              </div>
+              <!--  </app-card-container> -->
             </div>
           </div>
         </app-card-container>
@@ -276,7 +284,7 @@
 
       <div class="col-xl-3 col-lg-4 col-12 order-1 order-lg-2">
         <div class="venta-sidebar-sticky">
-          <app-card-container class="mb-3">
+          <app-card-container>
             <div class="venta-hero-header">
               <div>
                 <span class="venta-kicker">Estado de la operación</span>
@@ -299,9 +307,9 @@
                 {{ tipoPago.value || "SIN DEFINIR" }}
               </div>
             </div>
-          </app-card-container>
 
-          <app-card-container>
+            <hr class="my-4 text-muted" style="opacity: 0.15;" />
+
             <span class="venta-kicker">Resumen dinámico</span>
             <div class="summary-row">
               <span>Total de la venta</span>

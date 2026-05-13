@@ -19,7 +19,7 @@ import { ViewProyectoDetailComponent } from '../../../views/proyectos/view-proye
       [loading]="loading"
       [showFooter]="false"
       (CancelAction)="activeModal.dismiss()">
-        <app-view-proyecto-detail [proyecto]="proyecto"></app-view-proyecto-detail>      
+        <app-view-proyecto-detail [proyecto]="proyecto" [loading]="loading"></app-view-proyecto-detail>      
     </app-modal-container>
   `,
   styles: []

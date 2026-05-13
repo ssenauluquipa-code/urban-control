@@ -15,6 +15,7 @@ import { ModalContainerComponent } from 'src/app/shared/components/organisms/mod
       [mainTitleModal]="'Anular Venta'"
       [saveButtonName]="'Anular Venta'"
       [saveButtonIcon]="'stop'"
+      [saveButtonDanger]="true"
       [loading]="loading"
       (SaveAction)="confirmarAnulacion()"
       (CancelAction)="activeModal.dismiss()"

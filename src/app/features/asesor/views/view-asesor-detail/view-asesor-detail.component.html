@@ -5,13 +5,14 @@
     <!-- Fila 1: Código y Estado -->
     <div class="row mb-3">
       <div class="col-6">
-        <app-input-text-info [label]="'Código'" [value]="asesor?.codigoAsesor">
+        <app-input-text-info [label]="'Código'" [value]="asesor?.codigoAsesor" [loading]="loading">
         </app-input-text-info>
       </div>
       <div class="col-6">
         <app-input-text-info
           [label]="'Estado'"
           [value]="asesor?.isActive ? 'Activo' : 'Inactivo'"
+          [loading]="loading"
         >
         </app-input-text-info>
       </div>
@@ -23,6 +24,7 @@
       <app-input-text-info
         [label]="'Nombre Completo'"
         [value]="asesor?.nombreCompleto"
+        [loading]="loading"
       >
       </app-input-text-info>
     </div>
@@ -33,6 +35,7 @@
         <app-input-text-info
           [label]="'Tipo Doc.'"
           [value]="asesor?.tipoDocumento"
+          [loading]="loading"
         >
         </app-input-text-info>
       </div>
@@ -40,6 +43,7 @@
         <app-input-text-info
           [label]="'Nro. Documento'"
           [value]="asesor?.nroDocumento"
+          [loading]="loading"
         >
         </app-input-text-info>
       </div>
@@ -50,6 +54,7 @@
       <app-input-text-info
         [label]="'Teléfono'"
         [value]="asesor?.telefono || 'Sin registro'"
+        [loading]="loading"
       >
       </app-input-text-info>
     </div>
@@ -59,7 +64,7 @@
   <div class="col-md-6">
     <!-- Fila 1: Género -->
     <div class="mb-3">
-      <app-input-text-info [label]="'Género'" [value]="asesor?.genero">
+      <app-input-text-info [label]="'Género'" [value]="asesor?.genero" [loading]="loading">
       </app-input-text-info>
     </div>
 
@@ -68,6 +73,7 @@
       <app-input-text-info
         [label]="'Fecha Nacimiento'"
         [value]="asesor?.fechaNacimiento | date: 'dd/MM/yyyy'"
+        [loading]="loading"
       >
       </app-input-text-info>
     </div>
@@ -77,6 +83,7 @@
       <app-input-text-info
         [label]="'Email'"
         [value]="asesor?.email || 'Sin registro'"
+        [loading]="loading"
       >
       </app-input-text-info>
     </div>

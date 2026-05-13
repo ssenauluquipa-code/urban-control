@@ -24,7 +24,6 @@ import { AnularVentaModalComponent } from "../anular-venta-modal.component";
   imports: [
     PageContainerComponent,
     DataTableComponent,
-    AnularVentaModalComponent,
   ],
   templateUrl: "./list-ventas.component.html",
   styleUrls: ["./list-ventas.component.scss"],
@@ -265,7 +264,7 @@ export class ListVentasComponent implements OnInit {
       return;
     }
 
-    if (event.action === TableActionsEnum.INFO && event.row?.ventaId) {
+    if (event.action === TableActionsEnum.VIEW && event.row?.ventaId) {
       this.router.navigate(["/ventas/detail", event.row.ventaId]);
     }
   }

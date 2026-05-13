@@ -1,0 +1,28 @@
+<app-modal-container
+  [mainTitleModal]="'Subir Foto de Cliente'"
+  [subtitle]="cliente.nombreCompleto"
+  [saveButtonName]="'Guardar Cambios'"
+  [saveButtonIcon]="'upload'"
+  [loading]="loading"
+  (SaveAction)="guardarFoto()"
+  (CancelAction)="activeModal.dismiss()"
+>
+  <div class="photo-upload-content">
+    @if (!selectedFile && !cliente.fotoUrl) {
+      <div class="info-alert">
+        <span nz-icon nzType="info-circle" nzTheme="outline"></span>
+        <p>Seleccione una imagen cuadrada para mejores resultados.</p>
+      </div>
+    }
+
+    <app-image-display
+      [imageUrl]="cliente.fotoUrl"
+      [imageName]="cliente.nombreCompleto"
+      [editable]="true"
+      [emptyText]="'Sin Foto de Perfil'"
+      [emptyHint]="'Haz click o arrastra una imagen para subir'"
+      (imageUpdated)="onImageUpdated($event)"
+      (imageDeleted)="onImageDeleted()"
+    ></app-image-display>
+  </div>
+</app-modal-container>

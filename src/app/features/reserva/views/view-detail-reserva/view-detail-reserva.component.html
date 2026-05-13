@@ -6,13 +6,14 @@
         <!-- g-3 separa los inputs internos -->
         <div class="row g-2">
           <div class="col-md-6 col-12">
-            <app-input-text-info [label]="'Estado'" [value]="reserva?.estado">
+            <app-input-text-info [label]="'Estado'" [value]="reserva?.estado" [loading]="loading">
             </app-input-text-info>
           </div>
           <div class="col-md-6 col-12">
             <app-input-text-info
               [label]="'Monto'"
               [value]="reserva?.moneda + ' ' + reserva?.montoReserva"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -20,6 +21,7 @@
             <app-input-text-info
               [label]="'Fecha Reserva'"
               [value]="reserva?.fechaReserva | date: 'dd/MM/yyyy'"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -27,6 +29,7 @@
             <app-input-text-info
               [label]="'Vencimiento'"
               [value]="reserva?.fechaVencimiento | date: 'dd/MM/yyyy'"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -34,6 +37,7 @@
             <app-input-text-info
               [label]="'Observaciones'"
               [value]="reserva?.observaciones || 'Sin observaciones'"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -49,6 +53,7 @@
             <app-input-text-info
               [label]="'Nombre Completo'"
               [value]="reserva?.cliente?.nombreCompleto"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -60,6 +65,7 @@
                 ': ' +
                 reserva?.cliente?.nroDocumento
               "
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -67,6 +73,7 @@
             <app-input-text-info
               [label]="'Teléfono'"
               [value]="reserva?.cliente?.telefono"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -74,6 +81,7 @@
             <app-input-text-info
               [label]="'Nro. Referencia'"
               [value]="reserva?.cliente?.numeroReferencia"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -91,6 +99,7 @@
             <app-input-text-info
               [label]="'Proyecto'"
               [value]="reserva?.lote?.manzana?.proyecto?.nombre"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -98,6 +107,7 @@
             <app-input-text-info
               [label]="'Manzana'"
               [value]="reserva?.lote?.manzana?.codigo"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -105,6 +115,7 @@
             <app-input-text-info
               [label]="'Nro. Lote'"
               [value]="reserva?.lote?.numero"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -112,6 +123,7 @@
             <app-input-text-info
               [label]="'Estado Lote'"
               [value]="reserva?.lote?.estado"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -119,6 +131,7 @@
             <app-input-text-info
               [label]="'Área (m²)'"
               [value]="reserva?.lote?.areaM2"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>
@@ -126,6 +139,7 @@
             <app-input-text-info
               [label]="'Precio'"
               [value]="'BS ' + reserva?.lote?.precioReferencial"
+              [loading]="loading"
             >
             </app-input-text-info>
           </div>

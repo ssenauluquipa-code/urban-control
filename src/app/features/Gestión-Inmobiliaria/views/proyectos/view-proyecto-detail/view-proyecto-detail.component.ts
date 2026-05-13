@@ -12,4 +12,5 @@ import { InputTextInfoComponent } from 'src/app/shared/components/atoms/input-te
 })
 export class ViewProyectoDetailComponent {
   @Input() proyecto: IProyecto | null = null;
+  @Input() loading = false;
 }

@@ -1,9 +1,12 @@
 $accent: #534AB7;
+$accent-gradient: linear-gradient(135deg, #534AB7 0%, #7B6FE0 100%);
 $accent-light: rgba($accent, 0.06);
-$accent-border: rgba($accent, 0.2);
+$accent-border: rgba($accent, 0.15);
 $danger: #ff4d4f;
-$radius: 12px;
-$transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+$radius: 16px;
+$transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 8px 24px rgba($accent, 0.12);
 
 // ─── Input oculto ───────────────────────────────────────
 .hidden-input {
@@ -17,18 +20,21 @@ $transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 // ─── Contenedor con imagen ──────────────────────────────
 .image-container {
   position: relative;
+  width: 100%;
   border-radius: $radius;
   overflow: hidden;
-  border: 1px solid $accent-border;
+  border: 2px solid $accent-border;
   background: #fff;
-  transition: border-color $transition, box-shadow $transition;
+  transition: all $transition;
+  box-shadow: $shadow-sm;
 
   &.is-editable {
     cursor: pointer;
 
     &:hover {
       border-color: $accent;
-      box-shadow: 0 2px 12px rgba($accent, 0.12);
+      box-shadow: $shadow-md;
+      transform: translateY(-2px);
 
       .image-overlay {
         opacity: 1;
@@ -40,127 +46,170 @@ $transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 .display-image {
   display: block;
   width: 100%;
-  max-height: 240px;
-  object-fit: contain;
-  padding: 5px;
-  background: #fafafa;
-  border-radius: $radius;
+  height: 100%;
+  object-fit: cover;
+  background: #fdfdff;
+  transition: transform $transition;
+
+  .image-container:hover & {
+    transform: scale(1.03);
+  }
 }
 
 // ─── Overlay de acciones ────────────────────────────────
 .image-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 12px;
   opacity: 0;
   transition: opacity $transition;
   border-radius: $radius;
 }
 
 .overlay-btn {
-  width: 42px !important;
-  height: 42px !important;
+  width: 48px !important;
+  height: 48px !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  transition: transform $transition;
+  font-size: 20px;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all $transition !important;
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.15) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
   }
 
   &.edit-btn {
-    background: $accent !important;
-    border-color: $accent !important;
+    background: $accent-gradient !important;
+    color: #fff !important;
   }
-}
 
-// ─── Badge del nombre ───────────────────────────────────
-.image-name-badge {
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-  right: 8px;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(8px);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 5px 12px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  pointer-events: none;
+  &.delete-btn {
+    background: #fff !important;
+    color: $danger !important;
+  }
 }
 
 // ─── Estado vacío ───────────────────────────────────────
 .empty-container {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1 / 1;
   border: 2px dashed $accent-border;
   border-radius: $radius;
-  background: $accent-light;
-  padding: 32px 16px;
+  background: #fdfdff;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 12px;
   transition: all $transition;
+  position: relative;
+  outline: none;
 
   &.is-editable {
     cursor: pointer;
 
     &:hover {
       border-color: $accent;
-      background: rgba($accent, 0.1);
+      background: $accent-light;
+      box-shadow: $shadow-md;
+      transform: translateY(-2px);
 
       .empty-icon {
-        transform: scale(1.08);
-        background: linear-gradient(135deg, $accent, lighten($accent, 10%));
+        background: $accent-gradient;
+        box-shadow: 0 8px 16px rgba($accent, 0.3);
+        
+        span[nz-icon] {
+          color: #fff;
+          transform: rotate(15deg);
+        }
       }
     }
   }
 }
 
 .empty-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: rgba($accent, 0.15);
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: rgba($accent, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   transition: all $transition;
 
   span[nz-icon] {
-    font-size: 22px;
+    font-size: 28px;
     color: $accent;
-  }
-
-  .is-editable:hover & span[nz-icon] {
-    color: #fff;
+    transition: all $transition;
   }
 }
 
 .empty-text {
-  font-size: 13px;
-  font-weight: 600;
-  color: #3d3d4a;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a2e;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .empty-hint {
-  font-size: 12px;
-  color: #8c8c9a;
+  font-size: 13px;
+  color: #6e6e80;
   margin: 0;
+  max-width: 200px;
+  line-height: 1.4;
 }
+
+// ─── Variantes ─────────────────────────────────────────
+
+.image-container.variant-profile,
+.empty-container.variant-profile {
+  aspect-ratio: 1 / 1;
+  max-width: 320px;
+}
+
+.image-container.variant-profile .display-image {
+  object-fit: cover;
+}
+
+.image-container.variant-logo,
+.empty-container.variant-logo {
+  aspect-ratio: auto;
+  max-width: 350px;
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.image-container.variant-logo {
+  border: 1px solid $accent-border;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.empty-container.variant-logo {
+  border: 2px dashed $accent-border;
+  aspect-ratio: 16 / 9;
+}
+
+.image-container.variant-logo .display-image {
+  object-fit: contain;
+  background: transparent;
+  max-height: 200px;
+}
+
+

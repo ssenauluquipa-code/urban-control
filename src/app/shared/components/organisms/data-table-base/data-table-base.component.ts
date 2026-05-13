@@ -23,7 +23,7 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
   @Input() height = '520px';
   @Input() showCreate = true;
   @Input() actions: TableAction[] = ['view', 'edit', 'delete'];
-  @Input() pageSizeOptions: number[] = [5, 10, 20, 50, 100];
+  @Input() pageSizeOptions: number[] = [25, 50, 100];
   @Input() gridOptions: GridOptions = {};
 
   // --- Outputs Comunes ---

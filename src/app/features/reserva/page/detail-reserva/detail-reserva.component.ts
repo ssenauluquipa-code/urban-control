@@ -16,13 +16,7 @@ import { PageContainerComponent } from "src/app/shared/components/templates/page
   imports: [CommonModule, ViewDetailReservaComponent, NzSpinComponent, RouterModule, PageContainerComponent],
   template: `
   <app-page-container title="Detalle de Reserva" [showBack]="true" [showOptions]="false">
-  @if (loading) {
-      <div class="text-center p-5">
-        <nz-spin nzSimple nzSize="large"></nz-spin>
-      </div>
-    } @else if (reserva) {
-      <app-view-detail-reserva [reserva]="reserva"></app-view-detail-reserva>
-    }
+      <app-view-detail-reserva [reserva]="reserva" [loading]="loading"></app-view-detail-reserva>
   </app-page-container>
   `,
   styles: ``

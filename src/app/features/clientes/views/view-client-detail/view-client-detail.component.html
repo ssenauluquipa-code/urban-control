@@ -6,6 +6,7 @@
       <div class="row g-3">
         <div class="col-md-6 col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Código Cliente'"
             [value]="cliente?.codigoCliente"
           >
@@ -14,6 +15,7 @@
 
         <div class="col-md-6 col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Estado'"
             [value]="cliente?.isActive ? 'Activo' : 'Inactivo'"
           >
@@ -22,6 +24,7 @@
 
         <div class="col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Nombre Completo'"
             [value]="cliente?.nombreCompleto"
           >
@@ -29,12 +32,17 @@
         </div>
 
         <div class="col-md-6 col-12">
-          <app-input-text-info [label]="'Género'" [value]="cliente?.genero">
+          <app-input-text-info
+            [loading]="loading"
+            [label]="'Género'"
+            [value]="cliente?.genero"
+          >
           </app-input-text-info>
         </div>
 
         <div class="col-md-6 col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Fecha Nacimiento'"
             [value]="cliente?.fechaNacimiento | date: 'dd/MM/yyyy'"
           >
@@ -50,6 +58,7 @@
       <div class="row g-3">
         <div class="col-md-3 col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Tipo Documento'"
             [value]="cliente?.tipoDocumento"
           >
@@ -58,13 +67,16 @@
 
         <div class="col-md-6 col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Nro. Documento'"
             [value]="cliente?.nroDocumento"
           >
           </app-input-text-info>
         </div>
+
         <div class="col-md-3 col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Complemento'"
             [value]="cliente?.complemento ?? '-'"
           >
@@ -73,6 +85,7 @@
 
         <div class="col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Nro. Celular'"
             [value]="cliente?.numeroReferencia || 'Sin referencia'"
           >
@@ -88,6 +101,7 @@
       <div class="row g-3">
         <div class="col-lg-4 col-md-6 col-sm-6 col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Teléfono'"
             [value]="cliente?.telefono || 'Sin registro'"
           >
@@ -96,6 +110,7 @@
 
         <div class="col-lg-4 col-md-6 col-sm-6 col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Email'"
             [value]="cliente?.email || 'Sin registro'"
           >
@@ -104,6 +119,7 @@
 
         <div class="col-lg-4 col-md-6 col-sm-6 col-12">
           <app-input-text-info
+            [loading]="loading"
             [label]="'Dirección'"
             [value]="cliente?.direccion || 'Sin registro'"
           >

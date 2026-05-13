@@ -56,7 +56,9 @@ export class EmpresaEditPageComponent implements OnInit {
       diasVencimientoReserva: [5, [Validators.required, Validators.min(1)]],
       plazoMaximoMeses: [18, [Validators.required, Validators.min(1)]],
       horaCronDiario: [8, [Validators.required, Validators.min(0), Validators.max(23)]],
-      logoUrl: ['']
+      logoUrl: [''],
+      tipoDeCambio: ['', [Validators.required, Validators.min(0)]],
+
     });
   }
 

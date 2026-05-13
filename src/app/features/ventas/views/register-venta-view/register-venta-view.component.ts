@@ -220,10 +220,6 @@ export class RegisterVentaViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkUrlParams();
-    // Forzar detección de cambios cuando el formulario cambie
-    this.form?.valueChanges.subscribe(() => {
-      this.cdr.markForCheck();
-    });
   }
 
   private checkUrlParams(): void {

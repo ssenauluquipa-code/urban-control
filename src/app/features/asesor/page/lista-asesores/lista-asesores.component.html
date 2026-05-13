@@ -4,7 +4,6 @@
   [showNew]="true"
   (AddNew)="onAddNew()"
 >
-
   <!-- Tabla -->
   <!-- 
     IMPORTANTE: No ponemos [serverSide]="true".
@@ -20,7 +19,7 @@
       tableActionEnum.EDIT,
       tableActionEnum.DEACTIVATE,
       tableActionEnum.ACTIVATE,
-      tableActionEnum.INFO,
+      tableActionEnum.VIEW,
     ]"
     (actionClicked)="onTableAction($event)"
     (filterChanged)="onTableFilterChanged($event)"

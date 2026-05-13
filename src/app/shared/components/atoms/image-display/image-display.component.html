@@ -4,10 +4,10 @@
   type="file"
   [accept]="acceptTypes"
   class="hidden-input"
-  (change)="onFileSelected($event)" />
+  (change)="onFileSelected($event)"
+/>
 
 <div class="image-display-wrapper">
-
   <!-- Estado: Con imagen -->
   @if (displayUrl) {
     <div class="image-container" [class.is-editable]="editable">
@@ -16,17 +16,29 @@
       <!-- Overlay de acciones (solo si es editable) -->
       @if (editable) {
         <div class="image-overlay">
-          <button nz-button nzShape="circle" nzType="primary"
-                  class="overlay-btn edit-btn" type="button"
-                  nz-tooltip nzTooltipTitle="Reemplazar imagen"
-                  (click)="triggerUpload($event)">
+          <button
+            nz-button
+            nzShape="circle"
+            nzType="primary"
+            class="overlay-btn edit-btn"
+            type="button"
+            nz-tooltip
+            nzTooltipTitle="Reemplazar imagen"
+            (click)="triggerUpload($event)"
+          >
             <span nz-icon nzType="edit" nzTheme="outline"></span>
           </button>
 
-          <button nz-button nzShape="circle" nzDanger
-                  class="overlay-btn delete-btn" type="button"
-                  nz-tooltip nzTooltipTitle="Eliminar imagen"
-                  (click)="deleteImage($event)">
+          <button
+            nz-button
+            nzShape="circle"
+            nzDanger
+            class="overlay-btn delete-btn"
+            type="button"
+            nz-tooltip
+            nzTooltipTitle="Eliminar imagen"
+            (click)="deleteImage($event)"
+          >
             <span nz-icon nzType="delete" nzTheme="outline"></span>
           </button>
         </div>
@@ -42,14 +54,16 @@
 
   <!-- Estado: Sin imagen -->
   @if (!displayUrl) {
-    <button type="button"
-            class="empty-container"
-            [class.is-editable]="editable"
-            (click)="onEmptyClick()"
-            (keydown.enter)="onEmptyClick()"
-            (keydown.space)="onEmptyClick()"
-            [disabled]="!editable"
-            [attr.aria-label]="emptyText">
+    <button
+      type="button"
+      class="empty-container"
+      [class.is-editable]="editable"
+      (click)="onEmptyClick()"
+      (keydown.enter)="onEmptyClick()"
+      (keydown.space)="onEmptyClick()"
+      [disabled]="!editable"
+      [attr.aria-label]="emptyText"
+    >
       <div class="empty-icon">
         <span nz-icon [nzType]="emptyIcon" nzTheme="outline"></span>
       </div>
@@ -59,5 +73,4 @@
       }
     </button>
   }
-
 </div>

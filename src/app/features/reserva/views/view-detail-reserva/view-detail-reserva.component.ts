@@ -14,6 +14,7 @@ import { InputTextInfoComponent } from "src/app/shared/components/atoms/input-te
 export class ViewDetailReservaComponent {
 
   @Input() reserva: IReserva | null = null;
+  @Input() loading = false;
 
   getStatusColor(estado: string): string {
     switch (estado) {

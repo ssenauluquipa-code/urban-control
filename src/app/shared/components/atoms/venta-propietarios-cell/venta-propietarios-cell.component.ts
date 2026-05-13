@@ -15,7 +15,7 @@ import { IVenta, ClienteVenta } from 'src/app/core/models/venta.model';
   template: `
     @if (titular) {
       <div class="propietarios-container">
-        <span class="titular-name text-truncate">{{ titular.nombre }}</span>
+        <span class="titular-name">{{ titular.nombre }}</span>
         
         @if (cotitularesCount > 0) {
           <span class="cotitulares-badge ms-2"
@@ -74,8 +74,7 @@ import { IVenta, ClienteVenta } from 'src/app/core/models/venta.model';
 
     .titular-name {
       max-width: calc(100% - 40px);
-      white-space: nowrap;
-      overflow: hidden;
+      white-space: nowrap;      
       text-overflow: ellipsis;
     }
 
@@ -140,7 +139,7 @@ export class VentaPropietariosCellComponent implements ICellRendererAngularComp 
       // Buscamos al titular
       const foundTitular = clientes.find((c: ClienteVenta) => c.rol === 'TITULAR') || clientes[0];
       this.titular = foundTitular;
-      
+
       // El resto son cotitulares (usamos el id del titular encontrado localmente)
       this.cotitulares = clientes.filter((c: ClienteVenta) => c.id !== foundTitular.id);
       this.cotitularesCount = this.cotitulares.length;

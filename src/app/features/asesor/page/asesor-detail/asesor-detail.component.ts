@@ -18,7 +18,7 @@ import { ModalContainerComponent } from "src/app/shared/components/organisms/mod
       [loading]="loading"
       [showFooter]="false"
       (CancelAction)="activeModal.dismiss()">
-        <app-view-asesor-detail [asesor]="asesor"></app-view-asesor-detail>      
+        <app-view-asesor-detail [asesor]="asesor" [loading]="loading"></app-view-asesor-detail>      
 
     </app-modal-container>
   `,

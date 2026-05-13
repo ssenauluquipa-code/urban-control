@@ -7,17 +7,17 @@
   (AddNew)="onAddNew()"
 >
   <!-- Espaciado superior mínimo ya que los filtros están en la tabla -->
-    <app-data-table
-      [rowData]="ventas"
-      [columnDefs]="columnDefs"
-      [loading]="loading"
-      [showCreate]="false"
-      [actions]="[
-        tableActionEnum.INFO,
-        tableActionEnum.EDIT,
-        tableActionEnum.ANULAR
-      ]"
-      (actionClicked)="onTableAction($event)"
-    >
-    </app-data-table>
+  <app-data-table
+    [rowData]="ventas"
+    [columnDefs]="columnDefs"
+    [loading]="loading"
+    [showCreate]="false"
+    [actions]="[
+      tableActionEnum.VIEW,
+      tableActionEnum.EDIT,
+      tableActionEnum.ANULAR,
+    ]"
+    (actionClicked)="onTableAction($event)"
+  >
+  </app-data-table>
 </app-page-container>

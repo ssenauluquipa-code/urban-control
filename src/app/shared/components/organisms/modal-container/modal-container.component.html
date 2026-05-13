@@ -36,6 +36,7 @@
       <button
         nz-button
         nzType="primary"
+        [nzDanger]="saveButtonDanger"
         class="btn-rounded shadow-sm"
         [nzLoading]="loading"
         (click)="SaveAction.emit()"

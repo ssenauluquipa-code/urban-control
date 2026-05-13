@@ -4,8 +4,8 @@
   [showNew]="true"
   (AddNew)="onAddNew()"
 >
-  <!-- 📌 BARRA DE FILTROS -->
-  <div class="row mb-3 g-2">
+  <!-- BARRA DE FILTROS -->
+  <div class="row mb-3">
     <!-- Cliente -->
     <!-- <div class="col-md-3">
       <app-form-field label="Cliente">
@@ -50,14 +50,17 @@
     </div> -->
   </div>
 
-  <!-- 📌 TABLA DE DATOS -->
+  <!-- TABLA DE DATOS -->
   <app-data-table
     [rowData]="reservas"
     [columnDefs]="columnDefs"
     [loading]="loading"
-    height="450px"
     [showCreate]="false"
-    [actions]="[tableActionEnum.VIEW, tableActionEnum.VENTA, tableActionEnum.ANULAR]"
+    [actions]="[
+      tableActionEnum.VIEW,
+      tableActionEnum.VENTA,
+      tableActionEnum.ANULAR,
+    ]"
     (actionClicked)="onTableAction($event)"
   >
   </app-data-table>
