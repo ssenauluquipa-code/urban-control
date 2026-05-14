@@ -32,38 +32,48 @@ export class DetailVentaViewComponent {
     {
       field: 'nroCuota',
       headerName: 'Nro.',
-      width: 80,
+      width: 60,
       cellStyle: { fontWeight: 'bold' }
-    },
-    {
-      field: 'fechaVencimiento',
-      headerName: 'Vencimiento',
-      flex: 1,
-      valueFormatter: (params) => this.datePipe.transform(params.value, 'dd/MM/yyyy') || ''
     },
     {
       field: 'monto',
       headerName: 'Monto Cuota',
       flex: 1,
+      minWidth: 120,
+      type: 'rightAligned',
+      cellStyle: { 'display': 'flex', 'align-items': 'center', 'justify-content': 'flex-end' },
       valueFormatter: (params) => this.currencyPipe.transform(params.value, 'USD') || ''
     },
     {
       field: 'montoPagado',
       headerName: 'Pagado',
       flex: 1,
+      minWidth: 100,
+      type: 'rightAligned',
+      cellStyle: { 'display': 'flex', 'align-items': 'center', 'justify-content': 'flex-end' },
       valueFormatter: (params) => this.currencyPipe.transform(params.value, 'USD') || ''
     },
     {
       field: 'saldoPendiente',
       headerName: 'Saldo',
       flex: 1,
-      cellStyle: { color: '#e74c3c', fontWeight: 'bold' },
+      minWidth: 100,
+      type: 'rightAligned',
+      cellStyle: { 'display': 'flex', 'align-items': 'center', 'justify-content': 'flex-end', 'color': '#e74c3c', 'font-weight': 'bold' },
       valueFormatter: (params) => this.currencyPipe.transform(params.value, 'USD') || ''
+    },
+    {
+      field: 'fechaVencimiento',
+      headerName: 'Vencimiento',
+      flex: 1,
+      minWidth: 110,
+      valueFormatter: (params) => this.datePipe.transform(params.value, 'dd/MM/yyyy') || ''
     },
     {
       field: 'estado',
       headerName: 'Estado',
-      width: 140,
+      flex: 1,
+      minWidth: 100,
       cellRenderer: BadgeEstadoComponent
     }
   ];
