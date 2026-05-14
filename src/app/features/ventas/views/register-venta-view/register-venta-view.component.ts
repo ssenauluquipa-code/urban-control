@@ -14,6 +14,8 @@ import {
   CreateVentaPropietarioDto,
   RolPropietario,
 } from "src/app/core/models/venta.model";
+import { IReserva } from "src/app/core/models/reserva.model";
+import { ILoteByLoteDisponible } from "src/app/core/models/lote/lote.model";
 
 // Componentes locales del feature
 
@@ -78,7 +80,8 @@ export class RegisterVentaViewComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() loading = false;
 
-  public currentReservedLote: any = null;
+  public currentReservedLote: ILoteByLoteDisponible | null = null;
+  public reservaLabel = '';
 
   readonly TipoPago = TipoPago;
   readonly FrecuenciaPago = FrecuenciaPago;
@@ -237,24 +240,29 @@ export class RegisterVentaViewComponent implements OnInit {
     }
   }
 
-  onReservaSelected(reserva: any): void {
+  onReservaSelected(reserva: Partial<IReserva>): void {
     if (!reserva) return;
 
     // Si recibimos un objeto que parece ser solo de la tabla (no tiene el objeto 'lote' anidado),
     // buscamos el detalle completo para tener toda la información "rica".
     if (!reserva.lote && (reserva.reservaId || reserva.id)) {
-      const id = reserva.reservaId || reserva.id;
+      const id = (reserva.reservaId || reserva.id) as string;
       this.reservaService.getReservaById(id).subscribe(fullReserva => {
         this.applyReservaData(fullReserva);
       });
     } else {
-      this.applyReservaData(reserva);
+      this.applyReservaData(reserva as IReserva);
     }
   }
 
-  private applyReservaData(reserva: any): void {
+  private applyReservaData(reserva: IReserva): void {
     const lote = reserva.lote;
     const cliente = reserva.cliente || { id: reserva.clienteId };
+
+    // Construir etiqueta para el buscador de reservas
+    const mza = reserva.manzana || lote?.manzana?.codigo || '';
+    const nroLote = reserva.numeroLote || lote?.numero || '';
+    this.reservaLabel = `#${reserva.codigoReserva} - Mza. ${mza} Lote ${nroLote}`;
 
     if (lote) {
       // Preparamos el objeto del lote para el selector
@@ -263,16 +271,22 @@ export class RegisterVentaViewComponent implements OnInit {
         descripcion: `Lote ${lote.numero} - Mza. ${lote.manzana?.codigo || ''}`,
         nroLote: lote.numero,
         areaM2: lote.areaM2,
-        precio: lote.precioReferencial
+        precio: lote.precioReferencial,
+        manzanaId: lote.manzanaId,
+        codigoManzana: lote.manzana?.codigo || ''
       };
 
-      // 1. Cargamos el lote, el precio y bloqueamos
+      // 1. Cargamos la reserva, el lote, el precio y bloqueamos
       this.form.patchValue({
+        reservaId: reserva.id,
         loteId: lote.id,
         moneda: reserva.moneda || 'USD',
         montoTotal: lote.precioReferencial,
         cuotaInicial: reserva.montoReserva || 0
       });
+
+      // Bloqueamos la moneda según Regla 5
+      this.form.get('moneda')?.disable();
       // YA NO BLOQUEAMOS EL LOTE:
       // this.form.get('loteId')?.disable();
     }
@@ -299,7 +313,9 @@ export class RegisterVentaViewComponent implements OnInit {
   onReservaCleared(): void {
     // Si se limpia la reserva, desbloqueamos el lote
     this.currentReservedLote = null;
+    this.reservaLabel = '';
     this.form.get('loteId')?.enable();
+    this.form.get('moneda')?.enable();
     this.reservaId.setValue(null);
   }
 }

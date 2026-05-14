@@ -68,4 +68,17 @@
     color: #64748b; // Slate 500
     border-color: #cbd5e1; // Slate 300
   }
+
+  // ── VENTAS (Tipos de Pago) ──────────────────────────
+  &.contado {
+    background-color: #ebf8ff; // Blue 50
+    color: #2c5282; // Blue 800
+    border-color: #bee3f8; // Blue 200
+  }
+
+  &.cuotas {
+    background-color: #fffaf0; // Orange 50
+    color: #9c4221; // Orange 800
+    border-color: #feebc8; // Orange 200
+  }
 }

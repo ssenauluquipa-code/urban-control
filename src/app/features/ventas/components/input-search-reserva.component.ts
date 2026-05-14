@@ -171,6 +171,10 @@ export class InputSearchReservaComponent {
   @Input() placeholder = 'Buscar reserva...';
   @Input() disabled = false;
 
+  @Input() set selectedLabel(value: string) {
+    this.selectedReservaLabel = value;
+  }
+
   @Output() OnReservaSelected = new EventEmitter<IReserva>();
   @Output() OnClear = new EventEmitter<void>();
 
@@ -201,7 +205,10 @@ export class InputSearchReservaComponent {
   }
 
   private applySelection(reserva: IReserva): void {
-    this.selectedReservaLabel = `#${reserva.codigoReserva} - ${reserva.nombreCliente}`;
+    const mza = reserva.manzana || reserva.lote?.manzana?.codigo || '';
+    const lote = reserva.numeroLote || reserva.lote?.numero || '';
+
+    this.selectedReservaLabel = `#${reserva.codigoReserva} - Mza. ${mza} Lote ${lote}`;
     this.input_control.setValue(reserva.reservaId || reserva.id || null);
     this.OnReservaSelected.emit(reserva);
   }

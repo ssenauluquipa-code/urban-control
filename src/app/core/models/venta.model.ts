@@ -117,8 +117,6 @@ export interface IVentaSaldoResumen {
   saldoPendiente: string;
 }
 
-export type IVentaCuota = Record<string, unknown>;
-
 export interface ClienteVenta {
   id: string;
   nombre: string;
@@ -142,4 +140,16 @@ export enum DiaSemanaPago {
   VIERNES = "VIERNES",
   SABADO = "SABADO",
   DOMINGO = "DOMINGO",
+}
+
+export interface IVentaCuota {
+  id: string;
+  nroCuota: number;
+  fechaVencimiento: string;
+  monto: number;
+  montoPagado: number;
+  saldoPendiente: number;
+  estado: string;
+  createdAt: string;
+  updatedAt: string;
 }

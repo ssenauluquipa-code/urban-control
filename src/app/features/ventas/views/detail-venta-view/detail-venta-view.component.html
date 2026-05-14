@@ -1,0 +1,185 @@
+<div class="detail-container fade-in">
+  <!-- 1. CABECERA: Datos clave + Ubicación en una sola card -->
+  <div class="row g-3 mb-3">
+    <div class="col-12">
+      <app-card-container title="Datos de la Venta">
+        <div class="row g-3">
+          <div class="col-6 col-md-2">
+            <app-input-text-info
+              label="Nro. de Venta"
+              [value]="venta?.nroVenta"
+              [loading]="loading"
+              [bold]="true"
+            >
+            </app-input-text-info>
+          </div>
+
+          <div class="col-6 col-md-2">
+            <app-input-text-info
+              label="Fecha de Venta"
+              [value]="venta?.fechaVenta | date: 'dd/MM/yyyy'"
+              [loading]="loading"
+            >
+            </app-input-text-info>
+          </div>
+
+          <div class="col-6 col-md-2">
+            <app-input-text-info
+              label="Estado"
+              [value]="venta?.estado"
+              [loading]="loading"
+              [bold]="true"
+            >
+            </app-input-text-info>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <app-input-text-info
+              label="Titular Principal"
+              [value]="titularPrincipal"
+              [loading]="loading"
+            >
+            </app-input-text-info>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <app-input-text-info
+              label="Asesor Responsable"
+              [value]="venta?.nombreAsesor"
+              [loading]="loading"
+            >
+            </app-input-text-info>
+          </div>
+
+          @if (cotitulares && cotitulares !== "Ninguno") {
+            <div class="col-12 col-md-4">
+              <app-input-text-info
+                label="Cotitulares"
+                [value]="cotitulares"
+                [loading]="loading"
+              >
+              </app-input-text-info>
+            </div>
+          }
+
+          <!-- Separador visual -->
+          <div class="col-12"><hr class="my-1" /></div>
+
+          <div class="col-6 col-md-3">
+            <app-input-text-info
+              label="Proyecto"
+              [value]="venta?.manzana ? 'Urbanización Tarija' : ''"
+              [loading]="loading"
+            >
+            </app-input-text-info>
+          </div>
+
+          <div class="col-6 col-md-2">
+            <app-input-text-info
+              label="Manzana"
+              [value]="venta?.manzana"
+              [loading]="loading"
+              [bold]="true"
+            >
+            </app-input-text-info>
+          </div>
+
+          <div class="col-6 col-md-2">
+            <app-input-text-info
+              label="Lote Nro."
+              [value]="venta?.numeroLote"
+              [loading]="loading"
+              [bold]="true"
+            >
+            </app-input-text-info>
+          </div>
+
+          <div class="col-6 col-md-2">
+            <app-input-text-info
+              label="Superficie"
+              [value]="venta?.areaM2 + ' m²'"
+              [loading]="loading"
+            >
+            </app-input-text-info>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
+  </div>
+
+  <!-- 2. RESUMEN FINANCIERO -->
+  <div class="row g-3 mb-3">
+    <div class="col-12">
+      <app-card-container title="Resumen Financiero">
+        <div class="row g-3">
+          <div class="col-6 col-md-3">
+            <app-input-text-info
+              label="Monto Total"
+              [value]="venta?.montoTotal | currency: venta?.moneda"
+              [loading]="loading"
+              [bold]="true"
+            >
+            </app-input-text-info>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <app-input-text-info
+              label="Cuota Inicial / Reserva"
+              [value]="venta?.cuotaInicial | currency: venta?.moneda"
+              [loading]="loading"
+              [bold]="true"
+            >
+            </app-input-text-info>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <app-input-text-info
+              label="Saldo Pendiente"
+              [value]="venta?.saldoPendiente | currency: venta?.moneda"
+              [loading]="loading"
+              [bold]="true"
+            >
+            </app-input-text-info>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <app-input-text-info
+              label="Plan de Pago"
+              [value]="
+                venta?.tipoPago +
+                (venta?.frecuenciaPago
+                  ? ' (' + venta?.frecuenciaPago + ')'
+                  : '')
+              "
+              [loading]="loading"
+            >
+            </app-input-text-info>
+          </div>
+        </div>
+      </app-card-container>
+    </div>
+  </div>
+
+  <!-- 3. PLAN DE PAGOS -->
+  @if (venta?.tipoPago === "CUOTAS") {
+    <div class="row g-3">
+      <div class="col-12">
+        <app-card-container title="Plan de Pagos Detallado">
+          <app-data-table
+            [rowData]="cuotas"
+            [columnDefs]="columnDefs"
+            [loading]="loading"
+            [pageSize]="12"
+            [showCreate]="false"
+          >
+          </app-data-table>
+        </app-card-container>
+      </div>
+    </div>
+  } @else {
+    <div class="alert alert-info d-flex align-items-center gap-2">
+      <i class="ph ph-info fs-4"></i>
+      Esta es una venta al contado. No dispone de un plan de cuotas diferido.
+    </div>
+  }
+</div>

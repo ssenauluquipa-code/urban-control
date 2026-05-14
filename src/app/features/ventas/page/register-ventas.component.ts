@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, inject } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -41,7 +41,7 @@ import { LoteService } from "src/app/core/services/proyectos/lote.service";
   `,
   styles: ``,
 })
-export class RegisterVentasComponent implements OnInit {
+export class RegisterVentasComponent {
   private fb = inject(FormBuilder);
   private ventaService = inject(VentaService);
   private notification = inject(NotificationService);
@@ -95,25 +95,8 @@ export class RegisterVentasComponent implements OnInit {
     this.updateFinancingValidators(this.form.get("tipoPago")?.value);
   }
 
-  ngOnInit(): void {
-    this.checkUrlParams();
-  }
 
-  private checkUrlParams(): void {
-    this.route.queryParams.subscribe(params => {
-      const reservaId = params['reservaId'];
-      if (reservaId) {
-        this.reservaService.getReservaById(reservaId).subscribe((reserva) => {
-          this.form.patchValue({
-            reservaId: reserva.id,
-            loteId: reserva.loteId,
-            montoTotal: reserva.lote?.precioReferencial,
-            cuotaInicial: reserva.montoReserva || 0
-          });
-        });
-      }
-    });
-  }
+
 
   private listenFormChanges() {
     this.form.get("loteId")?.valueChanges.subscribe((id) => {
@@ -155,7 +138,7 @@ export class RegisterVentasComponent implements OnInit {
     this.form.get("cuotaInicial")?.clearValidators();
 
     if (tipo === TipoPago.CONTADO) {
-      const hasReserva = !!this.form.get('reservaId')?.value;
+      const hasReserva = !!this.form.get("reservaId")?.value;
 
       this.form.patchValue(
         {
@@ -175,23 +158,16 @@ export class RegisterVentasComponent implements OnInit {
         this.form.get(field)?.clearValidators();
       });
     } else {
-      this.form
-        .get("cuotaInicial")
-        ?.setValidators([Validators.required, Validators.min(0)]);
-
+      // CONFIGURACIÓN PARA VENTA A CUOTAS (FINANCIADA)
+      this.form.get("cuotaInicial")?.setValidators([Validators.required, Validators.min(0)]);
       this.form.get("frecuenciaPago")?.setValidators([Validators.required]);
-      this.form
-        .get("nroCuotas")
-        ?.setValidators([
-          Validators.required,
-          Validators.min(1),
-          Validators.max(600),
-        ]);
+      this.form.get("nroCuotas")?.setValidators([Validators.required, Validators.min(1), Validators.max(600)]);
       this.form.get("fechaPagoInicial")?.setValidators([Validators.required]);
 
       const frecuencia = this.form.get("frecuenciaPago")?.value;
       const modalidad = this.form.get("modalidadCalendarioPago")?.value;
 
+      // 1. Caso SEMANAL
       if (frecuencia === FrecuenciaPago.SEMANAL) {
         this.form.get("diaSemanaPago")?.setValidators([Validators.required]);
       } else {
@@ -199,58 +175,32 @@ export class RegisterVentasComponent implements OnInit {
         this.form.get("diaSemanaPago")?.setValue(null, { emitEvent: false });
       }
 
+      // 2. Caso QUINCENAL
       if (frecuencia === FrecuenciaPago.QUINCENAL) {
-        this.form
-          .get("modalidadCalendarioPago")
-          ?.setValidators([Validators.required]);
-      } else {
-        this.form.get("modalidadCalendarioPago")?.clearValidators();
-        this.form
-          .get("modalidadCalendarioPago")
-          ?.setValue(null, { emitEvent: false });
-      }
+        this.form.get("modalidadCalendarioPago")?.setValidators([Validators.required]);
 
-      if (modalidad === "DIAS_FIJOS_MES") {
-        this.form
-          .get("diaPagoMes1")
-          ?.setValidators([
-            Validators.required,
-            Validators.min(1),
-            Validators.max(31),
-          ]);
-        this.form
-          .get("diaPagoMes2")
-          ?.setValidators([
-            Validators.required,
-            Validators.min(1),
-            Validators.max(31),
-          ]);
+        if (modalidad === "DIAS_FIJOS_MES") {
+          this.form.get("diaPagoMes1")?.setValidators([Validators.required, Validators.min(1), Validators.max(31)]);
+          this.form.get("diaPagoMes2")?.setValidators([Validators.required, Validators.min(1), Validators.max(31)]);
+        } else {
+          this.form.get("diaPagoMes1")?.clearValidators();
+          this.form.get("diaPagoMes2")?.clearValidators();
+          this.form.get("diaPagoMes1")?.setValue(null, { emitEvent: false });
+          this.form.get("diaPagoMes2")?.setValue(null, { emitEvent: false });
+        }
       } else {
+        // Si no es quincenal, limpiamos modalidad y días fijos
+        this.form.get("modalidadCalendarioPago")?.clearValidators();
+        this.form.get("modalidadCalendarioPago")?.setValue(null, { emitEvent: false });
         this.form.get("diaPagoMes1")?.clearValidators();
         this.form.get("diaPagoMes2")?.clearValidators();
-
-        if (frecuencia !== FrecuenciaPago.MENSUAL) {
-          this.form.get("diaPagoMes1")?.setValue(null, { emitEvent: false });
-        }
+        this.form.get("diaPagoMes1")?.setValue(null, { emitEvent: false });
         this.form.get("diaPagoMes2")?.setValue(null, { emitEvent: false });
       }
 
-      if (frecuencia === FrecuenciaPago.MENSUAL) {
-        this.form
-          .get("diaPagoMes1")
-          ?.setValidators([
-            Validators.required,
-            Validators.min(1),
-            Validators.max(31),
-          ]);
-      }
-
-      if (
-        frecuencia !== FrecuenciaPago.MENSUAL &&
-        modalidad !== "DIAS_FIJOS_MES"
-      ) {
-        this.form.get("diaPagoMes1")?.clearValidators();
-      }
+      // 3. Caso MENSUAL / BIMESTRAL / TRIMESTRAL
+      // Según Regla 3: diaSemanaPago, modalidadCalendarioPago, diaPagoMes1/2 deben ser NULL.
+      // La lógica de arriba ya se encarga de limpiarlos si la frecuencia no es SEMANAL o QUINCENAL.
     }
 
     // Call updateValueAndValidity only ONCE for each affected field
@@ -294,6 +244,18 @@ export class RegisterVentasComponent implements OnInit {
           this.notification.warning("La venta permite un máximo de 3 propietarios.");
           return;
         }
+      }
+
+      // Debug de errores para identificar qué campo falta
+      console.warn("--- DEBUG DE VALIDACIÓN DE FORMULARIO ---");
+      Object.keys(this.form.controls).forEach(key => {
+        const control = this.form.get(key);
+        if (control?.invalid) {
+          console.log(`Campo inválido: [${key}]`, control.errors);
+        }
+      });
+      if (this.form.errors) {
+        console.log("Errores globales del formulario:", this.form.errors);
       }
 
       this.notification.warning(

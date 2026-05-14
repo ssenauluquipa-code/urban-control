@@ -1,0 +1,29 @@
+.detail-container {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+:host ::v-deep {
+    .ag-header-cell-label {
+        justify-content: center;
+    }
+    
+    .ag-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.text-success { color: #2ecc71 !important; }
+.text-danger { color: #e74c3c !important; }
+.fw-bold { font-weight: 600 !important; }

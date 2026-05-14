@@ -17,6 +17,7 @@ import { DataTableComponent } from "src/app/shared/components/organisms/data-tab
 import { Router } from "@angular/router";
 import { VentaPropietariosCellComponent } from "src/app/shared/components/atoms/venta-propietarios-cell/venta-propietarios-cell.component";
 import { AnularVentaModalComponent } from "../anular-venta-modal.component";
+import { VentaTipoPagoCellComponent } from "../../components/venta-tipo-pago-cell.component";
 
 @Component({
   selector: "app-list-ventas",
@@ -175,8 +176,8 @@ export class ListVentasComponent implements OnInit {
     {
       field: "tipoPago",
       headerName: "Tipo Pago",
-      width: 130,
-      // Aquí podrías usar tu BadgeEstadoComponent si lo adaptas para tipos de pago
+      width: 150,
+      cellRenderer: VentaTipoPagoCellComponent,
     },
   ];
 

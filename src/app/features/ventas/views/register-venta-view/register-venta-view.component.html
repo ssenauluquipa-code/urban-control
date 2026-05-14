@@ -17,6 +17,7 @@
               <app-form-field label="Reserva (Opcional)">
                 <app-input-search-reserva
                   [input_control]="reservaId"
+                  [selectedLabel]="reservaLabel"
                   (OnReservaSelected)="onReservaSelected($event)"
                   (OnClear)="onReservaCleared()"
                 ></app-input-search-reserva>
@@ -308,7 +309,7 @@
               </div>
             </div>
 
-            <hr class="my-4 text-muted" style="opacity: 0.15;" />
+            <hr class="my-4 text-muted" style="opacity: 0.15" />
 
             <span class="venta-kicker">Resumen dinámico</span>
             <div class="summary-row">
