@@ -4,6 +4,26 @@
   [showNew]="true"
   (AddNew)="onAddNew()"
 >
+  <!-- Tabla con Filtro Local (Nueva) -->
+  <app-data-table
+    [rowData]="clientes"
+    [columnDefs]="columnDefs"
+    [loading]="loading"
+    [pageSize]="limit"
+    [showCreate]="false"
+    [actions]="[
+      tableActionEnum.EDIT,
+      tableActionEnum.UPLOAD_PHOTO,
+      tableActionEnum.REMOVE_IMAGE,
+      tableActionEnum.DEACTIVATE,
+      tableActionEnum.ACTIVATE,
+      tableActionEnum.VIEW,
+    ]"
+    (actionClicked)="onTableAction($event)"
+  >
+  </app-data-table>
+
+  <!-- Tabla con Filtro Remoto (Comentada para referencia)
   <app-data-table-server
     [rowData]="clientes"
     [columnDefs]="columnDefs"
@@ -24,4 +44,5 @@
     (pageChange)="loadClientes($event)"
   >
   </app-data-table-server>
+  -->
 </app-page-container>

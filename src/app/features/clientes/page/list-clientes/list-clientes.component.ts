@@ -18,7 +18,7 @@ import {
 } from 'src/app/shared/interfaces/table-actions.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
-import { DataTableServerComponent } from 'src/app/shared/components/organisms/data-table-server/data-table-server.component';
+import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
 import { Router } from '@angular/router';
 import { ITableFilterModel } from 'src/app/shared/interfaces/table-filters.interface';
 import { StatusFloatingFilterComponent } from 'src/app/shared/components/organisms/status-floating-filter.component';
@@ -30,12 +30,12 @@ import { ClienteFotoUploadComponent } from '../../components/cliente-foto-upload
 @Component({
   selector: 'app-list-clientes',
   standalone: true,
-  imports: [PageContainerComponent, DataTableServerComponent, CommonModule],
+  imports: [PageContainerComponent, DataTableComponent, CommonModule],
   templateUrl: './list-clientes.component.html',
   styleUrls: ['./list-clientes.component.scss'],
 })
 export class ListClientesComponent implements OnInit, OnDestroy {
-  @ViewChild(DataTableServerComponent) dataTable!: DataTableServerComponent;
+  @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   private destroy$ = new Subject<void>();
   public tableActionEnum = TableActionsEnum;
@@ -118,7 +118,11 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       field: 'telefono',
       headerName: 'Celular',
       width: 110,
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
       field: 'direccion',
@@ -128,11 +132,14 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       suppressHeaderMenuButton: true,
     },
     {
-      field: 'isActive',
+      colId: 'isActive',
       headerName: 'Estado',
       width: 115,
+      // Usamos valueGetter para que el valor real sea texto ('true'/'false')
+      // Esto hace que el filtro funcione al 100% en local.
+      valueGetter: (params) => params.data?.isActive ? 'true' : 'false',
       cellRenderer: BadgeEstadoComponent,
-      filter: true,
+      filter: 'agTextColumnFilter',
       floatingFilter: true,
       floatingFilterComponent: StatusFloatingFilterComponent,
       floatingFilterComponentParams: {
@@ -146,7 +153,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
-    console.error('');
+    this.loadClientes();
   }
 
   ngOnDestroy(): void {
@@ -154,6 +161,36 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  /** 
+   * Carga de clientes (Local)
+   * Traemos una cantidad grande para filtrar en el navegador
+   */
+  loadClientes(): void {
+    this.loading = true;
+
+    // Para filtro LOCAL, traemos una cantidad grande (ej: 1000) 
+    // y dejamos que AG Grid haga el resto en el navegador.
+    this.clienteService
+      .getPagedClients(1, 100, '', undefined)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: (res) => {
+          this.clientes = [...res.data];
+          this.totalRecords = res.total;
+          this.cdr.detectChanges();
+        },
+        error: () => this.notification.error('Error al cargar clientes'),
+      });
+  }
+
+  /* 
+  // LÓGICA ANTERIOR (Remota) - Comentada para referencia
   loadClientes(page = 1): void {
     this.currentPage = page;
     this.loading = true;
@@ -184,18 +221,17 @@ export class ListClientesComponent implements OnInit, OnDestroy {
         error: () => this.notification.error('Error al cargar clientes'),
       });
   }
+  */
 
   onTableFilterChanged(filterModel: ITableFilterModel): void {
     this.currentFilterModel = { ...filterModel };
   }
 
   onStatusFilterChanged(status: boolean | undefined): void {
+    // En LOCAL no necesitamos disparar una carga manual, 
+    // AG Grid ya recibió el aviso desde el StatusFloatingFilterComponent
+    // y filtró el array en memoria.
     this.currentStatusFilter = status;
-    if (this.dataTable) {
-      this.dataTable.refresh();
-    } else {
-      this.loadClientes(1);
-    }
   }
 
   onTableAction(event: ITableActionEvent<ICliente>): void {
@@ -231,7 +267,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     modalRef.result
       .then((result) => {
         if (result) {
-          if (this.dataTable) this.dataTable.refresh();
+          if (this.dataTable) this.loadClientes();
         }
       })
       .catch(() => {
@@ -250,7 +286,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
         this.clienteService.deleteFoto(cliente.id).subscribe({
           next: () => {
             this.notification.success('Foto eliminada');
-            if (this.dataTable) this.dataTable.refresh();
+            if (this.dataTable) this.loadClientes();
           },
           error: () => this.notification.error('Error al eliminar la foto'),
         });
@@ -269,11 +305,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
           .subscribe({
             next: () => {
               this.notification.success('Estado actualizado');
-              if (this.dataTable) {
-                this.dataTable.refresh();
-              } else {
-                this.loadClientes(this.currentPage);
-              }
+              this.loadClientes();
             },
             error: (err: HttpErrorResponse) => {
               const msg =

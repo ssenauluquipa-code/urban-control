@@ -1,148 +1,123 @@
 <div class="detail-container fade-in">
-  <!-- 1. CABECERA: Datos clave + Ubicación en una sola card -->
+  <!-- FILA SUPERIOR: Info + Financiero lado a lado -->
   <div class="row g-3 mb-3">
-    <div class="col-12">
+    <!-- Datos de Venta + Ubicación -->
+    <div class="col-12 col-xl-7">
       <app-card-container title="Datos de la Venta">
         <div class="row g-3">
-          <div class="col-6 col-md-2">
+          <div class="col-6 col-md-4">
             <app-input-text-info
               label="Nro. de Venta"
               [value]="venta?.nroVenta"
               [loading]="loading"
               [bold]="true"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
-
-          <div class="col-6 col-md-2">
+          <div class="col-6 col-md-4">
             <app-input-text-info
               label="Fecha de Venta"
               [value]="venta?.fechaVenta | date: 'dd/MM/yyyy'"
               [loading]="loading"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
-
-          <div class="col-6 col-md-2">
+          <div class="col-6 col-md-4">
             <app-input-text-info
               label="Estado"
               [value]="venta?.estado"
               [loading]="loading"
               [bold]="true"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
-
-          <div class="col-6 col-md-3">
+          <div class="col-6 col-md-6">
             <app-input-text-info
               label="Titular Principal"
               [value]="titularPrincipal"
               [loading]="loading"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
-
-          <div class="col-6 col-md-3">
+          <div class="col-6 col-md-6">
             <app-input-text-info
               label="Asesor Responsable"
               [value]="venta?.nombreAsesor"
               [loading]="loading"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
 
           @if (cotitulares && cotitulares !== "Ninguno") {
-            <div class="col-12 col-md-4">
+            <div class="col-12">
               <app-input-text-info
                 label="Cotitulares"
                 [value]="cotitulares"
                 [loading]="loading"
-              >
-              </app-input-text-info>
+              ></app-input-text-info>
             </div>
           }
 
-          <!-- Separador visual -->
           <div class="col-12"><hr class="my-1" /></div>
 
-          <div class="col-6 col-md-3">
+          <div class="col-6 col-md-4">
             <app-input-text-info
               label="Proyecto"
               [value]="venta?.manzana ? 'Urbanización Tarija' : ''"
               [loading]="loading"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
-
-          <div class="col-6 col-md-2">
+          <div class="col-4 col-md-3">
             <app-input-text-info
               label="Manzana"
               [value]="venta?.manzana"
               [loading]="loading"
               [bold]="true"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
-
-          <div class="col-6 col-md-2">
+          <div class="col-4 col-md-2">
             <app-input-text-info
               label="Lote Nro."
               [value]="venta?.numeroLote"
               [loading]="loading"
               [bold]="true"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
-
-          <div class="col-6 col-md-2">
+          <div class="col-4 col-md-3">
             <app-input-text-info
               label="Superficie"
               [value]="venta?.areaM2 + ' m²'"
               [loading]="loading"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
         </div>
       </app-card-container>
     </div>
-  </div>
 
-  <!-- 2. RESUMEN FINANCIERO -->
-  <div class="row g-3 mb-3">
-    <div class="col-12">
+    <!-- Resumen Financiero -->
+    <div class="col-12 col-xl-5">
       <app-card-container title="Resumen Financiero">
         <div class="row g-3">
-          <div class="col-6 col-md-3">
+          <div class="col-6">
             <app-input-text-info
               label="Monto Total"
               [value]="venta?.montoTotal | currency: venta?.moneda"
               [loading]="loading"
               [bold]="true"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
-
-          <div class="col-6 col-md-3">
+          <div class="col-6">
             <app-input-text-info
               label="Cuota Inicial / Reserva"
               [value]="venta?.cuotaInicial | currency: venta?.moneda"
               [loading]="loading"
               [bold]="true"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
-
-          <div class="col-6 col-md-3">
+          <div class="col-6">
             <app-input-text-info
               label="Saldo Pendiente"
               [value]="venta?.saldoPendiente | currency: venta?.moneda"
               [loading]="loading"
               [bold]="true"
-            >
-            </app-input-text-info>
+            ></app-input-text-info>
           </div>
-
-          <div class="col-6 col-md-3">
+          <div class="col-6">
             <app-input-text-info
               label="Plan de Pago"
               [value]="
@@ -160,7 +135,7 @@
     </div>
   </div>
 
-  <!-- 3. PLAN DE PAGOS -->
+  <!-- TABLA: ancho completo -->
   @if (venta?.tipoPago === "CUOTAS") {
     <div class="row g-3">
       <div class="col-12">

@@ -49,10 +49,10 @@ export class BadgeEstadoComponent implements ICellRendererAngularComp {
   }
 
   private setState(value: string | boolean | null | undefined): void {
-    if (value === true) {
+    if (value === true || value === 'true') {
       this.label = 'Activo';
       this.cssClass = 'activo';
-    } else if (value === false) {
+    } else if (value === false || value === 'false') {
       this.label = 'Inactivo';
       this.cssClass = 'inactivo';
     } else if (typeof value === 'string') {

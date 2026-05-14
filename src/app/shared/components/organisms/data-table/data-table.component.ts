@@ -55,6 +55,7 @@ export class DataTableComponent<T = unknown> extends DataTableBaseComponent<T> i
     overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Cargando...</span>',
     overlayNoRowsTemplate: '<span class="ag-overlay-no-rows-center">No se encontraron registros</span>',
     localeText: {
+      // Paginación
       page: 'Página',
       of: 'de',
       to: 'a',
@@ -64,7 +65,62 @@ export class DataTableComponent<T = unknown> extends DataTableBaseComponent<T> i
       nextPage: 'Siguiente',
       previousPage: 'Anterior',
       pageSizeSelectorLabel: 'Filas por página:',
-      noRowsToShow: 'Sin datos'
+      noRowsToShow: 'No hay datos para mostrar',
+
+      // Filtros
+      contains: 'Contiene',
+      notContains: 'No contiene',
+      startsWith: 'Empieza con',
+      endsWith: 'Termina con',
+      equals: 'Igual a',
+      notEqual: 'Diferente a',
+      blank: 'Vacio',
+      notBlank: 'No vacio',
+
+      // Filtros de Número
+      lessThan: 'Menor que',
+      greaterThan: 'Mayor que',
+      lessThanOrEqual: 'Menor o igual que',
+      greaterThanOrEqual: 'Mayor o igual que',
+      inRange: 'En rango',
+      inRangeStart: 'Desde',
+      inRangeEnd: 'Hasta',
+
+      // Filtros de Fecha
+      dateFormatError: 'Error en formato de fecha',
+
+      // Menús
+      pinColumn: 'Anclar Columna',
+      pinLeft: 'Anclar a la izquierda',
+      pinRight: 'Anclar a la derecha',
+      noPin: 'Sin anclar',
+      autosizeThiscolumn: 'Autoajustar esta columna',
+      autosizeAllColumns: 'Autoajustar todas las columnas',
+      groupBy: 'Agrupar por',
+      ungroupBy: 'Desagrupar por',
+      resetColumns: 'Reiniciar columnas',
+      expandAll: 'Expandir todo',
+      collapseAll: 'Colapsar todo',
+      copy: 'Copiar',
+      ctrlC: 'Ctrl+C',
+      paste: 'Pegar',
+      ctrlV: 'Ctrl+V',
+      export: 'Exportar',
+      csvExport: 'Exportar a CSV',
+      excelExport: 'Exportar a Excel',
+
+      // Otros
+      loadingOoo: 'Cargando...',
+      noMatches: 'Sin coincidencias',
+      filterOoo: 'Filtrar...',
+      applyFilter: 'Aplicar Filtro...',
+      equalsOp: 'IGUAL',
+      notEqualOp: 'DIFERENTE',
+      lessThanOp: 'MENOR QUE',
+      greaterThanOp: 'MAYOR QUE',
+      lessThanOrEqualOp: 'MENOR O IGUAL QUE',
+      greaterThanOrEqualOp: 'MAYOR O IGUAL QUE',
+      inRangeOp: 'EN RANGO',
     },
     context: { parentComponent: this },
     components: { tableActions: TableActionsComponent }

@@ -10,19 +10,22 @@ import {
 } from "src/app/shared/interfaces/table-actions.interface";
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { ProjectStatusGlobalService } from "src/app/core/services/project-status-global.service";
-import { FormControl } from "@angular/forms";
-import { ManzanaFloatingFilterWrapperComponent } from "src/app/shared/components/organisms/manzana-floating-filter-wrapper.component";
-import { debounceTime, distinctUntilChanged, finalize, merge } from "rxjs";
+import { finalize } from "rxjs";
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
 import { Router } from "@angular/router";
 import { VentaPropietariosCellComponent } from "src/app/shared/components/atoms/venta-propietarios-cell/venta-propietarios-cell.component";
 import { AnularVentaModalComponent } from "../anular-venta-modal.component";
 import { VentaTipoPagoCellComponent } from "../../components/venta-tipo-pago-cell.component";
+import { VentaTipoPagoFloatingFilterComponent } from "src/app/shared/components/organisms/venta-tipo-pago-floating-filter.component";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-list-ventas",
   standalone: true,
   imports: [
+    CommonModule,
+    ReactiveFormsModule,
     PageContainerComponent,
     DataTableComponent,
   ],
@@ -137,27 +140,25 @@ export class ListVentasComponent implements OnInit {
       headerName: "Nro. Venta",
       width: 120,
       cellStyle: { fontWeight: "bold" },
-      filter: true,
+      filter: 'agTextColumnFilter',
       floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
       headerName: "Ubicación",
-      field: "manzana",
       width: 180,
       valueGetter: (params) => {
         return params.data
           ? `Mza ${params.data.manzana} - Lt ${params.data.numeroLote}`
           : "";
       },
-      filter: true,
+      filter: 'agTextColumnFilter',
       floatingFilter: true,
-      floatingFilterComponent: ManzanaFloatingFilterWrapperComponent, // Filtro de manzana dentro de la tabla
-      /* floatingFilterComponentParams: {
-        proyectoId: this.proyectoId,
-        onManzanaChange: (id: string | undefined) => {
-          this.manzanaControl.setValue(id || null);
-        }
-      } as IManzanaFloatingFilterParams */
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
       field: "clientes",
@@ -165,6 +166,33 @@ export class ListVentasComponent implements OnInit {
       flex: 1,
       minWidth: 250,
       cellRenderer: VentaPropietariosCellComponent,
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
+      // Getter para que el filtro de texto funcione con la lista de clientes
+      valueGetter: (params) => {
+        if (!params.data?.clientes) return '';
+        return params.data.clientes.map((c: any) => c.nombreCompleto).join(', ');
+      }
+    },
+    {
+      headerName: "Fecha",
+      width: 140,
+      valueGetter: (params) => {
+        if (!params.data?.fechaVenta) return '';
+        const date = new Date(params.data.fechaVenta);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      },
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: false,
+      suppressHeaderMenuButton: false,
+      suppressHeaderFilterButton: false,
     },
     {
       field: "montoTotal",
@@ -172,13 +200,25 @@ export class ListVentasComponent implements OnInit {
       width: 130,
       valueFormatter: (p) =>
         p.data ? `${p.data.moneda} ${p.value.toLocaleString()}` : "",
+      filter: 'agNumberColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: false,
+      suppressHeaderMenuButton: false,
+      suppressHeaderFilterButton: false,
     },
     {
+      colId: "tipoPago",
       field: "tipoPago",
       headerName: "Tipo Pago",
       width: 150,
       cellRenderer: VentaTipoPagoCellComponent,
-    },
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      floatingFilterComponent: VentaTipoPagoFloatingFilterComponent,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
+    }
   ];
 
   ngOnInit(): void {
@@ -187,12 +227,6 @@ export class ListVentasComponent implements OnInit {
       this.proyectoId = projectId || null;
       this.manzanaControl.setValue(null, { emitEvent: false }); // Reset local
 
-      // Actualizar params del filtro de la tabla
-      if (this.columnDefs[1].floatingFilterComponentParams) {
-        this.columnDefs[1].floatingFilterComponentParams.proyectoId =
-          this.proyectoId;
-      }
-
       if (projectId) {
         this.loadVentas();
       } else {
@@ -200,7 +234,8 @@ export class ListVentasComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
-    // 2. Escuchar cambios en filtros (Termino y Manzana)[cite: 22]
+    // 2. Escuchar cambios en filtros (Termino y Manzana)
+    /* 
     merge(
       this.termControl.valueChanges.pipe(distinctUntilChanged()),
       this.manzanaControl.valueChanges.pipe(distinctUntilChanged()),
@@ -209,17 +244,17 @@ export class ListVentasComponent implements OnInit {
       .subscribe(() => {
         this.loadVentas();
       });
+    */
   }
 
   loadVentas(): void {
     if (!this.proyectoId) return;
 
     this.loading = true;
-    const term = this.termControl.value || undefined;
-    const manzanaId = this.manzanaControl.value || undefined;
 
+    // En local cargamos todo el proyecto al inicio (parámetros undefined)
     this.ventaService
-      .listarVentas(manzanaId, term)
+      .listarVentas(undefined, undefined)
       .pipe(
         finalize(() => {
           this.loading = false;

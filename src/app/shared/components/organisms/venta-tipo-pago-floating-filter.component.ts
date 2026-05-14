@@ -3,28 +3,22 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IFloatingFilterAngularComp } from 'ag-grid-angular';
 import { IFloatingFilterParams, TextFilterModel } from 'ag-grid-community';
-import { EstadoReserva } from 'src/app/core/models/reserva.model';
 
-/**
- * Interfaz para los parámetros del filtro de Reservas.
- * Usamos el tipo string del Enum para el callback.
- */
-export interface StatusReservaFloatingFilterParams extends IFloatingFilterParams<unknown, TextFilterModel> {
-  onStatusChange?: (status: string | undefined) => void;
+export interface VentaTipoPagoFloatingFilterParams extends IFloatingFilterParams<unknown, TextFilterModel> {
+  // Callback opcional por si se necesita fuera
+  onTipoPagoChange?: (tipo: string | undefined) => void;
 }
 
 @Component({
-  selector: 'app-status-reserva-floating-filter',
+  selector: 'app-venta-tipo-pago-floating-filter',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
     <div class="custom-floating-filter">
       <select class="ag-custom-select" [(ngModel)]="currentValue" (change)="onValueChange()">
         <option value="all">Todos</option>
-        <option [value]="estadoEnum.ACTIVA">Activa</option>
-        <option [value]="estadoEnum.CONVERTIDA">Convertida</option>
-        <option [value]="estadoEnum.VENCIDA">Vencida</option>
-        <option [value]="estadoEnum.CANCELADA">Cancelada</option>
+        <option value="CONTADO">Contado</option>
+        <option value="CUOTAS">Cuotas</option>
       </select>
     </div>
   `,
@@ -34,20 +28,20 @@ export interface StatusReservaFloatingFilterParams extends IFloatingFilterParams
       width: 100%;
       height: 30px;
       font-size: 13px;
-      border: 1px solid #babfc7;
-      border-radius: 4px;
+      border: 1px solid var(--ag-border-color, #babfc7);
+      border-radius: var(--ag-border-radius, 4px);
       padding: 0 8px;
       outline: none;
       cursor: pointer;
+      background-color: var(--ag-background-color, #fff);
     }
   `]
 })
-export class StatusReservaFloatingFilterComponent implements IFloatingFilterAngularComp {
-  params!: StatusReservaFloatingFilterParams;
+export class VentaTipoPagoFloatingFilterComponent implements IFloatingFilterAngularComp {
+  params!: VentaTipoPagoFloatingFilterParams;
   currentValue = 'all';
-  estadoEnum = EstadoReserva;
 
-  agInit(params: StatusReservaFloatingFilterParams): void {
+  agInit(params: VentaTipoPagoFloatingFilterParams): void {
     this.params = params;
   }
 
@@ -56,25 +50,25 @@ export class StatusReservaFloatingFilterComponent implements IFloatingFilterAngu
   }
 
   onValueChange(): void {
-    const value = this.currentValue === 'all' ? undefined : this.currentValue;
+    const valueStr = this.currentValue === 'all' ? null : this.currentValue;
 
-    // 1. Compatibilidad con búsqueda remota (Callback manual)
-    if (this.params?.onStatusChange) {
-      this.params.onStatusChange(value);
+    // 1. Callback manual si existe
+    if (this.params?.onTipoPagoChange) {
+      this.params.onTipoPagoChange(valueStr || undefined);
     }
 
     // 2. Compatibilidad con búsqueda local (Vía API de AG Grid)
     const gridApi = this.params.api as any;
     const currentModel = gridApi.getFilterModel() || {};
 
-    if (value) {
-      currentModel['estado'] = {
+    if (valueStr) {
+      currentModel['tipoPago'] = {
         filterType: 'text',
         type: 'equals',
-        filter: value
+        filter: valueStr
       };
     } else {
-      delete currentModel['estado'];
+      delete currentModel['tipoPago'];
     }
 
     gridApi.setFilterModel(currentModel);

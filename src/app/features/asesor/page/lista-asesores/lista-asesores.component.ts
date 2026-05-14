@@ -80,19 +80,27 @@ export class ListaAsesoresComponent implements OnInit {
     {
       field: "telefono",
       headerName: "Teléfono",
-      width: 100,
+      width: 130,
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
-      field: "email",
-      headerName: "Email",
+      field: "direccion",
+      headerName: "Dirección",
       width: 250,
+      filter: 'agTextColumnFilter',
     },
     {
-      field: "isActive",
+      colId: 'isActive',
       headerName: "Estado",
       width: 110,
+      // Usamos valueGetter para que el filtro local funcione con strings
+      valueGetter: (params) => params.data?.isActive ? 'true' : 'false',
       cellRenderer: BadgeEstadoComponent,
-      filter: true,
+      filter: 'agTextColumnFilter',
       floatingFilter: true,
       floatingFilterComponent: StatusFloatingFilterComponent,
       floatingFilterComponentParams: {
@@ -121,12 +129,13 @@ export class ListaAsesoresComponent implements OnInit {
 
   loadAsesores(): void {
     this.loading = true;
+    // Cargamos todos los de tipo EMPLEADO para filtrar localmente
     this.asesorService
-      .getAsesores()
+      .getAsesores("", "", undefined, EAsesorType.EMPLEADO)
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (data) => {
-          this.asesores = data;
+          this.asesores = [...data];
         },
         error: () => this.notification.error("Error al cargar asesores"),
       });
@@ -180,14 +189,16 @@ export class ListaAsesoresComponent implements OnInit {
 
   onTableFilterChanged(filterModel: ITableFilterModel): void {
     this.currentFilterModel = filterModel;
-    this.executeSearch();
+    // En local no necesitamos llamar a executeSearch
   }
 
   onStatusFilterChanged(status: boolean | undefined): void {
     this.currentStatusFilter = status;
-    this.executeSearch();
+    // En local AG Grid ya maneja el filtrado mediante el StatusFloatingFilterComponent
   }
 
+  /* 
+  // Método remoto comentado para referencia
   private executeSearch(): void {
     const term =
       this.currentFilterModel["nombreCompleto"]?.filter ||
@@ -215,4 +226,5 @@ export class ListaAsesoresComponent implements OnInit {
         },
       });
   }
+  */
 }

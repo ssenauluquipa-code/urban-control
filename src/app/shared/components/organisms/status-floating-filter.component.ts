@@ -86,17 +86,47 @@ export class StatusFloatingFilterComponent implements IFloatingFilterAngularComp
 
   /**
    * Evento disparado desde el HTML cuando el usuario cambia el valor del `<select>`.
-   * Parsea el string ('true', 'false', 'all') a booleano y emite el valor
-   * llamando a la función `onStatusChange` inyectada en los parámetros.
+   * 
+   * 1. Si existe onStatusChange (Remoto), lo llama.
+   * 2. Si es Local, notifica al filtro padre de AG Grid usando setModel.
    */
   onValueChange(): void {
-    let value: boolean | undefined = undefined;
-    if (this.currentValue === 'true') value = true;
-    if (this.currentValue === 'false') value = false;
+    const valueStr = this.currentValue === 'all' ? null : this.currentValue;
+    
+    // DIAGNÓSTICO: Ver qué columnas existen realmente en la tabla
+    const allCols = this.params.api.getAllGridColumns();
+    console.log('StatusFloatingFilter: Enviando ->', valueStr);
+    console.log('Columnas disponibles en el Grid:', allCols.map(c => c.getColId()));
 
-    // Comunicación directa con la pantalla, 100% type-safe sin 'any'
+    // 1. Compatibilidad con búsqueda remota
     if (this.params?.onStatusChange) {
-      this.params.onStatusChange(value);
+      const boolValue = this.currentValue === 'true' ? true : (this.currentValue === 'false' ? false : undefined);
+      this.params.onStatusChange(boolValue);
+    }
+
+    // 2. Compatibilidad con búsqueda local (Vía Instancia de Filtro)
+    // Usamos 'any' para evitar errores de compilación por versiones de AG Grid
+    const gridApi = this.params.api as any;
+    const filterMethod = gridApi.getColumnFilterInstance ? gridApi.getColumnFilterInstance.bind(gridApi) : gridApi.getFilterInstance.bind(gridApi);
+
+    if (filterMethod) {
+      filterMethod('isActive').then((instance: any) => {
+        if (instance) {
+          console.log('Instancia de filtro encontrada para isActive');
+          instance.setModel(valueStr ? { 
+            filterType: 'text', 
+            type: 'equals', 
+            filter: valueStr 
+          } : null);
+          
+          // Sincronizar y refrescar
+          this.params.api.onFilterChanged();
+        } else {
+          console.warn('No se encontró instancia de filtro para la columna "isActive"');
+        }
+      });
+    } else {
+      console.error('No se encontró ningún método para obtener instancias de filtros en el API de AG Grid');
     }
   }
 }

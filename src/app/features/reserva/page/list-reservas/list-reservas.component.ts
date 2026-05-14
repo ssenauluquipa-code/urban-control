@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
-import { finalize, merge, debounceTime, distinctUntilChanged } from 'rxjs';
+import { finalize } from 'rxjs';
 import { EstadoReserva, IReserva } from 'src/app/core/models/reserva.model';
 import { ConfirmationService } from 'src/app/core/services/confirmation.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
@@ -16,9 +16,6 @@ import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { StatusReservaFloatingFilterComponent, StatusReservaFloatingFilterParams } from 'src/app/shared/components/organisms/status-reserva-floating-filter.component';
-import { ClienteFloatingFilterWrapperComponent } from 'src/app/shared/components/organisms/cliente-floating-filter-wrapper.component';
-import { IClienteFloatingFilterParams } from 'src/app/shared/interfaces/table-filters.interface';
-
 @Component({
   selector: 'app-list-reservas',
   standalone: true,
@@ -58,59 +55,95 @@ export class ListReservasComponent implements OnInit {
       field: 'codigoReserva',
       headerName: 'Cód. Reserva',
       width: 115,
-      cellStyle: { fontWeight: 'bold' }
+      cellStyle: { fontWeight: 'bold' },
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
       field: 'nombreCliente',
       headerName: 'Nombre del Cliente',
       flex: 1,
       minWidth: 250,
-      filter: true,
+      filter: 'agTextColumnFilter',
       floatingFilter: true,
-      floatingFilterComponent: ClienteFloatingFilterWrapperComponent,
-      floatingFilterComponentParams: {
-        onClienteChange: (clienteId: string | null) => {
-          this.clienteControl.setValue(clienteId); // Dispara el combineLatest
-        }
-      } as IClienteFloatingFilterParams
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
       field: 'nroDocumento',
       headerName: 'CI/NIT',
       width: 120,
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
       headerName: 'Lote',
       valueGetter: (params) => {
         return params.data ? `Mza ${params.data.manzana} - Lt ${params.data.numeroLote}` : '';
       },
-      width: 120
+      width: 120,
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
       field: 'montoReserva',
       headerName: 'Monto',
       width: 120,
-      valueFormatter: (p) => p.data ? `${p.data.moneda} ${p.value}` : ''
+      valueFormatter: (p) => p.data ? `${p.data.moneda} ${p.value}` : '',
+      filter: 'agNumberColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
       field: 'fechaVencimiento',
       headerName: 'Vencimiento',
-      width: 120,
-      valueFormatter: (p) => p.value ? new Date(p.value).toLocaleDateString() : ''
+      width: 135,
+      // Usamos valueGetter para transformar la fecha en un texto simple DD/MM/YYYY
+      // Así el filtro y la celda solo verán la fecha, nunca la hora.
+      valueGetter: (params) => {
+        if (!params.data?.fechaVencimiento) return '';
+        const date = new Date(params.data.fechaVencimiento);
+        // Ajuste para evitar problemas de zona horaria al crear la fecha
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      },
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
-      field: 'estado',
+      colId: 'estado',
       headerName: 'Estado',
       width: 150,
+      valueGetter: (p) => p.data?.estado,
       cellRenderer: BadgeEstadoComponent,
-      filter: true,
+      filter: 'agTextColumnFilter',
       floatingFilter: true,
       floatingFilterComponent: StatusReservaFloatingFilterComponent,
       floatingFilterComponentParams: {
         onStatusChange: (status: string | undefined) => {
-          this.estadoControl.setValue(status || null); // Dispara el combineLatest
+          this.estadoControl.setValue(status || null);
         }
-      } as StatusReservaFloatingFilterParams
+      } as StatusReservaFloatingFilterParams,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     }
   ];
 
@@ -130,6 +163,8 @@ export class ListReservasComponent implements OnInit {
     });
 
     // 2. Escuchar cambios en los Controles (Filtros superiores y de tabla)
+    /* 
+    // Comentamos la carga remota al cambiar filtros, ahora es local
     merge(
       this.clienteControl.valueChanges.pipe(distinctUntilChanged()),
       this.manzanaControl.valueChanges.pipe(distinctUntilChanged()),
@@ -139,6 +174,7 @@ export class ListReservasComponent implements OnInit {
     ).subscribe(() => {
       this.loadReservas();
     });
+    */
   }
 
   /**
@@ -149,16 +185,12 @@ export class ListReservasComponent implements OnInit {
 
     this.loading = true;
 
-    // Obtenemos valores directamente de los controles para asegurar sincronía
-    const estado = this.estadoControl.value || undefined;
-    const clienteId = this.clienteControl.value || undefined;
-    const manzanaId = this.manzanaControl.value || undefined;
-
+    // En LOCAL cargamos TODO el proyecto una sola vez
     this.reservaService.getReservas(
       this.proyectoId,
-      estado,
-      clienteId,
-      manzanaId
+      undefined, // estado null para traer todo
+      undefined, // cliente null
+      undefined  // manzana null
     )
       .pipe(finalize(() => {
         this.loading = false;
@@ -166,7 +198,6 @@ export class ListReservasComponent implements OnInit {
       }))
       .subscribe({
         next: (data) => {
-          // El service ya normaliza el ID, pero aquí aseguramos isActive para la UI
           this.reservas = data.map(r => ({
             ...r,
             isActive: r.estado === EstadoReserva.ACTIVA
