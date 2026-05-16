@@ -74,3 +74,27 @@
     }
   }
 }
+
+// FIX: Interacción de la Campana de Notificación
+::ng-deep .notification-bell.pc-head-link {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: transparent !important; // Elimina fondo estático
+  border-radius: 50% !important; // Fuerza que siempre sea redondo
+  
+  &:hover, &:focus, &:active, &.show {
+    background-color: #f8fafc !important; // Sutil fondo slate al pasar el mouse o hacer clic
+    transform: scale(1.05); // Crece sutilmente para feedback táctil
+    border-color: #e2e8f0 !important;
+    border-radius: 50% !important; // Evita que la plantilla lo vuelva cuadrado al darle clic
+    
+    span[nz-icon] {
+      color: #0f172a !important; // El icono se vuelve más oscuro/nítido
+    }
+  }
+
+  // Previene que el ::before cuadrado de la plantilla global salga del contenedor
+  &::after, &::before {
+    display: none !important;
+    content: none !important;
+  }
+}

@@ -34,7 +34,7 @@ export class DataTableComponent<T = unknown> extends DataTableBaseComponent<T> i
 
   // --- Input Específico de esta tabla ---
   @Input() rowData: T[] = [];
-  @Input() pageSize = 10;
+  @Input() pageSize = 25;
 
   // --- Configuración específica: client-side ---
   public override gridOptions: GridOptions = {

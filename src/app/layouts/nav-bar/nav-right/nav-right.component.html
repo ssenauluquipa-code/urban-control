@@ -1,7 +1,7 @@
 <ul class="list-unstyled">
   <!-- 🚀 NUEVO: SELECTOR DE PROYECTOS GLOBAL -->
-  <li class="pc-h-item d-none d-md-flex align-items-center me-2">
-    <div style="min-width: 200px">
+  <li class="pc-h-item d-flex align-items-center me-2">
+    <div style="min-width: 160px">
       <app-select-projects
         [inputControl]="globalProjectControl"
         (Change)="onProjectChange($event)"
@@ -22,12 +22,26 @@
   <li class="dropdown pc-h-item" ngbDropdown>
     <a
       href="javascript:"
-      class="pc-head-link dropdown-toggle arrow-none me-0 bg-gray-200"
+      class="pc-head-link dropdown-toggle arrow-none me-0 rounded-circle notification-bell"
+      style="
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #eef2f6; /* El mismo borde que pusiste en tu foto */
+        position: relative;
+        overflow: visible !important;
+      "
       data-bs-toggle="dropdown"
       ngbDropdownToggle
     >
-      <span nz-icon nzType="bell"></span>
-      <span class="badge bg-primary pc-h-badge">3</span>
+      <span
+        nz-icon
+        nzType="bell"
+        style="font-size: 20px; color: #475569"
+      ></span>
+      <span class="badge bg-danger pc-h-badge" style="position: absolute; top: 0; right: 0; transform: translate(30%, -30%);">3</span>
     </a>
     <div
       class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown"
