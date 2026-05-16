@@ -1,6 +1,6 @@
 <app-page-container
   title="Gestión de Asesores"
-  permissionScope="asesores"
+  [permissionScope]="EAppModule.ASESORES"
   [showNew]="true"
   (AddNew)="onAddNew()"
 >
@@ -11,6 +11,7 @@
     paginando y ordenando los datos que le pasamos automáticamente.
   -->
   <app-data-table
+    [module]="EAppModule.ASESORES"
     [rowData]="asesores"
     [columnDefs]="columnDefs"
     [loading]="loading"

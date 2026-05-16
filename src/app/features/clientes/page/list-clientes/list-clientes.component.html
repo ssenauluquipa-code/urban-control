@@ -1,11 +1,12 @@
 <app-page-container
   title="Gestión de Clientes"
-  permissionScope="clientes"
+  [permissionScope]="EAppModule.CLIENTES"
   [showNew]="true"
   (AddNew)="onAddNew()"
 >
   <!-- Tabla con Filtro Local (Nueva) -->
   <app-data-table
+    [module]="EAppModule.CLIENTES"
     [rowData]="clientes"
     [columnDefs]="columnDefs"
     [loading]="loading"

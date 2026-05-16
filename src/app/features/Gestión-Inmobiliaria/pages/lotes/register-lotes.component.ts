@@ -8,6 +8,7 @@ import { LoteService } from 'src/app/core/services/proyectos/lote.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { ViewRegisterLotesComponent } from '../../views/lotes/view-register-lotes/view-register-lotes.component';
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 
 @Component({
   selector: 'app-register-lotes',
@@ -20,7 +21,7 @@ import { ViewRegisterLotesComponent } from '../../views/lotes/view-register-lote
   template: `
     <app-page-container
       [title]="isEditMode ? 'Editando Lote #' + (loteData?.numero || '') : 'Registrar Nuevo Lote'"
-      permissionScope="lotes"
+      [permissionScope]="EAppModule.LOTES"
       [showSave]="true"
       [showCancel]="true"
       [loading]="loading"
@@ -41,6 +42,7 @@ import { ViewRegisterLotesComponent } from '../../views/lotes/view-register-lote
   styles: ``
 })
 export class RegisterLotesComponent implements OnInit {
+  public readonly EAppModule = EAppModule;
 
   public loteFormGroup!: FormGroup;
   public loteData: ILote | null = null;

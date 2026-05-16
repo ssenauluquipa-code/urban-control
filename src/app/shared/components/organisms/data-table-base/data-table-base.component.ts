@@ -23,6 +23,7 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
   @Input() height = '520px';
   @Input() showCreate = true;
   @Input() actions: TableAction[] = ['view', 'edit', 'delete'];
+  @Input() module = ''; // Nuevo input para el scope de permisos
   @Input() pageSizeOptions: number[] = [25, 50, 100];
   @Input() gridOptions: GridOptions = {};
 
@@ -45,12 +46,13 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
 
   ngOnInit(): void {
     // Lógica común de inicialización
+    this.computedColumnDefs = this.buildColumns();
     this.gridOptions.paginationPageSizeSelector = this.getPageSizeOptions();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     // Lógica común de cambios
-    if (changes['columnDefs'] || changes['actions']) {
+    if (changes['columnDefs'] || changes['actions'] || changes['module']) {
       this.computedColumnDefs = this.buildColumns();
     }
 
@@ -84,6 +86,7 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
       cellRenderer: 'tableActions',
       cellRendererParams: {
         actions: this.actions,
+        module: this.module, // Pasamos el módulo al renderizador de celdas
         actionClicked: (params: { action: string; data: T }) => this.onActionClicked(params)
       },
       suppressNavigable: true,

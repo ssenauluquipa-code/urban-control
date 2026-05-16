@@ -6,6 +6,7 @@ import {
   ITableActionEvent,
   TableActionsEnum,
 } from "src/app/shared/interfaces/table-actions.interface";
+import { EAppModule } from "src/app/core/config/permissions.enum";
 import {
   CellClassParams,
   ColDef,
@@ -33,7 +34,7 @@ import { UserRegisterComponent } from "../user-register.component";
   template: `
     <app-page-container
       title="Gestión de Usuarios"
-      permissionScope="usuarios"
+      [permissionScope]="EAppModule.USUARIOS"
       [showNew]="true"
       [showOptions]="true"
       (AddNew)="onAddNewUser()"
@@ -41,6 +42,7 @@ import { UserRegisterComponent } from "../user-register.component";
       <!-- Eliminamos el selector de proyectos porque la lista de usuarios es global -->
 
       <app-data-table
+        [module]="EAppModule.USUARIOS"
         [rowData]="(users$ | async) || []"
         [columnDefs]="columnDefs"
         [loading]="isLoading"
@@ -59,6 +61,7 @@ import { UserRegisterComponent } from "../user-register.component";
   styles: ``,
 })
 export class UserListComponent implements OnInit {
+  public readonly EAppModule = EAppModule;
   public tableActionEnum = TableActionsEnum;
   public users$!: Observable<IUser[]>;
   public isLoading = false;

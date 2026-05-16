@@ -7,6 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
@@ -21,10 +22,11 @@ import { ProyectoDetailComponent } from '../proyecto-detail/proyecto-detail.comp
   template: `
     <app-page-container
       title="Proyectos de Urbanización"
-      permissionScope="proyectos"
+      [permissionScope]="EAppModule.PROYECTOS"
       [showNew]="true"
       (AddNew)="onAddNew()">
       <app-data-table
+        [module]="EAppModule.PROYECTOS"
         [rowData]="(proyectos$ | async) || []"
         [columnDefs]="columnDefs"
         [loading]="loading"
@@ -37,6 +39,7 @@ import { ProyectoDetailComponent } from '../proyecto-detail/proyecto-detail.comp
   styles: ``
 })
 export class LisProyectosComponent implements OnInit {
+  public readonly EAppModule = EAppModule;
   public tableActionEnum = TableActionsEnum;
   public proyectos$!: Observable<IProyecto[]>;
   public loading = false;

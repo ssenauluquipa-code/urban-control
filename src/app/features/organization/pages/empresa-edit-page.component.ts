@@ -8,6 +8,7 @@ import { PageContainerComponent } from 'src/app/shared/components/templates/page
 import { EmpresaFormViewComponent } from '../views/empresa-form-view/empresa-form-view.component';
 import { concatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 
 @Component({
   selector: 'app-empresa-edit-page',
@@ -16,7 +17,7 @@ import { of } from 'rxjs';
   template: `
     <app-page-container
       title="Editar Configuración de Empresa"
-      permissionScope="empresa"
+      [permissionScope]="EAppModule.EMPRESA"
       [showSave]="true"
       [showBack]="true"
       [loading]="loading"
@@ -29,6 +30,7 @@ import { of } from 'rxjs';
   `
 })
 export class EmpresaEditPageComponent implements OnInit {
+  public readonly EAppModule = EAppModule;
   form!: FormGroup;
   loading = false;
 

@@ -4,7 +4,7 @@ export interface IUser {
   contactNumber: string;
   email: string;
   avatarUrl: string | null;
-  role: 'SUPER_ADMIN' | 'ADMIN' | 'USER' | 'EDITOR' | 'OPERADOR' | string; // Permitimos más roles y fallback de string
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'EDITOR' | string; // Permitimos más roles y fallback de string
   isActive?: boolean; // Si el backend lo devuelve
   asesorId?: string;
 }

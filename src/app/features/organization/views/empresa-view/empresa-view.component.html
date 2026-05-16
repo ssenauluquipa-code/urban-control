@@ -24,9 +24,9 @@
         <app-image-display
           [imageUrl]="empresaData.logoUrl"
           variant="logo"
-          [editable]="editable"
+          [editable]="false"
           [emptyText]="'Sin Logo'"
-          [emptyHint]="'Click para cargar logo'"
+          [emptyHint]="'El logo no se puede modificar'"
           (imageUpdated)="onLogoUpload($event)"
           (imageDeleted)="onLogoDelete()"
         ></app-image-display>

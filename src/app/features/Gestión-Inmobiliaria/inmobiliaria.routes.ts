@@ -1,15 +1,41 @@
 import { Routes } from "@angular/router";
+import { permissionGuard } from "src/app/core/guards/permission.guard";
+import { EAppModule, EAppAction } from "src/app/core/config/permissions.enum";
 
 export const INMOBILIARIA_ROUTES: Routes = [
-  { path: 'proyecto', loadComponent: () => import('./pages/proyectos/lis-proyectos/lis-proyectos.component').then(m => m.LisProyectosComponent) },
-  { path: 'manzanas', loadComponent: () => import('./pages/manzana/manzana-list.component').then(m => m.ManzanaListComponent) },
+  { 
+    path: 'proyecto', 
+    canActivate: [permissionGuard],
+    data: { module: EAppModule.PROYECTOS, action: EAppAction.VIEW },
+    loadComponent: () => import('./pages/proyectos/lis-proyectos/lis-proyectos.component').then(m => m.LisProyectosComponent) 
+  },
+  { 
+    path: 'manzanas', 
+    canActivate: [permissionGuard],
+    data: { module: EAppModule.MANZANAS, action: EAppAction.VIEW },
+    loadComponent: () => import('./pages/manzana/manzana-list.component').then(m => m.ManzanaListComponent) 
+  },
   {
     path: 'lotes',
     children: [
-      { path: '', loadComponent: () => import('./pages/lotes/list-lotes.component').then(m => m.ListLotesComponent) },
-      { path: 'crear', loadComponent: () => import('./pages/lotes/register-lotes.component').then(m => m.RegisterLotesComponent) },
-      { path: 'editar/:id', loadComponent: () => import('./pages/lotes/register-lotes.component').then(m => m.RegisterLotesComponent) },
-      /* { path: 'plano', loadComponent: () => import('./pages/plano-lotes/plano-lotes.component').then(m => m.PlanoLotesComponent) }, */
+      { 
+        path: '', 
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.LOTES, action: EAppAction.VIEW },
+        loadComponent: () => import('./pages/lotes/list-lotes.component').then(m => m.ListLotesComponent) 
+      },
+      { 
+        path: 'crear', 
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.LOTES, action: EAppAction.CREATE },
+        loadComponent: () => import('./pages/lotes/register-lotes.component').then(m => m.RegisterLotesComponent) 
+      },
+      { 
+        path: 'editar/:id', 
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.LOTES, action: EAppAction.EDIT },
+        loadComponent: () => import('./pages/lotes/register-lotes.component').then(m => m.RegisterLotesComponent) 
+      },
     ]
   },
 ]

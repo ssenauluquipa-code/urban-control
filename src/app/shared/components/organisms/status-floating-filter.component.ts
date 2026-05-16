@@ -92,12 +92,12 @@ export class StatusFloatingFilterComponent implements IFloatingFilterAngularComp
    */
   onValueChange(): void {
     const valueStr = this.currentValue === 'all' ? null : this.currentValue;
-    
-    // DIAGNÓSTICO: Ver qué columnas existen realmente en la tabla
-    const allCols = this.params.api.getAllGridColumns();
-    console.log('StatusFloatingFilter: Enviando ->', valueStr);
-    console.log('Columnas disponibles en el Grid:', allCols.map(c => c.getColId()));
 
+    // DIAGNÓSTICO: Ver qué columnas existen realmente en la tabla
+    /*    const allCols = this.params.api.getAllGridColumns();
+       console.log('StatusFloatingFilter: Enviando ->', valueStr);
+       console.log('Columnas disponibles en el Grid:', allCols.map(c => c.getColId()));
+    */
     // 1. Compatibilidad con búsqueda remota
     if (this.params?.onStatusChange) {
       const boolValue = this.currentValue === 'true' ? true : (this.currentValue === 'false' ? false : undefined);
@@ -112,13 +112,12 @@ export class StatusFloatingFilterComponent implements IFloatingFilterAngularComp
     if (filterMethod) {
       filterMethod('isActive').then((instance: any) => {
         if (instance) {
-          console.log('Instancia de filtro encontrada para isActive');
-          instance.setModel(valueStr ? { 
-            filterType: 'text', 
-            type: 'equals', 
-            filter: valueStr 
+          instance.setModel(valueStr ? {
+            filterType: 'text',
+            type: 'equals',
+            filter: valueStr
           } : null);
-          
+
           // Sincronizar y refrescar
           this.params.api.onFilterChanged();
         } else {

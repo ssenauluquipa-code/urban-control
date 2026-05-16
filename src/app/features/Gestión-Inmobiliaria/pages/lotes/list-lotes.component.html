@@ -1,6 +1,6 @@
 <app-page-container
   title="Gestión de Lotes"
-  permissionScope="lotes"
+  [permissionScope]="EAppModule.LOTES"
   [showNew]="true"
   [showOptions]="true"
   (AddNew)="onAddNewLote()"
@@ -58,6 +58,7 @@
   <!-- VISTA TABLA -->
   <!--  @if (viewMode === "table") { -->
   <app-data-table
+    [module]="EAppModule.LOTES"
     [rowData]="(lotes$ | async) || []"
     [columnDefs]="columnDefs"
     [loading]="isLoading"

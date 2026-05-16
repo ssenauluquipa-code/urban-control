@@ -1,3 +1,5 @@
+import { EAppModule } from "src/app/core/config/permissions.enum";
+
 export interface INavigationItem {
   id: string;
   title: string;
@@ -16,6 +18,7 @@ export interface INavigationItem {
   link?: string;
   description?: string;
   path?: string;
+  module?: EAppModule;
 }
 
 export const NavigationItems: INavigationItem[] = [
@@ -42,6 +45,7 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/dashboard/plano',
         icon: 'bi bi-map',
+        module: EAppModule.LOTES
       },
       /*
             {
@@ -78,7 +82,8 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/admin/usuarios',
         icon: 'bi bi-people',
-        breadcrumbs: false
+        breadcrumbs: false,
+        module: EAppModule.USUARIOS
       },
       {
         id: 'clientes',
@@ -87,7 +92,8 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/clientes',
         icon: 'bi bi-person-lines-fill',
-        breadcrumbs: false
+        breadcrumbs: false,
+        module: EAppModule.CLIENTES
       },
       {
         id: 'asesores',
@@ -96,7 +102,8 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/asesores',
         icon: 'bi bi-person-badge-fill',
-        breadcrumbs: false
+        breadcrumbs: false,
+        module: EAppModule.ASESORES
       },
       {
         id: 'reservas',
@@ -105,7 +112,8 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/reservas',
         icon: 'bi bi-calendar-check',
-        breadcrumbs: false
+        breadcrumbs: false,
+        module: EAppModule.RESERVAS
       },
       {
         id: 'ventas',
@@ -114,7 +122,18 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/ventas',
         icon: 'bi bi-cart-check',
-        breadcrumbs: false
+        breadcrumbs: false,
+        module: EAppModule.VENTAS
+      },
+      {
+        id: 'pagos',
+        title: 'Gestión Pagos',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/pagos',
+        icon: 'bi bi-cash-stack',
+        breadcrumbs: false,
+        module: EAppModule.PAGOS
       }
     ]
   },
@@ -174,7 +193,8 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/gestion-inmobiliaria/proyecto',
         icon: 'bi bi-folder2-open',
-        breadcrumbs: false
+        breadcrumbs: false,
+        module: EAppModule.PROYECTOS
       },
       {
         id: 'manzanas',
@@ -183,7 +203,8 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/gestion-inmobiliaria/manzanas',
         icon: 'bi bi-grid-3x3',
-        breadcrumbs: false
+        breadcrumbs: false,
+        module: EAppModule.MANZANAS
       },
       {
         id: 'lotes',
@@ -192,7 +213,8 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/gestion-inmobiliaria/lotes',
         icon: 'bi bi-geo-alt',
-        breadcrumbs: false
+        breadcrumbs: false,
+        module: EAppModule.LOTES
       }
     ]
   },
@@ -318,7 +340,8 @@ export const NavigationItems: INavigationItem[] = [
         classes: 'nav-item',
         url: '/configuracion/empresa',
         icon: 'bi bi-building-gear',
-        breadcrumbs: false
+        breadcrumbs: false,
+        module: EAppModule.EMPRESA
       }
     ]
   }

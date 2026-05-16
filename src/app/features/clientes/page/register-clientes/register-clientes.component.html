@@ -1,6 +1,6 @@
 <app-page-container
   [title]="isEditMode ? 'Editar Cliente' : 'Nuevo Cliente'"
-  permissionScope="clientes"
+  [permissionScope]="EAppModule.CLIENTES"
   [showNew]="false"
   [showOptions]="false"
   [showCancel]="true"

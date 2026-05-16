@@ -16,6 +16,7 @@ import {
   ITableActionEvent,
   TableActionsEnum,
 } from 'src/app/shared/interfaces/table-actions.interface';
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
@@ -38,7 +39,8 @@ export class ListClientesComponent implements OnInit, OnDestroy {
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   private destroy$ = new Subject<void>();
-  public tableActionEnum = TableActionsEnum;
+  public readonly tableActionEnum = TableActionsEnum;
+  public readonly EAppModule = EAppModule;
 
   // Data
   public clientes: ICliente[] = [];

@@ -1,7 +1,8 @@
-
 import { Routes } from '@angular/router';
 import { FullComponent } from './layouts/full/full.component';
 import { authGuard } from './core/guards/auth.guard';
+import { permissionGuard } from './core/guards/permission.guard';
+import { EAppModule, EAppAction } from './core/config/permissions.enum';
 
 export const Approutes: Routes = [
   {
@@ -37,35 +38,57 @@ export const Approutes: Routes = [
       },
       {
         path: 'admin',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.USUARIOS, action: EAppAction.VIEW },
         loadChildren: () => import('./features/users/users.routes').then(m => m.USERS_ROUTES)
       },
       {
         path: 'access',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.USUARIOS, action: EAppAction.VIEW },
         loadChildren: () => import('./features/access/access.routes').then(m => m.ACCESS_ROUTES)
       },
       {
         path: 'gestion-inmobiliaria',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.PROYECTOS, action: EAppAction.VIEW },
         loadChildren: () => import('./features/Gestión-Inmobiliaria/inmobiliaria.routes').then(m => m.INMOBILIARIA_ROUTES)
       },
       {
         path: 'configuracion',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.EMPRESA, action: EAppAction.VIEW },
         loadChildren: () => import('./features/organization/organization.routes').then(m => m.OrganizationRoutes)
       },
       {
         path: 'clientes',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.CLIENTES, action: EAppAction.VIEW },
         loadChildren: () => import('./features/clientes/clientes.routes').then(m => m.CLIENTES_ROUTES)
       },
       {
         path: 'asesores',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.ASESORES, action: EAppAction.VIEW },
         loadChildren: () => import('./features/asesor/asesor.routes').then(m => m.ASESORES_ROUTES)
       },
-{
+      {
         path: 'reservas',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.RESERVAS, action: EAppAction.VIEW },
         loadChildren: () => import('./features/reserva/reserva.routes').then(m => m.RESERVA_ROUTES)
       },
       {
         path: 'ventas',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.VENTAS, action: EAppAction.VIEW },
         loadChildren: () => import('./features/ventas/ventas.routes').then(m => m.VENTAS_ROUTES)
+      },
+      {
+        path: 'pagos',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.PAGOS, action: EAppAction.VIEW },
+        loadChildren: () => import('./features/ventas/ventas.routes').then(m => m.VENTAS_ROUTES) // Usamos ventas.routes temporalmente o creamos uno
       },
       {
         path: 'profile',

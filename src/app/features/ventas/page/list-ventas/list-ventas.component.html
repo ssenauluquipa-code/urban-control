@@ -2,12 +2,13 @@
 
 <app-page-container
   title="Gestión de Ventas"
-  permissionScope="ventas"
+  [permissionScope]="EAppModule.VENTAS"
   [showNew]="true"
   (AddNew)="onAddNew()"
 >
   <!-- Espaciado superior mínimo ya que los filtros están en la tabla -->
   <app-data-table
+    [module]="EAppModule.VENTAS"
     [rowData]="ventas"
     [columnDefs]="columnDefs"
     [loading]="loading"

@@ -7,6 +7,7 @@ import { ClienteService } from "src/app/core/services/cliente.service";
 import { NotificationService } from "src/app/core/services/notification.service";
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { ViewClientDetailComponent } from "../../views/view-client-detail/view-client-detail.component";
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 @Component({
   selector: "app-cliente-detail",
   standalone: true,
@@ -16,7 +17,7 @@ import { ViewClientDetailComponent } from "../../views/view-client-detail/view-c
       [title]="
         'Detalle del Cliente: ' + (cliente?.nombreCompleto || 'Cargando...')
       "
-      permissionScope="clientes"
+      [permissionScope]="EAppModule.CLIENTES"
       [showBack]="true"
       [showEdit]="true"
       (Back)="onBack()"
@@ -37,6 +38,7 @@ import { ViewClientDetailComponent } from "../../views/view-client-detail/view-c
   styles: ``,
 })
 export class ClienteDetailComponent implements OnInit {
+  public readonly EAppModule = EAppModule;
   cliente: ICliente | null = null;
   loading = true;
 

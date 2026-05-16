@@ -9,6 +9,7 @@ import { NotificationService } from 'src/app/core/services/notification.service'
 import { ManzanaService } from 'src/app/core/services/proyectos/manzana.service';
 import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 import { RegisterManzanaComponent } from './register-manzana.component';
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
@@ -23,12 +24,13 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
   template: `
     <app-page-container
       title="Gestión de Manzanas"
-      permissionScope="manzanas"
+      [permissionScope]="EAppModule.MANZANAS"
       [showNew]="true"
       [showOptions]="true"
       (AddNew)="onAddNewManzana()">
 
       <app-data-table
+        [module]="EAppModule.MANZANAS"
         [rowData]="(manzanas$ | async) || []"
         [columnDefs]="columnDefs"
         [loading]="isLoading"
@@ -42,7 +44,7 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
   styles: ``
 })
 export class ManzanaListComponent implements OnInit {
-
+  public readonly EAppModule = EAppModule;
   public tableActionEnum = TableActionsEnum;
   public manzanas$!: Observable<IManzana[]>;
   public isLoading = false;

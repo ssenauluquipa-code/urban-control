@@ -7,6 +7,7 @@ import { ClienteService } from 'src/app/core/services/cliente.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { FormClientesViewComponent } from "../../views/form-clientes-view/form-clientes-view.component";
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 
 @Component({
   selector: 'app-register-clientes',
@@ -23,6 +24,7 @@ export class RegisterClientesComponent implements OnInit {
   private clienteService = inject(ClienteService);
   private notification = inject(NotificationService);
 
+  public readonly EAppModule = EAppModule;
   public form!: FormGroup;
   public isEditMode = false;
   public loading = false;

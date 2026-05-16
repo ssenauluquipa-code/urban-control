@@ -75,7 +75,6 @@ export class SelectAsesorComponent implements OnInit {
   }
 
   onSelectionChange(asesor: IAsesorOption | null) {
-    console.log(asesor);
     this.SelectionChange.emit(asesor);
   }
 

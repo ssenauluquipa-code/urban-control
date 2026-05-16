@@ -7,7 +7,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { EPageAction, EPageMenuAction } from 'src/app/core/models/page-action.enum';
 import { PageActionService, AnyPageAction } from 'src/app/core/services/page-action.service';
-import { PermissionService } from 'src/app/core/services/permission.service';
+import { AccessControlService } from 'src/app/core/services/access-control.service';
+import { EAppModule, EAppAction } from 'src/app/core/config/permissions.enum';
 import { IPageConfig, DEFAULT_PAGE_CONFIG } from 'src/app/core/models/page-config.interface';
 
 @Component({
@@ -20,7 +21,7 @@ import { IPageConfig, DEFAULT_PAGE_CONFIG } from 'src/app/core/models/page-confi
 })
 export class SubHeaderComponent {
   private pageActionService = inject(PageActionService);
-  private permissionService = inject(PermissionService);
+  private access = inject(AccessControlService);
   private router = inject(Router);
   private location = inject(Location);
 
@@ -36,11 +37,21 @@ export class SubHeaderComponent {
   public readonly A = EPageAction;
   public readonly M = EPageMenuAction;
 
-  get canShowNew(): boolean { return !!this.config.showNew && (!this.permissionScope || this.permissionService.can(`${this.permissionScope}.create`)); }
-  get canShowSave(): boolean { return !!this.config.showSave && (!this.permissionScope || this.permissionService.can(`${this.permissionScope}.update`)); }
-  get canShowEdit(): boolean { return !!this.config.showEdit && (!this.permissionScope || this.permissionService.can(`${this.permissionScope}.update`)); }
-  get canShowDelete(): boolean { return !!this.config.showDelete && (!this.permissionScope || this.permissionService.can(`${this.permissionScope}.delete`)); }
-  get canShowUpdate(): boolean { return !!this.config.showUpdate && (!this.permissionScope || this.permissionService.can(`${this.permissionScope}.read`)); }
+  get canShowNew(): boolean { 
+    return !!this.config.showNew && (!this.permissionScope || this.access.can(this.permissionScope as EAppModule, EAppAction.CREATE)); 
+  }
+  get canShowSave(): boolean { 
+    return !!this.config.showSave && (!this.permissionScope || this.access.can(this.permissionScope as EAppModule, EAppAction.EDIT)); 
+  }
+  get canShowEdit(): boolean { 
+    return !!this.config.showEdit && (!this.permissionScope || this.access.can(this.permissionScope as EAppModule, EAppAction.EDIT)); 
+  }
+  get canShowDelete(): boolean { 
+    return !!this.config.showDelete && (!this.permissionScope || this.access.can(this.permissionScope as EAppModule, EAppAction.DELETE)); 
+  }
+  get canShowUpdate(): boolean { 
+    return !!this.config.showUpdate && (!this.permissionScope || this.access.can(this.permissionScope as EAppModule, EAppAction.VIEW)); 
+  }
 
   get canShowCancel(): boolean { return !!this.config.showCancel; }
   get canShowSend(): boolean { return !!this.config.showSend; }

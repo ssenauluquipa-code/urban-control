@@ -8,6 +8,7 @@ import {
   ITableActionEvent,
   TableActionsEnum,
 } from "src/app/shared/interfaces/table-actions.interface";
+import { EAppModule } from "src/app/core/config/permissions.enum";
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { ProjectStatusGlobalService } from "src/app/core/services/project-status-global.service";
 import { finalize } from "rxjs";
@@ -43,6 +44,7 @@ export class ListVentasComponent implements OnInit {
 
   // Estado
   public tableActionEnum = TableActionsEnum;
+  public readonly EAppModule = EAppModule;
   public ventas: IVenta[] = [];
   public loading = false;
   public proyectoId: string | null = null;

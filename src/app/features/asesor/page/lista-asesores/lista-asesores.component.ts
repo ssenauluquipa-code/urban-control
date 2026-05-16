@@ -9,6 +9,7 @@ import {
   ITableActionEvent,
   TableActionsEnum,
 } from "src/app/shared/interfaces/table-actions.interface";
+import { EAppModule } from "src/app/core/config/permissions.enum";
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
 import { ConfirmationService } from "src/app/core/services/confirmation.service";
@@ -26,7 +27,8 @@ import { StatusFloatingFilterComponent } from "src/app/shared/components/organis
   styleUrl: "./lista-asesores.component.scss",
 })
 export class ListaAsesoresComponent implements OnInit {
-  public tableActionEnum = TableActionsEnum;
+  public readonly tableActionEnum = TableActionsEnum;
+  public readonly EAppModule = EAppModule;
 
   // Data
   public asesores: IAsesor[] = [];

@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 import { EAsesorType, IAsesor } from "src/app/core/models/asesor/asesor.model";
+import { EAppModule } from "src/app/core/config/permissions.enum";
 import { AsesorService } from "src/app/core/services/asesor.service";
 import { ConfirmationService } from "src/app/core/services/confirmation.service";
 import { NotificationService } from "src/app/core/services/notification.service";
@@ -25,6 +26,7 @@ import {
 } from "src/app/shared/interfaces/table-actions.interface";
 import { ITableFilterModel } from "src/app/shared/interfaces/table-filters.interface";
 import { AsesorDetailComponent } from "src/app/features/asesor/page/asesor-detail/asesor-detail.component";
+import { RegisterPropietarioModalComponent } from "./register-propietario-modal.component";
 
 @Component({
   selector: "app-list-propietario",
@@ -32,6 +34,7 @@ import { AsesorDetailComponent } from "src/app/features/asesor/page/asesor-detai
   imports: [DataTableComponent],
   template: `
     <app-data-table
+      [module]="EAppModule.ASESORES"
       [rowData]="asesores"
       [columnDefs]="columnDefs"
       [loading]="loading"
@@ -40,7 +43,7 @@ import { AsesorDetailComponent } from "src/app/features/asesor/page/asesor-detai
         tableActionEnum.EDIT,
         tableActionEnum.DEACTIVATE,
         tableActionEnum.ACTIVATE,
-        tableActionEnum.INFO,
+        tableActionEnum.VIEW
       ]"
       height="350px"
       (actionClicked)="onTableAction($event)"
@@ -51,7 +54,8 @@ import { AsesorDetailComponent } from "src/app/features/asesor/page/asesor-detai
   styles: ``,
 })
 export class ListPropietarioComponent implements OnInit, OnChanges {
-  @Input() refreshToken = 0;
+  public readonly EAppModule = EAppModule;
+  @Input() refreshTrigger = 0;
 
   public tableActionEnum = TableActionsEnum;
 
@@ -143,7 +147,7 @@ export class ListPropietarioComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["refreshToken"] && !changes["refreshToken"].firstChange) {
+    if (changes["refreshTrigger"] && !changes["refreshTrigger"].firstChange) {
       this.loadPropietarios();
     }
   }
@@ -162,11 +166,11 @@ export class ListPropietarioComponent implements OnInit, OnChanges {
   }
 
   onTableAction(event: ITableActionEvent<IAsesor>): void {
-    if (event.action === TableActionsEnum.EDIT) {
-      this.router.navigate(["editar", event.row!.id], {
-        relativeTo: this.route,
-      });
-    }
+    /*     if (event.action === TableActionsEnum.EDIT) {
+          this.router.navigate(["editar", event.row!.id], {
+            relativeTo: this.route,
+          });
+        } */
 
     if (
       event.action === TableActionsEnum.DEACTIVATE ||
@@ -191,9 +195,27 @@ export class ListPropietarioComponent implements OnInit, OnChanges {
         });
     }
 
-    if (event.action === TableActionsEnum.INFO) {
+    if (event.action === TableActionsEnum.EDIT) {
+      this.openEditModal(event.row as IAsesor);
+    }
+
+    if (event.action === TableActionsEnum.VIEW) {
       this.openDetailModal(event.row!.id);
     }
+  }
+
+  private openEditModal(propietario: IAsesor): void {
+    const modalRef = this.modalService.open(RegisterPropietarioModalComponent, {
+      size: "lg",
+      backdrop: "static",
+    });
+    modalRef.componentInstance.data = propietario;
+
+    modalRef.result.then((result) => {
+      if (result) {
+        this.loadPropietarios();
+      }
+    }).catch(() => undefined);
   }
 
   private openDetailModal(id: string): void {

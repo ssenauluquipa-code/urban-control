@@ -8,6 +8,7 @@ import {
   ITableActionEvent,
   TableActionsEnum,
 } from 'src/app/shared/interfaces/table-actions.interface';
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 import {
   finalize,
   Observable,
@@ -44,6 +45,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   templateUrl: './list-lotes.component.html',
 })
 export class ListLotesComponent implements OnInit {
+  public readonly EAppModule = EAppModule;
   public tableActionEnum = TableActionsEnum;
   public lotes$!: Observable<ILote[]>;
   public isLoading = false;

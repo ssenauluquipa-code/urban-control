@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { finalize } from 'rxjs';
 
 import { EEstadoCivil, EGenero, ETipoDocumento } from 'src/app/core/models/cliente.model';
-import { EAsesorType } from 'src/app/core/models/asesor/asesor.model';
+import { EAsesorType, IAsesor } from 'src/app/core/models/asesor/asesor.model';
 import { AsesorService } from 'src/app/core/services/asesor.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { InputDocumentoComponent } from 'src/app/shared/components/atoms/input-documento/input-documento.component';
@@ -32,9 +32,9 @@ import { ModalContainerComponent } from 'src/app/shared/components/organisms/mod
   ],
   template: `
     <app-modal-container
-      [mainTitleModal]="'Nuevo Propietario'"
-      [saveButtonName]="'Registrar Propietario'"
-      [saveButtonIcon]="'user-add'"
+      [mainTitleModal]="isEditMode ? 'Editar Propietario' : 'Nuevo Propietario'"
+      [saveButtonName]="isEditMode ? 'Actualizar Propietario' : 'Registrar Propietario'"
+      [saveButtonIcon]="isEditMode ? 'save' : 'user-add'"
       [loading]="loading"
       (SaveAction)="onSave()"
       (CancelAction)="activeModal.dismiss()"
@@ -100,8 +100,11 @@ import { ModalContainerComponent } from 'src/app/shared/components/organisms/mod
   styles: ``,
 })
 export class RegisterPropietarioModalComponent implements OnInit {
+  @Input() data: IAsesor | null = null;
+
   public form!: FormGroup;
   public loading = false;
+  public isEditMode = false;
 
   public activeModal = inject(NgbActiveModal);
   private fb = inject(FormBuilder);
@@ -110,6 +113,10 @@ export class RegisterPropietarioModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
+    if (this.data) {
+      this.isEditMode = true;
+      this.form.patchValue(this.data);
+    }
   }
 
   get nombreCompletoControl(): FormControl {
@@ -171,19 +178,26 @@ export class RegisterPropietarioModalComponent implements OnInit {
         : null,
     };
 
-    this.asesorService
-      .createAsesor(payload)
+    const request$ = this.isEditMode && this.data
+      ? this.asesorService.updateAsesor(this.data.id, payload)
+      : this.asesorService.createAsesor(payload);
+
+    request$
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: () => {
-          this.notification.success('Propietario registrado correctamente');
+          this.notification.success(
+            this.isEditMode ? 'Propietario actualizado' : 'Propietario registrado'
+          );
           this.activeModal.close(true);
         },
         error: (err) => {
           if (err.status === 409) {
             this.notification.error('El documento ya existe');
           } else {
-            const msg = err.error?.message || 'Error al registrar propietario';
+            const msg =
+              err.error?.message ||
+              `Error al ${this.isEditMode ? 'actualizar' : 'registrar'} propietario`;
             this.notification.error(msg);
           }
         },

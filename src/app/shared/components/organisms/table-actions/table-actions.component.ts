@@ -6,6 +6,9 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { ITableActionParams, TableActionsEnum } from '../../../interfaces/table-actions.interface';
+import { AccessControlService } from 'src/app/core/services/access-control.service';
+import { EAppModule, EAppAction } from 'src/app/core/config/permissions.enum';
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-table-actions',
@@ -56,9 +59,12 @@ export class TableActionsComponent implements ICellRendererAngularComp {
 
   @Output() actionClicked = new EventEmitter<{ action: string, data: unknown }>();
 
+  private access = inject(AccessControlService);
+
   actions: string[] = [];
   rowData: unknown = null;
-  params!: ITableActionParams;
+  params!: ITableActionParams & { module?: string };
+  module = '';
   private isHandling = false; // Previene doble disparo por clic rápido
 
   handleAction(action: string, event?: MouseEvent) {
@@ -103,7 +109,6 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.VIEW]: 'Ver',
       [TableActionsEnum.EDIT]: 'Editar',
       [TableActionsEnum.DELETE]: 'Eliminar',
-      [TableActionsEnum.INFO]: 'Información',
       [TableActionsEnum.ANULAR]: 'Anular',
       [TableActionsEnum.NUEVO]: 'Nuevo',
       [TableActionsEnum.ACTIVATE]: 'Activar',
@@ -117,15 +122,17 @@ export class TableActionsComponent implements ICellRendererAngularComp {
     return labels[action] || action;
   }
 
-  agInit(params: ITableActionParams): void {
+  agInit(params: ITableActionParams & { module?: string }): void {
     this.params = params;
-    this.rowData = params.data; // Aquí están los datos de la fila
+    this.rowData = params.data;
+    this.module = params.module || '';
     this.actions = this.filterActions((params.actions as string[]) || []);
   }
 
-  refresh(params: ITableActionParams): boolean {
+  refresh(params: ITableActionParams & { module?: string }): boolean {
     this.params = params;
     this.rowData = params.data;
+    this.module = params.module || '';
     this.actions = this.filterActions((params.actions as string[]) || []);
     return true;
   }
@@ -133,31 +140,67 @@ export class TableActionsComponent implements ICellRendererAngularComp {
   private filterActions(actions: string[]): string[] {
     const data = this.rowData as { isActive?: boolean; avatarUrl?: string, estado?: string };
 
-    return actions.filter(action => {
-      if (action === TableActionsEnum.BLOQUEADO) {
-        // Solo mostramos Bloqueado si isActive es TRUE (definido en el map del componente lista)
-        return data?.estado === 'DISPONIBLE';
+    // 1. Filtramos por permisos
+    //const user = this.access['auth'].currentUser();
+    //const role = user?.role;
+
+    const allowedActions = actions.filter(action => {
+      if (!this.module) return true;
+      const appAction = this.mapToAppAction(action);
+      const can = this.access.can(this.module as EAppModule, appAction);
+
+      // Log de diagnóstico (puedes borrarlo después)
+      /* if (this.module === 'LOTES' && action === 'edit') {
+        console.log(`[TableActions] Lotes Edit Check: Role=${role}, Module=${this.module}, Action=${action} -> ${can ? '✅' : '🚫'}`);
+      } */
+
+      return can;
+    });
+
+    // 2. Filtramos por estado de negocio
+    // 2. Filtramos por jerarquía de roles (Regla Especial: Nadie toca al SUPER_ADMIN)
+    const currentModule = this.module as EAppModule;
+    const finalActions = allowedActions.filter(action => {
+      // Si el módulo es Usuarios y la fila es un SUPER_ADMIN, ocultamos acciones de escritura
+      if (currentModule === EAppModule.USUARIOS && (data as any)?.role === 'SUPER_ADMIN') {
+        if (action !== TableActionsEnum.VIEW && action !== TableActionsEnum.INFO) {
+          return false;
+        }
       }
-      // Solo mostramos si está BLOQUEADO
-      if (action === TableActionsEnum.SET_AVAILABLE) {
-        return data?.estado === 'BLOQUEADO';
-      }
-      // Si el usuario ya está activo, no mostramos "Activar"
+
+      if (action === TableActionsEnum.BLOQUEADO) return data?.estado === 'DISPONIBLE';
+      if (action === TableActionsEnum.SET_AVAILABLE) return data?.estado === 'BLOQUEADO';
       if (action === TableActionsEnum.ACTIVATE) return data?.isActive === false;
-      // Si el usuario ya está inactivo, no mostramos "Desactivar"
       if (action === TableActionsEnum.DEACTIVATE) return data?.isActive === true;
-      // Si no tiene foto/avatar, no mostramos "Quitar Foto"
       if (action === TableActionsEnum.REMOVE_IMAGE || action === 'remove_image') {
         return !!(data?.avatarUrl || (data as Record<string, unknown>)?.['fotoUrl']);
       }
-      // Siempre mostramos "Subir Foto"
       if (action === TableActionsEnum.UPLOAD_PHOTO || action === 'upload_photo') return true;
-      // 👇 Lógica específica para Anular Reservas
       if (action === TableActionsEnum.ANULAR || action === TableActionsEnum.VENTA) {
-        // Solo mostramos Anular o Venta si isActive es TRUE (definido en el map del componente lista)
         return data?.isActive === true;
       }
       return true;
     });
+
+    return finalActions;
+  }
+
+  private mapToAppAction(action: string): EAppAction {
+    switch (action) {
+      case TableActionsEnum.VIEW:
+      case TableActionsEnum.INFO: return EAppAction.VIEW;
+      case TableActionsEnum.EDIT:
+      case TableActionsEnum.BLOQUEADO:
+      case TableActionsEnum.SET_AVAILABLE: return EAppAction.EDIT;
+      case TableActionsEnum.DELETE:
+      case TableActionsEnum.REMOVE_IMAGE: return EAppAction.DELETE;
+      case TableActionsEnum.ANULAR: return EAppAction.ANULAR;
+      case TableActionsEnum.ACTIVATE: return EAppAction.ACTIVATE;
+      case TableActionsEnum.DEACTIVATE: return EAppAction.DEACTIVATE;
+      case TableActionsEnum.UPLOAD_PHOTO: return EAppAction.UPLOAD;
+      case TableActionsEnum.VENTA: return EAppAction.VENTA;
+      case TableActionsEnum.NUEVO: return EAppAction.CREATE;
+      default: return EAppAction.VIEW;
+    }
   }
 }

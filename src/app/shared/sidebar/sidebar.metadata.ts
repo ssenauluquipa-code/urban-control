@@ -1,3 +1,5 @@
+import { EAppModule } from 'src/app/core/config/permissions.enum';
+
 // Sidebar route metadata
 export interface IRouteInfo {
   path: string;
@@ -6,4 +8,5 @@ export interface IRouteInfo {
   class: string;
   extralink: boolean;
   submenu: IRouteInfo[];
+  module?: EAppModule;
 }

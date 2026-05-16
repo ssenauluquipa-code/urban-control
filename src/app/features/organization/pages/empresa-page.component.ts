@@ -11,6 +11,7 @@ import { IOrganization } from "src/app/core/models/Empresas/empresa-config.model
 import { OrganizationService } from "src/app/core/services/configuracion/organization.service";
 import { ListPropietarioComponent } from "./Asesor_propietario/list-propietario.component";
 import { RegisterPropietarioModalComponent } from "./Asesor_propietario/register-propietario-modal.component";
+import { EAppModule } from "src/app/core/config/permissions.enum";
 
 @Component({
   selector: "app-empresa-page",
@@ -23,12 +24,11 @@ import { RegisterPropietarioModalComponent } from "./Asesor_propietario/register
     TabsContainerComponent,
     TabItemComponent,
     ListPropietarioComponent,
-    RegisterPropietarioModalComponent,
   ],
   template: `
     <app-page-container
       title="Configuración de Empresa"
-      permissionScope="empresa"
+      [permissionScope]="EAppModule.EMPRESA"
       [showEdit]="activeTabIndex === 0"
       [showNew]="activeTabIndex === 1"
       [showOptions]="false"
@@ -54,7 +54,7 @@ import { RegisterPropietarioModalComponent } from "./Asesor_propietario/register
           [badge]="empresaData?.asesores?.length || 0"
         >
           <app-list-propietario
-            [refreshToken]="propietariosRefreshToken"
+            [refreshTrigger]="propietariosRefreshTrigger"
           ></app-list-propietario>
         </app-tab-item>
       </app-tabs-container>
@@ -63,16 +63,17 @@ import { RegisterPropietarioModalComponent } from "./Asesor_propietario/register
   styles: ``,
 })
 export class EmpresaPageComponent implements OnInit {
+  public readonly EAppModule = EAppModule;
   empresaData: IOrganization | null = null;
   isLoading = false;
   activeTabIndex = 0;
-  propietariosRefreshToken = 0;
+  propietariosRefreshTrigger = 0;
 
   constructor(
     private empresaService: OrganizationService,
     private router: Router,
     private modalService: NgbModal,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -112,7 +113,7 @@ export class EmpresaPageComponent implements OnInit {
     modalRef.result
       .then((result) => {
         if (result) {
-          this.propietariosRefreshToken++;
+          this.propietariosRefreshTrigger++;
           this.empresaService.clearCache();
           this.loadData();
         }

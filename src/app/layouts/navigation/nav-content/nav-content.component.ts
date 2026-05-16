@@ -3,7 +3,8 @@ import { NavGroupComponent } from "./nav-group/nav-group.component";
 import { CommonModule, Location, LocationStrategy } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NavigationItems, INavigationItem } from '../navigation';
-import { AuthService } from 'src/app/core/services/auth.service';
+import { AccessControlService } from 'src/app/core/services/access-control.service';
+import { EAppAction, EAppModule } from 'src/app/core/config/permissions.enum';
 
 @Component({
   selector: 'app-nav-content',
@@ -19,7 +20,7 @@ export class NavContentComponent implements OnInit {
   navigation: INavigationItem[] = [];
   windowWidth = window.innerWidth;
 
-  private authService = inject(AuthService);
+  private access = inject(AccessControlService);
 
   constructor(private location: Location,
     private locationStrategy: LocationStrategy,
@@ -27,48 +28,32 @@ export class NavContentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Escuchar el usuario logueado para filtrar el menú
-    const currentUser = this.authService.currentUser();
-    this.navigation = this.filterMenuByPermissions(NavigationItems, currentUser);
+    this.navigation = this.filterMenuByPermissions(NavigationItems);
   }
 
-  private filterMenuByPermissions(items: INavigationItem[], user: any): INavigationItem[] {
-    if (!user) return [];
+  private filterMenuByPermissions(items: INavigationItem[]): INavigationItem[] {
+    return items
+      .map(item => {
+        const newItem = { ...item };
+        if (newItem.children) {
+          newItem.children = this.filterMenuByPermissions(newItem.children);
+        }
+        return newItem;
+      })
+      .filter(item => {
+        // 1. Si tiene un módulo asignado, verificamos permiso VIEW
+        if (item.module) {
+          return this.access.can(item.module as EAppModule, EAppAction.VIEW);
+        }
 
-    // Si es el usuario específico que mencionaste
-    if (user.email === 'superadmin@gmail.com') {
-      // Definimos estrictamente los IDs de los menús (grupos o items) que TIENE PERMITIDO ver:
-      const allowedMenuIds = [
-        // Inicio
-        'main', 'dashboard', 'plano-lotes-nav',
-        // Administración
-        'administración', 'usuarios-admin', 'clientes', 'asesores', 'reservas',
-        // Gestión Inmobiliaria (todo)
-        'gestion-inmobiliaria', 'proyectos', 'manzanas', 'lotes',
-        // Configuración (todo)
-        'configuracion-group', 'empresa'
-      ];
+        // 2. Si es un grupo o colapsable, lo mostramos si tiene hijos permitidos
+        if (item.type === 'group' || item.type === 'collapse') {
+          return item.children && item.children.length > 0;
+        }
 
-      return items
-        .map(item => {
-          // Si el item tiene hijos, filtramos sus hijos recursivamente
-          const newItem = { ...item };
-          if (newItem.children) {
-            newItem.children = this.filterMenuByPermissions(newItem.children, user);
-          }
-          return newItem;
-        })
-        .filter(item => {
-          // Solo mantenemos el item si su ID está en la lista de permitidos
-          // O si es un grupo y le quedó al menos un hijo permitido
-          const isAllowed = allowedMenuIds.includes(item.id);
-          const hasAllowedChildren = item.children && item.children.length > 0;
-          return isAllowed || hasAllowedChildren;
-        });
-    }
-
-    // Para otros usuarios, puedes devolver todo el menú o aplicar otra lógica
-    return items;
+        // 3. Por defecto (items sin módulo como Dashboard), se muestran
+        return true;
+      });
   }
 
   fireOutClick() {

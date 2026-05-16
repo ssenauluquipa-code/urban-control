@@ -1,3 +1,4 @@
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 import { IRouteInfo } from './sidebar.metadata';
 
 export const ROUTES: IRouteInfo[] = [
@@ -11,92 +12,13 @@ export const ROUTES: IRouteInfo[] = [
     submenu: []
   },
   {
-    path: '/component/alert',
-    title: 'Alert',
-    icon: 'bi bi-bell',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/component/badges',
-    title: 'Badges',
-    icon: 'bi bi-patch-check',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/component/buttons',
-    title: 'Button',
-    icon: 'bi bi-hdd-stack',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/component/card',
-    title: 'Card',
-    icon: 'bi bi-card-text',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/component/dropdown',
-    title: 'Dropdown',
-    icon: 'bi bi-menu-app',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/component/pagination',
-    title: 'Pagination',
-    icon: 'bi bi-dice-1',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/component/nav',
-    title: 'Nav',
-    icon: 'bi bi-pause-btn',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/component/table',
-    title: 'Table',
-    icon: 'bi bi-layout-split',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/about',
-    title: 'About',
-    icon: 'bi bi-people',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/component/Ag-Grid-Angular',
-    title: 'Table Ag-Grid-Angular',
-    icon: 'bi bi-people',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
     path: '/gestion-inmobiliaria/lotes',
     title: 'Gestión de Lotes',
     icon: 'bi bi-building',
     class: '',
     extralink: false,
-    submenu: []
+    submenu: [],
+    module: EAppModule.LOTES
   },
   {
     path: '/admin/usuarios',
@@ -104,7 +26,8 @@ export const ROUTES: IRouteInfo[] = [
     icon: 'bi bi-people-fill',
     class: '',
     extralink: false,
-    submenu: []
+    submenu: [],
+    module: EAppModule.USUARIOS
   },
   {
     path: '/clientes',
@@ -112,7 +35,8 @@ export const ROUTES: IRouteInfo[] = [
     icon: 'bi bi-person-lines-fill',
     class: '',
     extralink: false,
-    submenu: []
+    submenu: [],
+    module: EAppModule.CLIENTES
   },
   {
     path: '/asesores',
@@ -120,15 +44,26 @@ export const ROUTES: IRouteInfo[] = [
     icon: 'bi bi-person-badge-fill',
     class: '',
     extralink: false,
-    submenu: []
+    submenu: [],
+    module: EAppModule.ASESORES
   },
-{
+  {
     path: '/reservas',
     title: 'Gestión de Reservas',
     icon: 'bi bi-calendar-check',
     class: '',
     extralink: false,
-    submenu: []
+    submenu: [],
+    module: EAppModule.RESERVAS
+  },
+  {
+    path: '/ventas',
+    title: 'Gestión de Ventas',
+    icon: 'bi bi-cart-check',
+    class: '',
+    extralink: false,
+    submenu: [],
+    module: EAppModule.VENTAS
   },
   {
     path: '/configuracion/empresa',
@@ -136,6 +71,7 @@ export const ROUTES: IRouteInfo[] = [
     icon: 'bi bi-gear',
     class: '',
     extralink: false,
-    submenu: []
+    submenu: [],
+    module: EAppModule.EMPRESA
   }
 ];

@@ -8,6 +8,7 @@ import { NotificationService } from 'src/app/core/services/notification.service'
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { ReservaService } from 'src/app/core/services/reserva.service';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -40,6 +41,7 @@ export class ListReservasComponent implements OnInit {
 
   // Propiedades de estado
   public tableActionEnum = TableActionsEnum;
+  public readonly EAppModule = EAppModule;
   public reservas: IReserva[] = [];
   public loading = false;
   public proyectoId: string | null = null;

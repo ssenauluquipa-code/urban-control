@@ -9,6 +9,7 @@ import { NotificationService } from 'src/app/core/services/notification.service'
 import { RegisterAsesorViewComponent } from "../views/register-asesor-view/register-asesor-view.component";
 import { CommonModule } from '@angular/common';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
+import { EAppModule } from 'src/app/core/config/permissions.enum';
 
 @Component({
   selector: 'app-register-asesor',
@@ -17,6 +18,7 @@ import { PageContainerComponent } from 'src/app/shared/components/templates/page
   template: `
     <app-page-container
       [title]="isEditMode ? 'Editar Asesor' : 'Nuevo Asesor'"
+      [permissionScope]="EAppModule.ASESORES"
       (Save)="onSubmit()"
       (Cancel)="goBack()"
       [showSave]="true"
@@ -32,6 +34,7 @@ import { PageContainerComponent } from 'src/app/shared/components/templates/page
   styles: ``
 })
 export class RegisterAsesorComponent implements OnInit {
+  public readonly EAppModule = EAppModule;
 
   public form!: FormGroup;
   public loading = false;
