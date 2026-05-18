@@ -3,6 +3,7 @@ import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-esta
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, finalize } from 'rxjs';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
@@ -31,7 +32,7 @@ import { ProyectoDetailComponent } from '../proyecto-detail/proyecto-detail.comp
         [columnDefs]="columnDefs"
         [loading]="loading"
         [showCreate]="false"
-        [actions]="[tableActionEnum.VIEW, tableActionEnum.EDIT, tableActionEnum.DELETE]"
+        [actions]="[tableActionEnum.VIEW, tableActionEnum.EDIT, tableActionEnum.DELETE, tableActionEnum.MASS_LOAD]"
         (actionClicked)="onTableAction($event)">
       </app-data-table>
     </app-page-container>
@@ -62,7 +63,8 @@ export class LisProyectosComponent implements OnInit {
     private proyectoService: ProyectoService,
     private modalService: NgbModal,
     private notification: NotificationService,
-    private nzModal: NzModalService
+    private nzModal: NzModalService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -77,7 +79,9 @@ export class LisProyectosComponent implements OnInit {
   }
 
   onTableAction(event: ITableActionEvent<IProyecto>): void {
-    if (event.action === TableActionsEnum.EDIT) {
+    if (event.action === TableActionsEnum.MASS_LOAD) {
+      this.router.navigate([`/gestion-inmobiliaria/proyecto/${event.row!.id}/carga-masiva`]);
+    } else if (event.action === TableActionsEnum.EDIT) {
       this.openModal(event.row ?? undefined);
     } else if (event.action === TableActionsEnum.VIEW || event.action === TableActionsEnum.INFO) {
       this.openDetailModal(event.row!.id);

@@ -35,6 +35,7 @@ import {
           [class.clickable]="clickable && !disabled"
           [class.disabled]="disabled"
           [class.error]="hasError"
+          [class.multiline-container]="multiline"
           [attr.tabindex]="clickable && !disabled ? 0 : null"
           (click)="handleClick()"
           (keydown.enter)="handleClick()"
@@ -47,6 +48,7 @@ import {
                 class="field-text"
                 [class.text-error]="hasError"
                 [class.font-medium]="bold"
+                [class.multiline]="multiline"
               >
                 {{ displayValue }}
               </span>
@@ -55,7 +57,11 @@ import {
                 <button
                   (click)="copyToClipboard($event)"
                   class="opacity-0 group-hover:opacity-100 transition-opacity text-secondary hover:text-primary"
-                ></button>
+                  aria-label="Copiar al portapapeles"
+                  title="Copiar"
+                >
+                  <span nz-icon nzType="copy" nzTheme="outline"></span>
+                </button>
               }
             </div>
           }
@@ -90,9 +96,27 @@ import {
         justify-content: space-between;
       }
 
+      /* Multiline override — fuerza anulación del height fijo del global CSS */
+      .field-container.multiline-container {
+        height: auto !important;
+        min-height: auto !important;
+        align-items: flex-start !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+      }
+
       /* Text */
       .field-text {
         color: #0b1c30; /* on-surface */
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.45;
+      }
+
+      .field-text.multiline {
+        display: block;
+        white-space: pre-wrap;
       }
 
       /* Placeholder */
@@ -188,6 +212,7 @@ export class InputTextInfoComponent {
   @Input() clickable = false;
   @Input() disabled = false;
   @Input() showCopy = false;
+  @Input() multiline = false;
   @Input() formatter?: (value: unknown) => string;
 
   // Outputs

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IVentaDetalle, IVentaCuota } from 'src/app/core/models/venta.model';
+import { IVentaDetalle, IVentaCuota, IVentaSaldoResumen } from 'src/app/core/models/venta.model';
 import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 import { InputTextInfoComponent } from 'src/app/shared/components/atoms/input-text-info.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
@@ -24,6 +24,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 export class DetailVentaViewComponent {
   @Input() venta: IVentaDetalle | null = null;
   @Input() cuotas: IVentaCuota[] = [];
+  @Input() saldo: IVentaSaldoResumen | null = null;
   @Input() loading = false;
 
   constructor(private currencyPipe: CurrencyPipe, private datePipe: DatePipe) {}

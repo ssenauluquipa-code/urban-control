@@ -99,7 +99,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.UPLOAD_PHOTO]: 'upload',
       [TableActionsEnum.BLOQUEADO]: 'lock',
       [TableActionsEnum.SET_AVAILABLE]: 'unlock',
-      [TableActionsEnum.VENTA]: 'shopping-cart'
+      [TableActionsEnum.VENTA]: 'shopping-cart',
+      [TableActionsEnum.MASS_LOAD]: 'appstore-add'
     };
     return icons[action] || 'question';
   }
@@ -118,6 +119,7 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.BLOQUEADO]: 'Bloquear',
       [TableActionsEnum.SET_AVAILABLE]: 'Disponible',
       [TableActionsEnum.VENTA]: 'Venta',
+      [TableActionsEnum.MASS_LOAD]: 'Carga Masiva',
     };
     return labels[action] || action;
   }
@@ -200,6 +202,7 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       case TableActionsEnum.UPLOAD_PHOTO: return EAppAction.UPLOAD;
       case TableActionsEnum.VENTA: return EAppAction.VENTA;
       case TableActionsEnum.NUEVO: return EAppAction.CREATE;
+      case TableActionsEnum.MASS_LOAD: return EAppAction.MASS_LOAD;
       default: return EAppAction.VIEW;
     }
   }

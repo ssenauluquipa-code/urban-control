@@ -20,6 +20,7 @@ import { EAppModule } from 'src/app/core/config/permissions.enum';
       [permissionScope]="EAppModule.CLIENTES"
       [showBack]="true"
       [showEdit]="true"
+      [showOptions]="false"
       (Back)="onBack()"
       (Edit)="onEdit()"
     >
@@ -47,7 +48,7 @@ export class ClienteDetailComponent implements OnInit {
     private router: Router,
     private clienteService: ClienteService,
     private notification: NotificationService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get("id");

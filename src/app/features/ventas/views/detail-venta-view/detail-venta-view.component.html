@@ -98,16 +98,15 @@
       </app-card-container>
     </div>
 
-    <!-- Resumen Financiero -->
+    <!-- Resumen Financiero (datos en tiempo real desde /saldo) -->
     <!-- En móvil col-12 (debajo de datos), en Desktop col-xl-5 (al lado) -->
     <div class="col-12 col-xl-5">
       <app-card-container title="Resumen Financiero">
         <div class="row g-3">
-          <!-- Valores monetarios suelen ser largos, mejor ancho completo en móvil -->
           <div class="col-12 col-md-6">
             <app-input-text-info
               label="Monto Total"
-              [value]="venta?.montoTotal | currency: venta?.moneda"
+              [value]="saldo?.montoTotal | currency: venta?.moneda"
               [loading]="loading"
               [bold]="true"
             ></app-input-text-info>
@@ -115,7 +114,15 @@
           <div class="col-12 col-md-6">
             <app-input-text-info
               label="Cuota Inicial / Reserva"
-              [value]="venta?.cuotaInicial | currency: venta?.moneda"
+              [value]="saldo?.cuotaInicial | currency: venta?.moneda"
+              [loading]="loading"
+              [bold]="true"
+            ></app-input-text-info>
+          </div>
+          <div class="col-12 col-md-6">
+            <app-input-text-info
+              label="Total Pagado"
+              [value]="saldo?.totalPagado | currency: venta?.moneda"
               [loading]="loading"
               [bold]="true"
             ></app-input-text-info>
@@ -123,7 +130,7 @@
           <div class="col-12 col-md-6">
             <app-input-text-info
               label="Saldo Pendiente"
-              [value]="venta?.saldoPendiente | currency: venta?.moneda"
+              [value]="saldo?.saldoPendiente | currency: venta?.moneda"
               [loading]="loading"
               [bold]="true"
             ></app-input-text-info>

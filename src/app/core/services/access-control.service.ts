@@ -9,7 +9,7 @@ export const APP_PERMISSIONS_MATRIX: PermissionMap = {
   [EAppRole.ADMIN]: {
     [EAppModule.CLIENTES]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ACTIVATE, EAppAction.DEACTIVATE, EAppAction.DELETE, EAppAction.UPLOAD],
     [EAppModule.ASESORES]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ACTIVATE, EAppAction.DEACTIVATE],
-    [EAppModule.PROYECTOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE],
+    [EAppModule.PROYECTOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE, EAppAction.MASS_LOAD],
     [EAppModule.MANZANAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE],
     [EAppModule.LOTES]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE],
     [EAppModule.RESERVAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.VENTA],

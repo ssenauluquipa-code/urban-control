@@ -25,6 +25,7 @@ import { EAppModule } from 'src/app/core/config/permissions.enum';
       [showSave]="true"
       [showCancel]="true"
       [loading]="loading"
+      [showOptions]="false"
       (Save)="onSave()"
       (Cancel)="onCancel()"
     >

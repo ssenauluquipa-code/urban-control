@@ -13,7 +13,8 @@ export enum TableActionsEnum {
   UPLOAD_PHOTO = 'upload_photo',
   BLOQUEADO = 'bloqueado',
   SET_AVAILABLE = 'set_available',
-  VENTA = 'venta'
+  VENTA = 'venta',
+  MASS_LOAD = 'MASS_LOAD'
 }
 
 export type TableAction = TableActionsEnum | string;

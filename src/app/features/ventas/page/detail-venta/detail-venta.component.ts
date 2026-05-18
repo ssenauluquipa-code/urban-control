@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { VentaService } from 'src/app/core/services/venta.service';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DetailVentaViewComponent } from '../../views/detail-venta-view/detail-venta-view.component';
-import { IVentaDetalle, IVentaCuota } from 'src/app/core/models/venta.model';
+import { IVentaDetalle, IVentaCuota, IVentaSaldoResumen } from 'src/app/core/models/venta.model';
 import { finalize, forkJoin } from 'rxjs';
 import { NotificationService } from 'src/app/core/services/notification.service';
 
@@ -16,13 +16,15 @@ import { NotificationService } from 'src/app/core/services/notification.service'
     <app-page-container
       [title]="'Detalle de Venta #' + (venta?.nroVenta || '')"
       [showSave]="false"
-      [showCancel]="true"
+      [showBack]="true"
       [loading]="loading"
-      (Cancel)="goBack()"
+      [showOptions]="false"
+      (Back)="goBack()"
     >
       <app-detail-venta-view
         [venta]="venta"
         [cuotas]="cuotas"
+        [saldo]="saldo"
         [loading]="loading"
       ></app-detail-venta-view>
     </app-page-container>
@@ -37,6 +39,7 @@ export class DetailVentaComponent implements OnInit {
 
   public venta: IVentaDetalle | null = null;
   public cuotas: IVentaCuota[] = [];
+  public saldo: IVentaSaldoResumen | null = null;
   public loading = false;
 
   ngOnInit(): void {
@@ -54,13 +57,15 @@ export class DetailVentaComponent implements OnInit {
     // Usamos forkJoin para cargar ambos servicios en paralelo
     forkJoin({
       venta: this.ventaService.obtenerVentaPorId(id),
-      cuotas: this.ventaService.obtenerCuotasPorVenta(id)
+      cuotas: this.ventaService.obtenerCuotasPorVenta(id),
+      saldo: this.ventaService.obtenerSaldoPorVenta(id)
     })
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (res) => {
           this.venta = res.venta;
           this.cuotas = res.cuotas;
+          this.saldo = res.saldo;
         },
         error: () => {
           this.notification.error('Error al cargar los detalles de la venta');

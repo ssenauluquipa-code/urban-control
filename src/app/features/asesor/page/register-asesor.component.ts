@@ -24,6 +24,7 @@ import { EAppModule } from 'src/app/core/config/permissions.enum';
       [showSave]="true"
       [showCancel]="true"
       [loading]="loading"
+      [showOptions]="false"
       >
       <app-register-asesor-view
         [form]="form"

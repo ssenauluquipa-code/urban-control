@@ -31,6 +31,7 @@ import { LoteService } from "src/app/core/services/proyectos/lote.service";
       [showSave]="true"
       [loading]="loading"
       [showCancel]="true"
+      [showOptions]="false"
     >
       <app-register-venta-view
         #ventaView

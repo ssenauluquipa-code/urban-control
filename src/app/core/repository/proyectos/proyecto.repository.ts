@@ -1,6 +1,7 @@
 import { Observable, map } from "rxjs";
 import { IProyectoRepository } from "../../interfaces/repository/proyectos/proyecto.repository.interface";
 import { CreateProyectoDto, IProyecto, IProyectoActivo, UpdateProyectoDto } from "../../models/proyectos/proyecto.model";
+import { ProyectoMassLoadPayload } from "../../models/proyectos/proyecto-mass-load.interface";
 import { environment } from "src/environments/environment.prod";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -37,6 +38,10 @@ export class ProyectoRepository implements IProyectoRepository {
 
   getProyectActive(): Observable<IProyectoActivo[]> {
     return this.http.get<IProyectoActivo[]>(`${this.API_URL}/activos`);
+  }
+
+  createEstructuraProyecto(proyectoId: string, payload: ProyectoMassLoadPayload): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/${proyectoId}/estructura`, payload);
   }
 
 }

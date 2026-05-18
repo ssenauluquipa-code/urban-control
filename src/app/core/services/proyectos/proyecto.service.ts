@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { IProyectoRepository } from '../../interfaces/repository/proyectos/proyecto.repository.interface';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { CreateProyectoDto, IProyecto, IProyectoActivo, UpdateProyectoDto } from '../../models/proyectos/proyecto.model';
+import { ProyectoMassLoadPayload } from '../../models/proyectos/proyecto-mass-load.interface';
 
 export const PROYECTO_REPOSITORY_TOKEN = 'IProyectoRepository';
 
@@ -47,6 +48,10 @@ export class ProyectoService {
     return this.repo.getProyectActive().pipe(
       tap(proyectos => this.proyectosActivosSubject.next(proyectos))
     );
+  }
+
+  createEstructuraProyecto(proyectoId: string, payload: ProyectoMassLoadPayload): Observable<any> {
+    return this.repo.createEstructuraProyecto(proyectoId, payload);
   }
 
   private refreshProyectosActivos(): void {
