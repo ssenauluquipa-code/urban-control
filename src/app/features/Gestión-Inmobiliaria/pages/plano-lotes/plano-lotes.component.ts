@@ -101,6 +101,8 @@ export class PlanoLotesComponent implements OnInit {
         nzClosable: false,
         nzMaskClosable: true,
         nzWidth: 450,
+        nzPlacement: 'right',
+        nzBodyStyle: { padding: '0' },
         nzData: {
           loteId: loteId,
         },

@@ -3,6 +3,27 @@
   z-index: 1200 !important;
 }
 
+// ==================== NZ-DRAWER: Evita que empuje el contenido ====================
+// El drawer usa position:fixed — el fondo NO debe desplazarse
+.ant-drawer {
+  position: fixed !important;
+}
+.ant-drawer-content-wrapper {
+  position: fixed !important;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.15) !important;
+}
+// Corrige el bug de Angular CDK / Ng-Zorro que pone position: fixed en html y desplaza la página verticalmente, dejando un lienzo blanco
+html.cdk-global-scrollblock {
+  position: initial !important;
+  overflow: hidden !important;
+}
+
+// Asegura que el body de la app no se mueva cuando el drawer está abierto
+body.ant-drawer-open,
+html.ant-drawer-open {
+  overflow: hidden !important;
+}
+
 nz-select {
   width: 100%;
 }
