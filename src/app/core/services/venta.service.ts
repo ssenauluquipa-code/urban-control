@@ -36,4 +36,8 @@ export class VentaService {
   anularVenta(id: string) {
     return this.repo.anular(id);
   }
+
+  eliminarVenta(id: string) {
+    return this.repo.eliminar(id);
+  }
 }

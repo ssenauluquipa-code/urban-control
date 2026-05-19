@@ -45,6 +45,7 @@ export enum RolPropietario {
 export interface IVenta {
   ventaId: string;
   nroVenta: number;
+  estado: string;
   reservaId?: string;
   codReserva?: number;
   fechaVenta: string;

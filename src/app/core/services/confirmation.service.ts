@@ -54,4 +54,51 @@ export class ConfirmationService {
       });
     });
   }
+
+  /**
+   * Modal genérico para confirmar eliminación permanente de un registro.
+   * Muestra un botón rojo de peligro y soporta estados de carga.
+   * 
+   * @param entityName 'Reserva', 'Proyecto', etc.
+   * @param itemName Identificador visual (código, nombre).
+   * @param request$ Observable con la llamada HTTP.
+   * @param isFeminine true si la entidad es femenina ('esta reserva', 'eliminada'), false si es masculina ('este lote', 'eliminado').
+   */
+  confirmDelete(
+    entityName: string,
+    itemName: string,
+    request$: Observable<any>,
+    isFeminine: boolean = true
+  ): Observable<boolean> {
+    const article = isFeminine ? 'esta' : 'este';
+    const suffix = isFeminine ? 'a' : 'o';
+
+    return new Observable(observer => {
+      this.modal.confirm({
+        nzTitle: `¿Está seguro de eliminar ${article} ${entityName.toLowerCase()}?`,
+        nzContent: `Se eliminará permanentemente: ${itemName}. Esta acción no se puede deshacer.`,
+        nzOkText: 'Confirmar',
+        nzOkDanger: true,
+        nzOnOk: () => new Promise<void>((resolve, reject) => {
+          request$.subscribe({
+            next: () => {
+              this.notification.success(`${entityName} eliminad${suffix} correctamente`);
+              observer.next(true);
+              observer.complete();
+              resolve();
+            },
+            error: (err) => {
+              this.notification.error(`Error al eliminar ${article} ${entityName.toLowerCase()}`);
+              observer.error(err);
+              reject(err);
+            }
+          });
+        }),
+        nzOnCancel: () => {
+          observer.next(false);
+          observer.complete();
+        }
+      });
+    });
+  }
 }

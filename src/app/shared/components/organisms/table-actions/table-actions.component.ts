@@ -148,6 +148,12 @@ export class TableActionsComponent implements ICellRendererAngularComp {
 
     const allowedActions = actions.filter(action => {
       if (!this.module) return true;
+
+      // Para el módulo RESERVAS y VENTAS, permitimos evaluar DELETE a nivel de negocio sin restricciones
+      if ((this.module === EAppModule.RESERVAS || this.module === EAppModule.VENTAS) && action === TableActionsEnum.DELETE) {
+        return true;
+      }
+
       const appAction = this.mapToAppAction(action);
       const can = this.access.can(this.module as EAppModule, appAction);
 
@@ -168,6 +174,21 @@ export class TableActionsComponent implements ICellRendererAngularComp {
         if (action !== TableActionsEnum.VIEW && action !== TableActionsEnum.INFO) {
           return false;
         }
+      }
+
+      // Regla de Negocio: En Reservas, el botón de eliminar solo aparece si la reserva está CANCELADA
+      if (currentModule === EAppModule.RESERVAS && action === TableActionsEnum.DELETE) {
+        return data?.estado === 'CANCELADA';
+      }
+
+      // Regla de Negocio: En Lotes, el botón de eliminar solo aparece si el lote está DISPONIBLE
+      if (currentModule === EAppModule.LOTES && action === TableActionsEnum.DELETE) {
+        return data?.estado === 'DISPONIBLE';
+      }
+
+      // Regla de Negocio: En Ventas, el botón de eliminar solo aparece si la venta está ANULADA
+      if (currentModule === EAppModule.VENTAS && action === TableActionsEnum.DELETE) {
+        return data?.estado === 'ANULADA';
       }
 
       if (action === TableActionsEnum.BLOQUEADO) return data?.estado === 'DISPONIBLE';

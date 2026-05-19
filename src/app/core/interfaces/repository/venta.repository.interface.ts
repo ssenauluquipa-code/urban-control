@@ -18,4 +18,5 @@ export interface IVentaRepository {
   getSaldoByVenta(id: string): Observable<IVentaSaldoResumen>;
   create(dto: CreateVentaDto): Observable<IVenta>;
   anular(id: string): Observable<void>;
+  eliminar(id: string): Observable<void>;
 }

@@ -4,6 +4,7 @@ import { ColDef } from "ag-grid-community";
 import { IVenta } from "src/app/core/models/venta.model";
 import { VentaService } from "src/app/core/services/venta.service";
 import { NotificationService } from "src/app/core/services/notification.service";
+import { ConfirmationService } from "src/app/core/services/confirmation.service";
 import {
   ITableActionEvent,
   TableActionsEnum,
@@ -20,6 +21,7 @@ import { VentaTipoPagoCellComponent } from "../../components/venta-tipo-pago-cel
 import { VentaTipoPagoFloatingFilterComponent } from "src/app/shared/components/organisms/venta-tipo-pago-floating-filter.component";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
 
 @Component({
   selector: "app-list-ventas",
@@ -38,6 +40,7 @@ export class ListVentasComponent implements OnInit {
   private ventaService = inject(VentaService);
   private globalContext = inject(ProjectStatusGlobalService);
   private notification = inject(NotificationService);
+  private confirmation = inject(ConfirmationService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private modalService = inject(NgbModal);
@@ -220,7 +223,18 @@ export class ListVentasComponent implements OnInit {
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,
-    }
+    },
+    {
+      field: 'estado',
+      headerName: "Estado",
+      width: 150,
+      cellRenderer: BadgeEstadoComponent,
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
+    },
   ];
 
   ngOnInit(): void {
@@ -305,6 +319,23 @@ export class ListVentasComponent implements OnInit {
     if (event.action === TableActionsEnum.VIEW && event.row?.ventaId) {
       this.router.navigate(["/ventas/detail", event.row.ventaId]);
     }
+    if (event.action === TableActionsEnum.DELETE && event.row?.ventaId && (event.row as any).estado === "ANULADA") {
+      this.confirmarEliminar(event.row);
+    }
+  }
+
+  private confirmarEliminar(venta: IVenta): void {
+    if (venta.estado !== "ANULADA") {
+      this.notification.warning("Solo se pueden eliminar ventas que se encuentren anuladas.");
+      return;
+    }
+    const request$ = this.ventaService.eliminarVenta(venta.ventaId);
+    this.confirmation.confirmDelete("Venta", `#${venta.nroVenta}`, request$, true) // true porque es femenino (esta venta, eliminada)
+      .subscribe(success => {
+        if (success) {
+          this.loadVentas();
+        }
+      });
   }
 
   onAddNew(): void {

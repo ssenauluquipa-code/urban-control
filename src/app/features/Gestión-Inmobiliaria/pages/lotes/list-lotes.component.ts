@@ -19,7 +19,8 @@ import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
-import { ILote, TEstadoLote, UpdateEstadoLoteDto } from 'src/app/core/models/lote/lote.model';
+import { ILote } from 'src/app/core/models/lote/lote.model';
+import { ConfirmationService } from 'src/app/core/services/confirmation.service';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { NzDrawerModule, NzDrawerService } from 'ng-zorro-antd/drawer'; // Importar servicio
 import { LoteDetailComponent } from '../../views/lotes/lote-detail/lote-detail.component';
@@ -108,7 +109,8 @@ export class ListLotesComponent implements OnInit {
     private breakpointObserver: BreakpointObserver,
     private globalContext: ProjectStatusGlobalService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private confirmation: ConfirmationService
   ) { }
 
   ngOnInit(): void {
@@ -151,17 +153,10 @@ export class ListLotesComponent implements OnInit {
     //const manzanaId = this.manzanaIdControl.value;
     if (event.action === TableActionsEnum.EDIT) {
       this.router.navigate(['editar', event.row?.id], { relativeTo: this.route });
-    }
-
-    if (event.action === TableActionsEnum.BLOQUEADO) {
-      this.confirmBloqueo(event.row!);
-    }
-    // Caso Poner Disponible (Desbloquear)
-    if (event.action === TableActionsEnum.SET_AVAILABLE) {
-      this.confirmDisponible(event.row!);
-    }
-    if (event.action === TableActionsEnum.VIEW) {
+    } else if (event.action === TableActionsEnum.VIEW) {
       this.openDetailDrawer(event.row!.id);
+    } else if (event.action === TableActionsEnum.DELETE && event.row?.estado === 'DISPONIBLE') {
+      this.confirmarEliminar(event.row);
     }
   }
 
@@ -178,41 +173,18 @@ export class ListLotesComponent implements OnInit {
   }
 
 
-  private confirmBloqueo(lote: ILote): void {
-    this.nzModal.confirm({
-      nzTitle: `¿Bloquear Lote #${lote.numero}?`,
-      nzContent: 'El lote no estará disponible para ventas.',
-      nzOkText: 'Sí, Bloquear',
-      nzOkDanger: true,
-      nzOnOk: () => {
-        const payload: UpdateEstadoLoteDto = { estado: TEstadoLote.BLOQUEADO };
-        this.executeStatusChange(lote.id, payload);
-      }
-    });
-  }
-
-
-  private confirmDisponible(lote: ILote): void {
-    this.nzModal.confirm({
-      nzTitle: `¿Poner Disponible Lote #${lote.numero}?`,
-      nzContent: 'El lote volverá a estar disponible para ventas.',
-      nzOkText: 'Sí, Disponible',
-      nzOnOk: () => {
-        const payload: UpdateEstadoLoteDto = { estado: TEstadoLote.DISPONIBLE };
-        this.executeStatusChange(lote.id, payload);
-      }
-    });
-  }
-
-  private executeStatusChange(loteId: string, payload: UpdateEstadoLoteDto): void {
-    this.loteService.updateEstadoLote(loteId, payload).subscribe({
-      next: () => {
-        this.notification.success(`Estado actualizado a ${payload.estado}`);
-        // Recargar con el filtro actual (manzanaId o todos)
-        this.loadLotes(this.manzanaIdControl.value);
-      },
-      error: (err) => this.notification.error(err.error?.message || 'Error')
-    });
+  private confirmarEliminar(lote: ILote): void {
+    if (lote.estado !== 'DISPONIBLE') {
+      this.notification.warning('Solo se pueden eliminar lotes que se encuentren disponibles.');
+      return;
+    }
+    const request$ = this.loteService.deleteLote(lote.id);
+    this.confirmation.confirmDelete('Lote', `#${lote.numero}`, request$, false) // false porque es masculino (este lote, eliminado)
+      .subscribe(success => {
+        if (success) {
+          this.loadLotes(this.manzanaIdControl.value);
+        }
+      });
   }
   public openDetailDrawer(loteId: string): void {
     const isMobile = this.breakpointObserver.isMatched(Breakpoints.Handset);

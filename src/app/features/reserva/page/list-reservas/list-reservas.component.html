@@ -56,10 +56,12 @@
     [columnDefs]="columnDefs"
     [loading]="loading"
     [showCreate]="false"
+    [module]="EAppModule.RESERVAS"
     [actions]="[
       tableActionEnum.VIEW,
       tableActionEnum.VENTA,
       tableActionEnum.ANULAR,
+      tableActionEnum.DELETE,
     ]"
     (actionClicked)="onTableAction($event)"
   >

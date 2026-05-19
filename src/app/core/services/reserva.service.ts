@@ -34,4 +34,8 @@ export class ReservaService {
   cancelReserva(id: string): Observable<ICancelReservaResponse> {
     return this.repo.cancel(id);
   }
+
+  eliminar(id: string): Observable<any> {
+    return this.repo.eliminar(id);
+  }
 }

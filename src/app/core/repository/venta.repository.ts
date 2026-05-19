@@ -54,4 +54,8 @@ export class VentaRepository implements IVentaRepository {
   getSaldoByVenta(id: string): Observable<IVentaSaldoResumen> {
     return this.http.get<IVentaSaldoResumen>(`${this.apiUrl}/${id}/saldo`);
   }
+
+  eliminar(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

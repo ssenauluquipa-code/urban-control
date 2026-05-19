@@ -6,4 +6,5 @@ export interface IReservaRepository {
     getAll(proyectoId?: string, estado?: string, clienteId?: string, manzanaId?: string): Observable<IReserva[]>;
     getById(id: string): Observable<IReserva>;
     cancel(id: string): Observable<ICancelReservaResponse>;
+    eliminar(id: string): Observable<any>;
 }

@@ -65,9 +65,8 @@
     [showCreate]="false"
     [actions]="[
       tableActionEnum.EDIT,
-      tableActionEnum.BLOQUEADO,
-      tableActionEnum.SET_AVAILABLE,
       tableActionEnum.VIEW,
+      tableActionEnum.DELETE,
     ]"
     (actionClicked)="onTableAction($event)"
     (rowClicked)="openDetailDrawer($event.id)"

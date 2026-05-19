@@ -222,6 +222,12 @@ export class ListReservasComponent implements OnInit {
       this.router.navigate(['/ventas/register'], {
         queryParams: { reservaId: event.row.reservaId }
       });
+    } else if (event.row?.estado === EstadoReserva.CANCELADA && event.action === TableActionsEnum.DELETE && event.row?.id) {
+      const request$ = this.reservaService.eliminar(event.row.id);
+      this.confirmation.confirmDelete('Reserva', `#${event.row.codigoReserva}`, request$, true)
+        .subscribe(success => {
+          if (success) this.loadReservas();
+        });
     }
   }
 

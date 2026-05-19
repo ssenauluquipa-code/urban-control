@@ -34,4 +34,8 @@ export class ReservaRepository implements IReservaRepository {
         return this.http.patch<ICancelReservaResponse>(`${this.Api_Url}/${id}/cancelar`, {});
     }
 
+    eliminar(id: string): Observable<any> {
+        return this.http.delete<any>(`${this.Api_Url}/${id}`);
+    }
+
 }
