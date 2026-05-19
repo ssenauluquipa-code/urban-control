@@ -88,7 +88,7 @@ export const Approutes: Routes = [
         path: 'pagos',
         canActivate: [permissionGuard],
         data: { module: EAppModule.PAGOS, action: EAppAction.VIEW },
-        loadChildren: () => import('./features/ventas/ventas.routes').then(m => m.VENTAS_ROUTES) // Usamos ventas.routes temporalmente o creamos uno
+        loadChildren: () => import('./features/pagos/pagos.routes').then(m => m.PagosRoutes)
       },
       {
         path: 'profile',
