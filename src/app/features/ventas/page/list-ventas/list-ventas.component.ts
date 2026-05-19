@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ColDef } from "ag-grid-community";
-import { IVenta } from "src/app/core/models/venta.model";
+import { ClienteVenta, IVenta } from "src/app/core/models/venta.model";
 import { VentaService } from "src/app/core/services/venta.service";
 import { NotificationService } from "src/app/core/services/notification.service";
 import { ConfirmationService } from "src/app/core/services/confirmation.service";
@@ -179,7 +179,7 @@ export class ListVentasComponent implements OnInit {
       // Getter para que el filtro de texto funcione con la lista de clientes
       valueGetter: (params) => {
         if (!params.data?.clientes) return '';
-        return params.data.clientes.map((c: any) => c.nombreCompleto).join(', ');
+        return params.data.clientes.map((c: ClienteVenta) => c.nombre).join(', ');
       }
     },
     {
@@ -230,7 +230,7 @@ export class ListVentasComponent implements OnInit {
       width: 150,
       cellRenderer: BadgeEstadoComponent,
       filter: 'agTextColumnFilter',
-      floatingFilter: true,
+      floatingFilter: false,
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,
@@ -319,7 +319,7 @@ export class ListVentasComponent implements OnInit {
     if (event.action === TableActionsEnum.VIEW && event.row?.ventaId) {
       this.router.navigate(["/ventas/detail", event.row.ventaId]);
     }
-    if (event.action === TableActionsEnum.DELETE && event.row?.ventaId && (event.row as any).estado === "ANULADA") {
+    if (event.action === TableActionsEnum.DELETE && event.row?.ventaId && event.row?.estado === "ANULADA") {
       this.confirmarEliminar(event.row);
     }
   }
