@@ -1,0 +1,59 @@
+// src/app/features/pagos/components/plan-cuotas-cronograma/plan-cuotas-cronograma.component.scss
+
+.cronograma-scroll-container {
+    max-height: 440px; // Ajustamos sutilmente la altura para compensar el padding
+    overflow-y: auto;
+    
+    // 🔥 SOLUCIÓN: Agregamos 6px arriba y abajo para que el card tenga "aire" al elevarse o bajar
+    padding: 6px 0.5rem 6px 4px; 
+  
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  }
+  
+  .cuotas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); // Mantenemos tus 3 columnas de alta densidad
+    gap: 0.85rem;
+    width: 100%;
+  }
+  
+  .cuota-card-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0 !important;
+    cursor: pointer;
+    
+    // 🔥 OPTIMIZACIÓN: will-change prepara al navegador para la animación y evita parpadeos (flickering)
+    will-change: transform, box-shadow, border-color;
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, border-color 0.15s ease-out;
+  
+    &:hover {
+      transform: translateY(-3px); // Efecto de suspensión limpio
+      
+      // Una sombra más suave para que no manche las tarjetas vecinas en la grilla densa
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08); 
+      border-color: #cbd5e1 !important;
+    }
+  
+    &.active-selection {
+      border-color: #12223b !important;
+      box-shadow: 0 0 0 1px #12223b;
+    }
+  }
+  
+  .style-cuota-num {
+    font-size: 0.85rem;
+    letter-spacing: 0.3px;
+  }
+  
+  .font-details {
+    font-size: 0.75rem;
+  }

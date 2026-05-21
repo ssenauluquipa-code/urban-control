@@ -5,7 +5,8 @@ import { CreateReservaDto, Moneda } from 'src/app/core/models/reserva.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { ReservaService } from 'src/app/core/services/reserva.service';
-import { finalize } from 'rxjs';
+import { OrganizationFinancialConfigService } from 'src/app/core/services/configuracion/organization-financial-config.service';
+import { finalize, take } from 'rxjs';
 import { ModalContainerComponent } from "src/app/shared/components/organisms/modal-container/modal-container.component";
 import { RegisterReservaViewComponent } from "../../views/register-reserva-view/register-reserva-view.component";
 
@@ -38,6 +39,7 @@ export class RegisterReservaComponent implements OnInit {
   private reservaService = inject(ReservaService);
   private notification = inject(NotificationService);
   private globalContext = inject(ProjectStatusGlobalService);
+  private financialConfig = inject(OrganizationFinancialConfigService);
 
   constructor() {
     this.buildForm();
@@ -53,8 +55,23 @@ export class RegisterReservaComponent implements OnInit {
       this.activeModal.dismiss();
     }
 
-    // 2. Valor por defecto
-    this.formGroup.patchValue({ moneda: Moneda.BS });
+    this.loadOrganizationFinancialDefaults();
+  }
+
+  private loadOrganizationFinancialDefaults(): void {
+    this.financialConfig
+      .getFinancialConfig()
+      .pipe(take(1))
+      .subscribe((config) => {
+        this.formGroup.patchValue({
+          moneda: this.toMoneda(config.currency),
+          tipoCambio: config.exchangeRate,
+        });
+      });
+  }
+
+  private toMoneda(currency: string): Moneda {
+    return currency === Moneda.USD ? Moneda.USD : Moneda.BS;
   }
 
   private buildForm(): void {
@@ -63,7 +80,8 @@ export class RegisterReservaComponent implements OnInit {
       manzanaId: [null],
       loteId: [null, Validators.required],
       montoReserva: [null, [Validators.required, Validators.min(0.01)]],
-      moneda: [1],
+      moneda: [null, Validators.required],
+      tipoCambio: [null, [Validators.required, Validators.min(0.01)]],
       fechaVencimiento: [null, [Validators.required]],
       observaciones: ['', [Validators.maxLength(500)]],
     });
@@ -83,6 +101,7 @@ export class RegisterReservaComponent implements OnInit {
       clienteId: formValue.clienteId,
       loteId: formValue.loteId,
       montoReserva: formValue.montoReserva,
+      tipoCambio: formValue.tipoCambio,
       moneda: formValue.moneda,
       fechaVencimiento: formValue.fechaVencimiento,
       observaciones: formValue.observaciones,

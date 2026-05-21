@@ -9,6 +9,7 @@ import { EmpresaFormViewComponent } from '../views/empresa-form-view/empresa-for
 import { concatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { EAppModule } from 'src/app/core/config/permissions.enum';
+import { UpdateOrganizationDto } from 'src/app/core/models/Empresas/empresa-config.model';
 
 @Component({
   selector: 'app-empresa-edit-page',
@@ -56,10 +57,16 @@ export class EmpresaEditPageComponent implements OnInit {
       phone: ['', [Validators.required]],
       currency: ['BS', [Validators.required]],
       diasVencimientoReserva: [5, [Validators.required, Validators.min(1)]],
-      plazoMaximoMeses: [18, [Validators.required, Validators.min(1)]],
-      horaCronDiario: [8, [Validators.required, Validators.min(0), Validators.max(23)]],
+      plazoMaximoMeses: [
+        null,
+        [Validators.required, Validators.min(1), Validators.max(120)],
+      ],
+      horaCronDiario: [
+        null,
+        [Validators.required, Validators.min(0), Validators.max(23)],
+      ],
       logoUrl: [''],
-      tipoDeCambio: ['', [Validators.required, Validators.min(0)]],
+      tipoDeCambio: [null, [Validators.required, Validators.min(0)]],
 
     });
   }
@@ -95,11 +102,8 @@ export class EmpresaEditPageComponent implements OnInit {
 
     this.loading = true;
 
-    // Creamos una copia del body y quitamos logoUrl porque el backend lo rechaza.
-    const empresaData = { ...this.form.value };
-    delete empresaData.logoUrl;
+    const empresaData = this.buildUpdatePayload();
 
-    // Encadenamos la actualización de datos con la del logo para tratarlo como una sola acción
     this.empresaService.updateEmpresa(empresaData).pipe(
       concatMap(() => {
         if (this.logoDeleted) {
@@ -121,6 +125,25 @@ export class EmpresaEditPageComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  /**
+   * Arma el body del PATCH convirtiendo campos numéricos.
+   * `app-input-number` trabaja sobre un input de texto y deja string en el FormControl.
+   */
+  private buildUpdatePayload(): UpdateOrganizationDto {
+    const v = this.form.getRawValue();
+    return {
+      name: v.name,
+      email: v.email,
+      address: v.address,
+      phone: v.phone,
+      currency: v.currency,
+      tipoDeCambio: Number(v.tipoDeCambio),
+      diasVencimientoReserva: Number(v.diasVencimientoReserva),
+      plazoMaximoMeses: Number(v.plazoMaximoMeses),
+      horaCronDiario: Number(v.horaCronDiario),
+    };
   }
 
   onLogoDelete(): void {

@@ -52,13 +52,47 @@
       </app-form-field>
     </div>
 
-    <!-- Número de Referencia -->
+    <!-- Celular -->
     <div class="col-12">
       <app-form-field [label]="'Número Celular'" [required]="true">
         <app-input-number
           [input_control]="Telefono"
           [input_placeholder]="'Ej: 77889900'"
         ></app-input-number>
+      </app-form-field>
+    </div>
+
+    <!-- Estado civil -->
+    <div class="col-md-6">
+      <app-form-field [label]="'Estado Civil'" [required]="true">
+        <app-select-estado-civil
+          [inputControl]="EstadoCivil"
+          [placeholder]="'Seleccione'"
+        ></app-select-estado-civil>
+      </app-form-field>
+    </div>
+
+    <!-- Ocupación -->
+    <div class="col-md-6">
+      <app-form-field [label]="'Ocupación'" [required]="true">
+        <app-input-text
+          [input_control]="Ocupacion"
+          [input_placeholder]="'Ej. Comerciante, Abogado...'"
+          [input_maxlength]="150"
+        ></app-input-text>
+      </app-form-field>
+    </div>
+
+    <!-- Dirección -->
+    <div class="col-12">
+      <app-form-field [label]="'Dirección'" [required]="true">
+        <app-input-textarea
+          [input_control]="Direccion"
+          input_placeholder="Av. Principal #123"
+          [input_rows]="2"
+          [input_maxlength]="250"
+          [input_autosize]="true"
+        ></app-input-textarea>
       </app-form-field>
     </div>
   </div>

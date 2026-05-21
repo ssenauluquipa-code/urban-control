@@ -1,78 +1,167 @@
 # Guía de Componentes - Atomic Design UrbanControl 🏗️
 
-Este documento centraliza la información sobre los componentes creados en el sistema bajo la metodología de **Atomic Design**. El objetivo es reutilizar estos componentes para mantener la consistencia visual y de comportamiento en toda la aplicación.
+Este documento centraliza los componentes reutilizables del sistema bajo la metodología **Atomic Design**. Úsalo como referencia al crear formularios, tablas y vistas nuevas.
+
+**Vista previa en vivo:** ruta `/showcase` (`DesignSystemShowcaseComponent`)
+
+**Última actualización:** Mayo 2026
 
 ---
 
 ## ⚛️ Átomos (Atoms)
-Componentes base que no se pueden desglosar más.
+Componentes base indivisibles. Ubicación: `src/app/shared/components/atoms/`
 
-| Componente | Selector | Propósito |
-|------------|----------|-----------|
-| **Text Input** | `<app-input-text>` | Input de texto estandarizado con soporte para iconos, máscaras y validaciones automáticas. |
-| **Number Input** | `<app-input-number>` | Input especializado para números con controles de incremento/decremento. |
-| **Date Input** | `<app-input-date>` | Selector de fecha estandarizado con formato local. |
-| **Textarea** | `<app-input-textarea>` | Área de texto con auto-resize y validaciones. |
-| **Select Data** | `<app-select-data>` | Selector genérico dinámico con búsqueda (Typeahead) y carga desde API. |
-| **Select Projects** | `<app-select-projects>` | Selector específico para proyectos inmobiliarios. |
-| **Select Lotes** | `<app-select-lotes>` | Selector de lotes filtrable por proyecto/manzana. |
-| **Select Clientes** | `<app-select-clientes>` | Selector avanzado de clientes. Soporta selección múltiple y asignación de roles (Titular/Cotitular). |
-| **Select Asesor** | `<app-select-asesor>` | Selector de asesores de venta. |
-| **Select Moneda** | `<app-select-moneda>` | Selector de moneda (BS/USD). |
-| **Currency Label** | `<app-currency-label>` | Formateador de moneda (BS/USD) con diseño limpio. |
-| **Badge Estado** | `<app-badge-estado>` | Etiquetas de colores para estados (Disponible, Vendido, etc). |
-| **Button Action** | `<app-button-action>` | Botones con estados de carga (loading) y estilos predefinidos. |
-| **Image Uploader** | `<app-image-uploader>` | Componente para subir y previsualizar imágenes. |
-| **Image Display** | `<app-image-display>` | Visualizador de imágenes con zoom/modal. |
-| **Card Container** | `<app-card-container>` | Contenedor base con diseño de tarjeta. |
-| **Error Messages** | `<app-input-error-messages>` | Gestor de mensajes de error de validación (usado internamente por los inputs). |
-| **Select Ubicación** | `varios` | Selectores para Departamento, Provincia, Expedido, etc. |
-| **Select Perfil** | `varios` | Selectores para Género, Tipo Documento, Estado Reserva. |
-| **Cell Propietarios**| `ag-grid cell` | Renderizador de celdas para mostrar propietarios y sus roles en tablas. |
+### Inputs y formularios
+
+| Componente | Selector | Ruta / archivo | Propósito |
+|------------|----------|----------------|-----------|
+| **Text Input** | `<app-input-text>` | `input-text/` | Texto con iconos, máscaras y validaciones. |
+| **Number Input** | `<app-input-number>` | `input-number/` | Números enteros o decimales con máscara. |
+| **Currency Input** | `<app-input-currency>` | `input-currency/` | Monto editable con formato de moneda (locale es-BO). |
+| **Date Input** | `<app-input-date>` | `input-date/` | Selector de fecha estandarizado. |
+| **Textarea** | `<app-input-textarea>` | `input-textarea/` | Área de texto con contador de caracteres. |
+| **Documento Input** | `<app-input-documento>` | `input-documento/` | Número de documento con validación de tipo. |
+| **Text Info (readonly)** | `<app-input-text-info>` | `input-text-info.component.ts` | Campo solo lectura con label, copiar y estado vacío/error. |
+| **Error Messages** | `<app-input-error-messages>` | `input-error-messages/` | Mensajes de validación (uso interno en inputs). |
+
+### Selectores de datos
+
+| Componente | Selector | Archivo | Propósito |
+|------------|----------|---------|-----------|
+| **Select Data** | `<app-select-data>` | `select-data.component.ts` | Selector genérico con búsqueda y objetos dinámicos. |
+| **Select Projects** | `<app-select-projects>` | `select-projects.component.ts` | Proyectos inmobiliarios. |
+| **Select Manzanas** | `<app-select-manzanas>` | `select-manzanas.component.ts` | Manzanas filtrables por proyecto. |
+| **Select Lotes** | `<app-select-lotes>` | `select-lotes.component.ts` | Lotes por manzana (precio, área, búsqueda). |
+| **Select Clientes** | `<app-select-clientes>` | `select-clientes.component.ts` | Clientes; múltiple y roles Titular/Cotitular. |
+| **Select Asesor** | `<app-select-asesor>` | `select-asesor.component.ts` | Asesores de venta con búsqueda remota. |
+| **Select Moneda** | `<app-select-moneda>` | `select-moneda.component.ts` | Moneda BS / USD. |
+
+### Selectores de catálogo / perfil
+
+| Componente | Selector | Archivo | Propósito |
+|------------|----------|---------|-----------|
+| **Select Departamento** | `<app-select-departamento>` | `select-departamento.component.ts` | Departamentos (ubicación). |
+| **Select Provincia** | `<app-select-provincia>` | `select-provincia.component.ts` | Provincias según departamento. |
+| **Select Expedido** | `<app-select-expedido>` | `select-expedido.component.ts` | Lugar de expedición del documento. |
+| **Select Tipo Documento** | `<app-select-document-type>` | `select-document-type.component.ts` | CI, Pasaporte, etc. |
+| **Select Género** | `<app-select-gender>` | `select-gender.component.ts` | Género. |
+| **Select Estado Civil** | `<app-select-estado-civil>` | `select-estado-civil.component.ts` | Estado civil. |
+| **Select Estado Reserva** | `<app-select-estado-reserva>` | `select-estado-reserva.component.ts` | Estados de reserva. |
+
+### Visualización y acción
+
+| Componente | Selector | Archivo | Propósito |
+|------------|----------|---------|-----------|
+| **Currency Label** | `<app-currency-label>` | `currency-label/` | Monto formateado BS/USD (solo lectura). |
+| **Badge Estado** | `<app-badge-estado>` | `badge-estado/` | Etiqueta de estado con color. AG-Grid o template. |
+| **Button Action** | `<app-button-action>` | `button-action/` | Botón con loading y tipos NG-Zorro. |
+| **Image Uploader** | `<app-image-uploader>` | `image-uploader/` | Subida y previsualización de imagen. |
+| **Image Display** | `<app-image-display>` | `image-display/` | Visualización de imagen. |
+| **Card Container** | `<app-card-container>` | `card-container/` | Tarjeta con título, icono y slot `card-footer`. |
+| **Tab Item** | `<app-tab-item>` | `tab-item/` | Pestaña individual (proyección de contenido). |
+
+### Celdas AG-Grid (átomos/cell renderers)
+
+| Componente | Selector | Archivo | Propósito |
+|------------|----------|---------|-----------|
+| **Venta Propietarios Cell** | `<app-venta-propietarios-cell>` | `venta-propietarios-cell/` | Propietarios y roles en tabla de ventas. |
+| **Status Filter** | `<app-status-filter>` | `status-filter/` | Filtro de estado en toolbar de grid. |
+
+**Estados soportados por `app-badge-estado`:** booleanos (Activo/Inactivo), lotes (`DISPONIBLE`, `RESERVADO`, `VENDIDO`, `BLOQUEADO`), reservas (`ACTIVA`, `VENCIDA`, `CONVERTIDA`, `CANCELADA`), cuotas/pagos (`PENDIENTE`, `PARCIAL`, `PAGADO`, `VENCIDO`, `ANULADO`), y cualquier string (clase CSS = valor en minúsculas).
 
 ---
 
 ## 🧬 Moléculas (Molecules)
-Combinación de átomos para formar unidades funcionales.
+Combinación de átomos. Ubicación: `src/app/shared/components/molecules/`
 
-| Componente | Selector | Propósito |
-|------------|----------|-----------|
-| **Form Field** | `<app-form-field>` | Contenedor de formulario que incluye **Label**, el **Input** (átomo) y el área de **Errores**. |
-| **Tipo Pago Selector** | `<app-tipo-pago-selector>` | Selector entre pago al **CONTADO** o en **CUOTAS**. |
-| **Frecuencia Pago** | `<app-select-frecuencia-pago>` | Selector de periodicidad (Mensual, Quincenal, Semanal). |
-| **Día Semana Selector** | `<app-select-dia-semana>` | Selector de días de la semana para pagos semanales. |
-| **Día Pago Input** | `<app-input-dia-pago>` | Input numérico para días fijos del mes (1-31). |
-| **Modalidad Calendario** | `<app-modalidad-calendario-selector>` | Selector de modalidad para pagos quincenales. |
+| Componente | Selector | Archivo | Propósito |
+|------------|----------|---------|-----------|
+| **Form Field** | `<app-form-field>` | `form-field/` | Label + slot para átomo + errores. |
+| **Tipo Pago Selector** | `<app-tipo-pago-selector>` | `tipo-pago-selector.component.ts` | CONTADO vs CUOTAS (botones NG-Zorro). |
+| **Método Pago Selector** | `<app-metodo-pago-selector>` | `metodo-pago-selector.component.ts` | EFECTIVO, TRANSFERENCIA, QR, CHEQUE (grilla 2×2). |
+| **Frecuencia Pago** | `<app-select-frecuencia-pago>` | `select-frecuencia-pago.component.ts` | Mensual, Quincenal, Semanal, etc. |
+| **Día Semana Selector** | `<app-select-dia-semana>` | `select-dia-semana.component.ts` | Día de la semana para pagos semanales. |
+| **Día Pago Input** | `<app-input-dia-pago>` | `input-dia-pago.component.ts` | Día fijo del mes (1–31). |
+| **Modalidad Calendario** | `<app-modalidad-calendario-selector>` | `modalidad-calendario-selector.component.ts` | Modalidad para pagos quincenales. |
+| **Tabs Container** | `<app-tabs-container>` | `tabs-container/` | Pestañas con `app-tab-item` por proyección. |
 
 ---
 
 ## 🦠 Organismos (Organisms)
-Componentes complejos que forman secciones de la interfaz.
+Bloques funcionales complejos. Ubicación: `src/app/shared/components/organisms/`
 
-| Componente | Selector | Propósito |
-|------------|----------|-----------|
-| **Data Table** | `<app-data-table>` | Tabla avanzada con AG-Grid, paginación, filtros y acciones por fila. |
-| **Server Data Table**| `<app-data-table-server>` | Versión de la tabla con paginación y filtros del lado del servidor. |
-| **Modal Container**| `<app-modal-container>` | Estructura base para ventanas emergentes con scroll y pie de página. |
-| **Sub Header** | `<app-sub-header>` | Cabecera de sección con título y botones de acción. |
-| **Table Actions** | `<app-table-actions>` | Grupo de botones (Ver/Editar/Borrar) para las filas de una tabla. |
-| **Floating Filters** | `varios` | Filtros flotantes personalizados para AG-Grid (Clientes, Manzanas, Estados). |
+| Componente | Selector | Archivo | Propósito |
+|------------|----------|---------|-----------|
+| **Data Table** | `<app-data-table>` | `data-table/` | AG-Grid cliente: filtros, acciones por fila, permisos. |
+| **Data Table Base** | `<app-data-table-base>` | `data-table-base/` | Base reutilizable de configuración AG-Grid. |
+| **Server Data Table** | `<app-data-table-server>` | `data-table-server/` | Paginación y filtros en servidor. |
+| **Modal Container** | `<app-modal-container>` | `modal-container/` | Estructura de modal con scroll y footer. |
+| **Sub Header** | `<app-sub-header>` | `sub-header/` | Cabecera de sección con acciones. |
+| **Table Actions** | `<app-table-actions>` | `table-actions/` | Botones Ver / Editar / Borrar por fila. |
+| **Status Floating Filter** | `<app-status-floating-filter>` | `status-floating-filter.component.ts` | Filtro flotante de estado (lotes). |
+| **Status Reserva Floating Filter** | `<app-status-reserva-floating-filter>` | `status-reserva-floating-filter.component.ts` | Filtro flotante estados de reserva. |
+| **Cliente Floating Filter** | `<app-cliente-floating-filter-wrapper>` | `cliente-floating-filter-wrapper.component.ts` | Filtro flotante de cliente en grid. |
+| **Manzana Floating Filter** | `<app-manzana-floating-filter-wrapper>` | `manzana-floating-filter-wrapper.component.ts` | Filtro flotante de manzana en grid. |
+| **Venta Tipo Pago Filter** | `<app-venta-tipo-pago-floating-filter>` | `venta-tipo-pago-floating-filter.component.ts` | Filtro CONTADO / CUOTAS en listado ventas. |
 
 ---
 
 ## 📑 Plantillas (Templates)
-Estructuras de layout para páginas.
+Layouts de página. Ubicación: `src/app/shared/components/templates/`
 
 | Componente | Selector | Propósito |
 |------------|----------|-----------|
-| **Page Container** | `<app-page-container>` | Layout principal que incluye Breadcrumbs, Título de página y contenedor de contenido. |
+| **Page Container** | `<app-page-container>` | Layout con título, breadcrumbs, botones Guardar/Cancelar/Nuevo/Atrás, exportación y permisos (`permissionScope`). |
 
 ---
 
-## 🛠️ Ejemplos de Uso Detallado
+## 🎯 Directivas compartidas
+Ubicación: `src/app/shared/components/directives/`
 
-### 👥 Selector de Clientes (`app-select-clientes`)
-Este componente permite buscar clientes y asignarles roles de Titular o Cotitular.
+| Directiva | Selector | Propósito |
+|-----------|----------|-----------|
+| **Can** | `[appCan]` | Muestra/oculta según permisos del módulo. |
+| **Drag Modal** | `[appDragModal]` | Permite arrastrar modales NG-Zorro. |
+
+---
+
+## 🧩 Componentes de dominio (por feature)
+No están en `shared/` pero siguen Atomic Design dentro de cada feature. Reutilizar dentro del mismo dominio o promover a `shared` si se usan en 2+ módulos.
+
+### Pagos (`features/pagos/`)
+
+| Componente | Selector | Propósito |
+|------------|----------|-----------|
+| **Plan Cuotas Cronograma** | `<app-plan-cuotas-cronograma>` | Grilla de cuotas; carga con `[ventaId]` vía `VentaService.obtenerCuotasPorVenta()` o `[cuotas]` manual. Emite `(onCuotaSelected)`. |
+| **Anular Pago Modal** | `<app-anular-pago-modal>` | Modal para anular un pago. |
+
+### Ventas (`features/ventas/`)
+
+| Componente | Selector | Propósito |
+|------------|----------|-----------|
+| **Input Search Reserva** | `<app-input-search-reserva>` | Búsqueda de reserva para convertir a venta. |
+| **Modal Search Reserva** | `<app-modal-search-reserva>` | Modal de búsqueda de reservas. |
+| **Venta Tipo Pago Cell** | `<app-venta-tipo-pago-cell>` | Celda AG-Grid con tipo de pago y enlace al plan de cuotas. |
+| **Anular Venta Modal** | `<app-anular-venta-modal>` | Modal de anulación de venta. |
+
+### Clientes (`features/clientes/`)
+
+| Componente | Selector | Propósito |
+|------------|----------|-----------|
+| **Model Multi Clientes** | `<app-model-multi-clientes>` | Modal/formulario multi-cliente con roles. |
+| **Cliente Foto Upload** | `<app-cliente-foto-upload>` | Subida de foto de perfil del cliente. |
+
+### Herramientas
+
+| Componente | Selector | Ruta | Propósito |
+|------------|----------|------|-----------|
+| **Design System Showcase** | `<app-design-system-showcase>` | `/showcase` | Catálogo visual de átomos, moléculas y organismos. |
+
+---
+
+## 🛠️ Ejemplos de uso
+
+### Selector de clientes
 
 ```html
 <app-select-clientes
@@ -84,44 +173,85 @@ Este componente permite buscar clientes y asignarles roles de Titular o Cotitula
 </app-select-clientes>
 ```
 
-### 💰 Etiqueta de Moneda (`app-currency-label`)
-Formatea automáticamente números a moneda con el estilo del sistema.
+### Etiqueta de moneda
 
 ```html
 <app-currency-label
-  [input_value]="montoTotal.value"
-  [currency]="'BS'"        <!-- 'BS' o 'USD' -->
-  [size]="'large'">       <!-- 'small', 'default', 'large' -->
+  [input_value]="montoTotal"
+  currency="BS"
+  size="large">
 </app-currency-label>
 ```
 
----
+### Método de pago
 
-## ⚠️ Aclaración Importante: Uso de `app-form-field`
-
-Para mantener la estandarización, **NUNCA** se deben usar componentes nativos o directos de NG-Zorro (`nz-input`, `nz-select`) dentro de los formularios si ya existe un átomo creado para ello.
-
-### ❌ Uso Incorrecto (Evitar)
-No uses el `nz-input` directamente. Esto rompe la consistencia de validaciones y estilos.
 ```html
-<app-form-field label="Referencia">
-  <!-- EVITAR ESTO -->
-  <input nz-input formControlName="numeroReferencia">
-</app-form-field>
+<app-metodo-pago-selector
+  [input_control]="form.controls.metodo">
+</app-metodo-pago-selector>
 ```
 
-### ✅ Uso Correcto (Recomendado)
-Debes usar el átomo correspondiente (`app-input-text`, `app-input-number`, etc.) dentro de la molécula `app-form-field`.
+### Cronograma de cuotas (carga desde API)
+
 ```html
-<app-form-field label="Nro. Referencia">
-  <app-input-text 
+<app-plan-cuotas-cronograma
+  [ventaId]="ventaId"
+  (onCuotaSelected)="onCuotaClick($event)">
+</app-plan-cuotas-cronograma>
+```
+
+Servicio: `VentaService.obtenerCuotasPorVenta(id)` → `GET /api/v1/ventas/:id/cuotas`
+
+### Form field + átomo (patrón obligatorio)
+
+```html
+<app-form-field label="Nro. Referencia" [required]="true">
+  <app-input-text
     [input_control]="form.controls.numeroReferencia"
     input_placeholder="Ej: REF-001">
   </app-input-text>
 </app-form-field>
 ```
 
-**Beneficios del uso correcto:**
-1. **Validación Automática:** Los átomos ya incluyen el componente de mensajes de error.
-2. **Estilos Unificados:** Si cambiamos el diseño de los inputs, se actualiza en todo el sistema.
-3. **Funcionalidad Extra:** Soporte nativo para iconos, máscaras y estados de enfoque.
+---
+
+## ⚠️ Reglas de uso
+
+### NUNCA usar NG-Zorro directo en formularios si existe un átomo
+
+```html
+<!-- ❌ Evitar -->
+<app-form-field label="Referencia">
+  <input nz-input formControlName="numeroReferencia">
+</app-form-field>
+
+<!-- ✅ Correcto -->
+<app-form-field label="Referencia">
+  <app-input-text [input_control]="form.controls.numeroReferencia"></app-input-text>
+</app-form-field>
+```
+
+**Beneficios:** validación unificada, estilos consistentes, iconos y máscaras sin duplicar lógica.
+
+### Convención de inputs
+
+| Propiedad típica | Uso |
+|------------------|-----|
+| `[input_control]` | `FormControl` del formulario reactivo |
+| `input_placeholder` | Placeholder en inputs de texto/número |
+| `[label]` | En selectores y algunos inputs especializados |
+
+### Promover componentes a `shared`
+
+Si un componente de `features/*/components/` se usa en **dos o más módulos**, moverlo a `shared/components/molecules/` u `organisms/` según corresponda.
+
+---
+
+## 📋 Checklist al crear un componente nuevo
+
+- [ ] ¿Es átomo, molécula u organismo?
+- [ ] `standalone: true` e imports explícitos
+- [ ] Selector con prefijo `app-`
+- [ ] Tipado estricto (sin `any` en `@Input` / `@Output`)
+- [ ] Agregar demo en `/showcase` si es reutilizable
+- [ ] Actualizar este archivo (`TODO_ATOMIC_DESIGN.md`)

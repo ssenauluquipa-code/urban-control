@@ -8,6 +8,7 @@ import { ColDef } from 'ag-grid-community';
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 
+/** Vista de solo lectura: datos de venta, saldo y tabla de cuotas. */
 @Component({
   selector: 'app-detail-venta-view',
   standalone: true,
@@ -79,11 +80,13 @@ export class DetailVentaViewComponent {
     }
   ];
 
+  /** Nombre del propietario titular para el resumen. */
   get titularPrincipal(): string {
     const titular = this.venta?.clientes.find(c => c.rol === 'TITULAR');
     return titular ? titular.nombre : 'Sin titular';
   }
 
+  /** Nombres de cotitulares separados por coma. */
   get cotitulares(): string {
     const cotitulares = this.venta?.clientes.filter(c => c.rol === 'COTITULAR');
     return cotitulares && cotitulares.length > 0 

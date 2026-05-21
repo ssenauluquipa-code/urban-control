@@ -11,6 +11,7 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
 import { IReserva, EstadoReserva } from 'src/app/core/models/reserva.model';
 import { FormsModule } from '@angular/forms';
 
+/** Modal con tabla de reservas activas filtrables por texto. */
 @Component({
   selector: 'app-modal-search-reserva',
   standalone: true,
@@ -114,6 +115,7 @@ export class ModalSearchReservaComponent implements OnInit {
     this.loadReservas();
   }
 
+  /** Carga reservas ACTIVAS del proyecto actual. */
   loadReservas(): void {
     const proyectoId = this.projectStatusService.getCurrentProjectId();
     if (!proyectoId) return;
@@ -131,6 +133,7 @@ export class ModalSearchReservaComponent implements OnInit {
     });
   }
 
+  /** Filtra la tabla por cliente, código, lote o manzana. */
   filterData(): void {
     if (!this.searchText) {
       this.filteredReservas = [...this.reservas];
@@ -150,6 +153,7 @@ export class ModalSearchReservaComponent implements OnInit {
     return new Date(date) < new Date();
   }
 
+  /** Cierra el modal devolviendo la reserva elegida. */
   selectReserva(reserva: IReserva): void {
     this.modalRef.close(reserva);
   }

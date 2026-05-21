@@ -60,7 +60,7 @@ export class EmpresaFormViewComponent {
     return this.form.get('diasVencimientoReserva') as FormControl;
   }
   get plazoMaximoControl() {
-    return this.form.get('plazoMaximoMeses') as FormControl;
+    return this.form.get('plazoMaximoMeses') as FormControl<number>;
   }
   get horaCronControl() {
     return this.form.get('horaCronDiario') as FormControl;

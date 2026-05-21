@@ -4,6 +4,7 @@ import { environment } from "src/environments/environment.prod";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import {
   CreateVentaDto,
+  IClientePagoById,
   IVenta,
   IVentaActivaCliente,
   IVentaCuota,
@@ -18,7 +19,7 @@ import { Observable } from "rxjs";
 export class VentaRepository implements IVentaRepository {
   private readonly apiUrl = environment.apiUrl + "/ventas";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}  
 
   getAll(manzanaId?: string, term?: string) {
     let params = new HttpParams();
@@ -57,5 +58,11 @@ export class VentaRepository implements IVentaRepository {
 
   eliminar(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getVentasPagoPorCliente(clienteId: string): Observable<IClientePagoById[]> {
+    return this.http.get<IClientePagoById[]>(
+      `${this.apiUrl}/cliente/${clienteId}/pagos`,
+    );
   }
 }

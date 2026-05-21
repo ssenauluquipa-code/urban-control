@@ -5,6 +5,7 @@ import { DetailVentaComponent } from './page/detail-venta/detail-venta.component
 import { permissionGuard } from 'src/app/core/guards/permission.guard';
 import { EAppAction, EAppModule } from 'src/app/core/config/permissions.enum';
 
+/** Rutas del módulo ventas: listado, registro y detalle. */
 export const VENTAS_ROUTES: Routes = [
     {
         path: '',

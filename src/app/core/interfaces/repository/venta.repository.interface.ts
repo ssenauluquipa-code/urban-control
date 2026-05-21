@@ -1,6 +1,7 @@
 import { Observable } from "rxjs";
 import {
   CreateVentaDto,
+  IClientePagoById,
   IVenta,
   IVentaActivaCliente,
   IVentaCuota,
@@ -19,4 +20,5 @@ export interface IVentaRepository {
   create(dto: CreateVentaDto): Observable<IVenta>;
   anular(id: string): Observable<void>;
   eliminar(id: string): Observable<void>;
+  getVentasPagoPorCliente(clienteId: string): Observable<IClientePagoById[]>;
 }

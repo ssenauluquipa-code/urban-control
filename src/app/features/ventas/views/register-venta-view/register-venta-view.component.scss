@@ -88,11 +88,13 @@
   .payment-mode-helper {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    border-radius: 12px;
-    padding: 0.9rem 1rem;
-    border: 1px solid #dbeafe;
+    gap: 0.15rem;
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    border-left: 4px solid #dbeafe;
     background: #f8fafc;
+    font-size: 0.9rem;
+    color: #475569;
   }
 
   .payment-mode-helper.is-contado {

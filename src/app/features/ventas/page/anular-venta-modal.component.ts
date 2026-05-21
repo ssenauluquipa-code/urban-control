@@ -6,6 +6,7 @@ import { NotificationService } from 'src/app/core/services/notification.service'
 import { VentaService } from 'src/app/core/services/venta.service';
 import { ModalContainerComponent } from 'src/app/shared/components/organisms/modal-container/modal-container.component';
 
+/** Modal de confirmación para anular una venta. */
 @Component({
   selector: 'app-anular-venta-modal',
   standalone: true,
@@ -44,6 +45,7 @@ export class AnularVentaModalComponent {
   private ventaService = inject(VentaService);
   private notification = inject(NotificationService);
 
+  /** Llama al API de anulación y cierra el modal si tiene éxito. */
   confirmarAnulacion(): void {
     if (!this.ventaId) {
       this.notification.error('No se encontró el identificador de la venta.');

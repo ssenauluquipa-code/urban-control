@@ -1,10 +1,12 @@
+// src/app/shared/components/atoms/badge-estado.component.scss
+
 .badge-estado {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 2px 12px; // Un poco más de aire lateral
   border-radius: 9999px;
-  font-size: 12px !important; // 14px puede verse muy grande en tablas densas, 12px es más elegante
+  font-size: 12px !important; // 12px es óptimo para interfaces densas y AG-Grid
   font-weight: 600;
   line-height: 1.25rem;
   letter-spacing: 0.01em;
@@ -49,15 +51,14 @@
     border-color: rgba(220, 38, 38, 0.2);
   }
 
-  // ── RESERVAS (Flujo de Negocio) ─────────────────────
-  &.vencida {
-    background-color: rgba(220, 38, 38, 0.1); // Rojo
-    color: #dc2626;
-    border-color: rgba(220, 38, 38, 0.2);
+  // ── RESERVAS Y CUOTAS (Alertas de Mora) ──────────────
+  &.vencido, &.vencida {
+    background-color: rgba(239, 68, 68, 0.1); // Rojo unificado de alerta
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.2);
   }
 
   &.convertida {
-    // Púrpura indica un éxito o transformación (Reserva -> Venta)
     background-color: #faf5ff; // Purple 50
     color: #6b21a8; // Purple 800
     border-color: #e9d5ff; // Purple 200
@@ -80,5 +81,24 @@
     background-color: #fffaf0; // Orange 50
     color: #9c4221; // Orange 800
     border-color: #feebc8; // Orange 200
+  }
+
+  // ── CRONOGRAMA DE PAGOS (Amortización FIFO) ─────────
+  &.pagado {
+    background-color: rgba(16, 185, 129, 0.1); // Verde esmeralda sutil
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+
+  &.parcial {
+    background-color: rgba(245, 158, 11, 0.1); // Ámbar/Naranja de abono parcial
+    color: #d97706;
+    border-color: rgba(245, 158, 11, 0.2);
+  }
+
+  &.pendiente {
+    background-color: #f1f5f9; // Gris Slate neutro
+    color: #475569;
+    border-color: #cbd5e1;
   }
 }

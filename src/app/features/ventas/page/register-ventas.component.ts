@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -18,8 +18,14 @@ import { ReservaService } from "src/app/core/services/reserva.service";
 import { ViewChild } from "@angular/core";
 import { NotificationService } from "src/app/core/services/notification.service";
 import { LoteService } from "src/app/core/services/proyectos/lote.service";
+import { OrganizationFinancialConfigService } from "src/app/core/services/configuracion/organization-financial-config.service";
+import { CurrencyCalculationService } from "src/app/core/services/finance/currency-calculation.service";
+import { Moneda } from "src/app/core/models/reserva.model";
+import { merge } from "rxjs";
+import { take } from "rxjs/operators";
 
 
+/** Página contenedora: formulario reactivo y envío de nueva venta. */
 @Component({
   selector: "app-register-ventas",
   standalone: true,
@@ -37,12 +43,13 @@ import { LoteService } from "src/app/core/services/proyectos/lote.service";
         #ventaView
         [form]="form"
         [loading]="loading"
+        [monedaBase]="monedaBase"
       ></app-register-venta-view>
     </app-page-container>
   `,
   styles: ``,
 })
-export class RegisterVentasComponent {
+export class RegisterVentasComponent implements OnInit {
   private fb = inject(FormBuilder);
   private ventaService = inject(VentaService);
   private notification = inject(NotificationService);
@@ -51,6 +58,11 @@ export class RegisterVentasComponent {
   private router = inject(Router);
   private reservaService = inject(ReservaService);
   private cdr = inject(ChangeDetectorRef);
+  private financialConfig = inject(OrganizationFinancialConfigService);
+  private currencyCalc = inject(CurrencyCalculationService);
+
+  /** Moneda base de la organización (precio de lote en catálogo). */
+  monedaBase: Moneda = Moneda.USD;
 
   @ViewChild('ventaView') ventaView!: RegisterVentaViewComponent;
 
@@ -61,8 +73,9 @@ export class RegisterVentasComponent {
       loteId: [null, [Validators.required]],
       reservaId: [null],
       tipoPago: [TipoPago.CONTADO, [Validators.required]],
-      moneda: ["BS", [Validators.required]],
-      montoTotal: [{ value: 0, disabled: true }, [Validators.required]],
+      moneda: [Moneda.USD, [Validators.required]],
+      tipoCambio: [null, [Validators.required, Validators.min(0.01)]],
+      montoTotal: [0, [Validators.required, Validators.min(0.01)]],
       cuotaInicial: [0],
       frecuenciaPago: [null],
       modalidadCalendarioPago: [null],
@@ -91,25 +104,78 @@ export class RegisterVentasComponent {
     },
   );
 
+  ngOnInit(): void {
+    this.loadOrganizationFinancialDefaults();
+  }
+
   constructor() {
     this.listenFormChanges();
     this.updateFinancingValidators(this.form.get("tipoPago")?.value);
   }
 
+  /**
+   * Carga moneda base y tipo de cambio desde la configuración de la empresa.
+   */
+  private loadOrganizationFinancialDefaults(): void {
+    this.financialConfig
+      .getFinancialConfig()
+      .pipe(take(1))
+      .subscribe((config) => {
+        this.monedaBase = this.toMoneda(config.currency);
+        this.form.patchValue({
+          moneda: this.monedaBase,
+          tipoCambio: config.exchangeRate,
+        });
+      });
+  }
+
+  /** Mapea código de moneda de configuración al enum Moneda. */
+  private toMoneda(currency: string): Moneda {
+    return currency === Moneda.USD ? Moneda.USD : Moneda.BS;
+  }
+
+  /**
+   * Convierte el precio del lote (moneda base) al monto total en la moneda de la venta.
+   */
+  recalculateMontoTotal(precioLote: number): void {
+    const monedaOperacion = this.form.get("moneda")?.value as Moneda;
+    const tipoCambio = Number(this.form.get("tipoCambio")?.value || 0);
+    const montoTotal = this.currencyCalc.convertAmount(
+      precioLote,
+      this.monedaBase,
+      monedaOperacion,
+      tipoCambio,
+    );
+    this.form.patchValue({ montoTotal }, { emitEvent: false });
+    this.form.updateValueAndValidity({ emitEvent: false });
+  }
 
 
 
+
+  /** Reacciona a cambios de lote, moneda, tipo de pago y monto total. */
   private listenFormChanges() {
     this.form.get("loteId")?.valueChanges.subscribe((id) => {
       if (id) {
         this.loteService.getLoteById(id).subscribe((lote) => {
-          this.form.patchValue({ montoTotal: lote.precioReferencial });
-          this.form.updateValueAndValidity({ emitEvent: false });
+          this.recalculateMontoTotal(lote.precioReferencial);
         });
       } else {
         this.form.patchValue({ montoTotal: 0 });
         this.form.updateValueAndValidity({ emitEvent: false });
       }
+    });
+
+    merge(
+      this.form.get("moneda")!.valueChanges,
+      this.form.get("tipoCambio")!.valueChanges,
+    ).subscribe(() => {
+      if (this.form.get("reservaId")?.value) return;
+      const loteId = this.form.get("loteId")?.value;
+      if (!loteId) return;
+      this.loteService.getLoteById(loteId).subscribe((lote) => {
+        this.recalculateMontoTotal(lote.precioReferencial);
+      });
     });
 
     this.form.get("tipoPago")?.valueChanges.subscribe((tipo) => {
@@ -123,8 +189,13 @@ export class RegisterVentasComponent {
     this.form.get("modalidadCalendarioPago")?.valueChanges.subscribe(() => {
       this.updateFinancingValidators(this.form.get("tipoPago")?.value);
     });
+
+    this.form.get("montoTotal")?.valueChanges.subscribe(() => {
+      this.form.updateValueAndValidity({ emitEvent: false });
+    });
   }
 
+  /** Activa o limpia validadores según CONTADO o CUOTAS. */
   private updateFinancingValidators(tipo: TipoPago | null) {
     const fieldsToClear = [
       "frecuenciaPago",
@@ -212,6 +283,7 @@ export class RegisterVentasComponent {
     this.form.updateValueAndValidity({ emitEvent: false });
   }
 
+  /** Valida el formulario y registra la venta en el backend. */
   handleSave() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();

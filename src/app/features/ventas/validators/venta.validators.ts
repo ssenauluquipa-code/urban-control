@@ -6,12 +6,7 @@ import {
   TipoPago,
 } from "src/app/core/models/venta.model";
 
-/**
- * Valida que la lista de propietarios sea correcta:
- * - Máximo 3 propietarios.
- * - No haya clientes duplicados.
- * - Haya exactamente un propietario con el rol de TITULAR.
- */
+/** Valida propietarios: máx. 3, sin duplicados y un solo titular. */
 export function propietariosVentaValidator(
   control: AbstractControl,
 ): ValidationErrors | null {
@@ -42,10 +37,7 @@ export function propietariosVentaValidator(
   return null;
 }
 
-/**
- * Valida que la cuota inicial no sea mayor al monto total de la venta
- * cuando el tipo de pago es a CUOTAS.
- */
+/** En CUOTAS, la cuota inicial no puede superar el monto total. */
 export function cuotaInicialNoMayorAlMontoTotalValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const tipoPago = control.get("tipoPago")?.value;
@@ -65,10 +57,7 @@ export function cuotaInicialNoMayorAlMontoTotalValidator(): ValidatorFn {
   };
 }
 
-/**
- * Valida que en el pago QUINCENAL con modalidad de DIAS_FIJOS_MES,
- * los días seleccionados no sean iguales.
- */
+/** En quincenal con días fijos, diaPagoMes1 y diaPagoMes2 deben ser distintos. */
 export function diasPagoQuincenalValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const tipoPago = control.get("tipoPago")?.value;

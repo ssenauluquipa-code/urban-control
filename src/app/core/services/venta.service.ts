@@ -8,16 +8,38 @@ import { CreateVentaDto } from "../models/venta.model";
 export class VentaService {
   constructor(@Inject("IVentaRepository") private repo: IVentaRepository) {}
 
+  registrarNuevaVenta(venta: CreateVentaDto) {
+    // Aquí puedes agregar validaciones de negocio antes de llamar al repo
+    return this.repo.create(venta);
+  }
+
   listarVentas(manzanaId?: string, term?: string) {
     return this.repo.getAll(manzanaId, term);
   }
+
+  listarVentasActivasPorCliente(clienteId: string) {
+    return this.repo.getVentasActivasByCliente(clienteId);
+  }
+
+  /**
+   * Ventas activas a cuotas con saldo pendiente del cliente (registro de pagos).
+   * GET /api/v1/ventas/cliente/:id/pagos
+   */
+  listarVentasPagoPorCliente(clienteId: string) {
+    return this.repo.getVentasPagoPorCliente(clienteId);
+  }
+
 
   obtenerVentaPorId(id: string) {
     return this.repo.getById(id);
   }
 
-  listarVentasActivasPorCliente(clienteId: string) {
-    return this.repo.getVentasActivasByCliente(clienteId);
+  eliminarVenta(id: string) {
+    return this.repo.eliminar(id);
+  }
+
+  anularVenta(id: string) {
+    return this.repo.anular(id);
   }
 
   obtenerCuotasPorVenta(id: string) {
@@ -28,16 +50,9 @@ export class VentaService {
     return this.repo.getSaldoByVenta(id);
   }
 
-  registrarNuevaVenta(venta: CreateVentaDto) {
-    // Aquí puedes agregar validaciones de negocio antes de llamar al repo
-    return this.repo.create(venta);
-  }
+  
 
-  anularVenta(id: string) {
-    return this.repo.anular(id);
-  }
+  
 
-  eliminarVenta(id: string) {
-    return this.repo.eliminar(id);
-  }
+  
 }

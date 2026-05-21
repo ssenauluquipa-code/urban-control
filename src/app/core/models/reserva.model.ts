@@ -20,6 +20,7 @@ export interface IReserva {
     loteId: string;
     montoReserva: number;
     moneda: Moneda;
+    tipoCambio?: number;
     fechaReserva: string;
     fechaVencimiento: string;
     estado: EstadoReserva;
@@ -45,6 +46,7 @@ export interface CreateReservaDto {
     clienteId: string;
     loteId: string;
     montoReserva: number;
+    tipoCambio: number;
     moneda: Moneda;
     fechaVencimiento: string;
     observaciones?: string;

@@ -37,6 +37,7 @@ export interface UpdateOrganizationDto {
   address?: string;
   phone?: string;
   currency?: string;
+  tipoDeCambio?: number;
   diasVencimientoReserva?: number;
   plazoMaximoMeses?: number;
   horaCronDiario?: number;

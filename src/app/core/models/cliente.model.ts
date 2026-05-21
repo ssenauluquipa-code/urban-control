@@ -62,11 +62,15 @@ export interface IClienteSearchResult {
 
 export interface CreateClienteRapidoDto {
     nombreCompleto: string;
-    tipoDocumento: string; // Usar tus Enums aquí si es posible
+    tipoDocumento: string;
     nroDocumento: string;
     complemento?: string;
     numeroReferencia?: string;
     genero: string;
+    estadoCivil: EEstadoCivil;
+    ocupacion: string;
+    telefono: string;
+    direccion: string;
 }
 
 

@@ -1,0 +1,124 @@
+<form [formGroup]="form" class="fade-in pago-form-layout">
+  <div class="container-fluid p-0">
+    <div class="row g-3 align-items-start">
+
+      <div class="col-xl-9 col-lg-8 col-12 order-2 order-lg-1">
+        @if (ventaIdValue) {
+        <app-plan-cuotas-cronograma 
+          [ventaId]="ventaIdValue" 
+          [montoFormulario]="montoConvertidoParaCronograma"
+          [moneda]="ventaSeleccionada?.moneda || 'USD'"
+          (onMontoCalculado)="onMontoCalculadoHandler($event)">
+        </app-plan-cuotas-cronograma>
+        } @else {
+        <app-card-container title="Cronograma de Cuotas">
+          <div class="text-center py-5 text-muted">
+            <p class="mb-0 fw-semibold">
+              Seleccione un cliente y una venta para ver el plan de cuotas.
+            </p>
+          </div>
+        </app-card-container>
+        }
+      </div>
+
+      <div class="col-xl-3 col-lg-4 col-12 order-1 order-lg-2 pago-sidebar-sticky">
+        <div class="d-flex flex-column gap-3">
+
+          <app-card-container title="Datos de la Operación">
+            <app-form-field label="Cliente" [required]="true">
+              <app-select-clientes [input_control]="clienteId" input_placeholder="Buscar cliente...">
+              </app-select-clientes>
+            </app-form-field>
+
+            @if (clienteId.value) {
+            <div class="mt-2">
+              <app-form-field label="Contrato / Venta" [required]="true">
+                <app-select-data [inputControl]="ventaId" [itemList]="ventasOpciones" bindValue="ventaId"
+                  bindLabel="label" [loading]="loadingVentas" [searchable]="true" placeholder="Seleccionar venta...">
+                </app-select-data>
+              </app-form-field>
+            </div>
+            }
+
+            <div class="mt-2">
+              <app-form-field label="Método de Pago" [required]="true">
+                <app-metodo-pago-selector [input_control]="metodo"></app-metodo-pago-selector>
+              </app-form-field>
+            </div>
+
+            <div class="mt-2">
+              <app-form-field label="Moneda" [required]="true">
+                <app-select-moneda [input_control]="monedaRecibida" placeholder="Moneda">
+                </app-select-moneda>
+              </app-form-field>
+            </div>
+
+            <div class="mt-2">
+              <app-form-field label="Monto Recibido" [required]="true">
+                <app-input-number [input_control]="monto" [allow_decimals]="true" input_placeholder="0.00">
+                </app-input-number>
+              </app-form-field>
+            </div>
+
+            <!--  <div class="mt-2">
+              <app-form-field label="Fecha Transacción" [required]="true">
+                <app-input-date [input_control]="fechaPago"></app-input-date>
+              </app-form-field>
+            </div> -->
+
+            <div class="mt-2">
+              <app-form-field label="Notas / Observaciones">
+                <app-input-textarea [input_control]="observaciones"
+                  input_placeholder="Detalle de la transferencia, banco origen, etc...">
+                </app-input-textarea>
+              </app-form-field>
+            </div>
+          </app-card-container>
+
+          <app-card-container title="Comprobante Digital">
+            <div class="pago-upload-wrapper py-2">
+              <app-image-display [editable]="true" emptyText="Sin Comprobante"
+                emptyHint="Haz click aquí para adjuntar el comprobante o captura" (imageUpdated)="onImageUpload($event)"
+                (imageDeleted)="onImageDeleted()">
+              </app-image-display>
+            </div>
+          </app-card-container>
+
+          <app-card-container title="Resumen de Transacción">
+            <span class="pago-kicker">Totales del recibo</span>
+
+            @if (ventaSeleccionada) {
+            <div class="summary-row muted-row">
+              <span>Cliente</span>
+              <strong class="text-end">{{ ventaSeleccionada.nombreCompletoCliente }}</strong>
+            </div>
+            <div class="summary-row muted-row">
+              <span>Venta</span>
+              <strong>#{{ ventaSeleccionada.nroVenta }}</strong>
+            </div>
+            <div class="summary-row muted-row">
+              <span>Saldo pendiente</span>
+              <strong>
+                {{ ventaSeleccionada.moneda }}
+                {{ ventaSeleccionada.saldoPendiente | number: '1.2-2' }}
+              </strong>
+            </div>
+            }
+
+            <div class="summary-row highlighted">
+              <span>Monto a Registrar</span>
+              <strong>{{ monedaValue }} {{ montoValue | number: '1.2-2' }}</strong>
+            </div>
+
+            <div class="summary-row muted-row">
+              <span>Tipo de Operación</span>
+              <strong>AMORTIZACIÓN FIFO</strong>
+            </div>
+          </app-card-container>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>

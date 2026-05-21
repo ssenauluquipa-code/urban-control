@@ -52,11 +52,23 @@
                   </app-form-field>
                 </div>
 
-                <div class="col-md-5">
+                <div class="col-md-4">
                   <app-form-field label="Moneda">
                     <app-select-moneda
                       [input_control]="moneda"
                     ></app-select-moneda>
+                  </app-form-field>
+                </div>
+
+                <div class="col-md-4">
+                  <app-form-field label="Tipo de Cambio" [required]="true">
+                    <app-input-number
+                      [input_control]="tipoCambio"
+                      [input_placeholder]="'Ej. 6.96'"
+                      [allow_decimals]="true"
+                      [decimal_precision]="2"
+                    >
+                    </app-input-number>
                   </app-form-field>
                 </div>
 
@@ -84,12 +96,12 @@
                 <span class="text-uppercase text-muted fw-bold small"
                   >Monto Total</span
                 >
-                <app-currency-label
-                  [input_value]="montoTotalValue"
+                <app-input-currency
+                  class="mt-2"
+                  [input_control]="montoTotal"
                   [currency]="moneda.value || 'BS'"
                   size="large"
-                  class="mt-2"
-                ></app-currency-label>
+                ></app-input-currency>
 
                 @if (isContado) {
                   <small class="text-muted mt-2 small-text-info">

@@ -8,6 +8,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { ModalSearchReservaComponent } from './modal-search-reserva.component';
 import { IReserva } from 'src/app/core/models/reserva.model';
 
+/** Campo de búsqueda de reserva activa con modal y botón limpiar. */
 @Component({
   selector: 'app-input-search-reserva',
   standalone: true,
@@ -61,7 +62,7 @@ import { IReserva } from 'src/app/core/models/reserva.model';
       display: flex;
       align-items: stretch;
       width: 100%;
-      height: 42px;
+      height: 36px;
       border: 1px solid #d9d9d9;
       border-radius: 8px;
       overflow: hidden;
@@ -186,6 +187,7 @@ export class InputSearchReservaComponent {
     return this.selectedReservaLabel || '';
   }
 
+  /** Abre el modal de reservas activas del proyecto. */
   openSearchModal(): void {
     if (this.disabled) return;
 
@@ -213,6 +215,7 @@ export class InputSearchReservaComponent {
     this.OnReservaSelected.emit(reserva);
   }
 
+  /** Borra la reserva seleccionada y notifica al padre (OnClear). */
   clearSelection(event?: Event): void {
     if (event) {
       event.stopPropagation();

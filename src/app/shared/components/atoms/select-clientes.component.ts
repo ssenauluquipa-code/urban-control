@@ -326,19 +326,36 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
 
     modalRef.componentInstance.nombrePrellenado = nombreCompleto;
 
-    modalRef.result.then((nuevoCliente: IClienteSearchResult) => {
-      if (nuevoCliente && nuevoCliente.id) {
-        this.clientList = [nuevoCliente, ...this.clientList];
-
-        if (this.multiple) {
-          const current = (this.internal_control.value as string[]) || [];
-          this.internal_control.setValue([...current, nuevoCliente.id]);
-        } else {
-          this.internal_control.setValue(nuevoCliente.id);
-        }
-        this.cdr.detectChanges();
-      }
+    modalRef.result.then((result: IClienteSearchResult) => {
+      this.applyClienteCreado(result);
     }).catch(() => { });
+  }
+
+  /**
+   * Inserta el cliente en la lista del ng-select y lo deja seleccionado en el control padre.
+   */
+  private applyClienteCreado(cliente: IClienteSearchResult): void {
+    if (!cliente?.id) return;
+
+    this.clientList = [
+      cliente,
+      ...this.clientList.filter((c) => c.id !== cliente.id),
+    ];
+
+    if (this.multiple) {
+      const current =
+        (this.extractIds(this.internal_control.value) as string[]) ?? [];
+      const nextIds = current.includes(cliente.id)
+        ? current
+        : [...current, cliente.id];
+      this.internal_control.setValue(nextIds);
+      this.processSelectionChange(nextIds);
+    } else {
+      this.internal_control.setValue(cliente.id);
+      this.processSelectionChange(cliente.id);
+    }
+
+    this.cdr.detectChanges();
   }
 
   isTitular(clientId: string): boolean {

@@ -12,8 +12,17 @@ import { SelectDocumentTypeComponent } from 'src/app/shared/components/atoms/sel
 import { SelectGenderComponent } from 'src/app/shared/components/atoms/select-gender.component';
 import { SelectExpedidoComponent } from 'src/app/shared/components/atoms/select-expedido.component';
 import { InputNumberComponent } from 'src/app/shared/components/atoms/input-number/input-number.component';
-import { EGenero, ETipoDocumento } from 'src/app/core/models/cliente.model';
+import {
+  CreateClienteDto,
+  EEstadoCivil,
+  EGenero,
+  ETipoDocumento,
+  ICliente,
+  IClienteSearchResult,
+} from 'src/app/core/models/cliente.model';
 import { InputDocumentoComponent } from 'src/app/shared/components/atoms/input-documento/input-documento.component';
+import { SelectEstadoCivilComponent } from 'src/app/shared/components/atoms/select-estado-civil.component';
+import { InputTextareaComponent } from 'src/app/shared/components/atoms/input-textarea/input-textarea.component';
 
 @Component({
   selector: 'app-model-multi-clientes',
@@ -28,7 +37,9 @@ import { InputDocumentoComponent } from 'src/app/shared/components/atoms/input-d
     SelectGenderComponent,
     SelectExpedidoComponent,
     InputNumberComponent,
-    InputDocumentoComponent
+    InputDocumentoComponent,
+    SelectEstadoCivilComponent,
+    InputTextareaComponent,
   ],
   templateUrl: './model-multi-clientes.component.html',
   styleUrl: './model-multi-clientes.component.scss'
@@ -54,26 +65,46 @@ export class ModelMultiClientesComponent implements OnInit {
       nroDocumento: ['', [Validators.required, Validators.maxLength(30)]],
       complemento: [null],
       telefono: ['', [Validators.required, Validators.maxLength(30)]],
-      genero: [EGenero.MASCULINO, [Validators.required]]
+      genero: [EGenero.MASCULINO, [Validators.required]],
+      estadoCivil: [EEstadoCivil.SOLTERO, Validators.required],
+      ocupacion: ['', [Validators.required, Validators.maxLength(150)]],
+      direccion: ['', [Validators.required, Validators.maxLength(250)]],
     });
   }
 
   guardarCliente(): void {
-    if (this.clienteForm.invalid) return;
+    if (this.clienteForm.invalid) {
+      this.clienteForm.markAllAsTouched();
+      this._notification.warning('Complete los campos obligatorios');
+      return;
+    }
 
     this.loading = true;
-    const nuevoCliente = this.clienteForm.value;
-    
+    const v = this.clienteForm.getRawValue();
+    const nuevoCliente: CreateClienteDto = {
+      nombreCompleto: v.nombreCompleto,
+      tipoDocumento: v.tipoDocumento,
+      nroDocumento: v.nroDocumento,
+      complemento: v.complemento || undefined,
+      genero: v.genero,
+      telefono: String(v.telefono ?? ''),
+      estadoCivil: v.estadoCivil,
+      ocupacion: v.ocupacion?.trim(),
+      direccion: v.direccion?.trim(),
+    };
+
     this._clienteService.createClient(nuevoCliente)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (res) => {
           this._notification.success('Cliente registrado correctamente');
-          this.activeModal.close(res);
+          this.activeModal.close(this.toSearchResult(res, v));
         },
         error: (err) => {
-          console.error('Error al crear cliente rápido', err);
-          this._notification.error('Ocurrió un error al registrar el cliente');
+          const msg = Array.isArray(err.error?.message)
+            ? err.error.message.join('. ')
+            : err.error?.message || 'Ocurrió un error al registrar el cliente';
+          this._notification.error(msg);
         }
       });
   }
@@ -102,4 +133,30 @@ export class ModelMultiClientesComponent implements OnInit {
     return this.clienteForm.get('genero') as FormControl<string | null>;
   }
 
+  get EstadoCivil() {
+    return this.clienteForm.get('estadoCivil') as FormControl<EEstadoCivil | null>;
+  }
+
+  get Ocupacion() {
+    return this.clienteForm.get('ocupacion') as FormControl<string | null>;
+  }
+
+  get Direccion() {
+    return this.clienteForm.get('direccion') as FormControl<string | null>;
+  }
+
+  /**
+   * Normaliza la respuesta del API (plana o envuelta en `data`) al formato del selector.
+   */
+  private toSearchResult(
+    res: ICliente | { data?: ICliente },
+    form: CreateClienteDto,
+  ): IClienteSearchResult {
+    const data = (res as { data?: ICliente })?.data ?? (res as ICliente);
+    return {
+      id: data?.id ?? '',
+      nombreCompleto: data?.nombreCompleto ?? form.nombreCompleto,
+      nroDocumento: data?.nroDocumento ?? form.nroDocumento,
+    };
+  }
 }

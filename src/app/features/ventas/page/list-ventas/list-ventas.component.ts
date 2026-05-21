@@ -23,6 +23,7 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
 
+/** Listado de ventas del proyecto con acciones ver, editar y anular. */
 @Component({
   selector: "app-list-ventas",
   standalone: true,
@@ -263,6 +264,7 @@ export class ListVentasComponent implements OnInit {
     */
   }
 
+  /** Consulta ventas del proyecto seleccionado. */
   loadVentas(): void {
     if (!this.proyectoId) return;
 
@@ -290,6 +292,7 @@ export class ListVentasComponent implements OnInit {
       });
   }
 
+  /** Enruta acciones de fila: anular, editar, ver o eliminar. */
   onTableAction(event: ITableActionEvent<IVenta>): void {
     if (event.action === TableActionsEnum.ANULAR && event.row?.ventaId) {
       const modalRef = this.modalService.open(AnularVentaModalComponent, {
@@ -324,6 +327,7 @@ export class ListVentasComponent implements OnInit {
     }
   }
 
+  /** Elimina físicamente solo ventas ya anuladas. */
   private confirmarEliminar(venta: IVenta): void {
     if (venta.estado !== "ANULADA") {
       this.notification.warning("Solo se pueden eliminar ventas que se encuentren anuladas.");
@@ -338,6 +342,7 @@ export class ListVentasComponent implements OnInit {
       });
   }
 
+  /** Navega al formulario de registro de venta. */
   onAddNew(): void {
     this.router.navigate(["/ventas/register"]);
   }

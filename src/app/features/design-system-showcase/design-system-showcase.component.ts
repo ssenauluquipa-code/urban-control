@@ -26,6 +26,12 @@ import { ModalidadCalendarioSelectorComponent } from 'src/app/shared/components/
 import { SelectDiaSemanaComponent } from 'src/app/shared/components/molecules/select-dia-semana.component';
 import { InputDiaPagoComponent } from 'src/app/shared/components/molecules/input-dia-pago.component';
 import { SelectFrecuenciaPagoComponent } from 'src/app/shared/components/molecules/select-frecuencia-pago.component';
+import { MetodoPagoSelectorComponent } from 'src/app/shared/components/molecules/metodo-pago-selector.component';
+import { EMetodoPago } from 'src/app/core/models/pagos.model';
+import {
+  PlanCuotasCronogramaComponent,
+  ICuotaCronogramaVisual,
+} from 'src/app/features/pagos/components/plan-cuotas-cronograma/plan-cuotas-cronograma.component';
 
 @Component({
   selector: 'app-design-system-showcase',
@@ -56,6 +62,8 @@ import { SelectFrecuenciaPagoComponent } from 'src/app/shared/components/molecul
     ModalidadCalendarioSelectorComponent,
     SelectDiaSemanaComponent,
     InputDiaPagoComponent,
+    MetodoPagoSelectorComponent,
+    PlanCuotasCronogramaComponent,
   ],
   templateUrl: './design-system-showcase.component.html',
   styleUrls: ['./design-system-showcase.component.scss'],
@@ -81,6 +89,11 @@ export class DesignSystemShowcaseComponent implements OnInit {
   modalidadControl = new FormControl<string | null>('INTERVALO_15_DIAS');
   diaSemanaControl = new FormControl<DiaSemanaPago>(DiaSemanaPago.LUNES, { nonNullable: true });
   diaPagoControl = new FormControl<number>(15, { nonNullable: true });
+  metodoPagoControl = new FormControl<EMetodoPago | null>(EMetodoPago.EFECTIVO);
+
+  /** Venta de prueba para el cronograma de cuotas en showcase */
+  demoVentaCuotasId = '610b4563-d606-4262-a1e6-47312e7f3a87';
+  cuotaSeleccionada: ICuotaCronogramaVisual | null = null;
 
   // ID de ejemplo para que el selector de lotes cargue algo
   dummyManzanaId = 'a6a7ae9f-e5b5-4a1f-9105-3e418d37b54b';
@@ -189,5 +202,10 @@ export class DesignSystemShowcaseComponent implements OnInit {
 
   onHeaderExportPdf(): void {
     console.log('Export: PDF');
+  }
+
+  onCuotaSelected(cuota: ICuotaCronogramaVisual | null): void {
+    this.cuotaSeleccionada = cuota;
+    console.log('Cuota seleccionada:', cuota);
   }
 }

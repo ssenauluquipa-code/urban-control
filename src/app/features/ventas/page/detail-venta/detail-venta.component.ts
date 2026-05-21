@@ -8,6 +8,7 @@ import { IVentaDetalle, IVentaCuota, IVentaSaldoResumen } from 'src/app/core/mod
 import { finalize, forkJoin } from 'rxjs';
 import { NotificationService } from 'src/app/core/services/notification.service';
 
+/** Página de detalle: carga venta, cuotas y saldo en paralelo. */
 @Component({
   selector: 'app-detail-venta',
   standalone: true,
@@ -51,6 +52,7 @@ export class DetailVentaComponent implements OnInit {
     });
   }
 
+  /** Obtiene detalle, plan de cuotas y resumen de saldo por ventaId. */
   private loadData(id: string): void {
     this.loading = true;
 
@@ -74,6 +76,7 @@ export class DetailVentaComponent implements OnInit {
       });
   }
 
+  /** Vuelve al listado de ventas. */
   goBack(): void {
     this.router.navigate(['/ventas']);
   }

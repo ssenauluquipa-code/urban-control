@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   Input,
+  OnDestroy,
   OnInit,
 } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -14,7 +15,11 @@ import {
   CreateVentaPropietarioDto,
   RolPropietario,
 } from "src/app/core/models/venta.model";
-import { IReserva } from "src/app/core/models/reserva.model";
+import { IReserva, Moneda } from "src/app/core/models/reserva.model";
+import { CurrencyCalculationService } from "src/app/core/services/finance/currency-calculation.service";
+import { OrganizationFinancialConfigService } from "src/app/core/services/configuracion/organization-financial-config.service";
+import { Subject } from "rxjs";
+import { filter, take, takeUntil } from "rxjs/operators";
 import { ILoteByLoteDisponible } from "src/app/core/models/lote/lote.model";
 
 // Componentes locales del feature
@@ -37,13 +42,14 @@ import { SelectLotesComponent } from "src/app/shared/components/atoms/select-lot
 import { SelectClientesComponent } from "src/app/shared/components/atoms/select-clientes.component";
 import { SelectMonedaComponent } from "src/app/shared/components/atoms/select-moneda.component";
 import { InputTextareaComponent } from "src/app/shared/components/atoms/input-textarea/input-textarea.component";
-import { CurrencyLabelComponent } from "src/app/shared/components/atoms/currency-label/currency-label.component";
+import { InputCurrencyComponent } from "src/app/shared/components/atoms/input-currency/input-currency.component";
 import { CardContainerComponent } from "src/app/shared/components/atoms/card-container/card-container.component";
 import { InputSearchReservaComponent } from "../../components/input-search-reserva.component";
 import { ReservaService } from "src/app/core/services/reserva.service";
 import { ActivatedRoute } from "@angular/router";
 
 
+/** Vista del formulario de registro de venta (lote, reserva, financiamiento, propietarios). */
 @Component({
   selector: "app-register-venta-view",
   standalone: true,
@@ -65,20 +71,25 @@ import { ActivatedRoute } from "@angular/router";
     SelectClientesComponent,
     SelectMonedaComponent,
     InputTextareaComponent,
-    CurrencyLabelComponent,
+    InputCurrencyComponent,
     CardContainerComponent,
     InputSearchReservaComponent,
+    InputNumberComponent
   ],
   templateUrl: "./register-venta-view.component.html",
   styleUrl: "./register-venta-view.component.scss",
 })
-export class RegisterVentaViewComponent implements OnInit {
+export class RegisterVentaViewComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private reservaService = inject(ReservaService);
   private route = inject(ActivatedRoute);
+  private currencyCalc = inject(CurrencyCalculationService);
+  private financialConfig = inject(OrganizationFinancialConfigService);
+  private destroy$ = new Subject<void>();
 
   @Input() form!: FormGroup;
   @Input() loading = false;
+  @Input() monedaBase: Moneda = Moneda.USD;
 
   public currentReservedLote: ILoteByLoteDisponible | null = null;
   public reservaLabel = '';
@@ -96,7 +107,10 @@ export class RegisterVentaViewComponent implements OnInit {
     return this.form.get("tipoPago") as FormControl<TipoPago | null>;
   }
   get moneda() {
-    return this.form.get("moneda") as FormControl<string | null>;
+    return this.form.get("moneda") as FormControl<Moneda | null>;
+  }
+  get tipoCambio() {
+    return this.form.get("tipoCambio") as FormControl<number | null>;
   }
   get montoTotal() {
     return this.form.get("montoTotal") as FormControl<number | null>;
@@ -154,11 +168,15 @@ export class RegisterVentaViewComponent implements OnInit {
     return Number(this.cuotaInicial.value || 0);
   }
 
+  /** Saldo a financiar: 0 en contado sin reserva; total − inicial en cuotas o con adelanto. */
   get saldoPendienteValue(): number {
-    const total = this.montoTotal.value || 0;
-    const inicial = this.cuotaInicial.value || 0;
-    const saldo = total - inicial;
-    return saldo > 0 ? saldo : 0;
+    if (this.isContado && !this.reservaId.value) {
+      return 0;
+    }
+    return this.currencyCalc.calculateRemainingBalance(
+      this.montoTotalValue,
+      this.cuotaInicialValue,
+    );
   }
 
   get propietariosValue(): CreateVentaPropietarioDto[] {
@@ -223,8 +241,26 @@ export class RegisterVentaViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkUrlParams();
+    this.listenLoteClearedWhenReservaLinked();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /** Si hay reserva vinculada y se quita el lote, limpia el resto de datos de la reserva. */
+  private listenLoteClearedWhenReservaLinked(): void {
+    this.loteId.valueChanges
+      .pipe(
+        filter((id) => !id),
+        filter(() => !!this.reservaId.value),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(() => this.onReservaCleared());
+  }
+
+  /** Precarga reserva desde query param ?reservaId=. */
   private checkUrlParams(): void {
     this.route.queryParams.subscribe(params => {
       const reservaId = params['reservaId'];
@@ -234,88 +270,117 @@ export class RegisterVentaViewComponent implements OnInit {
     });
   }
 
+  /** Sincroniza propietarios cuando cambia el selector de clientes. */
   onClientesChange(event: SelectClienteOutput): void {
     if (Array.isArray(event)) {
       this.form.patchValue({ propietarios: event });
     }
   }
 
+  /** Carga reserva completa y aplica lote, montos y titular al formulario. */
   onReservaSelected(reserva: Partial<IReserva>): void {
     if (!reserva) return;
 
-    // Si recibimos un objeto que parece ser solo de la tabla (no tiene el objeto 'lote' anidado),
-    // buscamos el detalle completo para tener toda la información "rica".
     if (!reserva.lote && (reserva.reservaId || reserva.id)) {
       const id = (reserva.reservaId || reserva.id) as string;
-      this.reservaService.getReservaById(id).subscribe(fullReserva => {
-        this.applyReservaData(fullReserva);
+      this.reservaService.getReservaById(id).subscribe((fullReserva) => {
+        this.applyReservaData({
+          ...fullReserva,
+          tipoCambio: fullReserva.tipoCambio ?? reserva.tipoCambio,
+          precioLote:
+            fullReserva.lote?.precioReferencial ?? reserva.precioLote,
+        } as IReserva);
       });
     } else {
       this.applyReservaData(reserva as IReserva);
     }
   }
 
+  /** Rellena lote, moneda, monto convertido, adelanto y titular desde la reserva. */
   private applyReservaData(reserva: IReserva): void {
     const lote = reserva.lote;
     const cliente = reserva.cliente || { id: reserva.clienteId };
+    const loteId = lote?.id ?? reserva.loteId;
+    const precioLote = lote?.precioReferencial ?? reserva.precioLote ?? 0;
+    const monedaOperacion = reserva.moneda;
+    const tipoCambio = Number(reserva.tipoCambio ?? this.tipoCambio.value ?? 0);
 
-    // Construir etiqueta para el buscador de reservas
-    const mza = reserva.manzana || lote?.manzana?.codigo || '';
-    const nroLote = reserva.numeroLote || lote?.numero || '';
+    const mza = reserva.manzana || lote?.manzana?.codigo || "";
+    const nroLote = reserva.numeroLote || lote?.numero || "";
     this.reservaLabel = `#${reserva.codigoReserva} - Mza. ${mza} Lote ${nroLote}`;
 
-    if (lote) {
-      // Preparamos el objeto del lote para el selector
+    if (loteId) {
       this.currentReservedLote = {
-        id: lote.id,
-        descripcion: `Lote ${lote.numero} - Mza. ${lote.manzana?.codigo || ''}`,
-        nroLote: lote.numero,
-        areaM2: lote.areaM2,
-        precio: lote.precioReferencial,
-        manzanaId: lote.manzanaId,
-        codigoManzana: lote.manzana?.codigo || ''
+        id: loteId,
+        descripcion: `Lote ${nroLote} - Mza. ${mza}`,
+        nroLote: Number(nroLote) || lote?.numero || 0,
+        areaM2: lote?.areaM2 ?? reserva.areaLote ?? 0,
+        precio: precioLote,
+        manzanaId: lote?.manzanaId ?? "",
+        codigoManzana: mza,
       };
 
-      // 1. Cargamos la reserva, el lote, el precio y bloqueamos
+      const montoTotal = this.currencyCalc.convertAmount(
+        precioLote,
+        this.monedaBase,
+        monedaOperacion,
+        tipoCambio,
+      );
+
       this.form.patchValue({
-        reservaId: reserva.id,
-        loteId: lote.id,
-        moneda: reserva.moneda || 'USD',
-        montoTotal: lote.precioReferencial,
-        cuotaInicial: reserva.montoReserva || 0
+        reservaId: reserva.reservaId || reserva.id,
+        loteId,
+        moneda: monedaOperacion,
+        tipoCambio,
+        montoTotal,
+        cuotaInicial: reserva.montoReserva || 0,
       });
 
-      // Bloqueamos la moneda según Regla 5
-      this.form.get('moneda')?.disable();
-      // YA NO BLOQUEAMOS EL LOTE:
-      // this.form.get('loteId')?.disable();
+      this.form.get("moneda")?.disable({ emitEvent: false });
+      this.form.get("tipoCambio")?.disable({ emitEvent: false });
     }
 
-    // 2. Cargamos al cliente de la reserva como Titular Principal
-    if (cliente) {
+    if (cliente?.id) {
       const propietarioTitular: CreateVentaPropietarioDto = {
         clienteId: cliente.id,
-        rol: RolPropietario.TITULAR
+        rol: RolPropietario.TITULAR,
       };
-
-      this.form.patchValue({
-        propietarios: [propietarioTitular]
-      });
+      this.form.patchValue({ propietarios: [propietarioTitular] });
     }
 
-    // 3. Forzar actualización de validez
-    this.form.get('loteId')?.updateValueAndValidity();
-    this.form.get('propietarios')?.updateValueAndValidity();
-
+    this.form.get("loteId")?.updateValueAndValidity();
+    this.form.get("propietarios")?.updateValueAndValidity();
+    this.form.updateValueAndValidity({ emitEvent: false });
     this.cdr.markForCheck();
   }
 
+  /** Limpia reserva, lote, propietarios y restaura config financiera de empresa. */
   onReservaCleared(): void {
-    // Si se limpia la reserva, desbloqueamos el lote
     this.currentReservedLote = null;
-    this.reservaLabel = '';
-    this.form.get('loteId')?.enable();
-    this.form.get('moneda')?.enable();
+    this.reservaLabel = "";
     this.reservaId.setValue(null);
+    this.loteId.setValue(null);
+
+    this.propietarios.setValue([]);
+    this.form.get("propietarios")?.updateValueAndValidity();
+    this.form.get("loteId")?.updateValueAndValidity();
+
+    this.form.get("moneda")?.enable({ emitEvent: false });
+    this.form.get("tipoCambio")?.enable({ emitEvent: false });
+
+    this.financialConfig
+      .getFinancialConfig()
+      .pipe(take(1))
+      .subscribe((config) => {
+        const moneda = config.currency === Moneda.USD ? Moneda.USD : Moneda.BS;
+        this.form.patchValue({
+          moneda,
+          tipoCambio: config.exchangeRate,
+          cuotaInicial: 0,
+          montoTotal: 0,
+        });
+        this.form.updateValueAndValidity({ emitEvent: false });
+        this.cdr.markForCheck();
+      });
   }
 }

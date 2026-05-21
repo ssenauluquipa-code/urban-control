@@ -19,6 +19,7 @@ export interface CreateVentaDto {
   nroCuotas?: number;
   montoTotal: number;
   cuotaInicial: number;
+  tipoCambio: number;
   moneda: Moneda;
   observaciones?: string;
   propietarios: CreateVentaPropietarioDto[]; // Array tipado de 1 a 3 items
@@ -153,4 +154,21 @@ export interface IVentaCuota {
   estado: string;
   createdAt: string;
   updatedAt: string;
+}
+
+/** Venta activa a cuotas con saldo pendiente, para registrar pagos de un cliente. */
+export interface IClientePagoById {
+  nombreCompletoCliente: string;
+  nroDocumentoCliente: string | number;
+  ventaId: string;
+  nroVenta: number;
+  fechaVenta: string;
+  frecuenciaPago: string;
+  moneda: string;
+  tipoCambio: number;
+  montoTotal: number;
+  totalPagado: number;
+  saldoPendiente: number;
+  nroCuotas: number;
+  montoCuota: number;
 }

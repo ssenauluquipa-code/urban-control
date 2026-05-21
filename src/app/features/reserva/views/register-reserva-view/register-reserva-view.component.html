@@ -52,14 +52,28 @@
       </div>
     </div>
 
-    <!-- 👇 USAMOS TU INPUT DATE -->
-    <app-form-field label="Fecha de Vencimiento" [required]="true">
-      <app-input-date
-        [input_control]="fechaVencimiento"
-        input_placeholder="Seleccionar fecha"
-      >
-      </app-input-date>
-    </app-form-field>
+    <div class="row">
+      <div class="col-6">
+        <app-form-field label="Fecha de Vencimiento" [required]="true">
+          <app-input-date
+            [input_control]="fechaVencimiento"
+            input_placeholder="Seleccionar fecha"
+          >
+          </app-input-date>
+        </app-form-field>
+      </div>
+      <div class="col-6">
+        <app-form-field label="Tipo de Cambio" [required]="true">
+          <app-input-number
+            [input_control]="tipoCambio"
+            [input_placeholder]="'Ej. 6.96'"
+            [allow_decimals]="true"
+            [decimal_precision]="2"
+          >
+          </app-input-number>
+        </app-form-field>
+      </div>
+    </div>
   </div>
   <app-form-field label="Observaciones">
     <!-- Si tienes átomo textarea, úsalo. Sino usa nz-input -->

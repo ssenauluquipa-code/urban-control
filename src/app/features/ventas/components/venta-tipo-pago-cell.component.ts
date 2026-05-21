@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 
+/** Celda AG Grid: badge de tipo de pago y enlace al plan si es CUOTAS. */
 @Component({
   selector: 'app-venta-tipo-pago-cell',
   standalone: true,
@@ -85,6 +86,7 @@ export class VentaTipoPagoCellComponent implements ICellRendererAngularComp {
     this.cssClass = value ? value.toLowerCase() : '';
   }
 
+  /** Navega al detalle de la venta (plan de cuotas). */
   verPlanDePagos(event: MouseEvent): void {
     event.stopPropagation();
     
