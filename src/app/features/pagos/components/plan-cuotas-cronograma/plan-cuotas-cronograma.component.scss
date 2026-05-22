@@ -1,59 +1,219 @@
-// src/app/features/pagos/components/plan-cuotas-cronograma/plan-cuotas-cronograma.component.scss
+/* ==========================
+   CONTENEDOR PRINCIPAL
+========================== */
 
 .cronograma-scroll-container {
-    max-height: 440px; // Ajustamos sutilmente la altura para compensar el padding
-    overflow-y: auto;
-    
-    // 🔥 SOLUCIÓN: Agregamos 6px arriba y abajo para que el card tenga "aire" al elevarse o bajar
-    padding: 6px 0.5rem 6px 4px; 
-  
-    &::-webkit-scrollbar {
-      width: 5px;
-    }
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
-    }
+  width: 100%;
+  overflow: visible;
+  padding: .5rem;
+}
+
+/* ==========================
+   GRID RESPONSIVE
+========================== */
+
+.cuotas-grid {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns: repeat(auto-fit,
+      minmax(280px, 1fr));
+
+  overflow: visible;
+}
+
+/* ==========================
+   TARJETA DE CUOTA
+========================== */
+
+.cuota-card-item {
+  position: relative;
+  cursor: pointer;
+
+  background: #fff;
+
+  min-height: 180px;
+
+  border: 1px solid #e9ecef !important;
+  border-radius: 16px !important;
+
+  transition: all .25s ease;
+
+  z-index: 1;
+
+  overflow: visible;
+
+  &:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, .08),
+      0 4px 10px rgba(0, 0, 0, .05);
+
+    z-index: 100;
   }
-  
+}
+
+/* ==========================
+   CARD SELECCIONADA
+========================== */
+
+.active-selection {
+  border: 2px solid #1677ff !important;
+
+  background: rgba(22,
+      119,
+      255,
+      .03);
+
+  box-shadow:
+    0 6px 20px rgba(22,
+      119,
+      255,
+      .15);
+}
+
+/* ==========================
+   NÚMERO DE CUOTA
+========================== */
+
+.style-cuota-num {
+  font-size: 1rem;
+}
+
+/* ==========================
+   CAJA DE MONTO
+========================== */
+
+.monto-box {
+  padding: .8rem;
+
+  background: #f8f9fa;
+
+  border-radius: 12px;
+
+  border: 1px solid #f1f3f5;
+
+  h5 {
+    margin: 0;
+  }
+}
+
+/* ==========================
+   DETALLES
+========================== */
+
+.font-details {
+  font-size: .85rem;
+}
+
+/* ==========================
+   MONTOS
+========================== */
+
+.text-success {
+  font-weight: 600;
+}
+
+.text-danger {
+  font-weight: 600;
+}
+
+/* ==========================
+   TABLET
+========================== */
+
+@media (max-width: 992px) {
+
   .cuotas-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); // Mantenemos tus 3 columnas de alta densidad
-    gap: 0.85rem;
-    width: 100%;
+
+    grid-template-columns: repeat(auto-fit,
+        minmax(240px, 1fr));
+
   }
-  
+
+}
+
+/* ==========================
+   MÓVIL
+========================== */
+
+@media (max-width: 576px) {
+
+  .cronograma-scroll-container {
+    padding: 0;
+  }
+
+  .cuotas-grid {
+    grid-template-columns: 1fr;
+  }
+
   .cuota-card-item {
-    background: #ffffff;
-    border: 1px solid #e2e8f0 !important;
-    cursor: pointer;
-    
-    // 🔥 OPTIMIZACIÓN: will-change prepara al navegador para la animación y evita parpadeos (flickering)
-    will-change: transform, box-shadow, border-color;
-    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, border-color 0.15s ease-out;
-  
-    &:hover {
-      transform: translateY(-3px); // Efecto de suspensión limpio
-      
-      // Una sombra más suave para que no manche las tarjetas vecinas en la grilla densa
-      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08); 
-      border-color: #cbd5e1 !important;
-    }
-  
-    &.active-selection {
-      border-color: #12223b !important;
-      box-shadow: 0 0 0 1px #12223b;
-    }
+    min-height: auto;
   }
-  
-  .style-cuota-num {
-    font-size: 0.85rem;
-    letter-spacing: 0.3px;
-  }
-  
+
   .font-details {
-    font-size: 0.75rem;
+    flex-direction: column !important;
+
+    align-items: flex-start !important;
+
+    gap: .5rem;
   }
+
+  .style-cuota-num {
+    font-size: .95rem;
+  }
+
+  .monto-box h5 {
+    font-size: 1rem;
+  }
+
+}
+
+.disabled-cuota {
+
+  opacity: .65;
+
+  cursor: not-allowed !important;
+
+  background: #f8f9fa;
+
+  border-color: #dee2e6 !important;
+
+  pointer-events: auto;
+
+  &:hover {
+
+    transform: none !important;
+
+    box-shadow: none !important;
+
+  }
+
+}
+
+/* Evita resaltar selección */
+.disabled-cuota.active-selection {
+
+  background: #f8f9fa !important;
+
+  border-color: #dee2e6 !important;
+
+  box-shadow: none !important;
+
+}
+
+/* ==========================
+   MONITORES GRANDES
+========================== */
+
+@media (min-width: 1600px) {
+
+  .cuotas-grid {
+
+    grid-template-columns: repeat(auto-fit,
+        minmax(320px, 1fr));
+
+  }
+
+}

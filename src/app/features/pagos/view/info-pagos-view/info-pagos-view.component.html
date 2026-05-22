@@ -1,0 +1,149 @@
+<div class="pago-detalle-container">
+
+    <!-- BANNER ANULADO (Ocupa todo el ancho arriba) -->
+    @if (pagoDetalle && pagoDetalle.estado === 'ANULADO') {
+    <div class="alert-banner alert-danger mb-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <strong>Pago Anulado</strong>
+        </div>
+        <p class="mb-1"><strong>Motivo:</strong> {{ pagoDetalle.motivoAnulacion || 'No especificado' }}</p>
+        <p class="mb-0 text-muted small">
+            Por: {{ pagoDetalle.anuladoPorUser?.name }} —
+            {{ pagoDetalle.fechaAnulacion | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+    </div>
+    }
+
+    <!-- SECCIÓN SUPERIOR: GRID DE 2 COLUMNAS -->
+    <!-- Usamos row g-4 para separar las tarjetas horizontalmente -->
+    <div class="row">
+
+        <!-- COLUMNA IZQUIERDA: Información -->
+        <div class="col-12 col-lg-5">
+            <app-card-container title="Información del Pago">
+                <div class="row g-3">
+
+                    <!-- Fila 1: 2 columnas pequeñas -->
+                    <div class="col-6">
+                        <app-input-text-info label="Código Pago" [value]="pagoDetalle?.codigoPago" [loading]="loading"
+                            [bold]="true">
+                        </app-input-text-info>
+                    </div>
+
+                    <div class="col-6">
+                        <app-input-text-info label="Fecha de Registro"
+                            [value]="pagoDetalle?.fechaPago | date:'dd/MM/yyyy HH:mm'" [loading]="loading">
+                        </app-input-text-info>
+                    </div>
+
+                    <!-- Fila 2: 2 columnas pequeñas -->
+                    <div class="col-6">
+                        <app-input-text-info label="Método de Pago" [value]="pagoDetalle?.metodo" [loading]="loading">
+                        </app-input-text-info>
+                    </div>
+
+                    <div class="col-6">
+                        <app-input-text-info label="Moneda / TC" [value]="formatMonedaTC()" [loading]="loading">
+                        </app-input-text-info>
+                    </div>
+
+                    <!-- Separador interno -->
+                    <div class="col-12">
+                        <hr class="my-2" />
+                    </div>
+
+                    <!-- Fila 3: Monto y Estado -->
+                    <div class="col-12">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-muted small fw-bold">Monto Registrado</span>
+
+                            @if (!loading) {
+                            <app-currency-label [input_value]="pagoDetalle?.monto || 0"
+                                [currency]="pagoDetalle?.monedaRecibida || 'BS'" size="large">
+                            </app-currency-label>
+                            } @else {
+                            <span class="skeleton-line" style="width: 100px; height: 24px;"></span>
+                            }
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="text-muted small fw-bold">Estado</span>
+                            @if (!loading) {
+                            <app-badge-estado [estado]="pagoDetalle?.estado"></app-badge-estado>
+                            } @else {
+                            <span class="skeleton-line" style="width: 70px; height: 22px;"></span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Observaciones -->
+                    @if (pagoDetalle?.observaciones) {
+                    <div class="col-12 mt-3">
+                        <app-input-text-info label="Observaciones" [value]="pagoDetalle?.observaciones"
+                            [loading]="loading" [multiline]="true">
+                        </app-input-text-info>
+                    </div>
+                    }
+
+                </div>
+            </app-card-container>
+        </div>
+
+        <!-- COLUMNA DERECHA: Distribución -->
+        <div class="col-12 col-lg-7">
+            <app-card-container title="Distribución del Pago" class="h-100">
+                @if (!loading) {
+                @if ((pagoDetalle?.aplicaciones?.length ?? 0) > 0) {
+                <app-data-table [rowData]="pagoDetalle?.aplicaciones || []" [columnDefs]="aplicacionesCols"
+                    [loading]="loading" class="mb-4" [showCreate]="false" [actions]="[]">
+                </app-data-table>
+                } @else {
+                <nz-empty nzDescription="Sin aplicaciones a cuotas" [nzNotFoundContent]="'Pago a cuenta'"></nz-empty>
+                }
+                } @else {
+                <!-- Skeleton para la tarjeta de distribución -->
+                <div class="p-3">
+                    <div class="skeleton-line mb-2" style="width: 100%; height: 20px;"></div>
+                    <div class="skeleton-line mb-2" style="width: 80%; height: 20px;"></div>
+                    <div class="skeleton-line" style="width: 60%; height: 20px;"></div>
+                </div>
+                }
+            </app-card-container>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-lg-5">
+            <!-- SECCIÓN INFERIOR: Comprobantes (Ancho completo) -->
+            @if (!loading) {
+            <app-card-container title="Comprobantes">
+                @if ((pagoDetalle?.comprobantes?.length ?? 0) > 0) {
+                <div class="comprobantes-list">
+                    @for (file of pagoDetalle?.comprobantes; track file.id) {
+                    <div class="comprobante-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box">
+                                <i class="bi bi-file-earmark-pdf fs-4 text-danger"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold small">{{ file.originalName }}</div>
+                                <small class="text-muted">{{ formatBytes(file.sizeBytes) }}</small>
+                            </div>
+                        </div>
+                        <a nz-button nzType="default" nzSize="small" [href]="file.publicUrl" target="_blank">
+                            Descargar
+                        </a>
+                    </div>
+                    }
+                </div>
+                } @else {
+                <nz-empty nzDescription="Sin archivos adjuntos"></nz-empty>
+                }
+            </app-card-container>
+            }
+        </div>
+    </div>
+
+
+</div>

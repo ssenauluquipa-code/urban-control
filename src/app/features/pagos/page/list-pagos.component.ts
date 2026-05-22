@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ColDef, ICellRendererParams, CellClassParams } from "ag-grid-community";
+import { NzIconModule } from "ng-zorro-antd/icon";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -21,6 +22,7 @@ import { PageContainerComponent } from "src/app/shared/components/templates/page
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
 import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
 import { AnularPagoModalComponent } from "./anular-pago-modal.component";
+import { PagoIconCellComponent } from "../components/pago-icon-cell.component";
 
 @Component({
   selector: "app-list-pagos",
@@ -103,14 +105,15 @@ export class ListPagosComponent implements OnInit {
     },
     {
       field: "ventaId",
-      headerName: "Referencia Venta",
-      flex: 1,
-      minWidth: 200,
+      headerName: "Ref. Venta",
+      width: 100,
       filter: "agTextColumnFilter",
       floatingFilter: true,
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,
+      cellRenderer: PagoIconCellComponent,
+      cellStyle: { display: "flex", justifyContent: "center", alignItems: "center" },
     },
     {
       field: "monto",
@@ -160,6 +163,17 @@ export class ListPagosComponent implements OnInit {
       suppressHeaderFilterButton: true,
     },
     {
+      field: 'observaciones',
+      headerName: 'Observaciones',
+      minWidth: 200,
+      flex: 1,
+      filter: "agTextColumnFilter",
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
+    },
+    {
       field: "estado",
       headerName: "Estado",
       width: 120,
@@ -170,7 +184,7 @@ export class ListPagosComponent implements OnInit {
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,
     },
-    {
+    /* {
       field: "cantidadComprobantes",
       headerName: "Docs",
       width: 90,
@@ -185,7 +199,7 @@ export class ListPagosComponent implements OnInit {
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,
-    },
+    }, */
   ];
 
   ngOnInit(): void {
@@ -218,10 +232,7 @@ export class ListPagosComponent implements OnInit {
 
   onTableAction(event: ITableActionEvent<IPagos>): void {
     if (event.action === TableActionsEnum.ANULAR && event.row?.pagoId) {
-      if (event.row.estado === "ANULADO") {
-        this.notification.warning("Este pago ya se encuentra anulado.");
-        return;
-      }
+
 
       const modalRef = this.modalService.open(AnularPagoModalComponent, {
         size: "md",

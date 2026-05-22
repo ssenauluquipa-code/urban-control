@@ -8,8 +8,9 @@
     <div class="cuotas-grid">
 
       @for (cuota of cuotas; track cuota.id) {
-      <div class="cuota-card-item p-3 rounded-3 border position-relative transition-all"
-        [class.active-selection]="cuota.isSeleccionadaEfectiva" (click)="seleccionarCuotaHasta($index)">
+      <div class="cuota-card-item p-3 rounded-3 border" [class.active-selection]="cuota.isSeleccionadaEfectiva"
+        [class.disabled-cuota]="cuota.estado=== 'PAGADO'"
+        (click)="cuota.estado !== 'PAGADO' && seleccionarCuotaHasta($index)">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <span class="fw-bold text-dark style-cuota-num">Cuota {{ cuota.nroCuota }}</span>
 
@@ -28,8 +29,10 @@
         </div>
 
         <div class="d-flex justify-content-between text-muted mt-2 pt-2 border-top border-light font-details">
-          <span>Abonado: <strong class="text-success">{{ moneda }} {{ cuota.montoPagado | number:'1.2-2' }}</strong></span>
-          <span>Saldo: <strong [class.text-danger]="cuota.saldoPendiente > 0">{{ moneda }} {{ cuota.saldoPendiente | number:'1.2-2' }}</strong></span>
+          <span>Abonado: <strong class="text-success">{{ moneda }} {{ cuota.montoPagado | number:'1.2-2'
+              }}</strong></span>
+          <span>Saldo: <strong [class.text-danger]="cuota.saldoPendiente > 0">{{ moneda }} {{ cuota.saldoPendiente |
+              number:'1.2-2' }}</strong></span>
         </div>
       </div>
       } @empty {

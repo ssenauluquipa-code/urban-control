@@ -200,7 +200,9 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       }
       if (action === TableActionsEnum.UPLOAD_PHOTO || action === 'upload_photo') return true;
       if (action === TableActionsEnum.ANULAR || action === TableActionsEnum.VENTA) {
-        return data?.isActive === true;
+        // Mostrar botón si el pago no está ya anulado y el usuario tiene permiso
+        const canAnular = this.access.can(this.module as EAppModule, EAppAction.ANULAR);
+        return (data?.estado !== 'ANULADO') && canAnular;
       }
       return true;
     });

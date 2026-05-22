@@ -1,0 +1,87 @@
+.pago-detalle-container {
+  padding: 0;
+  // CAMBIO CLAVE:
+  // 1. Quitamos el max-width fijo de 800px.
+  // 2. Usamos max-width: 100% para que se estire hasta el borde.
+  // 3. Ponemos width: 100% para asegurar que ocupe el contenedor padre.
+  width: 100%;
+  max-width: 100%; 
+  
+  // Opcional: Si quieres que siga centrado pero más ancho en pantallas gigantes:
+  // max-width: 1200px; margin: 0 auto; 
+  // Pero para llenar el espacio vacío, 100% es mejor.
+}
+
+.alert-banner {
+  padding: 0.875rem 1rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+
+  &.alert-danger {
+    background-color: #fff2f0;
+    border-left-color: #ff4d4f;
+    color: #cf1322;
+  }
+}
+
+.skeleton-line {
+  display: inline-block;
+  border-radius: 6px;
+  background: #f0f0f0;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+// Aplicaciones
+.aplicaciones-list {
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.aplicacion-header {
+  background: #fafafa;
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #8c8c8c;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.aplicacion-row {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 0.88rem;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #fafcff; }
+}
+
+// Comprobantes
+.comprobantes-list {
+  .comprobante-item {
+    padding: 10px 0;
+    border-bottom: 1px dashed #e8e8e8;
+    &:last-child { border-bottom: none; }
+  }
+
+  .icon-box {
+    width: 38px;
+    height: 38px;
+    background: #fff1f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+}

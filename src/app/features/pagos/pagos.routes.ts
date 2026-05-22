@@ -27,4 +27,16 @@ export const PagosRoutes: Routes = [
         loadComponent: () =>
             import("./page/register-pagos.component").then((m) => m.RegisterPagosComponent),
     },
+    {
+        path: "detail/:id",
+        canActivate: [permissionGuard],
+        data: {
+            title: "Detalle de Pago",
+            breadcrumb: "Detalle",
+            module: EAppModule.PAGOS,
+            action: EAppAction.VIEW,
+        },
+        loadComponent: () =>
+            import("./page/info-pagos.component").then((m) => m.InfoPagosComponent),
+    },
 ];

@@ -1,58 +1,63 @@
-// src/app/features/pagos/view/register-pagos-view/register-pagos-view.component.scss
 :host {
-    display: block;
-  }
-  
-  .pago-form-layout {
-    .pago-sidebar-sticky {
-      position: sticky;
-      top: 1rem;
+  display: block;
+}
+
+.pago-form-layout {
+
+  .pago-sidebar-sticky {
+    position: sticky;
+    top: 1rem;
+
+    // En móvil NO debe ser sticky (está arriba y causaría problemas)
+    @media (max-width: 991.98px) {
+      position: static;
     }
-  
-    .pago-kicker {
-      display: inline-block;
-      margin-bottom: 0.35rem;
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #64748b;
+  }
+
+  .pago-kicker {
+    display: inline-block;
+    margin-bottom: 0.35rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    font-weight: 700;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 0.85rem;
+    border-bottom: 1px dashed #f1f5f9;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.highlighted {
+      font-size: 1rem;
       font-weight: 700;
+      color: #1e3467;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 0.5rem;
+      padding-top: 0.75rem;
     }
-  
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem 0;
-      font-size: 0.85rem;
-      border-bottom: 1px dashed #f1f5f9;
-  
-      &:last-child {
-        border-bottom: none;
-      }
-  
-      &.highlighted {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #1e3467;
-        border-top: 1px solid #e2e8f0;
-        margin-top: 0.5rem;
-        padding-top: 0.75rem;
-      }
-  
-      &.muted-row {
-        color: #64748b;
-        font-size: 0.8rem;
-      }
-    }
-  
-    .pago-upload-wrapper {
-      width: 100%;
-      
-      ::ng-deep .empty-container,
-      ::ng-deep .image-container {
-        height: 150px !important;
-        border-style: dashed !important;
-      }
+
+    &.muted-row {
+      color: #64748b;
+      font-size: 0.8rem;
     }
   }
+
+  .pago-upload-wrapper {
+    width: 100%;
+
+    ::ng-deep .empty-container,
+    ::ng-deep .image-container {
+      height: 150px !important;
+      border-style: dashed !important;
+    }
+  }
+}

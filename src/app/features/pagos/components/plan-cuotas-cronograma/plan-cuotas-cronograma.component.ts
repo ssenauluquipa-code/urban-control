@@ -45,6 +45,7 @@ export class PlanCuotasCronogramaComponent implements OnInit, OnChanges {
   @Input() moneda = 'USD'; // 🔥 Recibe la moneda del contrato
   @Output() onMontoCalculado = new EventEmitter<number>(); // 🔥 Emite el nuevo total acumulado al padre
   @Output() onCuotaSeleccionada = new EventEmitter<ICuotaCronogramaVisual | null>(); // 🔥 Emite la cuota seleccionada
+  @Output() onCuotasSeleccionadas = new EventEmitter<ICuotaCronogramaVisual[]>(); // 🔥 Emite el listado completo de cuotas seleccionadas
 
   cuotas: ICuotaCronogramaVisual[] = [];
   loading = false;
@@ -111,12 +112,16 @@ export class PlanCuotasCronogramaComponent implements OnInit, OnChanges {
       return { ...cuota, isSeleccionadaEfectiva: true };
     });
 
+    const seleccionadas = this.cuotas.filter(c => c.isSeleccionadaEfectiva);
+    this.onCuotasSeleccionadas.emit(seleccionadas);
+
     this.cdr.markForCheck();
   }
 
   private loadCuotasIfNeeded(): void {
     if (!this.ventaId) {
       this.cuotas = [];
+      this.onCuotasSeleccionadas.emit([]);
       return;
     }
 

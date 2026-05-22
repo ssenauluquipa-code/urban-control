@@ -9,7 +9,6 @@ import { CardContainerComponent } from 'src/app/shared/components/atoms/card-con
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
 import { InputTextareaComponent } from 'src/app/shared/components/atoms/input-textarea/input-textarea.component';
-import { InputDateComponent } from 'src/app/shared/components/atoms/input-date/input-date.component';
 import { InputNumberComponent } from 'src/app/shared/components/atoms/input-number/input-number.component';
 import { MetodoPagoSelectorComponent } from 'src/app/shared/components/molecules/metodo-pago-selector.component';
 import { SelectMonedaComponent } from 'src/app/shared/components/atoms/select-moneda.component';
@@ -33,7 +32,6 @@ export interface VentaPagoOption {
     FormFieldComponent,
     SelectDataComponent,
     InputTextareaComponent,
-    InputDateComponent,
     InputNumberComponent,
     MetodoPagoSelectorComponent,
     SelectMonedaComponent,
@@ -49,6 +47,7 @@ export class RegisterPagosViewComponent {
   @Input() ventaSeleccionada: IClientePagoById | null = null;
   @Input() comprobanteArchivo: File | null = null;
   @Output() onArchivoChanged = new EventEmitter<File | null>();
+  @Output() onCuotasSeleccionadas = new EventEmitter<any[]>();
 
   get clienteId(): FormControl {
     return this.form.get('clienteId') as FormControl;

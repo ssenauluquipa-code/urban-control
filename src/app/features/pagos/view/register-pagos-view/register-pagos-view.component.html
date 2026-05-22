@@ -1,14 +1,13 @@
 <form [formGroup]="form" class="fade-in pago-form-layout">
   <div class="container-fluid p-0">
-    <div class="row g-3 align-items-start">
+    <div class="row align-items-start">
 
-      <div class="col-xl-9 col-lg-8 col-12 order-2 order-lg-1">
+      <!-- CRONOGRAMA: izquierda en desktop, abajo en móvil -->
+      <div class="col-12 col-lg-8 col-xxl-9 order-2 order-lg-1">
         @if (ventaIdValue) {
-        <app-plan-cuotas-cronograma 
-          [ventaId]="ventaIdValue" 
-          [montoFormulario]="montoConvertidoParaCronograma"
-          [moneda]="ventaSeleccionada?.moneda || 'USD'"
-          (onMontoCalculado)="onMontoCalculadoHandler($event)">
+        <app-plan-cuotas-cronograma [ventaId]="ventaIdValue" [montoFormulario]="montoConvertidoParaCronograma"
+          [moneda]="ventaSeleccionada?.moneda || 'USD'" (onMontoCalculado)="onMontoCalculadoHandler($event)"
+          (onCuotasSeleccionadas)="onCuotasSeleccionadas.emit($event)">
         </app-plan-cuotas-cronograma>
         } @else {
         <app-card-container title="Cronograma de Cuotas">
@@ -21,69 +20,67 @@
         }
       </div>
 
-      <div class="col-xl-3 col-lg-4 col-12 order-1 order-lg-2 pago-sidebar-sticky">
-        <div class="d-flex flex-column gap-3">
+      <!-- SIDEBAR: derecha en desktop, arriba en móvil -->
+      <div class="col-12 col-lg-4 col-xxl-3 order-1 order-lg-2">
+        <div class="pago-sidebar-sticky d-flex flex-column">
 
+          <!-- Datos de la Operación -->
           <app-card-container title="Datos de la Operación">
-            <app-form-field label="Cliente" [required]="true">
-              <app-select-clientes [input_control]="clienteId" input_placeholder="Buscar cliente...">
-              </app-select-clientes>
-            </app-form-field>
+            <div class="d-flex flex-column">
 
-            @if (clienteId.value) {
-            <div class="mt-2">
+              <app-form-field label="Cliente" [required]="true">
+                <app-select-clientes [input_control]="clienteId" input_placeholder="Buscar cliente...">
+                </app-select-clientes>
+              </app-form-field>
+
+              @if (clienteId.value) {
               <app-form-field label="Contrato / Venta" [required]="true">
                 <app-select-data [inputControl]="ventaId" [itemList]="ventasOpciones" bindValue="ventaId"
                   bindLabel="label" [loading]="loadingVentas" [searchable]="true" placeholder="Seleccionar venta...">
                 </app-select-data>
               </app-form-field>
-            </div>
-            }
+              }
 
-            <div class="mt-2">
               <app-form-field label="Método de Pago" [required]="true">
                 <app-metodo-pago-selector [input_control]="metodo"></app-metodo-pago-selector>
               </app-form-field>
-            </div>
 
-            <div class="mt-2">
-              <app-form-field label="Moneda" [required]="true">
-                <app-select-moneda [input_control]="monedaRecibida" placeholder="Moneda">
-                </app-select-moneda>
-              </app-form-field>
-            </div>
+              <!-- Moneda + Monto en la misma fila -->
+              <div class="row">
+                <div class="col-5">
+                  <app-form-field label="Moneda" [required]="true">
+                    <app-select-moneda [input_control]="monedaRecibida" placeholder="Moneda">
+                    </app-select-moneda>
+                  </app-form-field>
+                </div>
+                <div class="col-7">
+                  <app-form-field label="Monto Recibido" [required]="true">
+                    <app-input-number [input_control]="monto" [allow_decimals]="true" input_placeholder="0.00">
+                    </app-input-number>
+                  </app-form-field>
+                </div>
+              </div>
 
-            <div class="mt-2">
-              <app-form-field label="Monto Recibido" [required]="true">
-                <app-input-number [input_control]="monto" [allow_decimals]="true" input_placeholder="0.00">
-                </app-input-number>
-              </app-form-field>
-            </div>
-
-            <!--  <div class="mt-2">
-              <app-form-field label="Fecha Transacción" [required]="true">
-                <app-input-date [input_control]="fechaPago"></app-input-date>
-              </app-form-field>
-            </div> -->
-
-            <div class="mt-2">
               <app-form-field label="Notas / Observaciones">
                 <app-input-textarea [input_control]="observaciones"
                   input_placeholder="Detalle de la transferencia, banco origen, etc...">
                 </app-input-textarea>
               </app-form-field>
+
             </div>
           </app-card-container>
 
+          <!-- Comprobante -->
           <app-card-container title="Comprobante Digital">
             <div class="pago-upload-wrapper py-2">
               <app-image-display [editable]="true" emptyText="Sin Comprobante"
-                emptyHint="Haz click aquí para adjuntar el comprobante o captura" (imageUpdated)="onImageUpload($event)"
+                emptyHint="Haz click aquí para adjuntar el comprobante" (imageUpdated)="onImageUpload($event)"
                 (imageDeleted)="onImageDeleted()">
               </app-image-display>
             </div>
           </app-card-container>
 
+          <!-- Resumen -->
           <app-card-container title="Resumen de Transacción">
             <span class="pago-kicker">Totales del recibo</span>
 

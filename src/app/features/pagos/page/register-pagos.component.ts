@@ -1,11 +1,12 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, finalize, switchMap, takeUntil } from 'rxjs';
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { EMetodoPago } from 'src/app/core/models/pagos.model';
 import { Moneda } from 'src/app/core/models/reserva.model';
-import { IClientePagoById } from 'src/app/core/models/venta.model';
+import { IClientePagoById, IVentaDetalle } from 'src/app/core/models/venta.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { PagosService } from 'src/app/core/services/pagos.service';
 import { VentaService } from 'src/app/core/services/venta.service';
@@ -33,8 +34,40 @@ import { RegisterPagosViewComponent, VentaPagoOption } from '../view/register-pa
         [ventaSeleccionada]="ventaSeleccionada"
         [comprobanteArchivo]="comprobanteArchivo"
         (onArchivoChanged)="onArchivoManejado($event)"
+        (onCuotasSeleccionadas)="onCuotasManejadas($event)"
       ></app-register-pagos-view>
     </app-page-container>
+
+    <ng-template #confirmTemplate>
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; font-size: 14px;">
+        <div style="background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+          <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px dashed #e5e7eb;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: #6b7280; font-weight: 500; font-size: 12px; text-transform: uppercase;">Propiedad</span>
+              <span style="color: #111827; font-weight: 600;">{{ loteInfo }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #6b7280; font-weight: 500; font-size: 12px; text-transform: uppercase;">Cliente</span>
+              <span style="color: #111827; font-weight: 600;">{{ ventaSeleccionada?.nombreCompletoCliente || 'N/A' }}</span>
+            </div>
+          </div>
+          <div style="background-color: #f9fafb; border-radius: 6px; padding: 12px; margin-bottom: 20px;">
+            <span style="display: block; color: #374151; font-size: 11px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Detalle de Cuotas a Pagar</span>
+            <div style="color: #4b5563; font-size: 13px; line-height: 1.4;" [innerHTML]="cuotasTexto"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <div style="font-weight: 600; color: #374151; font-size: 14px;">TOTAL A PAGAR</div>
+            <div style="background-color: #1e40af; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 800; font-size: 18px; letter-spacing: 0.5px;">
+              {{ totalTexto }}
+            </div>
+          </div>
+        </div>
+        <div style="margin-top: 16px; padding: 10px; background-color: #fff7ed; border-left: 4px solid #f97316; border-radius: 4px; color: #9a3412; font-size: 12px; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 14px;">ℹ️</span>
+          <span>Verifique que el monto y el comprobante coincidan con la transacción bancaria.</span>
+        </div>
+      </div>
+    </ng-template>
   `,
   styles: ``,
 })
@@ -45,6 +78,8 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private notification = inject(NotificationService);
   private cdr = inject(ChangeDetectorRef);
+  private modalService = inject(NzModalService);
+  @ViewChild('confirmTemplate', { static: true }) confirmTemplate!: TemplateRef<any>;
   private destroy$ = new Subject<void>();
 
   form!: FormGroup;
@@ -54,8 +89,13 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
 
   ventasOpciones: VentaPagoOption[] = [];
   ventaSeleccionada: IClientePagoById | null = null;
+  ventaDetalleCompleto: IVentaDetalle | null = null;
+  cuotasSeleccionadas: any[] = [];
   lastMoneda = 'USD';
 
+  loteInfo = '';
+  cuotasTexto = '';
+  totalTexto = '';
   ngOnInit(): void {
     this.initForm();
     this.escucharCambiosCliente();
@@ -79,7 +119,6 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.loading = true;
     const rawData = this.form.getRawValue();
 
     const pagoDto = {
@@ -90,6 +129,48 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       fechaPago: rawData.fechaPago,
       observaciones: rawData.observaciones,
     };
+
+    // Obtener información del lote
+    this.loteInfo = this.ventaDetalleCompleto
+      ? `Manzana ${this.ventaDetalleCompleto.manzana || 'N/A'} — Lote ${this.ventaDetalleCompleto.numeroLote || 'N/A'}`
+      : (this.ventaSeleccionada ? `Venta #${this.ventaSeleccionada.nroVenta}` : 'No seleccionado');
+
+    // Obtener información de las cuotas
+    this.cuotasTexto = '';
+    if (this.cuotasSeleccionadas.length > 0) {
+      const cuotasActivas = this.cuotasSeleccionadas.filter(c => c.estado !== 'PAGADO');
+      console.log(this.cuotasSeleccionadas, " cuotas marcadas");
+      const cuotasList = cuotasActivas.map(c => `#${c.nroCuota}`).join(', ');
+      this.cuotasTexto = `<span style="font-weight: 600;">Cuotas a pagar:</span> ${cuotasList}`;
+    } else {
+      this.cuotasTexto = `<span style="color: #ee9d01; font-weight: 500;">⚠️ Pago a cuenta / Saldo a favor (sin cuotas específicas)</span>`;
+    }
+
+    // Total
+    this.totalTexto = `${pagoDto.monedaRecibida} ${Number(pagoDto.monto).toFixed(2)}`;
+
+    // Abrir modal de confirmación
+    this.modalService.confirm({
+      nzTitle: 'Confirmar Registro de Pago',
+      nzWidth: 550,
+      nzContent: this.confirmTemplate,
+      nzOkText: 'Confirmar Registro',
+      nzCancelText: 'Cancelar',
+      nzOkType: 'primary',
+      nzOnOk: () => this.ejecutarRegistroPago(pagoDto),
+    });
+
+
+
+  }
+
+  onCuotasManejadas(cuotas: any[]): void {
+    this.cuotasSeleccionadas = cuotas;
+  }
+
+  private ejecutarRegistroPago(pagoDto: any): void {
+    this.loading = true;
+    this.cdr.markForCheck();
 
     this.pagosService
       .registrarPago(pagoDto)
@@ -114,7 +195,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           const errorMessage =
-             err.error?.message || 'Error al registrar el pago.';
+            err.error?.message || 'Error al registrar el pago.';
           this.notification.error(errorMessage);
         },
       });
@@ -164,6 +245,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       .subscribe((ventaId: string | null) => {
         if (!ventaId) {
           this.ventaSeleccionada = null;
+          this.ventaDetalleCompleto = null;
           this.cdr.markForCheck();
           return;
         }
@@ -178,6 +260,21 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
           );
           this.lastMoneda = this.ventaSeleccionada.moneda;
         }
+
+        // Cargar detalles de venta para obtener el lote y la manzana
+        this.ventaDetalleCompleto = null;
+        this.ventaService
+          .obtenerVentaPorId(ventaId)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (detalle) => {
+              this.ventaDetalleCompleto = detalle;
+              this.cdr.markForCheck();
+            },
+            error: () => {
+              this.ventaDetalleCompleto = null;
+            }
+          });
 
         this.cdr.markForCheck();
       });

@@ -16,7 +16,7 @@ export const APP_PERMISSIONS_MATRIX: PermissionMap = {
     [EAppModule.VENTAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.DELETE],
     [EAppModule.USUARIOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ACTIVATE, EAppAction.DEACTIVATE, EAppAction.DELETE, EAppAction.UPLOAD],
     [EAppModule.EMPRESA]: [EAppAction.VIEW, EAppAction.EDIT, EAppAction.CREATE],
-    [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE],
+    [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE, EAppAction.ANULAR],
   },
   [EAppRole.EDITOR]: {
     [EAppModule.CLIENTES]: [EAppAction.VIEW],
@@ -27,7 +27,7 @@ export const APP_PERMISSIONS_MATRIX: PermissionMap = {
     [EAppModule.RESERVAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.VENTA, EAppAction.DELETE],
     [EAppModule.VENTAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.DELETE],
     [EAppModule.EMPRESA]: [EAppAction.VIEW],
-    [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.CREATE],
+    [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR],
   }
 };
 
