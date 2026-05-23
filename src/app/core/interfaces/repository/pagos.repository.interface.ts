@@ -49,4 +49,10 @@ export interface IPagosRepository {
    * DELETE /api/v1/pagos/{id}/comprobantes
    */
   eliminarComprobantes(id: string, comprobanteIds: string[]): Observable<void>;
+
+  /**
+   * Registra un pago incluyendo un archivo de comprobante en la misma peticion.
+   * POST /api/v1/pagos/con-comprobante
+   */
+  crearConComprobante(data: FormData): Observable<IPagos>;
 }

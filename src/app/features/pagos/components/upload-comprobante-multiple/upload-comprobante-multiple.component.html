@@ -1,0 +1,26 @@
+<app-modal-container
+  [mainTitleModal]="'Comprobantes de Pago'"
+  [subtitle]="'Código de Pago: ' + codigoPago"
+  [saveButtonName]="'Finalizar'"
+  [saveButtonIcon]="'check-circle'"
+  [loading]="loading"
+  (SaveAction)="onSave()"
+  (CancelAction)="activeModal.dismiss()"
+>
+  <div class="comprobantes-upload-content">
+    <div class="info-alert mb-3" style="display: flex; align-items: center; gap: 8px; background-color: #e6f7ff; border: 1px solid #91d5ff; padding: 12px; border-radius: 4px;">
+      <span nz-icon nzType="info-circle" nzTheme="outline" style="color: #1890ff;"></span>
+      <p style="margin: 0; color: rgba(0, 0, 0, 0.85); font-size: 14px;">
+        Los archivos se guardan automáticamente al ser adjuntados. Formatos permitidos: PNG, JPG, WEBP y PDF.
+      </p>
+    </div>
+
+    <app-image-display-multiple
+      #imageDisplay
+      [editable]="true"
+      [maxFiles]="8"
+      [maxSizeMB]="5"
+      (filesChanged)="onFilesChanged($event)"
+    ></app-image-display-multiple>
+  </div>
+</app-modal-container>

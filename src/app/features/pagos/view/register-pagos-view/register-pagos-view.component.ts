@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 
 import { IClientePagoById } from 'src/app/core/models/venta.model';
 import { PlanCuotasCronogramaComponent } from '../../components/plan-cuotas-cronograma/plan-cuotas-cronograma.component';
-import { ImageDisplayComponent } from 'src/app/shared/components/atoms/image-display/image-display.component';
+import { ImageDisplayMultipleComponent } from 'src/app/shared/components/atoms/image-display-multiple/image-display-multiple.component';
 import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
@@ -27,7 +27,7 @@ export interface VentaPagoOption {
     CommonModule,
     ReactiveFormsModule,
     CardContainerComponent,
-    ImageDisplayComponent,
+    ImageDisplayMultipleComponent,
     PlanCuotasCronogramaComponent,
     FormFieldComponent,
     SelectDataComponent,
@@ -45,8 +45,7 @@ export class RegisterPagosViewComponent {
   @Input() ventasOpciones: VentaPagoOption[] = [];
   @Input() loadingVentas = false;
   @Input() ventaSeleccionada: IClientePagoById | null = null;
-  @Input() comprobanteArchivo: File | null = null;
-  @Output() onArchivoChanged = new EventEmitter<File | null>();
+  @Output() onArchivosChanged = new EventEmitter<File[]>();
   @Output() onCuotasSeleccionadas = new EventEmitter<any[]>();
 
   get clienteId(): FormControl {
@@ -137,11 +136,5 @@ export class RegisterPagosViewComponent {
     this.monto.setValue(Number(montoConvertido.toFixed(2)));
   }
 
-  onImageUpload(file: File): void {
-    this.onArchivoChanged.emit(file);
-  }
 
-  onImageDeleted(): void {
-    this.onArchivoChanged.emit(null);
-  }
 }

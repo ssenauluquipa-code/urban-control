@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, finalize, switchMap, takeUntil } from 'rxjs';
+import { Subject, finalize, takeUntil } from 'rxjs';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { EMetodoPago } from 'src/app/core/models/pagos.model';
@@ -32,8 +32,8 @@ import { RegisterPagosViewComponent, VentaPagoOption } from '../view/register-pa
         [ventasOpciones]="ventasOpciones"
         [loadingVentas]="loadingVentas"
         [ventaSeleccionada]="ventaSeleccionada"
-        [comprobanteArchivo]="comprobanteArchivo"
-        (onArchivoChanged)="onArchivoManejado($event)"
+
+        (onArchivosChanged)="onArchivosManejado($event)"
         (onCuotasSeleccionadas)="onCuotasManejadas($event)"
       ></app-register-pagos-view>
     </app-page-container>
@@ -85,7 +85,8 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   loading = false;
   loadingVentas = false;
-  comprobanteArchivo: File | null = null;
+  // Updated to handle multiple comprobante files
+  comprobanteArchivos: File[] = [];
 
   ventasOpciones: VentaPagoOption[] = [];
   ventaSeleccionada: IClientePagoById | null = null;
@@ -108,8 +109,8 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onArchivoManejado(file: File | null): void {
-    this.comprobanteArchivo = file;
+  onArchivosManejado(files: File[]): void {
+    this.comprobanteArchivos = files;
   }
 
   onGuardarClick(): void {
@@ -173,16 +174,8 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
 
     this.pagosService
-      .registrarPago(pagoDto)
+      .registrarPagoConArchivo(pagoDto, this.comprobanteArchivos)
       .pipe(
-        switchMap((nuevoPago) => {
-          if (this.comprobanteArchivo && nuevoPago.pagoId) {
-            const formData = new FormData();
-            formData.append('file', this.comprobanteArchivo);
-            return this.pagosService.agregarComprobantes(nuevoPago.pagoId, formData);
-          }
-          return [nuevoPago];
-        }),
         finalize(() => {
           this.loading = false;
           this.cdr.markForCheck();

@@ -10,6 +10,7 @@ import { CardContainerComponent } from 'src/app/shared/components/atoms/card-con
 import { CurrencyLabelComponent } from 'src/app/shared/components/atoms/currency-label/currency-label.component';
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
+import { ImageDisplayMultipleComponent } from 'src/app/shared/components/atoms/image-display-multiple/image-display-multiple.component';
 
 @Component({
   selector: 'app-info-pagos-view',
@@ -23,24 +24,28 @@ import { DataTableComponent } from "src/app/shared/components/organisms/data-tab
     NzButtonModule,
     CommonModule,
     ReactiveFormsModule,
-    DataTableComponent
+    DataTableComponent,
+    ImageDisplayMultipleComponent
   ],
   templateUrl: './info-pagos-view.component.html',
   styleUrl: './info-pagos-view.component.scss',
 })
 export class InfoPagosViewComponent {
   // Column definitions for aplicaciones table
-    public aplicacionesCols: ColDef[] = [
-    { headerName: 'Nro. Cuota', field: 'nroCuota', width: 100 },
+  public aplicacionesCols: ColDef[] = [
+    {
+      headerName: 'Nro. Cuota', field: 'nroCuota', width: 100, sort: 'desc',
+      sortIndex: 0,
+    },
     {
       headerName: 'Vencimiento',
       field: 'fechaVencimiento',
       width: 150,
       valueFormatter: (params) => new Date(params.value).toLocaleDateString('es-ES'),
     },
-    { headerName: 'Monto Cuota', field: 'montoCuota', width: 130, valueFormatter: (params) => this.formatCurrency(params.value) },
-    { headerName: 'Aplicado', field: 'montoAplicado', width: 130, valueFormatter: (params) => this.formatCurrency(params.value) },
-    { headerName: 'Pagado', field: 'montoPagadoCuota', width: 130, valueFormatter: (params) => this.formatCurrency(params.value) },
+    { headerName: 'Monto Cuota', field: 'montoCuota', width: 120, valueFormatter: (params) => this.formatCurrency(params.value) },
+    { headerName: 'Aplicado', field: 'montoAplicado', width: 110, valueFormatter: (params) => this.formatCurrency(params.value) },
+    { headerName: 'Pagado', field: 'montoPagadoCuota', width: 110, valueFormatter: (params) => this.formatCurrency(params.value) },
     { headerName: 'Saldo Pendiente', field: 'saldoPendienteCuota', width: 130, valueFormatter: (params) => this.formatCurrency(params.value) },
     { headerName: 'Estado', field: 'estadoCuota', width: 120 },
   ];
@@ -51,8 +56,20 @@ export class InfoPagosViewComponent {
   }
 
   // Recibimos el loading del padre
-  @Input() pagoDetalle: IPagoDetalle | null = null;
+  private _pagoDetalle: IPagoDetalle | null = null;
+
+  @Input()
+  set pagoDetalle(val: IPagoDetalle | null) {
+    this._pagoDetalle = val;
+    this.updateMappedComprobantes();
+  }
+  get pagoDetalle(): IPagoDetalle | null {
+    return this._pagoDetalle;
+  }
+
   @Input() loading: boolean = false;
+  
+  mappedComprobantes: any[] = [];
 
   formatBytes(bytes: number, decimals = 2): string {
     if (!+bytes) return '0 Bytes';
@@ -72,5 +89,25 @@ export class InfoPagosViewComponent {
     const moneda = this.pagoDetalle.monedaRecibida ?? '';
     const tc = this.pagoDetalle.tipoCambio ? ` (TC: ${this.pagoDetalle.tipoCambio})` : '';
     return `${moneda}${tc}`;
+  }
+
+  private updateMappedComprobantes(): void {
+    if (!this._pagoDetalle?.comprobantes) {
+      this.mappedComprobantes = [];
+      return;
+    }
+    
+    this.mappedComprobantes = this._pagoDetalle.comprobantes.map(item => {
+      const esPdf = item.originalName?.endsWith('.pdf') || item.mimeType === 'application/pdf';
+      return {
+        uid: item.id,
+        name: item.originalName || 'Comprobante',
+        status: 'done',
+        url: item.publicUrl,
+        ['thumbUrl']: esPdf ? 'assets/icons/pdf-placeholder.svg' : item.publicUrl,
+        // Mock originFileObj para el preview
+        originFileObj: new File([], item.originalName || 'Comprobante')
+      };
+    });
   }
 }

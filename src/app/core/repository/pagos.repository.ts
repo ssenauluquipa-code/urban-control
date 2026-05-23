@@ -38,8 +38,14 @@ export class PagosRepository implements IPagosRepository {
     return this.http.get<IPagoDetalle>(`${this.apiUrl}/${id}`);
   }
 
+  /** Anula logicamente el ultimo pago activo */
   anular(id: string, motivoAnulacion: string): Observable<IPagoDetalle> {
     return this.http.patch<IPagoDetalle>(`${this.apiUrl}/${id}/anular`, { motivoAnulacion });
+  }
+
+  /** Registra pago con comprobante en una única petición multipart/form-data */
+  crearConComprobante(data: FormData): Observable<IPagos> {
+    return this.http.post<IPagos>(this.apiUrl, data);
   }
 
   agregarComprobantes(id: string, data: FormData): Observable<IPagoComprobante[]> {

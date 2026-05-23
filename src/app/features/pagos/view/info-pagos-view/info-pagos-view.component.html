@@ -15,16 +15,20 @@
     </div>
     }
 
-    <!-- SECCIÓN SUPERIOR: GRID DE 2 COLUMNAS -->
-    <!-- Usamos row g-4 para separar las tarjetas horizontalmente -->
+    <!-- SECCIÓN PRINCIPAL: UNA SOLA FILA CON 2 COLUMNAS -->
+    <!-- Usamos g-4 para espaciado entre columnas -->
     <div class="row">
 
-        <!-- COLUMNA IZQUIERDA: Información -->
-        <div class="col-12 col-lg-5">
+        <!-- COLUMNA IZQUIERDA: INFO + COMPROBANTES (APILADOS) -->
+        <!-- d-flex flex-column hace que los hijos se apilen uno sobre otro -->
+        <!-- h-100 asegura que esta columna tenga la misma altura que la derecha -->
+        <div class="col-12 col-lg-5 d-flex flex-column h-100">
+
+            <!-- 1. Tarjeta Información -->
             <app-card-container title="Información del Pago">
                 <div class="row g-3">
 
-                    <!-- Fila 1: 2 columnas pequeñas -->
+                    <!-- Fila 1 -->
                     <div class="col-6">
                         <app-input-text-info label="Código Pago" [value]="pagoDetalle?.codigoPago" [loading]="loading"
                             [bold]="true">
@@ -37,7 +41,7 @@
                         </app-input-text-info>
                     </div>
 
-                    <!-- Fila 2: 2 columnas pequeñas -->
+                    <!-- Fila 2 -->
                     <div class="col-6">
                         <app-input-text-info label="Método de Pago" [value]="pagoDetalle?.metodo" [loading]="loading">
                         </app-input-text-info>
@@ -48,7 +52,6 @@
                         </app-input-text-info>
                     </div>
 
-                    <!-- Separador interno -->
                     <div class="col-12">
                         <hr class="my-2" />
                     </div>
@@ -77,7 +80,6 @@
                         </div>
                     </div>
 
-                    <!-- Observaciones -->
                     @if (pagoDetalle?.observaciones) {
                     <div class="col-12 mt-3">
                         <app-input-text-info label="Observaciones" [value]="pagoDetalle?.observaciones"
@@ -88,15 +90,34 @@
 
                 </div>
             </app-card-container>
+
+            <!-- 2. Tarjeta Comprobantes (Justo debajo, llena el espacio) -->
+            <!-- flex-grow-1 hace que esta tarjeta ocupe el espacio restante de la columna -->
+            @if (!loading) {
+            <app-card-container title="Comprobantes" class="flex-grow-1">
+                @if ((pagoDetalle?.comprobantes?.length ?? 0) > 0) {
+                <div class="comprobantes-list">
+                    <app-image-display-multiple 
+                        [editable]="false" 
+                        [initialFiles]="mappedComprobantes">
+                    </app-image-display-multiple>
+                </div>
+                } @else {
+                <nz-empty nzDescription="Sin archivos adjuntos" [nzNotFoundContent]="'Sin comprobantes'"></nz-empty>
+                }
+            </app-card-container>
+            }
+
         </div>
 
-        <!-- COLUMNA DERECHA: Distribución -->
+        <!-- COLUMNA DERECHA: Distribución del Pago -->
+        <!-- h-100 para igualar altura con la columna izquierda -->
         <div class="col-12 col-lg-7">
-            <app-card-container title="Distribución del Pago" class="h-100">
+            <app-card-container title="Distribución del Pago">
                 @if (!loading) {
                 @if ((pagoDetalle?.aplicaciones?.length ?? 0) > 0) {
                 <app-data-table [rowData]="pagoDetalle?.aplicaciones || []" [columnDefs]="aplicacionesCols"
-                    [loading]="loading" class="mb-4" [showCreate]="false" [actions]="[]">
+                    [loading]="loading" [showCreate]="false" [actions]="[]">
                 </app-data-table>
                 } @else {
                 <nz-empty nzDescription="Sin aplicaciones a cuotas" [nzNotFoundContent]="'Pago a cuenta'"></nz-empty>
@@ -111,39 +132,7 @@
                 }
             </app-card-container>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-12 col-lg-5">
-            <!-- SECCIÓN INFERIOR: Comprobantes (Ancho completo) -->
-            @if (!loading) {
-            <app-card-container title="Comprobantes">
-                @if ((pagoDetalle?.comprobantes?.length ?? 0) > 0) {
-                <div class="comprobantes-list">
-                    @for (file of pagoDetalle?.comprobantes; track file.id) {
-                    <div class="comprobante-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="icon-box">
-                                <i class="bi bi-file-earmark-pdf fs-4 text-danger"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold small">{{ file.originalName }}</div>
-                                <small class="text-muted">{{ formatBytes(file.sizeBytes) }}</small>
-                            </div>
-                        </div>
-                        <a nz-button nzType="default" nzSize="small" [href]="file.publicUrl" target="_blank">
-                            Descargar
-                        </a>
-                    </div>
-                    }
-                </div>
-                } @else {
-                <nz-empty nzDescription="Sin archivos adjuntos"></nz-empty>
-                }
-            </app-card-container>
-            }
-        </div>
     </div>
-
 
 </div>

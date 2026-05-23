@@ -1,0 +1,27 @@
+<div class="clearfix uploader-pictures-wall">
+  <nz-upload
+    nzListType="picture-card"
+    [(nzFileList)]="fileList"
+    [nzDisabled]="!editable"
+    [nzShowButton]="editable && fileList.length < maxFiles"
+    [nzPreview]="handlePreview"
+    [nzBeforeUpload]="beforeUpload"
+    [nzRemove]="handleRemove"
+  >
+    <div>
+      <span nz-icon nzType="plus" class="upload-icon"></span>
+      <div class="upload-text mt-2">Adjuntar</div>
+    </div>
+  </nz-upload>
+
+  <nz-modal
+    [nzVisible]="previewVisible"
+    [nzContent]="modalContent"
+    [nzFooter]="null"
+    (nzOnCancel)="previewVisible = false"
+  >
+    <ng-template #modalContent>
+      <img [src]="previewImage" [ngStyle]="{ width: '100%' }" alt="Vista previa del comprobante" />
+    </ng-template>
+  </nz-modal>
+</div>

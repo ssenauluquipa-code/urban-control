@@ -73,10 +73,12 @@
           <!-- Comprobante -->
           <app-card-container title="Comprobante Digital">
             <div class="pago-upload-wrapper py-2">
-              <app-image-display [editable]="true" emptyText="Sin Comprobante"
-                emptyHint="Haz click aquí para adjuntar el comprobante" (imageUpdated)="onImageUpload($event)"
-                (imageDeleted)="onImageDeleted()">
-              </app-image-display>
+              <app-image-display-multiple
+              [editable]="true"
+              [maxFiles]="5"
+              [maxSizeMB]="5"
+              (filesChanged)="onArchivosChanged.emit($event)"
+            ></app-image-display-multiple>
             </div>
           </app-card-container>
 

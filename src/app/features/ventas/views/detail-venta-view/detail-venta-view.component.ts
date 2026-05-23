@@ -7,6 +7,7 @@ import { DataTableComponent } from 'src/app/shared/components/organisms/data-tab
 import { ColDef } from 'ag-grid-community';
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { ILote } from 'src/app/core/models/lote/lote.model';
 
 /** Vista de solo lectura: datos de venta, saldo y tabla de cuotas. */
 @Component({
@@ -26,9 +27,10 @@ export class DetailVentaViewComponent {
   @Input() venta: IVentaDetalle | null = null;
   @Input() cuotas: IVentaCuota[] = [];
   @Input() saldo: IVentaSaldoResumen | null = null;
+  @Input() lotes: ILote | null = null;
   @Input() loading = false;
 
-  constructor(private currencyPipe: CurrencyPipe, private datePipe: DatePipe) {}
+  constructor(private currencyPipe: CurrencyPipe, private datePipe: DatePipe) { }
 
   columnDefs: ColDef[] = [
     {
@@ -44,7 +46,7 @@ export class DetailVentaViewComponent {
       minWidth: 120,
       type: 'rightAligned',
       cellStyle: { 'display': 'flex', 'align-items': 'center', 'justify-content': 'flex-end' },
-      valueFormatter: (params) => this.currencyPipe.transform(params.value, 'USD') || ''
+      valueFormatter: (params) => this.currencyPipe.transform(params.value, this.venta?.moneda ?? 'USD') || ''
     },
     {
       field: 'montoPagado',
@@ -53,7 +55,7 @@ export class DetailVentaViewComponent {
       minWidth: 100,
       type: 'rightAligned',
       cellStyle: { 'display': 'flex', 'align-items': 'center', 'justify-content': 'flex-end' },
-      valueFormatter: (params) => this.currencyPipe.transform(params.value, 'USD') || ''
+      valueFormatter: (params) => this.currencyPipe.transform(params.value, this.venta?.moneda ?? 'USD') || ''
     },
     {
       field: 'saldoPendiente',
@@ -62,7 +64,7 @@ export class DetailVentaViewComponent {
       minWidth: 100,
       type: 'rightAligned',
       cellStyle: { 'display': 'flex', 'align-items': 'center', 'justify-content': 'flex-end', 'color': '#e74c3c', 'font-weight': 'bold' },
-      valueFormatter: (params) => this.currencyPipe.transform(params.value, 'USD') || ''
+      valueFormatter: (params) => this.currencyPipe.transform(params.value, this.venta?.moneda ?? 'USD') || ''
     },
     {
       field: 'fechaVencimiento',
@@ -89,8 +91,8 @@ export class DetailVentaViewComponent {
   /** Nombres de cotitulares separados por coma. */
   get cotitulares(): string {
     const cotitulares = this.venta?.clientes.filter(c => c.rol === 'COTITULAR');
-    return cotitulares && cotitulares.length > 0 
-      ? cotitulares.map(c => c.nombre).join(', ') 
+    return cotitulares && cotitulares.length > 0
+      ? cotitulares.map(c => c.nombre).join(', ')
       : 'Ninguno';
   }
 }

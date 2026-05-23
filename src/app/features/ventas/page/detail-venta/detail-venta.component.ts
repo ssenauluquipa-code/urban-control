@@ -5,10 +5,11 @@ import { VentaService } from 'src/app/core/services/venta.service';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DetailVentaViewComponent } from '../../views/detail-venta-view/detail-venta-view.component';
 import { IVentaDetalle, IVentaCuota, IVentaSaldoResumen } from 'src/app/core/models/venta.model';
-import { finalize, forkJoin } from 'rxjs';
 import { NotificationService } from 'src/app/core/services/notification.service';
+import { LoteService } from 'src/app/core/services/proyectos/lote.service';
+import { ILote } from 'src/app/core/models/lote/lote.model';
+import { forkJoin, of, switchMap, finalize } from 'rxjs';
 
-/** Página de detalle: carga venta, cuotas y saldo en paralelo. */
 @Component({
   selector: 'app-detail-venta',
   standalone: true,
@@ -26,6 +27,7 @@ import { NotificationService } from 'src/app/core/services/notification.service'
         [venta]="venta"
         [cuotas]="cuotas"
         [saldo]="saldo"
+        [lotes]="lotes"
         [loading]="loading"
       ></app-detail-venta-view>
     </app-page-container>
@@ -36,11 +38,13 @@ export class DetailVentaComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private ventaService = inject(VentaService);
+  private loteService = inject(LoteService);
   private notification = inject(NotificationService);
 
   public venta: IVentaDetalle | null = null;
   public cuotas: IVentaCuota[] = [];
   public saldo: IVentaSaldoResumen | null = null;
+  public lotes: ILote | null = null;
   public loading = false;
 
   ngOnInit(): void {
@@ -52,28 +56,30 @@ export class DetailVentaComponent implements OnInit {
     });
   }
 
-  /** Obtiene detalle, plan de cuotas y resumen de saldo por ventaId. */
   private loadData(id: string): void {
     this.loading = true;
-
-    // Usamos forkJoin para cargar ambos servicios en paralelo
-    forkJoin({
-      venta: this.ventaService.obtenerVentaPorId(id),
-      cuotas: this.ventaService.obtenerCuotasPorVenta(id),
-      saldo: this.ventaService.obtenerSaldoPorVenta(id)
-    })
-      .pipe(finalize(() => this.loading = false))
-      .subscribe({
-        next: (res) => {
-          this.venta = res.venta;
-          this.cuotas = res.cuotas;
-          this.saldo = res.saldo;
-        },
-        error: () => {
-          this.notification.error('Error al cargar los detalles de la venta');
-          this.goBack();
-        }
-      });
+    this.ventaService.obtenerVentaPorId(id).pipe(
+      switchMap(venta => {
+        this.venta = venta;
+        const loteId = venta?.loteId;
+        const cuotas$ = this.ventaService.obtenerCuotasPorVenta(id);
+        const saldo$ = this.ventaService.obtenerSaldoPorVenta(id);
+        const lote$ = loteId ? this.loteService.getLoteById(loteId) : of(null);
+        return forkJoin({ cuotas: cuotas$, saldo: saldo$, lote: lote$ });
+      }),
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: res => {
+        this.cuotas = res.cuotas;
+        this.saldo = res.saldo;
+        this.lotes = res.lote;
+      },
+      error: err => {
+        const message = err?.error?.message ?? 'Error al cargar los detalles de la venta';
+        this.notification.error(message);
+        this.goBack();
+      }
+    });
   }
 
   /** Vuelve al listado de ventas. */

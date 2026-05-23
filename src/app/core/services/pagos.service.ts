@@ -17,52 +17,58 @@ export class PagosService {
     @Inject("IPagosRepository") private repo: IPagosRepository
   ) {}
 
-  /**
-   * Registra un pago sobre una venta activa.
-   */
+  /** Registra un pago sin comprobante */
   registrarPago(data: IPagosDto): Observable<IPagos> {
     return this.repo.create(data);
   }
 
-  /**
-   * Lista pagos aplicando filtros de venta, metodo y rango de fechas.
-   */
+  /** Lista pagos aplicando filtros */
   listarPagos(filters?: IPagosQueryFilters): Observable<IPagos[]> {
     return this.repo.getAll(filters);
   }
 
-  /**
-   * Obtiene el detalle de un pago y sus aplicaciones a cuotas.
-   */
+  /** Obtiene detalle de un pago */
   obtenerPagoPorId(id: string): Observable<IPagoDetalle> {
     return this.repo.getById(id);
   }
 
-  /**
-   * Anula logicamente el ultimo pago activo de una venta y revierte saldos.
-   */
+  /** Anula lógicamente un pago */
   anularPago(id: string, motivoAnulacion: string): Observable<IPagoDetalle> {
     return this.repo.anular(id, motivoAnulacion);
   }
 
-  /**
-   * Agrega uno o varios comprobantes PDF o imagen a un pago existente.
-   */
+  /** Agrega comprobantes a un pago existente */
   agregarComprobantes(id: string, data: FormData): Observable<IPagoComprobante[]> {
     return this.repo.agregarComprobantes(id, data);
   }
 
-  /**
-   * Lista los comprobantes adjuntos a un pago.
-   */
+  /** Lista los comprobantes de un pago */
   listarComprobantes(id: string): Observable<IPagoComprobante[]> {
     return this.repo.getComprobantes(id);
   }
 
-  /**
-   * Elimina uno o varios comprobantes adjuntos al pago.
-   */
+  /** Elimina comprobantes de un pago */
   eliminarComprobantes(id: string, comprobanteIds: string[]): Observable<void> {
     return this.repo.eliminarComprobantes(id, comprobanteIds);
+  }
+
+  /** Registra un pago con uno o varios archivos adjuntos */
+  registrarPagoConArchivo(pagoData: IPagosDto, archivos: File[]): Observable<IPagos> {
+    const formData = new FormData();
+    formData.append('ventaId', pagoData.ventaId);
+    formData.append('monto', pagoData.monto.toString());
+    formData.append('monedaRecibida', pagoData.monedaRecibida);
+    formData.append('metodo', pagoData.metodo);
+    // ISO string for fechaPago
+    const fecha = new Date(pagoData.fechaPago);
+    formData.append('fechaPago', fecha.toISOString());
+    if (pagoData.observaciones) {
+      formData.append('observaciones', pagoData.observaciones);
+    }
+    // Append each file; backend should handle multiple "comprobantes" entries
+    archivos?.forEach((file) => {
+      formData.append('comprobantes', file);
+    });
+    return this.repo.crearConComprobante(formData);
   }
 }

@@ -14,7 +14,8 @@ export enum TableActionsEnum {
   BLOQUEADO = 'bloqueado',
   SET_AVAILABLE = 'set_available',
   VENTA = 'venta',
-  MASS_LOAD = 'MASS_LOAD'
+  MASS_LOAD = 'MASS_LOAD',
+  COMPROBANTE = 'comprobante',
 }
 
 export type TableAction = TableActionsEnum | string;

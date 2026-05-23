@@ -1,0 +1,57 @@
+:host ::ng-deep {
+  .uploader-pictures-wall {
+    // Contenedor principal en Flexbox dinámico
+    .ant-upload-picture-card-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    // Alineación limpia de la lista de miniaturas hacia la izquierda
+    .ant-upload-list-picture-card {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      float: none !important;
+      margin: 0;
+    }
+
+    .ant-upload-list-picture-card-container {
+      display: inline-block;
+      float: none !important;
+      margin: 0 !important;
+    }
+
+    // Botón de adjuntar dinámico, se mueve siempre al extremo derecho
+    .ant-upload.ant-upload-select-picture-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      float: none !important;
+      margin: 0 !important;
+      cursor: pointer;
+    }
+
+    // Ocultamos el label con el nombre del archivo
+    .ant-upload-list-picture-card-container .ant-upload-list-item-name {
+      display: none !important;
+    }
+
+    // Ajustamos la miniatura para que cubra la tarjeta completa
+    .ant-upload-list-picture-card .ant-upload-list-item-thumbnail {
+      line-height: 1;
+      height: 100%;
+      width: 100%;
+      
+      img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    
+    .ant-upload-list-item-info {
+      padding: 0 !important;
+    }
+  }
+}

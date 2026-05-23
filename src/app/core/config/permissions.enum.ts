@@ -31,5 +31,6 @@ export enum EAppAction {
     IMPORT = 'IMPORT',
     PRINT = 'PRINT',
     VENTA = 'VENTA', // Esta es real de tus tablas
-    MASS_LOAD = 'MASS_LOAD'
+    MASS_LOAD = 'MASS_LOAD',
+    COMPROBANTE = 'COMPROBANTE'
 }

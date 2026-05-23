@@ -314,10 +314,10 @@ export class ListVentasComponent implements OnInit {
       return;
     }
 
-    if (event.action === TableActionsEnum.EDIT && event.row?.ventaId) {
+    /* if (event.action === TableActionsEnum.EDIT && event.row?.ventaId) {
       this.router.navigate(["/ventas/editar", event.row.ventaId]);
       return;
-    }
+    } */
 
     if (event.action === TableActionsEnum.VIEW && event.row?.ventaId) {
       this.router.navigate(["/ventas/detail", event.row.ventaId]);

@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ColDef, ICellRendererParams, CellClassParams } from "ag-grid-community";
-import { NzIconModule } from "ng-zorro-antd/icon";
+import { ColDef, CellClassParams } from "ag-grid-community";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -23,6 +22,7 @@ import { DataTableComponent } from "src/app/shared/components/organisms/data-tab
 import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
 import { AnularPagoModalComponent } from "./anular-pago-modal.component";
 import { PagoIconCellComponent } from "../components/pago-icon-cell.component";
+import { UploadComprobanteMultipleComponent } from "../components/upload-comprobante-multiple/upload-comprobante-multiple.component";
 
 @Component({
   selector: "app-list-pagos",
@@ -48,7 +48,8 @@ import { PagoIconCellComponent } from "../components/pago-icon-cell.component";
         [showCreate]="false"
         [actions]="[
           tableActionEnum.VIEW,
-          tableActionEnum.ANULAR
+          tableActionEnum.ANULAR,
+          tableActionEnum.COMPROBANTE
         ]"
         (actionClicked)="onTableAction($event)"
       >
@@ -73,6 +74,7 @@ export class ListPagosComponent implements OnInit {
   public proyectoId: string | null = null;
 
   columnDefs: ColDef[] = [
+
     {
       field: "fechaPago",
       headerName: "Fecha Pago",
@@ -210,6 +212,22 @@ export class ListPagosComponent implements OnInit {
     });
   }
 
+  /**
+   * Abre el modal para cargar/comprobar comprobantes de un pago.
+   */
+  abrirCargaComprobantes(pago: IPagos): void {
+    const modalRef = this.modalService.open(UploadComprobanteMultipleComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+    });
+    modalRef.componentInstance.pagoId = pago.pagoId;
+    modalRef.componentInstance.codigoPago = pago.codigoPago;
+    modalRef.result
+      .then(() => this.loadPagos())
+      .catch(() => {});
+  }
+
   loadPagos(): void {
     this.loading = true;
 
@@ -255,6 +273,9 @@ export class ListPagosComponent implements OnInit {
 
     if (event.action === TableActionsEnum.VIEW && event.row?.pagoId) {
       this.router.navigate(["/pagos/detail", event.row.pagoId]);
+    }
+    if(event.action === TableActionsEnum.COMPROBANTE && event.row?.pagoId){
+      this.abrirCargaComprobantes(event.row);
     }
   }
 
