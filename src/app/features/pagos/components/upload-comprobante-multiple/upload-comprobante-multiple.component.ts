@@ -124,7 +124,6 @@ export class UploadComprobanteMultipleComponent implements OnInit, AfterViewInit
    * Ejecuta todas las operaciones pendientes cuando el usuario confirma.
    */
   onSave(): void {
-    console.log('[onSave] Iniciando guardado...');
 
     const currentFiles = this.imageDisplayComponent?.fileList || [];
     const serverIds = new Set(this.mapaComprobantesServidor.map(x => x.id));
@@ -141,39 +140,30 @@ export class UploadComprobanteMultipleComponent implements OnInit, AfterViewInit
       .map(x => x.id)
       .filter(id => !currentIds.has(id));
 
-    console.log('[onSave] Archivos a subir detectados:', uploads.length);
-    console.log('[onSave] Archivos a eliminar detectados:', deletions.length);
-
     // Subidas pendientes
     if (uploads.length) {
-      console.log('[onSave] Ejecutando subidas...');
       uploads.forEach(file => this.ejecutarSubida(file));
     }
 
     // Eliminaciones pendientes
     if (deletions.length) {
-      console.log('[onSave] Ejecutando eliminaciones para IDs:', deletions);
       this.pagosService.eliminarComprobantes(this.pagoId, deletions)
         .pipe(finalize(() => {
-          console.log('[onSave] Eliminación finalizada (finalize)');
           this.loading = false;
           this.cdr.markForCheck();
         }))
         .subscribe({
           next: () => {
-            console.log('[onSave] Eliminación exitosa');
             this.notification.success('Comprobantes eliminados correctamente.');
             this.cargarComprobantesExistentes();
           },
           error: (err) => {
-            console.error('[onSave] Error al eliminar:', err);
             this.notification.error('Error al eliminar comprobantes del servidor.');
           }
         });
     }
 
     // Cerramos el modal
-    console.log('[onSave] Cerrando modal...');
     this.activeModal.close(true);
   }
 
@@ -181,7 +171,6 @@ export class UploadComprobanteMultipleComponent implements OnInit, AfterViewInit
    * ACCIÓN 2: POST - Registra de inmediato el binario en la base de datos
    */
   private ejecutarSubida(file: File): void {
-    console.log('[ejecutarSubida] Iniciando subida de:', file?.name);
     this.loading = true;
     this.cdr.markForCheck();
 
@@ -191,14 +180,12 @@ export class UploadComprobanteMultipleComponent implements OnInit, AfterViewInit
     this.pagosService.agregarComprobantes(this.pagoId, formData)
       .pipe(
         finalize(() => {
-          console.log('[ejecutarSubida] Subida finalizada (finalize)');
           this.loading = false;
           this.cdr.markForCheck();
         })
       )
       .subscribe({
         next: (res) => {
-          console.log('[ejecutarSubida] Subida exitosa:', res);
           this.notification.success('Comprobante adjuntado y guardado con éxito.');
           this.cargarComprobantesExistentes();
         },

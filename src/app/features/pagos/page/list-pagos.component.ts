@@ -121,8 +121,6 @@ export class ListPagosComponent implements OnInit {
       field: "monto",
       headerName: "Monto",
       width: 130,
-      valueFormatter: (p) =>
-        p.data ? `${p.data.monedaRecibida} ${p.value.toLocaleString()}` : "",
       cellStyle: { display: "flex", "justify-content": "flex-end", "align-items": "center" },
       filter: "agNumberColumnFilter",
       floatingFilter: true,
@@ -153,6 +151,16 @@ export class ListPagosComponent implements OnInit {
       suppressFloatingFilterButton: false,
       suppressHeaderMenuButton: false,
       suppressHeaderFilterButton: false,
+    },
+    {
+      field: 'monedaRecibida',
+      headerName: "Moneda recibida",
+      width: 120,
+      filter: "agTextColumnFilter",
+      floatingFilter: true,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
     },
     {
       field: "metodo",

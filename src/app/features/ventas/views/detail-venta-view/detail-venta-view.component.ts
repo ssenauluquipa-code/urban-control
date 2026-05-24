@@ -63,7 +63,13 @@ export class DetailVentaViewComponent {
       flex: 1,
       minWidth: 100,
       type: 'rightAligned',
-      cellStyle: { 'display': 'flex', 'align-items': 'center', 'justify-content': 'flex-end', 'color': '#e74c3c', 'font-weight': 'bold' },
+      cellStyle: (params) => ({
+      'display': 'flex',
+      'align-items': 'center',
+      'justify-content': 'flex-end',
+      'font-weight': 'bold',
+      'color': params.value === 0 ? '#27ae60' : '#e74c3c'  // verde si es 0, rojo si > 0
+      }),
       valueFormatter: (params) => this.currencyPipe.transform(params.value, this.venta?.moneda ?? 'USD') || ''
     },
     {

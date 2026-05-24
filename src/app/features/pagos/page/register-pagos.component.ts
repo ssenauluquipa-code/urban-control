@@ -140,7 +140,6 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
     this.cuotasTexto = '';
     if (this.cuotasSeleccionadas.length > 0) {
       const cuotasActivas = this.cuotasSeleccionadas.filter(c => c.estado !== 'PAGADO');
-      console.log(this.cuotasSeleccionadas, " cuotas marcadas");
       const cuotasList = cuotasActivas.map(c => `#${c.nroCuota}`).join(', ');
       this.cuotasTexto = `<span style="font-weight: 600;">Cuotas a pagar:</span> ${cuotasList}`;
     } else {
