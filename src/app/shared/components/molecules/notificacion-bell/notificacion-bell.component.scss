@@ -1,0 +1,27 @@
+::ng-deep .notification-bell.pc-head-link {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: transparent !important;
+  border-radius: 50% !important;
+  
+  &:hover, &:focus, &:active, &.show {
+    background-color: #f8fafc !important;
+    transform: scale(1.03);
+    
+    span[nz-icon] {
+      color: #0f172a !important;
+    }
+  }
+}
+
+.action-check {
+  opacity: 0.3;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1) translateY(-50%);
+    ::ng-deep span[nz-icon] {
+      color: #198754 !important;
+    }
+  }
+}

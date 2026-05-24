@@ -9,12 +9,13 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
 import { FormControl } from '@angular/forms';
 import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
 import { SelectProjectsComponent } from "src/app/shared/components/atoms/select-projects.component";
+import { NotificacionBellComponent } from 'src/app/shared/components/molecules/notificacion-bell/notificacion-bell.component';
 import { NotificationService } from 'src/app/core/services/notification.service';
 
 @Component({
   selector: 'app-nav-right',
   standalone: true,
-  imports: [RouterModule, NgbNavModule, NgbDropdownModule, NzIconModule, SelectProjectsComponent],
+  imports: [RouterModule, NgbNavModule, NgbDropdownModule, NzIconModule, SelectProjectsComponent, NotificacionBellComponent],
   templateUrl: './nav-right.component.html',
   styleUrl: './nav-right.component.scss'
 })

@@ -1,0 +1,89 @@
+<div class="dropdown pc-h-item" ngbDropdown (openChange)="$event ? onDropdownOpen() : null">
+  <a
+    href="javascript:"
+    class="pc-head-link dropdown-toggle arrow-none me-0 rounded-circle notification-bell"
+    style="
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #eef2f6;
+      position: relative;
+      overflow: visible !important;
+    "
+    ngbDropdownToggle
+  >
+    <span nz-icon nzType="bell" style="font-size: 20px; color: #475569"></span>
+    
+    @if (resumen.totalNoLeidas > 0) {
+      <span class="badge bg-danger pc-h-badge" style="position: absolute; top: 0; right: 0; transform: translate(30%, -30%);">
+        {{ resumen.totalNoLeidas }}
+      </span>
+    }
+  </a>
+  
+  <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown" ngbDropdownMenu>
+    <div class="dropdown-header d-flex align-items-center justify-content-between">
+      <h5 class="m-0">Notificaciones</h5>
+      
+      @if (resumen.totalNoLeidas > 0) {
+        <a class="bg-transparent" style="cursor: pointer;" (click)="marcarTodasComoLeidadas()" title="Marcar todas como leídas">
+          <i class="text-success d-flex f-20" antIcon theme="outline" type="check-circle"></i>
+        </a>
+      }
+    </div>
+    <div class="dropdown-divider mb-0"></div>
+    
+    <div style="min-height: 280px; max-height: 400px; overflow-y: auto;">
+      <div class="dropdown-header p-0 text-wrap header-notification-scroll">
+        <div class="list-group list-group-flush w-100">
+          
+          @if (cargando) {
+            <div class="text-center py-5">
+              <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+              <p class="text-muted small mt-2 mb-0">Sincronizando alertas...</p>
+            </div>
+          } @else {
+            @for (noti of alertas; track noti.id) {
+              <a class="list-group-item list-group-item-action position-relative">
+                <div class="d-flex">
+                  <div class="flex-shrink-0">
+                    <div class="user-avatar" [ngClass]="getColorClassByTipo(noti.tipo)" style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+  <span nz-icon [nzType]="getIconByTipo(noti.tipo)" nzTheme="outline" class="d-flex"></span>
+</div>
+                  </div>
+                  <div class="flex-grow-1 ms-3 pe-4">
+                    <span class="float-end text-muted small">{{ noti.createdAt | date:'HH:mm' }}</span>
+                    <h6 class="text-dark mb-0 small fw-bold">{{ noti.titulo }}</h6>
+                    <p class="text-body mb-1 small text-muted" style="font-size: 0.8rem; line-height: 1.2;">
+                      {{ noti.mensaje }}
+                    </p>
+                  </div>
+                </div>
+                
+                <span class="position-absolute end-0 top-50 translate-middle-y me-2 action-check"
+                      role="button"
+                      style="cursor: pointer; padding: 4px;"
+                      (click)="marcarComoLeida(noti.id, $event)"
+                      title="Marcar como leída">
+                  <i nz-icon nzType="check" class="text-muted" style="font-size: 16px;"></i>
+                </span>
+              </a>
+            } @empty {
+              <div class="text-center py-5 text-muted">
+                <span nz-icon nzType="check-circle" style="font-size: 32px; color: #cbd5e1;"></span>
+                <p class="small mt-2 mb-0">Estás al día. Sin alertas pendientes.</p>
+              </div>
+            }
+          }
+
+        </div>
+      </div>
+    </div>
+    <div class="dropdown-divider mt-0"></div>
+    <div class="text-center py-2">
+      <a href="javascript:" class="link-primary small fw-bold">Ver historial completo</a>
+    </div>
+  </div>
+</div>
