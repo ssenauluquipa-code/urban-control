@@ -1,6 +1,6 @@
 import { ColDef } from 'ag-grid-community';
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
@@ -48,7 +48,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class ListLotesComponent implements OnInit {
   public readonly EAppModule = EAppModule;
   public tableActionEnum = TableActionsEnum;
-  public lotes$!: Observable<ILote[]>;
+  public lotes = signal<ILote[]>([]);
   public isLoading = false;
 
   public proyectoId: string | null = null;
@@ -111,23 +111,26 @@ export class ListLotesComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private confirmation: ConfirmationService
-  ) { }
+  ) {
+    effect(() => {
+      const projectId : string | null = this.globalContext.currentProjectId();
+      this.proyectoId = projectId;
+      if (projectId) {
+        this.manzanaIdControl.enable({ emitEvent: false });
+        this.manzanaIdControl.setValue(null, { emitEvent: false });
+        // Cargamos todos los lotes de la base de datos para el proyecto seleccionado
+        this.loadLotes(null);
+      } else {
+        this.manzanaIdControl.disable({ emitEvent: false });
+        this.manzanaIdControl.setValue(null, { emitEvent: false });
+        this.lotes.set([]);
+      }
+    })
+   }
 
   ngOnInit(): void {
     // 1. Cargar primer proyecto
-    this.globalContext.selectedProjectId$.subscribe((projectId) => {
-      this.proyectoId = projectId;
-      if (projectId) {
-        this.manzanaIdControl.enable();
-        this.manzanaIdControl.setValue(null);
-        // Cargar todos los lotes del proyecto inicialmente
-        this.loadLotes(null);
-      } else {
-        this.manzanaIdControl.disable();
-        this.manzanaIdControl.setValue(null);
-        this.lotes$ = of([]);
-      }
-    });
+    /* ssss */
 
     this.manzanaIdControl.valueChanges.subscribe((manzanaId) => {
       // Si hay manzanaId, filtra; si no, carga todos
@@ -138,9 +141,18 @@ export class ListLotesComponent implements OnInit {
 
   private loadLotes(manzanaId: string | null): void {
     this.isLoading = true;
-    this.lotes$ = this.loteService
+    this.loteService
       .getLotes(manzanaId)
-      .pipe(finalize(() => this.isLoading = false));
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (data: ILote[]) => {
+          this.lotes.set(data);
+        },
+        error : () => {
+          this.notification.error('Error al recuperar el listado de lotes');
+          this.lotes.set([]);
+        }
+      });
   }
 
 

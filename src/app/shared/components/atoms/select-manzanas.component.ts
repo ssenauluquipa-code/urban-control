@@ -1,9 +1,9 @@
-import { Component, EventEmitter, inject, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { IManzanaSearchResult } from 'src/app/core/models/manzana/manzana.model';
 import { ManzanaService } from 'src/app/core/services/proyectos/manzana.service';
-import { SelectDataComponent } from "./select-data.component";
+import { SelectDataComponent } from './select-data.component';
 
 @Component({
   selector: 'app-select-manzanas',
@@ -17,53 +17,38 @@ import { SelectDataComponent } from "./select-data.component";
       [bindValue]="'id'"
       [bindLabel]="'codigo'"
       [loading]="isLoading"
-      (ChangeValue)="onSelect($event)">
+      (ChangeValue)="onSelect($event)"
+      (SearchText)="onSearchInput($event)">
     </app-select-data>
-  `,
-  styles: ``
+  `
 })
-export class SelectManzanasComponent implements OnInit, OnChanges, OnDestroy {
+export class SelectManzanasComponent implements OnInit, OnDestroy {
+  private readonly manzanaService = inject(ManzanaService);
 
-  // Inputs
-  @Input() inputControl = new FormControl();
-  @Input() proyectoId: string | null = null; // Recibe el proyecto para filtrar
-  @Input() placeholder = 'Seleccionar Manzana';
+  // Inputs y Outputs estrictos sin rastro de proyectoId redundantes
+  @Input() inputControl = new FormControl<string | null>(null);
+  @Input() placeholder: string = 'Seleccione manzana';
   @Output() Change = new EventEmitter<string | null>();
 
-  // Estado
+  // Estado local alineado a tu Swagger
   public manzanaList: IManzanaSearchResult[] = [];
-  public isLoading = false;
+  public isLoading: boolean = false;
 
-  // RxJS
-  private searchSubject$ = new Subject<string>();
-  private destroy$ = new Subject<void>();
-
-  private manzanaService = inject(ManzanaService);
+  private readonly searchSubject$ = new Subject<string>();
+  private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    // Configuramos el Debounce
+    // 🚀 Carga inicial automática: el interceptor inyectará el X-Project-Id activo en la red
+    this.searchManzanas('');
+
+    // Escucha reactiva con debounce de la escritura del usuario
     this.searchSubject$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       takeUntil(this.destroy$)
-    ).subscribe(term => {
-      if (this.proyectoId) {
-        this.searchManzanas(this.proyectoId, term);
-      }
+    ).subscribe((term: string) => {
+      this.searchManzanas(term);
     });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    // Si cambia el proyecto, reseteamos y cargamos las manzanas del nuevo proyecto
-    if (changes['proyectoId']) {
-      this.inputControl.setValue(null);
-      this.manzanaList = [];
-
-      if (this.proyectoId) {
-        // Iniciamos búsqueda con término vacío para traer las primeras opciones
-        this.searchManzanas(this.proyectoId, '');
-      }
-    }
   }
 
   ngOnDestroy(): void {
@@ -72,33 +57,35 @@ export class SelectManzanasComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-     * Recibe lo que el usuario escribe y lo emite al Subject (con debounce)
-     */
-  onSearchInput(term: string): void {
+   * ⚡ Corrección del Error TS2345: Captura de forma segura el texto o el evento del select-data
+   */
+  public onSearchInput(event: Event | string): void {
+    const term = typeof event === 'string' ? event : (event.target as HTMLInputElement)?.value || '';
     this.searchSubject$.next(term);
   }
 
   /**
-  * Llama al servicio usando el método searchManzanas
-  */
-  private searchManzanas(proyectoId: string, term: string): void {
+   * Petición HTTP directa limpia basada en el header inyectado
+   */
+  private searchManzanas(term: string): void {
     this.isLoading = true;
 
-    // 👇 Usamos el método que indicaste: searchManzanas(proyectoId, term)
-    this.manzanaService.searchManzanas(proyectoId, term).subscribe({
-      next: (data: IManzanaSearchResult[]) => {
-        this.manzanaList = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error buscando manzanas', err);
-        this.isLoading = false;
-      }
-    });
+    this.manzanaService.searchManzanas(term)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: IManzanaSearchResult[]) => {
+          this.manzanaList = data || [];
+          this.isLoading = false;
+        },
+        error: () => {
+          this.isLoading = false;
+          this.manzanaList = [];
+        }
+      });
   }
 
-  onSelect(event: string | null): void {
-    this.Change.emit(event);
+  public onSelect(event: string | IManzanaSearchResult | null): void {
+    const selectedId = typeof event === 'object' && event !== null ? event.id : (event as string | null);
+    this.Change.emit(selectedId);
   }
-
 }

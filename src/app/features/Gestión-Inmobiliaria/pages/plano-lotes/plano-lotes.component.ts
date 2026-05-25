@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { map, Observable, of } from 'rxjs';
 import { ILote } from 'src/app/core/models/lote/lote.model';
@@ -36,15 +36,33 @@ export class PlanoLotesComponent implements OnInit {
   private drawerService = inject(NzDrawerService);
 
   public manzanaIdControl = new FormControl<string | null>(null);
-  public groupedLotes$!: Observable<IManzanaGroup[]>;
+  public groupedLotes = signal<IManzanaGroup[]>([]);
+  public proyectoId : string | null = null;
 
-  // Obtenemos el proyectoId directamente del estado global
-  get proyectoId(): string | null {
-    return this._globalContext.getCurrentProjectId();
+  constructor(){
+    /**
+     * 🚀 EFECTO REACTIVO CENTRAL:
+     * Resuelve el error de compilación. Escucha el Signal global del proyecto
+     * y tipa rigurosamente el parámetro como string | null (Evitando tipos any).
+     */
+    effect(() => {
+      const projectId: string | null = this._globalContext.currentProjectId();
+      this.proyectoId = projectId;
+
+      if (projectId) {
+        this.manzanaIdControl.enable({ emitEvent: false });
+        this.manzanaIdControl.setValue(null, { emitEvent: false });
+        this.loadLotes(null);
+      } else {
+        this.manzanaIdControl.disable({ emitEvent: false });
+        this.manzanaIdControl.setValue(null, { emitEvent: false });
+        this.groupedLotes.set([]); // Limpiamos los planos si no hay proyecto
+      }
+    });
   }
 
   ngOnInit(): void {
-    // Reaccionar al cambio de proyecto global
+   /*  // Reaccionar al cambio de proyecto global
     this._globalContext.selectedProjectId$.subscribe((projectId) => {
       if (projectId) {
         // Cuando cambia el proyecto, reseteamos el filtro de manzana y cargamos todos los lotes
@@ -53,7 +71,7 @@ export class PlanoLotesComponent implements OnInit {
       } else {
         this.groupedLotes$ = of([]);
       }
-    });
+    }); */
 
     //  Reaccionar al cambio del select de manzanas
     this.manzanaIdControl.valueChanges.subscribe((manzanaId) => {
@@ -62,11 +80,11 @@ export class PlanoLotesComponent implements OnInit {
   }
 
   private loadLotes(manzanaId: string | null): void {
-    this.groupedLotes$ = this._lotesService.getLotes(manzanaId).pipe(
-      map(lotes => {
-        // Agrupamos TODOS los lotes devueltos por la manzana
+    this._lotesService.getLotes(manzanaId).pipe(
+      map((lotes: ILote[]) => {
         const groups: Record<string, ILote[]> = {};
-        lotes.forEach(lote => {
+        
+        lotes.forEach((lote: ILote) => {
           const key = lote.manzana?.codigo || 'S/M';
           if (!groups[key]) groups[key] = [];
           groups[key].push(lote);
@@ -79,7 +97,14 @@ export class PlanoLotesComponent implements OnInit {
             lotes: groups[key]
           }));
       })
-    );
+    ).subscribe({
+      next: (groups: IManzanaGroup[]) => {
+        this.groupedLotes.set(groups); // Seteamos el valor de manera reactiva en el Signal
+      },
+      error: () => {
+        this.groupedLotes.set([]);
+      }
+    });
   }
 
   onLoteSelected(lote: ILote): void {

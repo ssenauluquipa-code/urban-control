@@ -1,349 +1,210 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { finalize } from "rxjs";
 import { ColDef } from "ag-grid-community";
-import { ClienteVenta, IVenta } from "src/app/core/models/venta.model";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+
+// Modelos e Interfaces
+import { IVenta } from "src/app/core/models/venta.model";
+import { EAppModule } from "src/app/core/config/permissions.enum";
+import { ITableActionEvent, TableActionsEnum } from "src/app/shared/interfaces/table-actions.interface";
+
+// Servicios
 import { VentaService } from "src/app/core/services/venta.service";
 import { NotificationService } from "src/app/core/services/notification.service";
 import { ConfirmationService } from "src/app/core/services/confirmation.service";
-import {
-  ITableActionEvent,
-  TableActionsEnum,
-} from "src/app/shared/interfaces/table-actions.interface";
-import { EAppModule } from "src/app/core/config/permissions.enum";
-import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { ProjectStatusGlobalService } from "src/app/core/services/project-status-global.service";
-import { finalize } from "rxjs";
-import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
-import { Router } from "@angular/router";
-import { VentaPropietariosCellComponent } from "src/app/shared/components/atoms/venta-propietarios-cell/venta-propietarios-cell.component";
-import { AnularVentaModalComponent } from "../anular-venta-modal.component";
-import { VentaTipoPagoCellComponent } from "../../components/venta-tipo-pago-cell.component";
-import { VentaTipoPagoFloatingFilterComponent } from "src/app/shared/components/organisms/venta-tipo-pago-floating-filter.component";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
-import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
 
-/** Listado de ventas del proyecto con acciones ver, editar y anular. */
+// Componentes Compartidos
+import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
+import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
+import { VentaPropietariosCellComponent } from "src/app/shared/components/atoms/venta-propietarios-cell/venta-propietarios-cell.component";
+
+// Modales
+import { AnularVentaModalComponent } from "../anular-venta-modal.component";
+
 @Component({
   selector: "app-list-ventas",
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    PageContainerComponent,
     DataTableComponent,
+    PageContainerComponent
   ],
   templateUrl: "./list-ventas.component.html",
-  styleUrls: ["./list-ventas.component.scss"],
 })
 export class ListVentasComponent implements OnInit {
-  // Inyecciones[cite: 21, 22]
-  private ventaService = inject(VentaService);
-  private globalContext = inject(ProjectStatusGlobalService);
-  private notification = inject(NotificationService);
-  private confirmation = inject(ConfirmationService);
-  private cdr = inject(ChangeDetectorRef);
-  private router = inject(Router);
-  private modalService = inject(NgbModal);
+  // Inyección moderna de servicios usando inject()
+  private readonly ventaService = inject(VentaService);
+  private readonly globalContext = inject(ProjectStatusGlobalService);
+  private readonly notification = inject(NotificationService);
+  private readonly confirmation = inject(ConfirmationService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+  private readonly modalService = inject(NgbModal);
+  private readonly destroyRef = inject(DestroyRef);
 
-  // Estado
-  public tableActionEnum = TableActionsEnum;
+  // Enums expuestos para el template HTML
   public readonly EAppModule = EAppModule;
+  public readonly tableActionEnum = TableActionsEnum;
+
+  // Estado del Componente
   public ventas: IVenta[] = [];
-  public loading = false;
+  public columnDefs: ColDef[] = [];
+  public loading: boolean = false;
   public proyectoId: string | null = null;
 
-  // Filtros Reactivos
-  public termControl = new FormControl<string | null>(null);
-  public manzanaControl = new FormControl<string | null>(null);
-
-  // Definición de columnas para la tabla de ventas
-  /* public columnDefs: ColDef[] = [
-    {
-      field: 'codigoVenta',
-      headerName: 'Código',
-      width: 120,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true
-    },
-    {
-      field: 'clienteNombre',
-      headerName: 'Cliente',
-      flex: 2,
-      minWidth: 200,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true
-    },
-    {
-      field: 'nroDocumento',
-      headerName: 'Documento',
-      width: 140,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true
-    },
-    {
-      field: 'loteCodigo',
-      headerName: 'Lote',
-      width: 100,
-      suppressHeaderMenuButton: true
-    },
-    {
-      field: 'proyectoNombre',
-      headerName: 'Proyecto',
-      flex: 1,
-      minWidth: 150,
-      suppressHeaderMenuButton: true
-    },
-    {
-      field: 'fechaVenta',
-      headerName: 'Fecha',
-      width: 120,
-      suppressHeaderMenuButton: true
-    },
-    {
-      field: 'precioTotal',
-      headerName: 'Precio Total',
-      width: 140,
-      valueFormatter: (params) => this.formatCurrency(params.value),
-      suppressHeaderMenuButton: true
-    },
-{
-      field: 'estado',
-      headerName: 'Estado',
-      width: 130,
-      cellRenderer: (params: { value: EEstadoVenta }) => this.getEstadoBadge(params.value),
-      suppressHeaderMenuButton: true
-    },
-    {
-      field: 'isActive',
-      headerName: 'Estado',
-      width: 130,
-      cellRenderer: BadgeEstadoComponent,
-      filter: true,
-      floatingFilter: true,
-      floatingFilterComponent: StatusFloatingFilterComponent,
-      floatingFilterComponentParams: {
-        onStatusChange: (status: boolean | undefined) => this.onStatusFilterChanged(status)
-      },
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true
-    }
-  ]; */
-
-  columnDefs: ColDef[] = [
-    {
-      field: "nroVenta",
-      headerName: "Nro. Venta",
-      width: 120,
-      cellStyle: { fontWeight: "bold" },
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    },
-    {
-      headerName: "Ubicación",
-      width: 180,
-      valueGetter: (params) => {
-        return params.data
-          ? `Mza ${params.data.manzana} - Lt ${params.data.numeroLote}`
-          : "";
-      },
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    },
-    {
-      field: "clientes",
-      headerName: "Propietario(s)",
-      flex: 1,
-      minWidth: 250,
-      cellRenderer: VentaPropietariosCellComponent,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-      // Getter para que el filtro de texto funcione con la lista de clientes
-      valueGetter: (params) => {
-        if (!params.data?.clientes) return '';
-        return params.data.clientes.map((c: ClienteVenta) => c.nombre).join(', ');
-      }
-    },
-    {
-      headerName: "Fecha",
-      width: 140,
-      valueGetter: (params) => {
-        if (!params.data?.fechaVenta) return '';
-        const date = new Date(params.data.fechaVenta);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-      },
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: false,
-      suppressHeaderMenuButton: false,
-      suppressHeaderFilterButton: false,
-    },
-    {
-      field: "montoTotal",
-      headerName: "Total",
-      width: 130,
-      valueFormatter: (p) =>
-        p.data ? `${p.data.moneda} ${p.value.toLocaleString()}` : "",
-      filter: 'agNumberColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: false,
-      suppressHeaderMenuButton: false,
-      suppressHeaderFilterButton: false,
-    },
-    {
-      colId: "tipoPago",
-      field: "tipoPago",
-      headerName: "Tipo Pago",
-      width: 150,
-      cellRenderer: VentaTipoPagoCellComponent,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      floatingFilterComponent: VentaTipoPagoFloatingFilterComponent,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    },
-    {
-      field: 'estado',
-      headerName: "Estado",
-      width: 150,
-      cellRenderer: BadgeEstadoComponent,
-      filter: 'agTextColumnFilter',
-      floatingFilter: false,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    },
-  ];
-
   ngOnInit(): void {
-    // 1. Escuchar Proyecto Global
-    this.globalContext.selectedProjectId$.subscribe((projectId) => {
-      this.proyectoId = projectId || null;
-      this.manzanaControl.setValue(null, { emitEvent: false }); // Reset local
+    this.loadColumnDefs();
 
-      if (projectId) {
-        this.loadVentas();
-      } else {
-        this.ventas = [];
-        this.cdr.detectChanges();
-      }
-    });
-    // 2. Escuchar cambios en filtros (Termino y Manzana)
-    /* 
-    merge(
-      this.termControl.valueChanges.pipe(distinctUntilChanged()),
-      this.manzanaControl.valueChanges.pipe(distinctUntilChanged()),
-    )
-      .pipe(debounceTime(400))
-      .subscribe(() => {
-        this.loadVentas();
+    // ⚡ Escuchamos reactivamente el Signal global sin caer en tipos 'any' implícitos
+    toObservable(this.globalContext.currentProjectId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((projectId: string | null) => {
+        this.proyectoId = projectId;
+        this.loadVentas(); // El interceptor inyectará automáticamente el header X-Project-Id
       });
-    */
   }
 
-  /** Consulta ventas del proyecto seleccionado. */
-  loadVentas(): void {
-    if (!this.proyectoId) return;
+  /**
+   * Carga el listado general de ventas.
+   * La segmentación por proyecto se maneja a nivel de red gracias al projectInterceptor
+   */
+  public loadVentas(): void {
+    if (!this.proyectoId) {
+      this.ventas = [];
+      this.cdr.detectChanges();
+      return;
+    }
 
     this.loading = true;
 
-    // En local cargamos todo el proyecto al inicio (parámetros undefined)
+    // 🚀 Invocación limpia y desacoplada del parámetro proyectoId
     this.ventaService
-      .listarVentas(undefined, undefined)
+      .listarVentas()
       .pipe(
         finalize(() => {
           this.loading = false;
           this.cdr.detectChanges();
-        }),
+        })
       )
       .subscribe({
-        next: (data) => {
-          this.ventas = data.map((venta) => ({
-            ...venta,
-            isActive:
-              (venta as IVenta & { estado?: string }).estado !== "ANULADA",
-          }));
+        next: (data: IVenta[]) => {
+          this.ventas = data;
         },
-        error: () =>
-          this.notification.error("Error al cargar el listado de ventas"),
+        error: () => {
+          this.notification.error("Error al cargar el listado de ventas");
+        },
       });
   }
 
-  /** Enruta acciones de fila: anular, editar, ver o eliminar. */
-  onTableAction(event: ITableActionEvent<IVenta>): void {
-    if (event.action === TableActionsEnum.ANULAR && event.row?.ventaId) {
-      const modalRef = this.modalService.open(AnularVentaModalComponent, {
-        size: "md",
-        backdrop: "static",
-        keyboard: false,
-      });
+  /**
+   * Gestor centralizado de eventos y acciones sobre las filas de la tabla
+   */
+  public onTableAction(event: ITableActionEvent<IVenta>): void {
+    if (!event.row) return;
 
-      modalRef.componentInstance.ventaId = event.row.ventaId;
-      modalRef.componentInstance.nroVenta = event.row.nroVenta;
+    switch (event.action) {
+      case TableActionsEnum.ANULAR:
+        if (event.row.ventaId) {
+          const modalRef = this.modalService.open(AnularVentaModalComponent, {
+            size: "md",
+            backdrop: "static",
+            keyboard: false,
+          });
 
-      modalRef.result
-        .then((result) => {
-          if (result) {
-            this.loadVentas();
-          }
-        })
-        .catch(() => undefined);
-      return;
-    }
+          modalRef.componentInstance.ventaId = event.row.ventaId;
+          modalRef.componentInstance.nroVenta = event.row.nroVenta;
 
-    /* if (event.action === TableActionsEnum.EDIT && event.row?.ventaId) {
-      this.router.navigate(["/ventas/editar", event.row.ventaId]);
-      return;
-    } */
+          modalRef.result
+            .then((result) => {
+              if (result) this.loadVentas();
+            })
+            .catch(() => undefined);
+        }
+        break;
 
-    if (event.action === TableActionsEnum.VIEW && event.row?.ventaId) {
-      this.router.navigate(["/ventas/detail", event.row.ventaId]);
-    }
-    if (event.action === TableActionsEnum.DELETE && event.row?.ventaId && event.row?.estado === "ANULADA") {
-      this.confirmarEliminar(event.row);
+      case TableActionsEnum.VIEW:
+        if (event.row.ventaId) {
+          this.router.navigate(["/ventas/detail", event.row.ventaId]);
+        }
+        break;
+
+      case TableActionsEnum.DELETE:
+        if (event.row.ventaId && event.row.estado === "ANULADA") {
+          this.confirmarEliminar(event.row);
+        } else {
+          this.notification.warning("Solo se pueden eliminar físicamente ventas que se encuentren ANULADAS.");
+        }
+        break;
+
+      default:
+        console.warn("Acción no reconocida en listado de ventas:", event.action);
+        break;
     }
   }
 
-  /** Elimina físicamente solo ventas ya anuladas. */
+  /**
+   * Ejecuta la confirmación visual y posterior borrado físico de la venta
+   */
   private confirmarEliminar(venta: IVenta): void {
     if (venta.estado !== "ANULADA") {
       this.notification.warning("Solo se pueden eliminar ventas que se encuentren anuladas.");
       return;
     }
+
     const request$ = this.ventaService.eliminarVenta(venta.ventaId);
-    this.confirmation.confirmDelete("Venta", `#${venta.nroVenta}`, request$, true) // true porque es femenino (esta venta, eliminada)
-      .subscribe(success => {
-        if (success) {
-          this.loadVentas();
-        }
+    this.confirmation
+      .confirmDelete("Venta", `#${venta.nroVenta}`, request$, true)
+      .subscribe((success) => {
+        if (success) this.loadVentas();
       });
   }
 
-  /** Navega al formulario de registro de venta. */
-  onAddNew(): void {
+  /**
+   * Redirección programática al formulario de altas
+   */
+  public onAddNew(): void {
     this.router.navigate(["/ventas/register"]);
+  }
+
+  /**
+   * Estructura fuertemente tipada para las columnas ag-grid del listado
+   */
+  private loadColumnDefs(): void {
+    this.columnDefs = [
+      {
+        headerName: "Nro. Venta",
+        field: "nroVenta",
+        filter: "agTextColumnFilter",
+        flex: 1,
+      },
+      {
+        headerName: "Clientes / Propietarios",
+        field: "propietarios",
+        cellRenderer: VentaPropietariosCellComponent,
+        flex: 2.5,
+      },
+      {
+        headerName: "Fecha Venta",
+        field: "fechaVenta",
+        valueFormatter: (params) => (params.value ? new Date(params.value).toLocaleDateString() : ""),
+        flex: 1,
+      },
+      {
+        headerName: "Precio Total",
+        field: "precioVenta",
+        valueFormatter: (params) => (params.value ? `Bs. ${params.value.toLocaleString()}` : "Bs. 0"),
+        flex: 1,
+      },
+      {
+        headerName: "Estado",
+        field: "estado",
+        filter: "agTextColumnFilter",
+        flex: 1,
+      },
+    ];
   }
 }

@@ -10,7 +10,6 @@
       <app-form-field label="Manzana">
         <app-select-manzanas
           [inputControl]="manzanaIdControl"
-          [proyectoId]="proyectoId"
           [placeholder]="'Seleccione manzana'"
         >
         </app-select-manzanas>
@@ -59,7 +58,7 @@
   <!--  @if (viewMode === "table") { -->
   <app-data-table
     [module]="EAppModule.LOTES"
-    [rowData]="(lotes$ | async) || []"
+    [rowData]="lotes()"
     [columnDefs]="columnDefs"
     [loading]="isLoading"
     [showCreate]="false"

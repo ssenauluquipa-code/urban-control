@@ -1,9 +1,10 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "src/environments/environment";
 import { CreateManzanaDto, IManzana, IManzanaSearchResult, UpdateManzanaDto } from "../../models/manzana/manzana.model";
 import { IManzanaRepository } from "../../interfaces/repository/proyectos/manzana.repository.interface";
+import { ProjectStatusGlobalService } from "../../services/project-status-global.service";
 
 @Injectable({
   providedIn: 'root'
@@ -28,8 +29,12 @@ export class ManzanaRepository implements IManzanaRepository {
 
   delete(id: string): Observable<void> { return this.http.delete<void>(`${this.API_URL}/${id}`); }
 
-  search(proyectoId: string, term: string): Observable<IManzanaSearchResult[]> {
-    const params = new HttpParams().set('proyectoId', proyectoId).set('term', term);
+  /**
+   * CORREGIDO: Buscador limpio por término. 
+   * La cabecera X-Project-Id la manejará automáticamente el interceptor.
+   */
+  search(term: string): Observable<IManzanaSearchResult[]> {
+    const params = new HttpParams().set('term', term || '');
     return this.http.get<IManzanaSearchResult[]>(`${this.API_URL}/search`, { params });
   }
 }

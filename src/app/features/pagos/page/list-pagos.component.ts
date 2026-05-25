@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, effect, inject, OnInit } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ColDef, CellClassParams } from "ag-grid-community";
 import { Router } from "@angular/router";
@@ -212,12 +212,31 @@ export class ListPagosComponent implements OnInit {
     }, */
   ];
 
+  constructor(){
+    /**
+     * 🚀 EFECTO REACTIVO DE ANGULAR:
+     * Escucha el Signal global del proyecto seleccionado de forma automática.
+     * Tipa estrictamente el valor como string | null (Cero tipos any implícitos).
+     */
+    effect(() => {
+      const currentId: string | null = this.globalContext.currentProjectId();
+      this.proyectoId = currentId;
+
+      if (currentId) {
+        this.loadPagos(currentId);
+      } else {
+        this.pagos = [];
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   ngOnInit(): void {
     // Escuchar Proyecto Global para recargar pagos
-    this.globalContext.selectedProjectId$.subscribe((projectId) => {
+/*     this.globalContext.selectedProjectId$.subscribe((projectId) => {
       this.proyectoId = projectId || null;
       this.loadPagos();
-    });
+    }); */
   }
 
   /**
@@ -232,11 +251,13 @@ export class ListPagosComponent implements OnInit {
     modalRef.componentInstance.pagoId = pago.pagoId;
     modalRef.componentInstance.codigoPago = pago.codigoPago;
     modalRef.result
-      .then(() => this.loadPagos())
-      .catch(() => {});
+    .then(() => {
+      if (this.proyectoId) this.loadPagos(this.proyectoId);
+    })
+    .catch(() => {});
   }
 
-  loadPagos(): void {
+  loadPagos(proyectoId: string | null): void {
     this.loading = true;
 
     this.pagosService
@@ -271,8 +292,8 @@ export class ListPagosComponent implements OnInit {
 
       modalRef.result
         .then((result) => {
-          if (result) {
-            this.loadPagos();
+          if (result && this.proyectoId) {
+            this.loadPagos(this.proyectoId);
           }
         })
         .catch(() => undefined);

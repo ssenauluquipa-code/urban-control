@@ -6,16 +6,17 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { ProfileFormComponent } from 'src/app/features/profile/views/profile-form/profile-form.component';
 import { IUpdateProfileDto } from 'src/app/core/models/user.model';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
 import { SelectProjectsComponent } from "src/app/shared/components/atoms/select-projects.component";
 import { NotificacionBellComponent } from 'src/app/shared/components/molecules/notificacion-bell/notificacion-bell.component';
 import { NotificationService } from 'src/app/core/services/notification.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-nav-right',
   standalone: true,
-  imports: [RouterModule, NgbNavModule, NgbDropdownModule, NzIconModule, SelectProjectsComponent, NotificacionBellComponent],
+  imports: [CommonModule,RouterModule, ReactiveFormsModule ,NgbNavModule, NgbDropdownModule, NzIconModule, SelectProjectsComponent, NotificacionBellComponent],
   templateUrl: './nav-right.component.html',
   styleUrl: './nav-right.component.scss'
 })
@@ -32,12 +33,19 @@ export class NavRightComponent implements OnInit {
   windowWidth: number;
   screenFull = true;
 
+  //Exponemos el signal de solo lectura directamente para optimizar el rendirezado reactivo de la UI
+  public currentUser = this.authService.currentUser;
 
   public globalProjectControl = new FormControl<string>('');
   constructor() {
     this.windowWidth = window.innerWidth;
   }
   ngOnInit(): void {
+    // Si la RAM del usuario está limpia en F5 pero hay token, lo cargamos
+    if (!this.currentUser() && this.authService.getToken()) {
+      this.authService.getLoggedUser().subscribe();
+    }
+    
     this.projectService.getProyectActive().subscribe(proyectos => {
       const currentId = this.globalContext.getCurrentProjectId();
 
@@ -59,13 +67,10 @@ export class NavRightComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout().subscribe(() => {
+    this.authService.logout().subscribe();
+    /* this.authService.logout().subscribe(() => {
       this.router.navigate(['/auth/login']);
-    });
-  }
-
-  get currentUser() {
-    return this.authService.currentUser();
+    }); */
   }
 
   profile = [

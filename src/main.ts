@@ -48,6 +48,7 @@ import { ReservaRepository } from './app/core/repository/reserva.repository';
 import { VentaRepository } from './app/core/repository/venta.repository';
 import { PagosRepository } from './app/core/repository/pagos.repository';
 import { NotificacionRepository } from './app/core/repository/notificacion.repository';
+import { projectInterceptor } from './app/core/interceptors/project.interceptor';
 
 ModuleRegistry.registerModules([AllCommunityModule, ClientSideRowModelModule, InfiniteRowModelModule]);
 
@@ -93,7 +94,7 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(NzIconModule, NzModalModule),
     provideAnimations(),
     provideHttpClient(
-      withInterceptors([authInterceptor]),
+      withInterceptors([projectInterceptor, authInterceptor]),
       withInterceptorsFromDi(),
     ),
     provideRouter(Approutes),

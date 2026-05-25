@@ -2,6 +2,7 @@ import { HttpInterceptorFn, HttpErrorResponse, HttpRequest, HttpHandlerFn } from
 import { inject } from '@angular/core';
 import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { ProjectStatusGlobalService } from '../services/project-status-global.service';
 
 // 🧊 Variables de estado global para el interceptor (fuera de la función)
 let isRefreshing = false;
@@ -9,7 +10,12 @@ const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const authService = inject(AuthService);
+  const projectGlobalServices = inject(ProjectStatusGlobalService);
+
   const token = authService.getToken();
+  const porjectId = projectGlobalServices.getCurrentProjectId();
+
+  const headerToSet : Record<string, string>= {};
 
   // 1. Inyectar Token en la cabecera si existe
   let authReq = req;

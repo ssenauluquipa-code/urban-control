@@ -1,245 +1,234 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { ColDef } from 'ag-grid-community';
-import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
+import { ColDef } from 'ag-grid-community';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+
+// Modelos e Interfaces
 import { EstadoReserva, IReserva } from 'src/app/core/models/reserva.model';
+import { EAppModule } from 'src/app/core/config/permissions.enum';
+import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
+
+// Servicios
 import { ConfirmationService } from 'src/app/core/services/confirmation.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { ReservaService } from 'src/app/core/services/reserva.service';
-import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
-import { EAppModule } from 'src/app/core/config/permissions.enum';
-import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
-import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { RegisterReservaComponent } from '../register-reserva/register-reserva.component';
-import { Router } from '@angular/router';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { StatusReservaFloatingFilterComponent, StatusReservaFloatingFilterParams } from 'src/app/shared/components/organisms/status-reserva-floating-filter.component';
+
+// Componentes Compartidos
+import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
+import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
+import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
+
 @Component({
   selector: 'app-list-reservas',
   standalone: true,
   imports: [
-    CommonModule,
-    DataTableComponent,
-    PageContainerComponent,
-    ReactiveFormsModule
+    CommonModule, 
+    ReactiveFormsModule, 
+    DataTableComponent, 
+    PageContainerComponent, 
+    NzIconModule
   ],
   templateUrl: './list-reservas.component.html',
-  styleUrl: './list-reservas.component.scss'
 })
 export class ListReservasComponent implements OnInit {
-  // Servicios e inyecciones
-  private reservaService = inject(ReservaService);
-  private confirmation = inject(ConfirmationService);
-  private notification = inject(NotificationService);
-  private globalContext = inject(ProjectStatusGlobalService);
-  private modalService = inject(NgbModal);
-  private router = inject(Router);
-  private cdr = inject(ChangeDetectorRef);
+  // Inyección de servicios modernos usando inject()
+  private readonly reservaService = inject(ReservaService);
+  private readonly globalContext = inject(ProjectStatusGlobalService);
+  private readonly confirmation = inject(ConfirmationService);
+  private readonly notification = inject(NotificationService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
-  // Propiedades de estado
-  public tableActionEnum = TableActionsEnum;
+  // Exponer Enums al Template
   public readonly EAppModule = EAppModule;
+  public readonly tableActionEnum = TableActionsEnum;
+
+  // Controles de Filtros Reactivos
+  public readonly clienteControl = new FormControl<string | null>(null);
+  public readonly manzanaControl = new FormControl<string | null>(null);
+  public readonly estadoControl = new FormControl<string | null>('ACTIVA');
+
+  // Estado del Componente
   public reservas: IReserva[] = [];
-  public loading = false;
+  public columnDefs: ColDef[] = [];
+  public loading: boolean = false;
   public proyectoId: string | null = null;
 
-  // Filtros Reactivos (Única fuente de verdad)
-  public clienteControl = new FormControl<string | null>(null);
-  public manzanaControl = new FormControl<string | null>(null);
-  public estadoControl = new FormControl<string | null>(null);
-
-  // Definición de Columnas para AG Grid
-  columnDefs: ColDef[] = [
-    {
-      field: 'codigoReserva',
-      headerName: 'Cód. Reserva',
-      width: 115,
-      cellStyle: { fontWeight: 'bold' },
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    },
-    {
-      field: 'nombreCliente',
-      headerName: 'Nombre del Cliente',
-      flex: 1,
-      minWidth: 250,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    },
-    {
-      field: 'nroDocumento',
-      headerName: 'CI/NIT',
-      width: 120,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    },
-    {
-      headerName: 'Lote',
-      valueGetter: (params) => {
-        return params.data ? `Mza ${params.data.manzana} - Lt ${params.data.numeroLote}` : '';
-      },
-      width: 120,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    },
-    {
-      field: 'montoReserva',
-      headerName: 'Monto',
-      width: 120,
-      valueFormatter: (p) => p.data ? `${p.data.moneda} ${p.value}` : '',
-      filter: 'agNumberColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    },
-    {
-      field: 'fechaVencimiento',
-      headerName: 'Vencimiento',
-      width: 135,
-      // Usamos valueGetter para transformar la fecha en un texto simple DD/MM/YYYY
-      // Así el filtro y la celda solo verán la fecha, nunca la hora.
-      valueGetter: (params) => {
-        if (!params.data?.fechaVencimiento) return '';
-        const date = new Date(params.data.fechaVencimiento);
-        // Ajuste para evitar problemas de zona horaria al crear la fecha
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-      },
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    },
-    {
-      colId: 'estado',
-      headerName: 'Estado',
-      width: 150,
-      valueGetter: (p) => p.data?.estado,
-      cellRenderer: BadgeEstadoComponent,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      floatingFilterComponent: StatusReservaFloatingFilterComponent,
-      floatingFilterComponentParams: {
-        onStatusChange: (status: string | undefined) => {
-          this.estadoControl.setValue(status || null);
-        }
-      } as StatusReservaFloatingFilterParams,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
-    }
-  ];
-
   ngOnInit(): void {
-    // 1. Reaccionar al cambio de Proyecto Global
-    this.globalContext.selectedProjectId$.subscribe(projectId => {
-      this.proyectoId = projectId || null;
-      // Reset de filtros locales al cambiar de proyecto
-      this.manzanaControl.setValue(null, { emitEvent: false });
+    this.initFormFilters();
+    this.loadColumnDefs();
 
-      if (projectId) {
-        this.loadReservas();
-      } else {
-        this.reservas = [];
-        this.cdr.detectChanges();
-      }
-    });
+    // ⚡ Escuchamos de forma reactiva el Signal del Proyecto y lo convertimos a Observable
+    toObservable(this.globalContext.currentProjectId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((projectId: string | null) => {
+        this.proyectoId = projectId;
+        this.loadReservas(); // El interceptor inyectará automáticamente el header X-Project-Id
+      });
 
-    // 2. Escuchar cambios en los Controles (Filtros superiores y de tabla)
-    /* 
-    // Comentamos la carga remota al cambiar filtros, ahora es local
-    merge(
-      this.clienteControl.valueChanges.pipe(distinctUntilChanged()),
-      this.manzanaControl.valueChanges.pipe(distinctUntilChanged()),
-      this.estadoControl.valueChanges.pipe(distinctUntilChanged())
-    ).pipe(
-      debounceTime(300)
-    ).subscribe(() => {
-      this.loadReservas();
-    });
-    */
+    // Suscripción reactiva a los cambios de filtros superiores
+    this.clienteControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadReservas());
+    this.manzanaControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadReservas());
+    this.estadoControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadReservas());
   }
 
   /**
-   * Carga las reservas usando los valores actuales de los controles
+   * Inicializa o restablece configuraciones de los filtros si es necesario
    */
-  loadReservas(): void {
-    if (!this.proyectoId) return;
+  private initFormFilters(): void {
+    // Si necesitas valores iniciales por defecto, se pueden gestionar aquí
+  }
+
+  /**
+   * Carga las reservas aplicando los filtros de la barra superior.
+   * El ID de Proyecto no se envía aquí, ya que viaja mediante el Header HTTP 'X-Project-Id'
+   */
+  public loadReservas(): void {
+    if (!this.proyectoId) {
+      this.reservas = [];
+      this.cdr.detectChanges();
+      return;
+    }
 
     this.loading = true;
 
-    // En LOCAL cargamos TODO el proyecto una sola vez
-    this.reservaService.getReservas(
-      this.proyectoId,
-      undefined, // estado null para traer todo
-      undefined, // cliente null
-      undefined  // manzana null
-    )
-      .pipe(finalize(() => {
-        this.loading = false;
-        this.cdr.detectChanges();
-      }))
+    // Mapeamos los filtros para pasarlos limpiamente según el Swagger (undefined si están vacíos)
+    const clienteId = this.clienteControl.value || undefined;
+    const manzanaId = this.manzanaControl.value || undefined;
+    const estado = this.estadoControl.value || undefined;
+
+    this.reservaService.getReservas(clienteId, manzanaId, estado)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        })
+      )
       .subscribe({
-        next: (data) => {
-          this.reservas = data.map(r => ({
-            ...r,
-            isActive: r.estado === EstadoReserva.ACTIVA
-          }));
+        next: (data: IReserva[]) => {
+          this.reservas = data;
         },
-        error: () => this.notification.error('Error al cargar reservas')
+        error: () => {
+          this.notification.error('Error al cargar el listado de reservas.');
+        }
       });
   }
 
-  onTableAction(event: ITableActionEvent<IReserva>): void {
-    if (event.action === TableActionsEnum.ANULAR && event.row?.id) {
-      const request$ = this.reservaService.cancelReserva(event.row.id);
-      this.confirmation.toggleStatus('Reserva', `#${event.row.codigoReserva}`, true, request$)
-        .subscribe(success => {
-          if (success) this.loadReservas();
-        });
-    } else if (event.action === TableActionsEnum.VIEW && event.row?.id) {
-      this.router.navigate(['/reservas/detail', event.row.id]);
-    } else if (event.action === TableActionsEnum.VENTA && event.row?.reservaId) {
-      this.router.navigate(['/ventas/register'], {
-        queryParams: { reservaId: event.row.reservaId }
-      });
-    } else if (event.row?.estado === EstadoReserva.CANCELADA && event.action === TableActionsEnum.DELETE && event.row?.id) {
-      const request$ = this.reservaService.eliminar(event.row.id);
-      this.confirmation.confirmDelete('Reserva', `#${event.row.codigoReserva}`, request$, true)
-        .subscribe(success => {
-          if (success) this.loadReservas();
-        });
+  /**
+   * Manejador de las acciones disparadas desde la tabla de datos
+   */
+  public onTableAction(event: ITableActionEvent<IReserva>): void {
+    if (!event.row) return;
+
+    switch (event.action) {
+      case TableActionsEnum.ANULAR:
+        if (event.row.id) {
+          const request$ = this.reservaService.cancelReserva(event.row.id);
+          this.confirmation.toggleStatus('Reserva', `#${event.row.codigoReserva}`, true, request$)
+            .subscribe(success => {
+              if (success) this.loadReservas();
+            });
+        }
+        break;
+
+      case TableActionsEnum.VIEW:
+        if (event.row.id) {
+          this.router.navigate(['/reservas/detail', event.row.id]);
+        }
+        break;
+
+      case TableActionsEnum.VENTA:
+        if (event.row.reservaId) {
+          this.router.navigate(['/ventas/register'], {
+            queryParams: { reservaId: event.row.reservaId }
+          });
+        }
+        break;
+
+      case TableActionsEnum.DELETE:
+        if (event.row.estado === EstadoReserva.CANCELADA && event.row.id) {
+          const request$ = this.reservaService.eliminar(event.row.id);
+          this.confirmation.confirmDelete('Reserva', `#${event.row.codigoReserva}`, request$, true)
+            .subscribe(success => {
+              if (success) this.loadReservas();
+            });
+        } else {
+          this.notification.warning('Solo se pueden eliminar físicamente reservas que se encuentren CANCELADAS.');
+        }
+        break;
+
+      default:
+        console.warn('Acción no reconocida en listado de reservas:', event.action);
+        break;
     }
   }
 
-  onAddNew() {
-    const modalRef = this.modalService.open(RegisterReservaComponent, {
-      size: 'lg',
-      backdrop: 'static'
-    });
-    modalRef.result.then((res) => {
-      if (res) this.loadReservas();
-    }).catch(() => {
-      //
-    });
+  /**
+   * Redirección para registrar una nueva reserva
+   */
+  public onAddNew(): void {
+    this.router.navigate(['/reservas/register']);
+  }
+
+  /**
+   * Define las columnas de la tabla utilizando ag-grid de manera fuertemente tipada
+   */
+  private loadColumnDefs(): void {
+    this.columnDefs = [
+      {
+        headerName: 'Código',
+        field: 'codigoReserva',
+        filter: 'agTextColumnFilter',
+        flex: 1,
+      },
+      {
+        headerName: 'Cliente',
+        field: 'cliente.nombreCompleto',
+        valueGetter: (params) => {
+          const c = params.data?.cliente;
+          return c ? `${c.nombres} ${c.apellidos}` : 'S/C';
+        },
+        filter: 'agTextColumnFilter',
+        flex: 2,
+      },
+      {
+        headerName: 'Manzana / Lote',
+        field: 'lote.numero',
+        valueGetter: (params) => {
+          const lote = params.data?.lote;
+          const manzana = params.data?.manzana;
+          if (lote && manzana) {
+            return `Mz. ${manzana.codigo} - Lote ${lote.numero}`;
+          }
+          return 'No asignado';
+        },
+        flex: 1.5,
+      },
+      {
+        headerName: 'Fecha Reserva',
+        field: 'fechaReserva',
+        valueFormatter: (params) => params.value ? new Date(params.value).toLocaleDateString() : '',
+        flex: 1,
+      },
+      {
+        headerName: 'Vencimiento',
+        field: 'fechaVencimiento',
+        valueFormatter: (params) => params.value ? new Date(params.value).toLocaleDateString() : '',
+        flex: 1,
+      },
+      {
+        headerName: 'Estado',
+        field: 'estado',
+        cellRenderer: BadgeEstadoComponent,
+        flex: 1,
+        cellClass: 'd-flex align-items-center'
+      }
+    ];
   }
 }

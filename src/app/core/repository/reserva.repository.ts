@@ -16,9 +16,8 @@ export class ReservaRepository implements IReservaRepository {
         return this.http.post<ICreateReservaResponse>(this.Api_Url, dto);
     }
 
-    getAll(proyectoId?: string, estado?: string, clienteId?: string, manzanaId?: string): Observable<IReserva[]> {
-        let params = new HttpParams();
-        if (proyectoId) params = params.set('proyectoId', proyectoId);
+    getAll(estado?: string, clienteId?: string, manzanaId?: string): Observable<IReserva[]> {
+        let params = new HttpParams();        
         if (estado) params = params.set('estado', estado);
         if (clienteId) params = params.set('clienteId', clienteId);
         if (manzanaId) params = params.set('manzanaId', manzanaId);

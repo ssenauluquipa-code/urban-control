@@ -13,8 +13,8 @@ export class ReservaService {
     return this.repo.create(dto);
   }
 
-  getReservas(proyectoId?: string, estado?: string, clienteId?: string, manzanaId?: string): Observable<IReserva[]> {
-    return this.repo.getAll(proyectoId, estado, clienteId, manzanaId).pipe(
+  getReservas(estado?: string, clienteId?: string, manzanaId?: string): Observable<IReserva[]> {
+    return this.repo.getAll(estado, clienteId, manzanaId).pipe(
       map((reservas) => reservas.map(r => ({
         ...r,
         id: r.reservaId || r.id // Normalización

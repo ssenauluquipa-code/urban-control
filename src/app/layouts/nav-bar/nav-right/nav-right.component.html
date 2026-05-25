@@ -133,7 +133,7 @@
   </li> -->
   <!-- COMPONENTE DE NOTIFICACION -->
   <app-notificacion-bell></app-notificacion-bell>
-  <li class="dropdown pc-h-item header-user-profile" ngbDropdown>
+  <li class="dropdown pc-h-item header-user-profile" ngbDropdown *ngIf="currentUser() as user">
     <a
       href="javascript:"
       class="pc-head-link dropdown-toggle arrow-none me-0"
@@ -141,7 +141,7 @@
     >
       <img
         [src]="
-          currentUser?.avatarUrl ||
+          user?.avatarUrl ||
           '../../../../assets/images/user/avatar-2.jpg'
         "
         alt="user-image"
@@ -154,7 +154,7 @@
         "
       />
       <span class="f-w-600 ms-2 d-none d-lg-inline-block">{{
-        currentUser?.name || "Usuario"
+        user?.name || "Usuario"
       }}</span>
     </a>
 
@@ -167,7 +167,7 @@
           <div class="flex-shrink-0">
             <img
               [src]="
-                currentUser?.avatarUrl ||
+                user?.avatarUrl ||
                 '../../../../assets/images/user/avatar-2.jpg'
               "
               alt="user-image"
@@ -176,9 +176,9 @@
             />
           </div>
           <div class="flex-grow-1 ms-3 text-start">
-            <h6 class="mb-0">{{ currentUser?.name || "Usuario" }}</h6>
+            <h6 class="mb-0">{{ user?.name || "Usuario" }}</h6>
             <span class="text-muted small">{{
-              currentUser?.role || "Personal"
+              user.role || "Personal"
             }}</span>
           </div>
           <a href="javascript:" class="bg-transparent" (click)="logout()">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ColDef } from 'ag-grid-community';
@@ -31,7 +31,7 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
 
       <app-data-table
         [module]="EAppModule.MANZANAS"
-        [rowData]="(manzanas$ | async) || []"
+        [rowData]="manzanas()"
         [columnDefs]="columnDefs"
         [loading]="isLoading"
         [showCreate]="false"
@@ -46,7 +46,8 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
 export class ManzanaListComponent implements OnInit {
   public readonly EAppModule = EAppModule;
   public tableActionEnum = TableActionsEnum;
-  public manzanas$!: Observable<IManzana[]>;
+  //Guardamos los datos en un Signal local en vez de usar un Observable suelto ($)
+  public manzanas = signal<IManzana[]>([]);
   public isLoading = false;
 
   constructor(private manzanaService: ManzanaService,
@@ -55,7 +56,16 @@ export class ManzanaListComponent implements OnInit {
     private notification: NotificationService,
     private nzModal: NzModalService,
     private globalContext: ProjectStatusGlobalService
-  ) { }
+  ) { 
+    effect(() => {
+      const projectId = this.globalContext.currentProjectId();
+      if(projectId){
+        this.refreshData(projectId);
+      }else{
+        this.manzanas.set([]);
+      }
+    })
+  }
 
   columnDefs: ColDef[] = [
     {
@@ -74,20 +84,22 @@ export class ManzanaListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.globalContext.selectedProjectId$.subscribe(projectId => {
-      if (projectId) {
-        this.refreshData(projectId);
-      } else {
-        this.manzanas$ = of([]);
-      }
-    })
+    
   }
 
   refreshData(proyectoId: string): void {
     this.isLoading = true;
-    this.manzanas$ = this.manzanaService.getManzanas(proyectoId).pipe(
-      finalize(() => this.isLoading = false)
-    );
+    this.manzanaService.getManzanas()
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (data) => {
+          this.manzanas.set(data); // 🔄 Seteamos el valor de forma reactiva en el Signal
+        },
+        error: () => {
+          this.notification.error('Error al cargar la lista de manzanas.');
+          this.manzanas.set([]);
+        }
+      });
   }
 
   onTableAction(event: ITableActionEvent<IManzana>): void {
