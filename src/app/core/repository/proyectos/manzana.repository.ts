@@ -14,11 +14,8 @@ export class ManzanaRepository implements IManzanaRepository {
 
   constructor(private http: HttpClient) { }
 
-  // Si pasa proyectoId, agrega el query param ?proyectoId=...
-  getAll(proyectoId?: string): Observable<IManzana[]> {
-    let params = new HttpParams();
-    if (proyectoId) params = params.set('proyectoId', proyectoId);
-    return this.http.get<IManzana[]>(this.API_URL, { params });
+  getAll(): Observable<IManzana[]> {
+    return this.http.get<IManzana[]>(this.API_URL);
   }
 
   getById(id: string): Observable<IManzana> { return this.http.get<IManzana>(`${this.API_URL}/${id}`); }

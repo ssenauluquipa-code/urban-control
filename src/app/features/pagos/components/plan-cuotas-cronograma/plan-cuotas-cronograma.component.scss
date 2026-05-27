@@ -4,8 +4,7 @@
 
 .cronograma-scroll-container {
   width: 100%;
-  overflow: visible;
-  padding: .5rem;
+  padding: .25rem;
 }
 
 /* ==========================
@@ -14,12 +13,8 @@
 
 .cuotas-grid {
   display: grid;
-  gap: 1rem;
-
-  grid-template-columns: repeat(auto-fit,
-      minmax(280px, 1fr));
-
-  overflow: visible;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 }
 
 /* ==========================
@@ -29,29 +24,74 @@
 .cuota-card-item {
   position: relative;
   cursor: pointer;
-
   background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 10px 12px;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
 
-  min-height: 180px;
-
-  border: 1px solid #e9ecef !important;
-  border-radius: 16px !important;
-
-  transition: all .25s ease;
-
-  z-index: 1;
-
-  overflow: visible;
-
-  &:hover {
-    transform: translateY(-5px);
-
-    box-shadow:
-      0 10px 30px rgba(0, 0, 0, .08),
-      0 4px 10px rgba(0, 0, 0, .05);
-
-    z-index: 100;
+  &:not(.disabled-cuota):hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+    border-color: #ced4da;
   }
+}
+
+/* ==========================
+   ELEMENTOS INTERNOS
+========================== */
+
+.cuota-num {
+  font-size: .8rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+.cuota-fecha {
+  font-size: .72rem;
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+.cuota-divider {
+  border: none;
+  border-top: 1px solid #f1f3f5;
+  margin: 7px 0;
+}
+
+.cuota-monto {
+  font-size: .85rem;
+  font-weight: 600;
+  color: #212529;
+  line-height: 1.2;
+}
+
+.cuota-moneda {
+  font-size: .7rem;
+  font-weight: 400;
+  color: #6c757d;
+}
+
+.cuota-detalles {
+  display: flex;
+  justify-content: space-between;
+  font-size: .7rem;
+  color: #6c757d;
+  margin-top: 5px;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.cuota-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  background: #f8f9fa;
+  color: #6c757d;
 }
 
 /* ==========================
@@ -60,160 +100,91 @@
 
 .active-selection {
   border: 2px solid #1677ff !important;
-
-  background: rgba(22,
-      119,
-      255,
-      .03);
-
-  box-shadow:
-    0 6px 20px rgba(22,
-      119,
-      255,
-      .15);
+  background: rgba(22, 119, 255, .04);
+  box-shadow: 0 4px 14px rgba(22, 119, 255, .14);
 }
 
 /* ==========================
-   NÚMERO DE CUOTA
+   CARD PAGADA / DESHABILITADA
 ========================== */
 
-.style-cuota-num {
-  font-size: 1rem;
-}
-
-/* ==========================
-   CAJA DE MONTO
-========================== */
-
-.monto-box {
-  padding: .8rem;
-
+.disabled-cuota {
+  opacity: .6;
+  cursor: not-allowed !important;
   background: #f8f9fa;
+  border-color: #dee2e6 !important;
 
-  border-radius: 12px;
-
-  border: 1px solid #f1f3f5;
-
-  h5 {
-    margin: 0;
+  &:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    border-color: #dee2e6 !important;
   }
 }
 
-/* ==========================
-   DETALLES
-========================== */
-
-.font-details {
-  font-size: .85rem;
+.disabled-cuota.active-selection {
+  background: #f8f9fa !important;
+  border-color: #dee2e6 !important;
+  box-shadow: none !important;
 }
 
 /* ==========================
-   MONTOS
+   COLORES SEMÁNTICOS
 ========================== */
 
 .text-success {
-  font-weight: 600;
+  color: #198754 !important;
 }
 
 .text-danger {
-  font-weight: 600;
+  color: #dc3545 !important;
 }
 
 /* ==========================
-   TABLET
+   TABLET  (≤992px)
+   col-lg-8 ≈ 700–800px
 ========================== */
 
 @media (max-width: 992px) {
-
   .cuotas-grid {
-
-    grid-template-columns: repeat(auto-fit,
-        minmax(240px, 1fr));
-
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 7px;
   }
-
 }
 
 /* ==========================
-   MÓVIL
+   MÓVIL  (≤576px)
 ========================== */
 
 @media (max-width: 576px) {
-
   .cronograma-scroll-container {
     padding: 0;
   }
 
   .cuotas-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 6px;
   }
 
   .cuota-card-item {
-    min-height: auto;
+    padding: 8px 10px;
   }
 
-  .font-details {
-    flex-direction: column !important;
-
-    align-items: flex-start !important;
-
-    gap: .5rem;
+  .cuota-monto {
+    font-size: .8rem;
   }
 
-  .style-cuota-num {
-    font-size: .95rem;
+  .cuota-detalles {
+    flex-direction: column;
+    gap: 2px;
   }
-
-  .monto-box h5 {
-    font-size: 1rem;
-  }
-
-}
-
-.disabled-cuota {
-
-  opacity: .65;
-
-  cursor: not-allowed !important;
-
-  background: #f8f9fa;
-
-  border-color: #dee2e6 !important;
-
-  pointer-events: auto;
-
-  &:hover {
-
-    transform: none !important;
-
-    box-shadow: none !important;
-
-  }
-
-}
-
-/* Evita resaltar selección */
-.disabled-cuota.active-selection {
-
-  background: #f8f9fa !important;
-
-  border-color: #dee2e6 !important;
-
-  box-shadow: none !important;
-
 }
 
 /* ==========================
-   MONITORES GRANDES
+   PANTALLAS GRANDES (≥1600px)
 ========================== */
 
 @media (min-width: 1600px) {
-
   .cuotas-grid {
-
-    grid-template-columns: repeat(auto-fit,
-        minmax(320px, 1fr));
-
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
-
 }

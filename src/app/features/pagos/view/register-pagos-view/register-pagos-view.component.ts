@@ -45,6 +45,7 @@ export class RegisterPagosViewComponent {
   @Input() ventasOpciones: VentaPagoOption[] = [];
   @Input() loadingVentas = false;
   @Input() ventaSeleccionada: IClientePagoById | null = null;
+  @Input() proyectoId: string | null = null;
   @Output() onArchivosChanged = new EventEmitter<File[]>();
   @Output() onCuotasSeleccionadas = new EventEmitter<any[]>();
 

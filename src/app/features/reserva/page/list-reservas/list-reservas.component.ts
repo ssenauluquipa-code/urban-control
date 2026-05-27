@@ -52,7 +52,10 @@ export class ListReservasComponent implements OnInit {
   // Controles de Filtros Reactivos
   public readonly clienteControl = new FormControl<string | null>(null);
   public readonly manzanaControl = new FormControl<string | null>(null);
-  public readonly estadoControl = new FormControl<string | null>('ACTIVA');
+  public readonly estadoControl = new FormControl<string | null>('');
+
+  // Convertimos el signal a observable en el contexto válido (inicializador de propiedad)
+  private readonly projectId$ = toObservable(this.globalContext.currentProjectId);
 
   // Estado del Componente
   public reservas: IReserva[] = [];
@@ -64,8 +67,8 @@ export class ListReservasComponent implements OnInit {
     this.initFormFilters();
     this.loadColumnDefs();
 
-    // ⚡ Escuchamos de forma reactiva el Signal del Proyecto y lo convertimos a Observable
-    toObservable(this.globalContext.currentProjectId)
+    // ⚡ Escuchamos de forma reactiva el Observable del Proyecto
+    this.projectId$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((projectId: string | null) => {
         this.proyectoId = projectId;
@@ -103,7 +106,7 @@ export class ListReservasComponent implements OnInit {
     const manzanaId = this.manzanaControl.value || undefined;
     const estado = this.estadoControl.value || undefined;
 
-    this.reservaService.getReservas(clienteId, manzanaId, estado)
+    this.reservaService.getReservas(estado, clienteId, manzanaId)
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -189,11 +192,7 @@ export class ListReservasComponent implements OnInit {
       },
       {
         headerName: 'Cliente',
-        field: 'cliente.nombreCompleto',
-        valueGetter: (params) => {
-          const c = params.data?.cliente;
-          return c ? `${c.nombres} ${c.apellidos}` : 'S/C';
-        },
+        field: 'nombreCliente',
         filter: 'agTextColumnFilter',
         flex: 2,
       },
@@ -201,10 +200,10 @@ export class ListReservasComponent implements OnInit {
         headerName: 'Manzana / Lote',
         field: 'lote.numero',
         valueGetter: (params) => {
-          const lote = params.data?.lote;
+          const lote = params.data?.numeroLote;
           const manzana = params.data?.manzana;
           if (lote && manzana) {
-            return `Mz. ${manzana.codigo} - Lote ${lote.numero}`;
+            return `Mz. ${manzana} - Lote ${lote}`;
           }
           return 'No asignado';
         },

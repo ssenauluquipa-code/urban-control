@@ -165,8 +165,10 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
       .pipe(takeUntil(this.destroy$))
       .subscribe(externalValue => {
         const nextIds = this.extractIds(externalValue);
-        if (JSON.stringify(this.internal_control.value) !== JSON.stringify(nextIds)) {
-          this.internal_control.setValue(nextIds, { emitEvent: false });
+        const desiredInternalValue = this.multiple ? nextIds : (nextIds.length > 0 ? nextIds[0] : null);
+        
+        if (JSON.stringify(this.internal_control.value) !== JSON.stringify(desiredInternalValue)) {
+          this.internal_control.setValue(desiredInternalValue, { emitEvent: false });
           this.cdr.markForCheck();
         }
       });
@@ -183,7 +185,8 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
     const initialValue = this.input_control.value;
     if (initialValue) {
       const ids = this.extractIds(initialValue);
-      this.internal_control.setValue(ids, { emitEvent: false });
+      const desiredInternalValue = this.multiple ? ids : (ids.length > 0 ? ids[0] : null);
+      this.internal_control.setValue(desiredInternalValue, { emitEvent: false });
     }
     this.syncValidationStatus();
   }
@@ -236,7 +239,7 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
 
   private processSelectionChange(value: string | string[] | null): void {
     if (!this.multiple) {
-      this.input_control.setValue(value as unknown as T, { emitEvent: false });
+      this.input_control.setValue(value as unknown as T, { emitEvent: true });
       this.Change.emit(value as SelectClienteOutput);
       return;
     }
@@ -281,7 +284,7 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
       finalValue = selectedIds;
     }
 
-    this.input_control.setValue(finalValue as T, { emitEvent: false });
+    this.input_control.setValue(finalValue as T, { emitEvent: true });
     this.Change.emit(finalValue as SelectClienteOutput);
   }
 

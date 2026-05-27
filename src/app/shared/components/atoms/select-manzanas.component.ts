@@ -4,6 +4,8 @@ import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { IManzanaSearchResult } from 'src/app/core/models/manzana/manzana.model';
 import { ManzanaService } from 'src/app/core/services/proyectos/manzana.service';
 import { SelectDataComponent } from './select-data.component';
+import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-select-manzanas',
@@ -24,6 +26,7 @@ import { SelectDataComponent } from './select-data.component';
 })
 export class SelectManzanasComponent implements OnInit, OnDestroy {
   private readonly manzanaService = inject(ManzanaService);
+  private readonly globalContext = inject(ProjectStatusGlobalService);
 
   // Inputs y Outputs estrictos sin rastro de proyectoId redundantes
   @Input() inputControl = new FormControl<string | null>(null);
@@ -37,9 +40,26 @@ export class SelectManzanasComponent implements OnInit, OnDestroy {
   private readonly searchSubject$ = new Subject<string>();
   private readonly destroy$ = new Subject<void>();
 
+  // Convertimos el signal a observable en el contexto de inyección válido
+  private readonly projectId$ = toObservable(this.globalContext.currentProjectId);
+
   ngOnInit(): void {
-    // 🚀 Carga inicial automática: el interceptor inyectará el X-Project-Id activo en la red
-    this.searchManzanas('');
+    // 🚀 Carga inicial automática y reactiva ante cambios del proyecto global
+    this.projectId$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((projectId) => {
+        console.log('🔄 [SelectManzanas] Proyecto global activo:', projectId);
+        
+        if (!projectId) {
+          this.manzanaList = [];
+          return;
+        }
+
+        // Limpiamos el control si el proyecto cambia para evitar inconsistencias
+        this.inputControl.setValue(null);
+        this.Change.emit(null);
+        this.searchManzanas('');
+      });
 
     // Escucha reactiva con debounce de la escritura del usuario
     this.searchSubject$.pipe(

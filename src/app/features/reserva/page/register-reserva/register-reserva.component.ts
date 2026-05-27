@@ -1,29 +1,32 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
 import { CreateReservaDto, Moneda } from 'src/app/core/models/reserva.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { ReservaService } from 'src/app/core/services/reserva.service';
 import { OrganizationFinancialConfigService } from 'src/app/core/services/configuracion/organization-financial-config.service';
 import { finalize, take } from 'rxjs';
-import { ModalContainerComponent } from "src/app/shared/components/organisms/modal-container/modal-container.component";
+import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { RegisterReservaViewComponent } from "../../views/register-reserva-view/register-reserva-view.component";
 
 @Component({
   selector: 'app-register-reserva',
   standalone: true,
-  imports: [ModalContainerComponent, RegisterReservaViewComponent],
+  imports: [PageContainerComponent, RegisterReservaViewComponent],
   template: `
-    <app-modal-container
-      mainTitleModal="Registrar Reserva"
+    <app-page-container
+      title="Registrar Reserva"
       [loading]="loading"
-      (SaveAction)="onSave()"
-      (CancelAction)="onCancel()"
+      [showSave]="true"
+      [showCancel]="true"
+      [showOptions]="false"
+      (Save)="onSave()"
+      (Cancel)="onCancel()"
     >
       <app-register-reserva-view [reservaForm]="formGroup" [proyectoId]="proyectoId">
       </app-register-reserva-view>
-    </app-modal-container>
+    </app-page-container>
 
   `,
   styles: ``
@@ -35,7 +38,7 @@ export class RegisterReservaComponent implements OnInit {
   public loading = false;
 
   private fb = inject(FormBuilder);
-  private activeModal = inject(NgbActiveModal);
+  private router = inject(Router);
   private reservaService = inject(ReservaService);
   private notification = inject(NotificationService);
   private globalContext = inject(ProjectStatusGlobalService);
@@ -52,7 +55,8 @@ export class RegisterReservaComponent implements OnInit {
 
     if (!this.proyectoId) {
       this.notification.warning('Seleccione un proyecto primero');
-      this.activeModal.dismiss();
+      this.router.navigate(['/reservas']);
+      return;
     }
 
     this.loadOrganizationFinancialDefaults();
@@ -112,7 +116,7 @@ export class RegisterReservaComponent implements OnInit {
       .subscribe({
         next: () => {
           this.notification.success('Reserva creada exitosamente');
-          this.activeModal.close(true);
+          this.router.navigate(['/reservas']);
         },
         error: (err) => {
           if (err.status === 409) {
@@ -125,6 +129,6 @@ export class RegisterReservaComponent implements OnInit {
   }
 
   public onCancel(): void {
-    this.activeModal.dismiss();
+    this.router.navigate(['/reservas']);
   }
 }

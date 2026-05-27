@@ -35,9 +35,9 @@
 
               @if (clienteId.value) {
               <app-form-field label="Contrato / Venta" [required]="true">
-                <app-select-data [inputControl]="ventaId" [itemList]="ventasOpciones" bindValue="ventaId"
+                <app-select-data [proyectoId]="proyectoId" [inputControl]="ventaId" [itemList]="ventasOpciones" bindValue="ventaId"
                   bindLabel="label" [loading]="loadingVentas" [searchable]="true" placeholder="Seleccionar venta...">
-                </app-select-data>
+                </app-select-data>                
               </app-form-field>
               }
 
@@ -47,13 +47,13 @@
 
               <!-- Moneda + Monto en la misma fila -->
               <div class="row">
-                <div class="col-5">
+                <div class="col-12 col-lg-5">
                   <app-form-field label="Moneda" [required]="true">
                     <app-select-moneda [input_control]="monedaRecibida" placeholder="Moneda">
                     </app-select-moneda>
                   </app-form-field>
                 </div>
-                <div class="col-7">
+                <div class="col-12 col-lg-7">
                   <app-form-field label="Monto Recibido" [required]="true">
                     <app-input-number [input_control]="monto" [allow_decimals]="true" input_placeholder="0.00">
                     </app-input-number>

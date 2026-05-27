@@ -7,7 +7,6 @@
   .pago-sidebar-sticky {
     position: sticky;
     top: 1rem;
-
     // En móvil NO debe ser sticky (está arriba y causaría problemas)
     @media (max-width: 991.98px) {
       position: static;

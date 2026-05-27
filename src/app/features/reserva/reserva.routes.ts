@@ -14,5 +14,11 @@ export const RESERVA_ROUTES: Routes = [
         canActivate: [permissionGuard],
         data: { module: EAppModule.RESERVAS, action: EAppAction.VIEW },
         loadComponent: () => import('./page/detail-reserva/detail-reserva.component').then(m => m.DetailReservaComponent) 
+    },
+    {
+        path: 'register',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.RESERVAS, action: EAppAction.CREATE },
+        loadComponent: () => import('./page/register-reserva/register-reserva.component').then(m => m.RegisterReservaComponent)
     }
 ]

@@ -12,6 +12,8 @@ import { PagosService } from 'src/app/core/services/pagos.service';
 import { VentaService } from 'src/app/core/services/venta.service';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { RegisterPagosViewComponent, VentaPagoOption } from '../view/register-pagos-view/register-pagos-view.component';
+import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-register-pagos',
@@ -28,6 +30,7 @@ import { RegisterPagosViewComponent, VentaPagoOption } from '../view/register-pa
       (Cancel)="onCancelarClick()"
     >
       <app-register-pagos-view
+        [proyectoId]="globalContext.currentProjectId()"
         [form]="form"
         [ventasOpciones]="ventasOpciones"
         [loadingVentas]="loadingVentas"
@@ -75,6 +78,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private pagosService = inject(PagosService);
   private ventaService = inject(VentaService);
+  public globalContext = inject(ProjectStatusGlobalService);
   private router = inject(Router);
   private notification = inject(NotificationService);
   private cdr = inject(ChangeDetectorRef);
@@ -97,8 +101,21 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   loteInfo = '';
   cuotasTexto = '';
   totalTexto = '';
+  private currentProjectId$ = toObservable(this.globalContext.currentProjectId);
+
   ngOnInit(): void {
     this.initForm();
+    this.currentProjectId$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((projectId: string | null) => {
+        // Al cambiar de proyecto, limpiamos el flujo de operación para evitar errores 400
+        this.form.patchValue({ clienteId: null, ventaId: null }, { emitEvent: false });
+        this.ventaSeleccionada = null;
+        this.ventaDetalleCompleto = null;
+        this.ventasOpciones = [];
+        this.cdr.markForCheck();
+      });
+
     this.escucharCambiosCliente();
     this.escucharCambiosVenta();
     this.escucharCambiosMonedaRecibida();
@@ -217,6 +234,9 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       .get('clienteId')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((clienteId: string | null) => {
+        console.log('=== [DEBUG] CLIENTE SELECCIONADO ===');
+        console.log('ID del Cliente:', clienteId);
+
         this.form.patchValue({ ventaId: null }, { emitEvent: false });
         this.ventaSeleccionada = null;
         this.ventasOpciones = [];
@@ -235,6 +255,9 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       .get('ventaId')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((ventaId: string | null) => {
+        console.log('=== [DEBUG] VENTA SELECCIONADA ===');
+        console.log('ID de Venta:', ventaId);
+        
         if (!ventaId) {
           this.ventaSeleccionada = null;
           this.ventaDetalleCompleto = null;
@@ -244,6 +267,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
 
         const opcion = this.ventasOpciones.find((v) => v.ventaId === ventaId);
         this.ventaSeleccionada = opcion?.venta ?? null;
+        console.log('Venta completa encontrada:', this.ventaSeleccionada);
 
         if (this.ventaSeleccionada?.moneda) {
           this.form.patchValue(
@@ -260,6 +284,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (detalle) => {
+              console.log('Detalles adicionales de la venta:', detalle);
               this.ventaDetalleCompleto = detalle;
               this.cdr.markForCheck();
             },
@@ -304,6 +329,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
 
   private cargarVentasPorCliente(clienteId: string): void {
     this.loadingVentas = true;
+    console.log(`[DEBUG] Llamando API: listarVentasPagoPorCliente(${clienteId})`);
 
     this.ventaService
       .listarVentasPagoPorCliente(clienteId)
@@ -315,7 +341,9 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (ventas) => {
+          console.log('[DEBUG] Respuesta de Ventas recibida:', ventas);
           this.ventasOpciones = ventas.map((v) => this.mapVentaOpcion(v));
+          console.log('[DEBUG] Opciones Mapeadas para el Select:', this.ventasOpciones);
 
           if (this.ventasOpciones.length === 1) {
             const unica = this.ventasOpciones[0];
@@ -326,7 +354,8 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
             );
           }
         },
-        error: () => {
+        error: (err) => {
+          console.error('[DEBUG] Error al cargar ventas del cliente:', err);
           this.ventasOpciones = [];
           this.notification.error(
             'No se pudieron cargar las ventas del cliente.'

@@ -1,43 +1,48 @@
 <app-card-container title="Cronograma de Cuotas Pendientes (Amortización FIFO)">
   @if (loading) {
-  <div class="text-center py-5 text-muted">
-    <p class="mb-0 fw-semibold">Cargando plan de cuotas...</p>
+  <div class="text-center py-4 text-muted">
+    <p class="mb-0 fw-semibold small">Cargando plan de cuotas...</p>
   </div>
   } @else {
   <div class="cronograma-scroll-container">
     <div class="cuotas-grid">
 
       @for (cuota of cuotas; track cuota.id) {
-      <div class="cuota-card-item p-3 rounded-3 border" [class.active-selection]="cuota.isSeleccionadaEfectiva"
-        [class.disabled-cuota]="cuota.estado=== 'PAGADO'"
+      <div
+        class="cuota-card-item"
+        [class.active-selection]="cuota.isSeleccionadaEfectiva"
+        [class.disabled-cuota]="cuota.estado === 'PAGADO'"
         (click)="cuota.estado !== 'PAGADO' && seleccionarCuotaHasta($index)">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="fw-bold text-dark style-cuota-num">Cuota {{ cuota.nroCuota }}</span>
 
+        <!-- Header: número + badge -->
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="cuota-num">Cuota {{ cuota.nroCuota }}</span>
           <app-badge-estado [estado]="cuota.estado"></app-badge-estado>
         </div>
 
-        <div class="text-muted small mb-3">
-          Vence: {{ cuota.fechaVencimiento | date:'dd/MM/yyyy' }}
+        <!-- Fecha -->
+        <div class="cuota-fecha">
+          {{ cuota.fechaVencimiento | date:'dd/MM/yyyy' }}
         </div>
 
-        <div class="monto-box mb-1">
-          <span class="text-muted small d-block mb-1">MONTO TOTAL</span>
-          <h5 class="mb-0 fw-bold text-dark">
-            {{ cuota.montoTotal | number:'1.2-2' }} <span class="text-muted fs-6 fw-normal">{{ moneda }}</span>
-          </h5>
+        <hr class="cuota-divider">
+
+        <!-- Monto total -->
+        <div class="cuota-monto">
+          {{ cuota.montoTotal | number:'1.2-2' }}
+          <span class="cuota-moneda">{{ moneda }}</span>
         </div>
 
-        <div class="d-flex justify-content-between text-muted mt-2 pt-2 border-top border-light font-details">
-          <span>Abonado: <strong class="text-success">{{ moneda }} {{ cuota.montoPagado | number:'1.2-2'
-              }}</strong></span>
-          <span>Saldo: <strong [class.text-danger]="cuota.saldoPendiente > 0">{{ moneda }} {{ cuota.saldoPendiente |
-              number:'1.2-2' }}</strong></span>
+        <!-- Abonado / Saldo -->
+        <div class="cuota-detalles">
+          <span>Ab: <strong class="text-success">{{ cuota.montoPagado | number:'1.2-2' }}</strong></span>
+          <span>Sd: <strong [class.text-danger]="cuota.saldoPendiente > 0">{{ cuota.saldoPendiente | number:'1.2-2' }}</strong></span>
         </div>
+
       </div>
       } @empty {
-      <div class="text-center py-5 text-muted col-12 border rounded-3 bg-light">
-        <p class="mb-0 fw-semibold">No existen cuotas cargadas en el plan de deudas.</p>
+      <div class="cuota-empty">
+        <p class="mb-0 fw-semibold small">No existen cuotas cargadas en el plan de deudas.</p>
       </div>
       }
 

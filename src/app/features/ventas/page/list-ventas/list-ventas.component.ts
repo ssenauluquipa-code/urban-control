@@ -24,6 +24,8 @@ import { VentaPropietariosCellComponent } from "src/app/shared/components/atoms/
 
 // Modales
 import { AnularVentaModalComponent } from "../anular-venta-modal.component";
+import { VentaTipoPagoCellComponent } from "../../components/venta-tipo-pago-cell.component";
+import { VentaTipoPagoFloatingFilterComponent } from "src/app/shared/components/organisms/venta-tipo-pago-floating-filter.component";
 
 @Component({
   selector: "app-list-ventas",
@@ -50,6 +52,9 @@ export class ListVentasComponent implements OnInit {
   public readonly EAppModule = EAppModule;
   public readonly tableActionEnum = TableActionsEnum;
 
+  // Convertimos el signal a observable en el contexto válido
+  private readonly projectId$ = toObservable(this.globalContext.currentProjectId);
+
   // Estado del Componente
   public ventas: IVenta[] = [];
   public columnDefs: ColDef[] = [];
@@ -59,8 +64,8 @@ export class ListVentasComponent implements OnInit {
   ngOnInit(): void {
     this.loadColumnDefs();
 
-    // ⚡ Escuchamos reactivamente el Signal global sin caer en tipos 'any' implícitos
-    toObservable(this.globalContext.currentProjectId)
+    // ⚡ Escuchamos reactivamente el Observable del proyecto global
+    this.projectId$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((projectId: string | null) => {
         this.proyectoId = projectId;
@@ -195,9 +200,28 @@ export class ListVentasComponent implements OnInit {
       },
       {
         headerName: "Precio Total",
-        field: "precioVenta",
+        field: "montoTotal",
         valueFormatter: (params) => (params.value ? `Bs. ${params.value.toLocaleString()}` : "Bs. 0"),
         flex: 1,
+      },
+      {
+        headerName: "Saldo Pendiente",
+        field: "saldoPendiente",
+        valueFormatter: (params) => (params.value ? `Bs. ${params.value.toLocaleString()}` : "Bs. 0"),
+        flex: 1,
+      },
+      {
+       colId: "tipoPago",
+      field: "tipoPago",
+      headerName: "Tipo Pago",
+      width: 150,
+      cellRenderer: VentaTipoPagoCellComponent,
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      floatingFilterComponent: VentaTipoPagoFloatingFilterComponent,
+      suppressFloatingFilterButton: true,
+      suppressHeaderMenuButton: true,
+      suppressHeaderFilterButton: true,
       },
       {
         headerName: "Estado",

@@ -143,6 +143,7 @@ export class SelectDataComponent<T = unknown> implements OnInit {
 
   @Input() minLength = 0;
   @Input() maxLength = 0;
+  @Input() proyectoId: string | null = null;
   // CORREGIDO: Emitimos el tipo específico del valor del control
   @Output() ChangeValue = new EventEmitter<string | T | null>();
   @Output() SelectionChange = new EventEmitter<T | T[] | null>();
