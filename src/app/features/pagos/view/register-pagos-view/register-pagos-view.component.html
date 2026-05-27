@@ -29,7 +29,11 @@
             <div class="d-flex flex-column">
 
               <app-form-field label="Cliente" [required]="true">
-                <app-select-clientes [input_control]="clienteId" input_placeholder="Buscar cliente...">
+                <app-select-clientes 
+                  [input_control]="clienteId" 
+                  [preloadedClientId]="clienteId.value"
+                  [preloadedClientName]="ventaSeleccionada?.nombreCompletoCliente"
+                  input_placeholder="Buscar cliente...">
                 </app-select-clientes>
               </app-form-field>
 

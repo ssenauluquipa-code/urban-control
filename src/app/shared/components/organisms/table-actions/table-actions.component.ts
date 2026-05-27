@@ -101,7 +101,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.SET_AVAILABLE]: 'unlock',
       [TableActionsEnum.VENTA]: 'shopping-cart',
       [TableActionsEnum.MASS_LOAD]: 'appstore-add',
-      [TableActionsEnum.COMPROBANTE]: 'file-pdf'
+      [TableActionsEnum.COMPROBANTE]: 'file-pdf',
+      [TableActionsEnum.PAGO]: 'credit-card'
     };
     return icons[action] || 'question';
   }
@@ -121,7 +122,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.SET_AVAILABLE]: 'Disponible',
       [TableActionsEnum.VENTA]: 'Venta',
       [TableActionsEnum.MASS_LOAD]: 'Carga Masiva',
-      [TableActionsEnum.COMPROBANTE]: 'Comprob'
+      [TableActionsEnum.COMPROBANTE]: 'Comprob',
+      [TableActionsEnum.PAGO]: 'Pago',
     };
     return labels[action] || action;
   }
@@ -142,7 +144,13 @@ export class TableActionsComponent implements ICellRendererAngularComp {
   }
 
   private filterActions(actions: string[]): string[] {
-    const data = this.rowData as { isActive?: boolean; avatarUrl?: string, estado?: string };
+    const data = this.rowData as {
+      isActive?: boolean;
+      avatarUrl?: string;
+      estado?: string;
+      tipoPago?: string;
+      saldoPendiente?: number;
+    };
 
     // 1. Filtramos por permisos
     //const user = this.access['auth'].currentUser();
@@ -191,6 +199,14 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       // Regla de Negocio: En Ventas, el botón de eliminar solo aparece si la venta está ANULADA
       if (currentModule === EAppModule.VENTAS && action === TableActionsEnum.DELETE) {
         return data?.estado === 'ANULADA';
+      }
+
+      // Regla de Negocio: En Ventas, el botón "Pago" solo aparece si es CONTADO y está ACTIVA (y preferible si tiene saldo pendiente)
+      if (currentModule === EAppModule.VENTAS && action === TableActionsEnum.PAGO) {
+        const isActiva = data?.estado === 'ACTIVA';
+        const isContado = data?.tipoPago === 'CONTADO';
+        const hasSaldo = typeof data?.saldoPendiente === 'number' ? data.saldoPendiente > 0 : true;
+        return isActiva && isContado && hasSaldo;
       }
 
       if (action === TableActionsEnum.BLOQUEADO) return data?.estado === 'DISPONIBLE';

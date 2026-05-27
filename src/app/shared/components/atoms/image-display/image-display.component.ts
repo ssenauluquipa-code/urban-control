@@ -21,7 +21,17 @@ export class ImageDisplayComponent {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   /** URL de la imagen desde la BD */
-  @Input() imageUrl?: string;
+  private _imageUrl?: string;
+  @Input()
+  set imageUrl(value: string | undefined) {
+    this._imageUrl = value;
+    // Si cambia la URL desde afuera (ej. al abrir otro registro), reiniciamos estados locales.
+    this.previewUrl.set('');
+    this.isDeleted.set(false);
+  }
+  get imageUrl(): string | undefined {
+    return this._imageUrl;
+  }
 
   /** Nombre/alt de la imagen */
   @Input() imageName = 'Imagen';
@@ -53,8 +63,12 @@ export class ImageDisplayComponent {
   /** Signal para preview temporal (antes de guardar) */
   previewUrl = signal<string>('');
 
+  /** Marca local de eliminación (oculta la imagen aunque exista imageUrl) */
+  isDeleted = signal(false);
+
   /** URL efectiva: preview temporal o la de BD */
   get displayUrl(): string {
+    if (this.isDeleted()) return '';
     return this.previewUrl() || this.imageUrl || '';
   }
 
@@ -73,6 +87,9 @@ export class ImageDisplayComponent {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
+
+    // Si el usuario selecciona un archivo, ya no está "eliminada"
+    this.isDeleted.set(false);
 
     // Validar tipo
     if (!file.type.startsWith('image/')) {
@@ -106,6 +123,7 @@ export class ImageDisplayComponent {
   deleteImage(event: Event): void {
     event.stopPropagation();
     this.previewUrl.set('');
+    this.isDeleted.set(true);
     this.imageDeleted.emit();
   }
 

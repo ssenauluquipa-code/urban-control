@@ -341,9 +341,30 @@ export class RegisterVentasComponent implements OnInit {
     const rawData = this.form.getRawValue();
 
     this.ventaService.registrarNuevaVenta(rawData).subscribe({
-      next: () => {
+      next: (response: any) => {
         this.notification.success("¡Venta registrada con éxito!");
-        this.router.navigate(["/ventas"]);
+        if (rawData.tipoPago === 'CONTADO' && response.data) {
+          const ventaCreada = response.data;
+      
+          // Buscamos el nombre del titular real en el array de propietarios locales para no perderlo
+          const titularLocal = rawData.propietarios?.find((p: any) => p.rol === 'TITULAR');
+          const nombreTitular = titularLocal ? `${titularLocal.nombres} ${titularLocal.apellidos}` : "Titular de la Venta";
+          
+          this.router.navigate(["/pagos/register"], {
+            state: {
+              ventaId: ventaCreada.id,
+              nroVenta: ventaCreada.nroVenta,
+              moneda: ventaCreada.moneda,
+              tipoCambio: ventaCreada.tipoCambio,
+              saldoPendiente: ventaCreada.saldoPendiente,
+              nombreCompletoCliente: nombreTitular,
+              clienteId: titularLocal?.clienteId,
+              esContadoDirecto: true
+            }
+          })
+        } else {
+          this.router.navigate(["/ventas"]);
+        }
       },
       error: (err) => {
         this.loading = false;

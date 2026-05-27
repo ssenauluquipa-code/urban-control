@@ -11,7 +11,9 @@ import { INotificacion, INotificacionResumen, INotificacionFilter } from '../mod
 })
 export class NotificacionRepository implements INotificacionRepository {
   private http = inject(HttpClient);
-  private readonly URL = `${environment.apiUrl}/api/v1/notificaciones`;
+  // `environment.apiUrl` ya incluye el prefijo `/api/v1` (en dev por proxy y en prod en el dominio),
+  // por eso no se debe volver a agregar `/api/v1` aquí.
+  private readonly URL = `${environment.apiUrl}/notificaciones`;
 
   getAll(filters?: INotificacionFilter): Observable<INotificacion[]> {
     let params = new HttpParams();

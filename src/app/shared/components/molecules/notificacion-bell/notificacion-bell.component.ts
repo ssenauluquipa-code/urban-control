@@ -2,10 +2,13 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { Router } from '@angular/router';
 import { Subject, interval } from 'rxjs';
 import { switchMap, takeUntil, startWith } from 'rxjs/operators';
 import { NotificacionService } from 'src/app/core/services/notificacion.service';
 import { INotificacion, INotificacionResumen, TipoNotificacion } from 'src/app/core/models/notificacion.model';
+import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-notificacion-bell',
@@ -16,7 +19,10 @@ import { INotificacion, INotificacionResumen, TipoNotificacion } from 'src/app/c
 })
 export class NotificacionBellComponent implements OnInit, OnDestroy {
   private notiService = inject(NotificacionService);
+  private globalProjectService = inject(ProjectStatusGlobalService);
+  private router = inject(Router);
   private destroy$ = new Subject<void>();
+  private readonly projectId$ = toObservable(this.globalProjectService.currentProjectId);
 
   // Estados reactivos expuestos a la vista
   public resumen: INotificacionResumen = { totalNoLeidas: 0, cuotasPorVencer: 0, cuotasVencidas: 0, lotesLiberados: 0 };
@@ -24,11 +30,15 @@ export class NotificacionBellComponent implements OnInit, OnDestroy {
   public cargando = false;
 
   ngOnInit(): void {
-    // Lógica de consumo recomendada: Sondeo liviano cada 60 segundos para el badge
-    interval(60000)
+    this.projectId$
       .pipe(
-        startWith(0), // Dispara la carga inicial inmediata
-        switchMap(() => this.notiService.getContadorAlertas()),
+        switchMap(() => 
+          // Reinicia el temporizador de 60 segundos cada vez que el ID del proyecto cambia
+          interval(60000).pipe(
+            startWith(0),
+            switchMap(() => this.notiService.getContadorAlertas())
+          )
+        ),
         takeUntil(this.destroy$)
       )
       .subscribe({
@@ -42,7 +52,7 @@ export class NotificacionBellComponent implements OnInit, OnDestroy {
    */
   onDropdownOpen(): void {
     this.cargando = true;
-    this.notiService.getAlertasMenuCampana(5)
+    this.notiService.getAlertasMenuCampana(25)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (listaAlertas) => {
@@ -73,7 +83,12 @@ export class NotificacionBellComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.alertas = [];
-          this.resumen.totalNoLeidas = 0;
+          this.resumen = {
+            totalNoLeidas: 0,
+            cuotasPorVencer: 0,
+            cuotasVencidas: 0,
+            lotesLiberados: 0
+          };
         }
       });
   }
@@ -88,6 +103,11 @@ export class NotificacionBellComponent implements OnInit, OnDestroy {
     if (tipo === 'CUOTA_VENCIDA') return 'bg-light-danger text-danger';
     if (tipo === 'CUOTA_POR_VENCER') return 'bg-light-warning text-warning';
     return 'bg-light-primary text-primary';
+  }
+
+  goToHistorial(event: Event): void {
+    event.preventDefault();
+    this.router.navigate(['/notificaciones/historial']);
   }
 
   ngOnDestroy(): void {

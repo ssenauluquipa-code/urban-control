@@ -10,6 +10,8 @@ import { ReservaService } from 'src/app/core/services/reserva.service';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { IReserva, EstadoReserva } from 'src/app/core/models/reserva.model';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 /** Modal con tabla de reservas activas filtrables por texto. */
 @Component({
@@ -105,6 +107,7 @@ export class ModalSearchReservaComponent implements OnInit {
   private reservaService = inject(ReservaService);
   private projectStatusService = inject(ProjectStatusGlobalService);
   private modalRef = inject(NzModalRef);
+  private notification = inject(NotificationService);
 
   loading = false;
   reservas: IReserva[] = [];
@@ -118,19 +121,27 @@ export class ModalSearchReservaComponent implements OnInit {
   /** Carga reservas ACTIVAS del proyecto actual. */
   loadReservas(): void {
     const proyectoId = this.projectStatusService.getCurrentProjectId();
-    if (!proyectoId) return;
+    if (!proyectoId) {
+      this.reservas = [];
+      this.filteredReservas = [];
+      this.notification.warning('Seleccione un proyecto para listar reservas activas.');
+      return;
+    }
 
     this.loading = true;
-    this.reservaService.getReservas(proyectoId, EstadoReserva.ACTIVA).subscribe({
-      next: (data) => {
-        this.reservas = data;
-        this.filteredReservas = [...data];
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      }
-    });
+    // Igual que en list-reservas: el proyecto viaja por header X-Project-Id (interceptor).
+    this.reservaService
+      .getReservas(EstadoReserva.ACTIVA)
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: (data) => {
+          this.reservas = data;
+          this.filteredReservas = [...data];
+        },
+        error: () => {
+          this.notification.error('No se pudieron cargar las reservas activas.');
+        }
+      });
   }
 
   /** Filtra la tabla por cliente, código, lote o manzana. */

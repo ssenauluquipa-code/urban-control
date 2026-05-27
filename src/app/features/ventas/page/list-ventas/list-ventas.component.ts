@@ -7,7 +7,7 @@ import { ColDef } from "ag-grid-community";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 // Modelos e Interfaces
-import { IVenta } from "src/app/core/models/venta.model";
+import { IVenta, TipoPago } from "src/app/core/models/venta.model";
 import { EAppModule } from "src/app/core/config/permissions.enum";
 import { ITableActionEvent, TableActionsEnum } from "src/app/shared/interfaces/table-actions.interface";
 
@@ -26,6 +26,7 @@ import { VentaPropietariosCellComponent } from "src/app/shared/components/atoms/
 import { AnularVentaModalComponent } from "../anular-venta-modal.component";
 import { VentaTipoPagoCellComponent } from "../../components/venta-tipo-pago-cell.component";
 import { VentaTipoPagoFloatingFilterComponent } from "src/app/shared/components/organisms/venta-tipo-pago-floating-filter.component";
+import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
 
 @Component({
   selector: "app-list-ventas",
@@ -145,6 +146,37 @@ export class ListVentasComponent implements OnInit {
         }
         break;
 
+      case TableActionsEnum.PAGO:
+      const ventaData = event.row;
+      const titular = ventaData.clientes?.find((c: any) => c.rol === 'TITULAR') || ventaData.clientes?.[0];
+      const clienteId = titular?.id;
+      // 2. 🌟 LIMPIAR EL NOMBRE: Si viene "Juan Pablo Seña - CI 125...", nos quedamos solo con "Juan Pablo Seña"
+      let nombreCliente = titular?.nombre || 'Titular de la Venta';
+      if (nombreCliente.includes(' - ')) {
+        nombreCliente = nombreCliente.split(' - ')[0].trim();
+      }
+
+      if (!ventaData.ventaId || !clienteId) {
+        this.notification.warning('No se encontraron los datos necesarios para procesar el pago.');
+        return;
+      }
+
+      // 2. Redireccionar a la misma ruta de pagos con la estructura exacta que espera el formulario
+      this.router.navigate(['/pagos/register'], {
+        state: {
+          ventaId: ventaData.ventaId,
+          nroVenta: ventaData.nroVenta,
+          moneda: ventaData.moneda,
+          tipoCambio: ventaData.tipoCambio,
+          saldoPendiente: ventaData.saldoPendiente,
+          nombreCompletoCliente: nombreCliente,
+          clienteId: clienteId,
+          esContadoDirecto: ventaData.tipoPago === 'CONTADO' // Dinámico según el tipo de pago
+        }
+      });
+      break;
+        break;
+
       default:
         console.warn("Acción no reconocida en listado de ventas:", event.action);
         break;
@@ -185,49 +217,71 @@ export class ListVentasComponent implements OnInit {
         field: "nroVenta",
         filter: "agTextColumnFilter",
         flex: 1,
+        minWidth: 120,
       },
       {
         headerName: "Clientes / Propietarios",
         field: "propietarios",
         cellRenderer: VentaPropietariosCellComponent,
         flex: 2.5,
+        minWidth: 220,
       },
       {
         headerName: "Fecha Venta",
         field: "fechaVenta",
         valueFormatter: (params) => (params.value ? new Date(params.value).toLocaleDateString() : ""),
         flex: 1,
+        minWidth: 130,
       },
       {
         headerName: "Precio Total",
         field: "montoTotal",
-        valueFormatter: (params) => (params.value ? `Bs. ${params.value.toLocaleString()}` : "Bs. 0"),
+        valueFormatter: (params) => {
+          if (params.value === undefined || params.value === null) return "0.00";
+          // 🪙 Obtenemos la moneda de la fila, por defecto 'BS' si no viniera
+          const moneda = params.data?.moneda || "BS";
+          return `${moneda} ${params.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        },
         flex: 1,
+        minWidth: 140,
       },
       {
         headerName: "Saldo Pendiente",
         field: "saldoPendiente",
-        valueFormatter: (params) => (params.value ? `Bs. ${params.value.toLocaleString()}` : "Bs. 0"),
+        valueFormatter: (params) => {
+          if (params.value === undefined || params.value === null) return "0.00";
+          // 🪙 Evaluamos de igual forma la moneda asignada al contrato de venta
+          const moneda = params.data?.moneda || "BS";
+          return `${moneda} ${params.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        },
         flex: 1,
+        minWidth: 150,
       },
       {
-       colId: "tipoPago",
-      field: "tipoPago",
-      headerName: "Tipo Pago",
-      width: 150,
-      cellRenderer: VentaTipoPagoCellComponent,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-      floatingFilterComponent: VentaTipoPagoFloatingFilterComponent,
-      suppressFloatingFilterButton: true,
-      suppressHeaderMenuButton: true,
-      suppressHeaderFilterButton: true,
+        colId: "tipoPago",
+        field: "tipoPago",
+        headerName: "Tipo Pago",
+        width: 130,
+        minWidth: 120,
+        cellRenderer: VentaTipoPagoCellComponent,
+        filter: 'agTextColumnFilter',
+        floatingFilter: true,
+        floatingFilterComponent: VentaTipoPagoFloatingFilterComponent,
+        suppressFloatingFilterButton: true,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
       },
       {
+        field: 'estado',
         headerName: "Estado",
-        field: "estado",
-        filter: "agTextColumnFilter",
-        flex: 1,
+        width: 115,
+        minWidth: 110,
+        cellRenderer: BadgeEstadoComponent,
+        filter: 'agTextColumnFilter',
+        floatingFilter: false,
+        suppressFloatingFilterButton: true,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
       },
     ];
   }

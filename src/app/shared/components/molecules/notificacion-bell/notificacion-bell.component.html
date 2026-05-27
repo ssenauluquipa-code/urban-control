@@ -29,7 +29,8 @@
       
       @if (resumen.totalNoLeidas > 0) {
         <a class="bg-transparent" style="cursor: pointer;" (click)="marcarTodasComoLeidadas()" title="Marcar todas como leídas">
-          <i class="text-success d-flex f-20" antIcon theme="outline" type="check-circle"></i>
+          <!-- <i class="text-success d-flex f-20" antIcon theme="outline" type="check-circle"></i> -->
+          <span nz-icon nzType="check-circle" nzTheme="outline" class="text-success d-flex" style="font-size: 20px;"></span>
         </a>
       }
     </div>
@@ -83,7 +84,7 @@
     </div>
     <div class="dropdown-divider mt-0"></div>
     <div class="text-center py-2">
-      <a href="javascript:" class="link-primary small fw-bold">Ver historial completo</a>
+      <a href="javascript:" class="link-primary small fw-bold" (click)="goToHistorial($event)">Ver historial completo</a>
     </div>
   </div>
 </div>

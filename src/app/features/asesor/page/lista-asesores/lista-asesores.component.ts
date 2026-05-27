@@ -43,7 +43,8 @@ export class ListaAsesoresComponent implements OnInit {
     {
       field: "codigoAsesor",
       headerName: "Código",
-      width: 80,
+      width: 100,
+      minWidth: 100,
       filter: "agTextColumnFilter",
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -53,7 +54,7 @@ export class ListaAsesoresComponent implements OnInit {
     },
     {
       field: "nombreCompleto",
-      headerName: "Nombre Completo del asesor",
+      headerName: "Nombre del asesor",
       flex: 1,
       minWidth: 200,
       filter: "agTextColumnFilter",
@@ -64,7 +65,8 @@ export class ListaAsesoresComponent implements OnInit {
     },
     {
       headerName: "Documento",
-      width: 160,
+      width: 170,
+      minWidth: 160,
       filter: "agTextColumnFilter",
       valueGetter: (params) => {
         const data = params.data;
@@ -83,6 +85,7 @@ export class ListaAsesoresComponent implements OnInit {
       field: "telefono",
       headerName: "Teléfono",
       width: 130,
+      minWidth: 120,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -92,13 +95,15 @@ export class ListaAsesoresComponent implements OnInit {
     {
       field: "direccion",
       headerName: "Dirección",
-      width: 250,
+      flex: 1,
+      minWidth: 200,
       filter: 'agTextColumnFilter',
     },
     {
       colId: 'isActive',
       headerName: "Estado",
-      width: 110,
+      width: 115,
+      minWidth: 115,
       // Usamos valueGetter para que el filtro local funcione con strings
       valueGetter: (params) => params.data?.isActive ? 'true' : 'false',
       cellRenderer: BadgeEstadoComponent,
@@ -199,7 +204,7 @@ export class ListaAsesoresComponent implements OnInit {
     // En local AG Grid ya maneja el filtrado mediante el StatusFloatingFilterComponent
   }
 
-  /* 
+  /*
   // Método remoto comentado para referencia
   private executeSearch(): void {
     const term =

@@ -93,6 +93,12 @@ export const Approutes: Routes = [
       {
         path: 'profile',
         loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES)
+      },
+      {
+        path: 'notificaciones/historial',
+        loadComponent: () =>
+          import('./shared/components/molecules/notificacion-historial/notificacion-historial.component')
+            .then(m => m.NotificacionHistorialComponent)
       }
     ]
   },

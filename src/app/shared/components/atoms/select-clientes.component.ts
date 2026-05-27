@@ -130,6 +130,9 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
   @Input() multiple = false;
   @Input() maxSelection = 3;
   @Input() withRoles = false;
+  
+  @Input() preloadedClientId?: string;
+  @Input() preloadedClientName?: string;
 
   @Output() Change = new EventEmitter<SelectClienteOutput>();
 
@@ -144,6 +147,16 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
+    if (this.preloadedClientId && this.preloadedClientName) {
+      const mockClient: IClienteSearchResult = {
+        id: this.preloadedClientId,
+        nombreCompleto: this.preloadedClientName,
+        nroDocumento: 'N/A'
+      };
+      this.poolClientesSeleccionados.set(this.preloadedClientId, mockClient);
+      this.clientList = [mockClient];
+    }
+
     this.inicializarValorExterno();
 
     // Búsqueda con debounce para protección de la API

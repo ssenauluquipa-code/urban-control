@@ -78,7 +78,8 @@ export class ListPagosComponent implements OnInit {
     {
       field: "fechaPago",
       headerName: "Fecha Pago",
-      width: 130,
+      width: 140,
+      minWidth: 130,
       valueGetter: (params) => {
         if (!params.data?.fechaPago) return "";
         const date = new Date(params.data.fechaPago);
@@ -98,6 +99,7 @@ export class ListPagosComponent implements OnInit {
       field: "codigoPago",
       headerName: "Código",
       width: 110,
+      minWidth: 100,
       cellStyle: { fontWeight: "bold" },
       filter: "agTextColumnFilter",
       floatingFilter: true,
@@ -108,7 +110,8 @@ export class ListPagosComponent implements OnInit {
     {
       field: "ventaId",
       headerName: "Ref. Venta",
-      width: 100,
+      width: 115,
+      minWidth: 110,
       filter: "agTextColumnFilter",
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -121,6 +124,7 @@ export class ListPagosComponent implements OnInit {
       field: "monto",
       headerName: "Monto",
       width: 130,
+      minWidth: 110,
       cellStyle: { display: "flex", "justify-content": "flex-end", "align-items": "center" },
       filter: "agNumberColumnFilter",
       floatingFilter: true,
@@ -132,6 +136,7 @@ export class ListPagosComponent implements OnInit {
       field: "montoRecibido",
       headerName: "Recibido",
       width: 130,
+      minWidth: 120,
       valueFormatter: (p) =>
         p.data ? `${p.data.monedaRecibida} ${p.value.toLocaleString()}` : "",
       cellStyle: (params: CellClassParams<IPagos>) => {
@@ -142,6 +147,7 @@ export class ListPagosComponent implements OnInit {
             style["fontWeight"] = "bold";
           } else {
             style["color"] = "#2ecc71"; // Verde / Pago completo
+            style["fontWeight"] = "bold";
           }
         }
         return style;
@@ -155,7 +161,8 @@ export class ListPagosComponent implements OnInit {
     {
       field: 'monedaRecibida',
       headerName: "Moneda recibida",
-      width: 120,
+      width: 155,
+      minWidth: 155,
       filter: "agTextColumnFilter",
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -166,6 +173,7 @@ export class ListPagosComponent implements OnInit {
       field: "metodo",
       headerName: "Método",
       width: 120,
+      minWidth: 110,
       filter: "agTextColumnFilter",
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -186,7 +194,8 @@ export class ListPagosComponent implements OnInit {
     {
       field: "estado",
       headerName: "Estado",
-      width: 120,
+      width: 115,
+      minWidth: 110,
       cellRenderer: BadgeEstadoComponent,
       filter: "agTextColumnFilter",
       floatingFilter: false,

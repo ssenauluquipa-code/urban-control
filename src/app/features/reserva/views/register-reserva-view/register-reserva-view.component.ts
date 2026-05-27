@@ -6,7 +6,6 @@ import { FormFieldComponent } from "src/app/shared/components/molecules/form-fie
 import { SelectClientesComponent } from "src/app/shared/components/atoms/select-clientes.component";
 import { SelectManzanasComponent } from "src/app/shared/components/atoms/select-manzanas.component";
 import { SelectLotesComponent } from "src/app/shared/components/atoms/select-lotes.component";
-import { InputTextComponent } from "src/app/shared/components/atoms/input-text/input-text.component";
 import { SelectMonedaComponent } from "src/app/shared/components/atoms/select-moneda.component";
 import { InputDateComponent } from "src/app/shared/components/atoms/input-date/input-date.component";
 import { InputTextareaComponent } from "src/app/shared/components/atoms/input-textarea/input-textarea.component";
@@ -15,7 +14,7 @@ import { InputNumberComponent } from "src/app/shared/components/atoms/input-numb
 @Component({
   selector: 'app-register-reserva-view',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, SelectClientesComponent, SelectManzanasComponent, SelectLotesComponent, InputTextComponent, SelectMonedaComponent, InputDateComponent, InputTextareaComponent, InputNumberComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, SelectClientesComponent, SelectManzanasComponent, SelectLotesComponent, SelectMonedaComponent, InputDateComponent, InputTextareaComponent, InputNumberComponent],
   templateUrl: './register-reserva-view.component.html',
   styleUrl: './register-reserva-view.component.scss'
 })

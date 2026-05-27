@@ -1,0 +1,15 @@
+<app-page-container [showBack]="true" [showOptions]="false">
+<section class="notificacion-historial">
+
+  <app-data-table
+    [rowData]="notificaciones"
+    [columnDefs]="columnDefs"
+    [loading]="loading"
+    [showCreate]="false"
+    [actions]="[]"
+    [height]="'560px'"
+    (rowClicked)="onRowClick($event)"
+  ></app-data-table>
+</section>
+
+</app-page-container>

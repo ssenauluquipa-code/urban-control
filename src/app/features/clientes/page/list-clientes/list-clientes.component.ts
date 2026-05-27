@@ -66,7 +66,8 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'codigoCliente',
       headerName: 'Código',
-      width: 90,
+      width: 100,
+      minWidth: 100,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -77,6 +78,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       field: 'fotoUrl',
       headerName: 'Foto',
       width: 90,
+      minWidth: 90,
       cellRenderer: (params: ICellRendererParams<ICliente>) => {
         const url = params.value;
         const name = params.data?.nombreCompleto || 'U';
@@ -101,7 +103,8 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'nroDocumento',
       headerName: 'Documento',
-      width: 150,
+      width: 160,
+      minWidth: 160,
       valueFormatter: (params) => {
         if (!params.data) return '';
         const data = params.data;
@@ -119,7 +122,8 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'telefono',
       headerName: 'Celular',
-      width: 110,
+      width: 120,
+      minWidth: 110,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -137,6 +141,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       colId: 'isActive',
       headerName: 'Estado',
       width: 115,
+      minWidth: 115,
       // Usamos valueGetter para que el valor real sea texto ('true'/'false')
       // Esto hace que el filtro funcione al 100% en local.
       valueGetter: (params) => params.data?.isActive ? 'true' : 'false',
@@ -163,14 +168,14 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /** 
+  /**
    * Carga de clientes (Local)
    * Traemos una cantidad grande para filtrar en el navegador
    */
   loadClientes(): void {
     this.loading = true;
 
-    // Para filtro LOCAL, traemos una cantidad grande (ej: 1000) 
+    // Para filtro LOCAL, traemos una cantidad grande (ej: 1000)
     // y dejamos que AG Grid haga el resto en el navegador.
     this.clienteService
       .getPagedClients(1, 100, '', undefined)
@@ -191,7 +196,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       });
   }
 
-  /* 
+  /*
   // LÓGICA ANTERIOR (Remota) - Comentada para referencia
   loadClientes(page = 1): void {
     this.currentPage = page;
@@ -230,7 +235,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
   }
 
   onStatusFilterChanged(status: boolean | undefined): void {
-    // En LOCAL no necesitamos disparar una carga manual, 
+    // En LOCAL no necesitamos disparar una carga manual,
     // AG Grid ya recibió el aviso desde el StatusFloatingFilterComponent
     // y filtró el array en memoria.
     this.currentStatusFilter = status;

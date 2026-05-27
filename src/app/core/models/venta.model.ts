@@ -55,6 +55,7 @@ export interface IVenta {
   montoTotal: number;
   cuotaInicial?: number;
   saldoPendiente: number;
+  tipoCambio:number;
   moneda: string;
   createdAt?: string;
   loteId?: string;

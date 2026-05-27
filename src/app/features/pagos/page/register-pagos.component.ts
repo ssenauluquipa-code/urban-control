@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, finalize, takeUntil } from 'rxjs';
+import { Subject, finalize, takeUntil, skip } from 'rxjs';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { EMetodoPago } from 'src/app/core/models/pagos.model';
@@ -101,13 +101,77 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   loteInfo = '';
   cuotasTexto = '';
   totalTexto = '';
+  esPagoContadoDirecto = false;
+  clienteIdContado: string | null = null;
   private currentProjectId$ = toObservable(this.globalContext.currentProjectId);
+
+  constructor() {
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state as {
+      ventaId: string;
+      nroVenta: number;
+      fechaVenta: string;
+      moneda: string;
+      tipoCambio: number;
+      montoTotal: number;
+      saldoPendiente: number;
+      nombreCompletoCliente: string;
+      clienteId?: string;
+      esContadoDirecto?: boolean;
+    };
+    if (state && state.esContadoDirecto) {
+      this.esPagoContadoDirecto = true;
+      this.clienteIdContado = state.clienteId || null;
+
+      this.ventaSeleccionada = {
+        ventaId: state.ventaId,
+        nroVenta: state.nroVenta,
+        fechaVenta: state.fechaVenta,
+        moneda: state.moneda,
+        tipoCambio: state.tipoCambio,
+        montoTotal: state.montoTotal,
+        saldoPendiente: state.saldoPendiente,
+        nombreCompletoCliente: state.nombreCompletoCliente,
+        nroDocumentoCliente: '', // Vacío controlado o marcador
+        frecuenciaPago: 'CONTADO',
+        totalPagado: 0,
+        nroCuotas: 0,
+        montoCuota: 0
+      };
+      this.lastMoneda = state.moneda;
+    }
+  }
 
   ngOnInit(): void {
     this.initForm();
+
+    if (this.esPagoContadoDirecto && this.ventaSeleccionada) {
+      // Necesitamos agregar la venta a las opciones para que el select de venta funcione correctamente
+      this.ventasOpciones = [{
+        ventaId: this.ventaSeleccionada.ventaId,
+        label: `Venta #${this.ventaSeleccionada.nroVenta} — CONTADO — Saldo ${this.ventaSeleccionada.moneda} ${this.ventaSeleccionada.saldoPendiente}`,
+        venta: this.ventaSeleccionada
+      }];
+
+      // Hacemos el patch con emitEvent: false para no disparar las limpiezas automáticas
+      this.form.patchValue({
+        clienteId: this.clienteIdContado,
+        ventaId: this.ventaSeleccionada.ventaId,
+        monto: this.ventaSeleccionada.saldoPendiente,
+        monedaRecibida: this.ventaSeleccionada.moneda
+      }, { emitEvent: false });
+
+      // Bloqueamos los componentes
+      this.form.get('clienteId')?.disable();
+      this.form.get('ventaId')?.disable();
+    }
+
     this.currentProjectId$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((projectId: string | null) => {
+      .pipe(
+        skip(1), // Evita que la emisión inicial borre nuestros datos precargados
+        takeUntil(this.destroy$)
+      )
+      .subscribe((projectId: string | null) => {
         // Al cambiar de proyecto, limpiamos el flujo de operación para evitar errores 400
         this.form.patchValue({ clienteId: null, ventaId: null }, { emitEvent: false });
         this.ventaSeleccionada = null;
@@ -257,7 +321,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       .subscribe((ventaId: string | null) => {
         console.log('=== [DEBUG] VENTA SELECCIONADA ===');
         console.log('ID de Venta:', ventaId);
-        
+
         if (!ventaId) {
           this.ventaSeleccionada = null;
           this.ventaDetalleCompleto = null;

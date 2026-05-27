@@ -16,6 +16,7 @@ export enum TableActionsEnum {
   VENTA = 'venta',
   MASS_LOAD = 'MASS_LOAD',
   COMPROBANTE = 'comprobante',
+  PAGO = 'pago',
 }
 
 export type TableAction = TableActionsEnum | string;

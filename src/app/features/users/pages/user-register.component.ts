@@ -5,7 +5,7 @@ import { IUser } from 'src/app/core/models/user.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { ViewRegisterUserComponent } from '../views/view-register-user/view-register-user.component';
-import { catchError, finalize, of, switchMap } from 'rxjs';
+import { catchError, finalize, map, of, switchMap } from 'rxjs';
 import { ModalContainerComponent } from 'src/app/shared/components/organisms/modal-container/modal-container.component';
 import { IAsesorOption } from 'src/app/core/models/asesor/asesor.model';
 @Component({
@@ -39,6 +39,7 @@ export class UserRegisterComponent {
   @Input()
   set userData(data: IUser | null) {
     this._userData = data;
+    this.selectedAvatarFile = null;
     // Si hay datos (modo edición), llenamos el formulario inmediatamente
     if (data) {
       this.patchUserData(data);
@@ -49,6 +50,8 @@ export class UserRegisterComponent {
   }
   /** Archivo de imagen seleccionado temporalmente para subir como avatar */
   private selectedAvatarFile: File | null = null;
+  /** Bandera: el usuario quiere eliminar el avatar actual (solo edición) */
+  private avatarMarkedForDeletion = false;
 
   constructor(
     private fb: FormBuilder,
@@ -93,6 +96,8 @@ export class UserRegisterComponent {
   private patchUserData(data: IUser): void {
     // 1. Resetear el formulario a su estado inicial
     this.userFormGroup.reset();
+    this.selectedAvatarFile = null;
+    this.avatarMarkedForDeletion = false;
 
     // 2. Ajustar validaciones para modo edición
     this.userFormGroup.get('password')?.clearValidators();
@@ -103,13 +108,18 @@ export class UserRegisterComponent {
       id: data.id,
       name: data.name,
       email: data.email,
-      contactNumber: data.contactNumber,
+      contactNumber: this.normalizeContactNumber(data.contactNumber),
       role: data.role, // 🔥 Esto es clave para que el select tome el valor
       asesorId: data.asesorId,
     });
 
     // 4. Deshabilitar email (lógica de negocio)
     //this.userFormGroup.get('email')?.disable();
+  }
+
+  /** Normaliza el teléfono a solo dígitos (requerido por el input numérico). */
+  private normalizeContactNumber(value: string | number | null | undefined): string {
+    return String(value ?? '').replace(/\D/g, '');
   }
 
   /**
@@ -119,6 +129,7 @@ export class UserRegisterComponent {
    */
   public onAvatarSelected(file: File): void {
     this.selectedAvatarFile = file;
+    this.avatarMarkedForDeletion = false;
   }
 
   /**
@@ -126,6 +137,7 @@ export class UserRegisterComponent {
    */
   public onAvatarDeleted(): void {
     this.selectedAvatarFile = null;
+    this.avatarMarkedForDeletion = !!this.userData?.id;
   }
 
   /**
@@ -137,7 +149,7 @@ export class UserRegisterComponent {
       this.userFormGroup.patchValue({
         name: asesor.nombreCompleto,
         email: asesor.email,
-        contactNumber: asesor.telefono,
+        contactNumber: this.normalizeContactNumber(asesor.telefono),
       });
       this.notification.info(`Datos cargados desde el asesor: ${asesor.nombreCompleto}`);
     }
@@ -160,60 +172,85 @@ export class UserRegisterComponent {
 
     const formValue = this.userFormGroup.getRawValue();
     const isEditMode = !!formValue.id;
+    const userId = formValue.id as string;
+    const contactNumber = this.normalizeContactNumber(formValue.contactNumber);
 
     this.loading = true;
-    // 1. Definir la petición principal (Crear o Actualizar)
-    let mainRequest$;
+    const mainRequest$ = isEditMode
+      ? this.userService.updateUser(userId, {
+          name: formValue.name,
+          contactNumber,
+          role: formValue.role,
+          asesorId: formValue.asesorId,
+        })
+      : this.userService.createUser({
+          name: formValue.name,
+          email: formValue.email,
+          password: formValue.password,
+          contactNumber,
+          role: formValue.role,
+          asesorId: formValue.asesorId,
+        });
 
-    if (isEditMode) {
-      // Payload para actualizar (sin email ni contraseña)
-      const payload = {
-        name: formValue.name,
-        contactNumber: formValue.contactNumber,
-        email: formValue.email,
-        role: formValue.role,
-        asesorId: formValue.asesorId,
-      };
-      mainRequest$ = this.userService.updateUser(formValue.id, payload);
-    } else {
-      // Payload para crear
-      const createData = { ...formValue };
-      delete createData.id;
-      mainRequest$ = this.userService.createUser(createData);
-    }
-    // 2. Ejecutar cadena de operaciones con RxJS
     mainRequest$
       .pipe(
-        switchMap((userResponse: IUser) => {
-          // Una vez guardados los datos, verificamos si hay avatar
-          if (this.selectedAvatarFile && userResponse.id) {
-            return this.userService
-              .uploadAvatar(userResponse.id, this.selectedAvatarFile)
-              .pipe(
-                // Si el avatar falla, capturamos el error para no romper el flujo principal
-                catchError((err) => {
-                  console.error('Error subiendo avatar', err);
-                  this.notification.warning(
-                    'Datos guardados, pero ocurrió un error al subir el avatar.',
-                  );
-                  // Retornamos el usuario original para que el flujo continúe exitosamente
-                  return of(userResponse);
-                }),
-              );
+        switchMap((userResponse: IUser | null) => {
+          const targetUserId = isEditMode ? userId : userResponse?.id;
+
+          if (!targetUserId) {
+            return of({ avatarUploaded: false, avatarDeleted: false, avatarError: false });
           }
-          // Si no hay archivo, simplemente devolvemos la respuesta original
-          return of(userResponse);
+
+          if (this.avatarMarkedForDeletion && !this.selectedAvatarFile) {
+            return this.userService.deleteAvatar(targetUserId).pipe(
+              map(() => ({ avatarUploaded: false, avatarDeleted: true, avatarError: false })),
+              catchError((err) => {
+                console.error('Error eliminando avatar', err);
+                return of({ avatarUploaded: false, avatarDeleted: false, avatarError: true });
+              }),
+            );
+          }
+
+          if (!this.selectedAvatarFile) {
+            return of({ avatarUploaded: false, avatarDeleted: false, avatarError: false });
+          }
+
+          return this.userService.uploadAvatar(targetUserId, this.selectedAvatarFile).pipe(
+            map(() => ({ avatarUploaded: true, avatarDeleted: false, avatarError: false })),
+            catchError((err) => {
+              console.error('Error subiendo avatar', err);
+              return of({ avatarUploaded: false, avatarDeleted: false, avatarError: true });
+            }),
+          );
         }),
         finalize(() => {
           this.loading = false;
-        })
+        }),
       )
       .subscribe({
-        next: () => {
-          const message = isEditMode
-            ? 'Usuario actualizado correctamente.'
-            : 'Usuario creado exitosamente.';
-          this.notification.success(message);
+        next: ({ avatarUploaded, avatarDeleted, avatarError }) => {
+          if (avatarError) {
+            this.notification.warning(
+              'Datos guardados, pero ocurrió un error al subir el avatar.',
+            );
+          }
+
+          if (isEditMode) {
+            this.notification.success(
+              avatarUploaded
+                ? 'Usuario y avatar actualizados correctamente.'
+                : avatarDeleted
+                  ? 'Usuario actualizado y avatar eliminado correctamente.'
+                : 'Usuario actualizado correctamente.',
+            );
+          } else {
+            this.notification.success(
+              avatarUploaded
+                ? 'Usuario creado y avatar subido exitosamente.'
+                : 'Usuario creado exitosamente.',
+            );
+          }
+
           this.activeModal.close(true);
         },
         error: (err) => {

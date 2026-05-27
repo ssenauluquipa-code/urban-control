@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { INotificacionRepository } from '../interfaces/repository/notificacion.repository.interface';
 import { Observable } from 'rxjs';
-import { INotificacion, INotificacionResumen } from '../models/notificacion.model';
+import { INotificacion, INotificacionFilter, INotificacionResumen } from '../models/notificacion.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,14 @@ export class NotificacionService {
    * Filtra por no leídas y aplica un límite por performance.
    */
   getAlertasMenuCampana(limite: number = 25): Observable<INotificacion[]> {
-    return this.notiRepo.getAll({ leida: false, limit: limite });
+    return this.notiRepo.getAll({ limit: limite });
+  }
+
+  /**
+   * Obtiene historial completo de notificaciones con filtros opcionales.
+   */
+  getHistorialNotificaciones(filters?: INotificacionFilter): Observable<INotificacion[]> {
+    return this.notiRepo.getAll(filters);
   }
 
   /**
