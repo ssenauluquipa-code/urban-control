@@ -1,112 +1,138 @@
 <div class="detail-container fade-in">
-  <!-- FILA SUPERIOR: En móvil se apilarán una debajo de otra -->
+
   <div class="row g-3 mb-3">
-    <!-- Datos de Venta + Ubicación -->
-    <div class="col-12 col-xl-7">
+
+    <!-- Datos de Venta -->
+    <div class="col-12 col-sm-6 col-xl-7">
       <app-card-container title="Datos de la Venta">
         <div class="row g-3">
-          <!-- Fila 1: 3 columnas en desktop, 1 columna en móvil -->
+
+          <!-- Fila 1: Nro, Fecha, Estado -->
           <div class="col-12 col-md-4">
-            <app-input-text-info label="Nro. de Venta" [value]="venta?.nroVenta" [loading]="loading"
-              [bold]="true"></app-input-text-info>
+            <app-input-text-info label="Nro. de Venta" [value]="venta?.nroVenta"
+              [loading]="loading" [bold]="true">
+            </app-input-text-info>
           </div>
           <div class="col-12 col-md-4">
-            <app-input-text-info label="Fecha de Venta" [value]="venta?.fechaVenta | date: 'dd/MM/yyyy'"
-              [loading]="loading"></app-input-text-info>
+            <app-input-text-info label="Fecha de Venta"
+              [value]="venta?.fechaVenta | date: 'dd/MM/yyyy'"
+              [loading]="loading">
+            </app-input-text-info>
           </div>
           <div class="col-12 col-md-4">
-            <app-input-text-info label="Estado" [value]="venta?.estado" [loading]="loading"
-              [bold]="true"></app-input-text-info>
+            <app-input-text-info label="Estado" [value]="venta?.estado"
+              [loading]="loading" [bold]="true">
+            </app-input-text-info>
           </div>
 
-          <!-- Fila 2: 2 columnas en desktop/tablet, 1 columna en móvil -->
-          <div class="col-12 col-md-6">
+          <!-- Fila 2: Titular ocupa todo el ancho -->
+          <div class="col-12">
             <app-input-text-info label="Titular Principal" [value]="titularPrincipal"
-              [loading]="loading"></app-input-text-info>
-          </div>
-          <div class="col-12 col-md-6">
-            <app-input-text-info label="Asesor Responsable" [value]="venta?.nombreAsesor"
-              [loading]="loading"></app-input-text-info>
+              [loading]="loading">
+            </app-input-text-info>
           </div>
 
+          <!-- Fila 3: Asesor ocupa todo el ancho -->
+          <div class="col-12">
+            <app-input-text-info label="Asesor Responsable" [value]="venta?.nombreAsesor"
+              [loading]="loading">
+            </app-input-text-info>
+          </div>
+
+          <!-- Cotitulares solo si existen -->
           @if (cotitulares && cotitulares !== "Ninguno") {
           <div class="col-12">
-            <app-input-text-info label="Cotitulares" [value]="cotitulares" [loading]="loading"></app-input-text-info>
+            <app-input-text-info label="Cotitulares" [value]="cotitulares"
+              [loading]="loading">
+            </app-input-text-info>
           </div>
           }
 
-          <div class="col-12">
-            <hr class="my-2" />
-          </div>
+          <div class="col-12"><hr class="my-1" /></div>
 
-          <!-- Fila Ubicación: Ajustado para mejor lectura en móvil -->
-          <!-- Proyecto ocupa todo el ancho en móvil por ser texto largo -->
+          <!-- Fila Ubicación -->
+          <!-- Proyecto: ancho completo en móvil, 4 columnas en desktop -->
           <div class="col-12 col-md-4">
-            <app-input-text-info label="Proyecto" [value]="lotes?.manzana?.proyecto?.nombre"
-              [loading]="loading"></app-input-text-info>
+            <app-input-text-info label="Proyecto"
+              [value]="lotes?.manzana?.proyecto?.nombre"
+              [loading]="loading">
+            </app-input-text-info>
           </div>
 
-          <!-- Datos cortos (Manzana, Lote) pueden compartir ancho en móvil (col-6) -->
-          <div class="col-6 col-md-3">
-            <app-input-text-info label="Manzana" [value]="venta?.manzana" [loading]="loading"
-              [bold]="true"></app-input-text-info>
+          <!-- Manzana, Lote y Superficie: comparten fila en desktop,
+               en móvil col-4 para que queden en una sola fila los 3 -->
+          <div class="col-4 col-md-3">
+            <app-input-text-info label="Manzana" [value]="venta?.manzana"
+              [loading]="loading" [bold]="true">
+            </app-input-text-info>
           </div>
-          <div class="col-6 col-md-2">
-            <app-input-text-info label="Lote Nro." [value]="venta?.numeroLote" [loading]="loading"
-              [bold]="true"></app-input-text-info>
+          <div class="col-4 col-md-2">
+            <app-input-text-info label="Lote" [value]="venta?.numeroLote"
+              [loading]="loading" [bold]="true">
+            </app-input-text-info>
           </div>
-
-          <!-- Superficie en móvil ocupa medio ancho o completo según preferencia, aquí 6 para balancear -->
-          <div class="col-6 col-md-3">
+          <div class="col-4 col-md-3">
             <app-input-text-info label="Superficie" [value]="venta?.areaM2 + ' m²'"
-              [loading]="loading"></app-input-text-info>
+              [loading]="loading">
+            </app-input-text-info>
           </div>
+
         </div>
       </app-card-container>
     </div>
 
-    <!-- Resumen Financiero (datos en tiempo real desde /saldo) -->
-    <!-- En móvil col-12 (debajo de datos), en Desktop col-xl-5 (al lado) -->
-    <div class="col-12 col-xl-5">
+    <!-- Resumen Financiero -->
+    <div class="col-12 col-sm-6 col-xl-5">
       <app-card-container title="Resumen Financiero">
         <div class="row g-3">
-          <div class="col-12 col-md-6">
-            <app-input-text-info label="Monto Total" [value]="saldo?.montoTotal | currency: venta?.moneda"
-              [loading]="loading" [bold]="true"></app-input-text-info>
+          <div class="col-6">
+            <app-input-text-info label="Monto Total"
+              [value]="saldo?.montoTotal | currency: venta?.moneda"
+              [loading]="loading" [bold]="true">
+            </app-input-text-info>
           </div>
-          <div class="col-12 col-md-6">
-            <app-input-text-info label="Cuota Inicial / Reserva" [value]="saldo?.cuotaInicial | currency: venta?.moneda"
-              [loading]="loading" [bold]="true"></app-input-text-info>
+          <div class="col-6">
+            <app-input-text-info label="Cuota Inicial / Reserva"
+              [value]="saldo?.cuotaInicial | currency: venta?.moneda"
+              [loading]="loading" [bold]="true">
+            </app-input-text-info>
           </div>
-          <div class="col-12 col-md-6">
-            <app-input-text-info label="Total Pagado" [value]="saldo?.totalPagado | currency: venta?.moneda"
-              [loading]="loading" [bold]="true"></app-input-text-info>
+          <div class="col-6">
+            <app-input-text-info label="Total Pagado"
+              [value]="saldo?.totalPagado | currency: venta?.moneda"
+              [loading]="loading" [bold]="true">
+            </app-input-text-info>
           </div>
-          <div class="col-12 col-md-6">
-            <app-input-text-info label="Saldo Pendiente" [value]="saldo?.saldoPendiente | currency: venta?.moneda"
-              [loading]="loading" [bold]="true"></app-input-text-info>
+          <div class="col-6">
+            <app-input-text-info label="Saldo Pendiente"
+              [value]="saldo?.saldoPendiente | currency: venta?.moneda"
+              [loading]="loading" [bold]="true">
+            </app-input-text-info>
           </div>
-          <div class="col-12 col-md-6">
-            <app-input-text-info label="Plan de Pago" [value]="
-                venta?.tipoPago +
-                (venta?.frecuenciaPago
-                  ? ' (' + venta?.frecuenciaPago + ')'
-                  : '')
-              " [loading]="loading">
+          <div class="col-12">
+            <app-input-text-info label="Plan de Pago"
+              [value]="venta?.tipoPago + (venta?.frecuenciaPago ? ' (' + venta?.frecuenciaPago + ')' : '')"
+              [loading]="loading">
             </app-input-text-info>
           </div>
         </div>
       </app-card-container>
     </div>
+
   </div>
 
-  <!-- TABLA -->
+  <!-- TABLA DE CUOTAS -->
   @if (venta?.tipoPago === "CUOTAS") {
   <div class="row g-3">
     <div class="col-12">
       <app-card-container title="Plan de Pagos Detallado">
-        <app-data-table [rowData]="cuotas" [columnDefs]="columnDefs" [loading]="loading" [pageSize]="25"
-          [showCreate]="false" [actions]="[]">
+        <app-data-table
+          [rowData]="cuotas"
+          [columnDefs]="columnDefs"
+          [loading]="loading"
+          [pageSize]="25"
+          [showCreate]="false"
+          [actions]="[]">
         </app-data-table>
       </app-card-container>
     </div>
@@ -117,4 +143,5 @@
     Esta es una venta al contado. No dispone de un plan de cuotas diferido.
   </div>
   }
+
 </div>

@@ -7,7 +7,6 @@ import {
   inject,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -36,23 +35,19 @@ export interface ICuotaCronogramaVisual {
   templateUrl: './plan-cuotas-cronograma.component.html',
   styleUrl: './plan-cuotas-cronograma.component.scss',
 })
-export class PlanCuotasCronogramaComponent implements OnInit, OnChanges {
+export class PlanCuotasCronogramaComponent implements OnChanges {
   private ventaService = inject(VentaService);
   private cdr = inject(ChangeDetectorRef);
 
   @Input() ventaId: string | null = null;
-  @Input() montoFormulario = 0; // 🔥 Recibe el monto actual escrito a mano o calculado
-  @Input() moneda = 'USD'; // 🔥 Recibe la moneda del contrato
-  @Output() onMontoCalculado = new EventEmitter<number>(); // 🔥 Emite el nuevo total acumulado al padre
+  @Input() montoFormulario = 0; //Recibe el monto actual escrito a mano o calculado
+  @Input() moneda = 'USD'; // Recibe la moneda del contrato
+  @Output() onMontoCalculado = new EventEmitter<number>(); //Emite el nuevo total acumulado al padre
   @Output() onCuotaSeleccionada = new EventEmitter<ICuotaCronogramaVisual | null>(); // 🔥 Emite la cuota seleccionada
   @Output() onCuotasSeleccionadas = new EventEmitter<ICuotaCronogramaVisual[]>(); // 🔥 Emite el listado completo de cuotas seleccionadas
 
   cuotas: ICuotaCronogramaVisual[] = [];
   loading = false;
-
-  ngOnInit(): void {
-    this.loadCuotasIfNeeded();
-  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['ventaId']) {
@@ -107,7 +102,7 @@ export class PlanCuotasCronogramaComponent implements OnInit, OnChanges {
       if (saldoRestante < 0.01) {
         return { ...cuota, isSeleccionadaEfectiva: false };
       }
-      
+
       saldoRestante -= cuota.saldoPendiente;
       return { ...cuota, isSeleccionadaEfectiva: true };
     });

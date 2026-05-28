@@ -51,15 +51,17 @@ export class NotificacionHistorialComponent implements OnInit {
     {
       headerName: 'Tipo',
       field: 'tipo',
-      minWidth: 220,
+      minWidth: 260,
       flex: 1.1,
       cellRenderer: (params: { value: TipoNotificacion }) => this.renderTipoBadge(params.value),
     },
     {
       headerName: 'Título',
       field: 'titulo',
-      minWidth: 220,
-      flex: 1.3,
+      minWidth: 240,
+      flex: 2,
+      wrapText: true,
+      autoHeight: true,
     },
     {
       headerName: 'Mensaje',
@@ -123,8 +125,7 @@ export class NotificacionHistorialComponent implements OnInit {
           this.loading = true;
           this.cdr.markForCheck();
         }),
-        switchMap((projectId) => {
-          console.log('[notificacion-historial] currentProjectId:', projectId);
+        switchMap((projectId) => {          
           if (!projectId) {
             return of([] as INotificacion[]);
           }
@@ -145,9 +146,7 @@ export class NotificacionHistorialComponent implements OnInit {
         }),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((resultado) => {
-        console.log('[notificacion-historial] notificaciones cargadas:', resultado);
-        console.log('[notificacion-historial] total:', resultado.length);
+      .subscribe((resultado) => {                
         this.notificaciones = resultado;
         this.loading = false;
         this.cdr.markForCheck();

@@ -1,0 +1,116 @@
+.modal-verificacion {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+/* Tarjeta principal */
+.mv-card {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+}
+
+/* Filas propiedad / cliente */
+.mv-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 6px 0;
+
+  &:not(:last-of-type) {
+    border-bottom: none;
+  }
+}
+
+.mv-label {
+  font-size: .72rem;
+  font-weight: 500;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  flex-shrink: 0;
+}
+
+.mv-value {
+  font-size: .82rem;
+  font-weight: 600;
+  color: #212529;
+  text-align: right;
+}
+
+/* Separador punteado */
+.mv-divider {
+  border: none;
+  border-top: 1px dashed #dee2e6;
+  margin: .75rem 0;
+}
+
+/* Caja de cuotas */
+.mv-cuotas-box {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  margin-bottom: .75rem;
+}
+
+.mv-cuotas-title {
+  display: block;
+  font-size: .68rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: .5rem;
+}
+
+.mv-cuotas-content {
+  font-size: .8rem;
+  color: #495057;
+  line-height: 1.6;
+}
+
+/* Fila total */
+.mv-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: .75rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.mv-total-label {
+  font-size: .78rem;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.mv-total-amount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #212529;
+  letter-spacing: .01em;
+}
+
+/* Alerta de verificación */
+.mv-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fff8f0;
+  border-left: 3px solid #fd7e14;
+  border-radius: 0 8px 8px 0;
+  font-size: .75rem;
+  color: #7d3c0a;
+  line-height: 1.5;
+}
+
+.mv-alert-icon {
+  font-size: 1rem;
+  color: #fd7e14;
+  flex-shrink: 0;
+  margin-top: 1px;
+}

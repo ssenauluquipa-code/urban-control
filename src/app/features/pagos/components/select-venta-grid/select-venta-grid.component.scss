@@ -1,0 +1,108 @@
+.ventas-grid-container {
+  width: 100%;
+  padding: .25rem;
+
+  // AGREGA ESTO:
+  max-height: 350px; /* Altura máxima para el grid de ventas */
+  overflow-y: auto;  /* Habilita scroll interno si hay muchas ventas */
+
+  /* Scrollbar fina estilo MacOS/Windows moderno */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.ventas-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.venta-card-item {
+  position: relative;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 12px;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .08);
+    border-color: #cbd5e1;
+  }
+}
+
+.venta-num {
+  font-size: .85rem;
+  font-weight: 700;
+  color: #212529;
+}
+
+.venta-info-extra {
+  font-size: .75rem;
+  color: #6c757d;
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+.venta-divider {
+  border: none;
+  border-top: 1px dashed #f1f3f5;
+  margin: 8px 0;
+}
+
+.venta-monto {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #212529;
+  line-height: 1.2;
+}
+
+.venta-moneda {
+  font-size: .75rem;
+  font-weight: 400;
+  color: #6c757d;
+}
+
+.venta-detalles {
+  display: flex;
+  justify-content: space-between;
+  font-size: .75rem;
+  color: #6c757d;
+  margin-top: 6px;
+}
+
+.ventas-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem 1rem;
+  border: 1px dashed #dee2e6;
+  border-radius: 12px;
+  background: #f8f9fa;
+  color: #6c757d;
+}
+
+.active-selection {
+  border: 2px solid #1677ff !important;
+  background: rgba(22, 119, 255, .04);
+  box-shadow: 0 4px 12px rgba(22, 119, 255, .14);
+}
+
+ventas-grid-container::-webkit-scrollbar {
+  width: 6px;
+}
+.ventas-grid-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.ventas-grid-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
+}
+
+@media (max-width: 576px) {
+  .ventas-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}

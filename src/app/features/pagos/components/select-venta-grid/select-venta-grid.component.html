@@ -1,0 +1,58 @@
+<div class="ventas-grid-container">
+
+  @if (loading) {
+    <div class="text-center py-4 text-muted">
+      <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+      Cargando ventas...
+    </div>
+  } @else if (ventas.length === 0) {
+    <div class="ventas-empty">
+      <p class="mb-0 fw-semibold small">No existen ventas activas para este cliente.</p>
+    </div>
+  } @else {
+    <div class="ventas-grid">
+
+      @for (venta of ventas; track venta.ventaId) {
+      <div
+        class="venta-card-item"
+        [class.active-selection]="venta.ventaId === currentVentaId"
+        role="button"
+        tabindex="0"
+        (click)="seleccionarVenta(venta.ventaId)"
+        (keydown.enter)="seleccionarVenta(venta.ventaId)"
+        (keydown.space)="seleccionarVenta(venta.ventaId)"
+      >
+
+        <!-- Header: Nro Venta + Frecuencia -->
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="venta-num">Venta #{{ venta.venta.nroVenta }}</span>
+          <span class="badge bg-light text-dark border">
+            {{ venta.venta.frecuenciaPago }}
+          </span>
+        </div>
+
+        <!-- Cuerpo: Lote (Viene del merge con /activas) -->
+        <div class="venta-info-extra">
+          {{ venta.venta.lote }}
+        </div>
+
+        <hr class="venta-divider">
+
+        <!-- Monto Saldo Pendiente -->
+        <div class="venta-monto">
+          {{ venta.venta.saldoPendiente | number:'1.2-2' }}
+          <span class="venta-moneda">{{ venta.venta.moneda }}</span>
+        </div>
+
+        <!-- Detalles: Cuota Mensual -->
+        <div class="venta-detalles">
+          <span>Cuota: <strong>{{ venta.venta.montoCuota | number:'1.2-2' }}</strong></span>
+          <span>Total: <strong>{{ venta.venta.montoTotal | number:'1.2-2' }}</strong></span>
+        </div>
+
+      </div>
+      }
+
+    </div>
+  }
+</div>

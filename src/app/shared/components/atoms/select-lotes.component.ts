@@ -5,6 +5,9 @@ import { ILoteByLoteDisponible } from 'src/app/core/models/lote/lote.model';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
 import { SelectDataComponent } from './select-data.component';
 import { CommonModule } from '@angular/common';
+import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { takeUntil, distinctUntilChanged, skip } from 'rxjs/operators';
 
 @Component({
   selector: 'app-select-lotes',
@@ -44,6 +47,8 @@ import { CommonModule } from '@angular/common';
 })
 export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
   private loteService = inject(LoteService);
+  private globalContext = inject(ProjectStatusGlobalService);
+  private readonly projectId$ = toObservable(this.globalContext.currentProjectId);
 
   // Inputs
   @Input() input_control = new FormControl<string | null>(null);
@@ -66,6 +71,19 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit(): void {
     // Cargamos lotes siempre al inicio (si hay manzanaId filtra, si no trae todos)
     this.loadLotes(this.manzanaId);
+
+    // Cuando cambia el proyecto global, limpiamos la selección y recargamos
+    this.projectId$
+      .pipe(
+        skip(1), // ignoramos la emisión inicial, ngOnInit ya cargó
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.input_control.setValue(null, { emitEvent: false });
+        this.loteList = [];
+        this.loadLotes(this.manzanaId);
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -111,7 +129,7 @@ export class SelectLotesComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  onSelect(event: string | null): void {
+  onSelect(event: string): void {
     this.Change.emit(event);
     // Emitir el manzanaId del lote seleccionado
     if (event) {

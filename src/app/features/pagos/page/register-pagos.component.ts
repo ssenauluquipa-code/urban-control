@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, finalize, takeUntil, skip } from 'rxjs';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { EMetodoPago } from 'src/app/core/models/pagos.model';
 import { Moneda } from 'src/app/core/models/reserva.model';
@@ -14,6 +14,7 @@ import { PageContainerComponent } from 'src/app/shared/components/templates/page
 import { RegisterPagosViewComponent, VentaPagoOption } from '../view/register-pagos-view/register-pagos-view.component';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { ModalVerificacionPagoComponent } from '../components/modal-verificacion-pago/modal-verificacion-pago.component';
 
 @Component({
   selector: 'app-register-pagos',
@@ -40,37 +41,6 @@ import { toObservable } from '@angular/core/rxjs-interop';
         (onCuotasSeleccionadas)="onCuotasManejadas($event)"
       ></app-register-pagos-view>
     </app-page-container>
-
-    <ng-template #confirmTemplate>
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; font-size: 14px;">
-        <div style="background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-          <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px dashed #e5e7eb;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span style="color: #6b7280; font-weight: 500; font-size: 12px; text-transform: uppercase;">Propiedad</span>
-              <span style="color: #111827; font-weight: 600;">{{ loteInfo }}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-              <span style="color: #6b7280; font-weight: 500; font-size: 12px; text-transform: uppercase;">Cliente</span>
-              <span style="color: #111827; font-weight: 600;">{{ ventaSeleccionada?.nombreCompletoCliente || 'N/A' }}</span>
-            </div>
-          </div>
-          <div style="background-color: #f9fafb; border-radius: 6px; padding: 12px; margin-bottom: 20px;">
-            <span style="display: block; color: #374151; font-size: 11px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Detalle de Cuotas a Pagar</span>
-            <div style="color: #4b5563; font-size: 13px; line-height: 1.4;" [innerHTML]="cuotasTexto"></div>
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-            <div style="font-weight: 600; color: #374151; font-size: 14px;">TOTAL A PAGAR</div>
-            <div style="background-color: #1e40af; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 800; font-size: 18px; letter-spacing: 0.5px;">
-              {{ totalTexto }}
-            </div>
-          </div>
-        </div>
-        <div style="margin-top: 16px; padding: 10px; background-color: #fff7ed; border-left: 4px solid #f97316; border-radius: 4px; color: #9a3412; font-size: 12px; display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 14px;">ℹ️</span>
-          <span>Verifique que el monto y el comprobante coincidan con la transacción bancaria.</span>
-        </div>
-      </div>
-    </ng-template>
   `,
   styles: ``,
 })
@@ -82,8 +52,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private notification = inject(NotificationService);
   private cdr = inject(ChangeDetectorRef);
-  private modalService = inject(NzModalService);
-  @ViewChild('confirmTemplate', { static: true }) confirmTemplate!: TemplateRef<any>;
+  private modalService = inject(NgbModal);
   private destroy$ = new Subject<void>();
 
   form!: FormGroup;
@@ -231,15 +200,23 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
     this.totalTexto = `${pagoDto.monedaRecibida} ${Number(pagoDto.monto).toFixed(2)}`;
 
     // Abrir modal de confirmación
-    this.modalService.confirm({
-      nzTitle: 'Confirmar Registro de Pago',
-      nzWidth: 550,
-      nzContent: this.confirmTemplate,
-      nzOkText: 'Confirmar Registro',
-      nzCancelText: 'Cancelar',
-      nzOkType: 'primary',
-      nzOnOk: () => this.ejecutarRegistroPago(pagoDto),
+    const modalRef = this.modalService.open(ModalVerificacionPagoComponent, {
+      size: 'md',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true,
     });
+
+    modalRef.componentInstance.loteInfo = this.loteInfo;
+    modalRef.componentInstance.cuotasTexto = this.cuotasTexto;
+    modalRef.componentInstance.totalTexto = this.totalTexto;
+    modalRef.componentInstance.ventaSeleccionada = this.ventaSeleccionada;
+
+    modalRef.result
+      .then((confirmed) => {
+        if (confirmed) this.ejecutarRegistroPago(pagoDto);
+      })
+      .catch(() => undefined);
 
 
 
@@ -297,9 +274,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
     this.form
       .get('clienteId')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe((clienteId: string | null) => {
-        console.log('=== [DEBUG] CLIENTE SELECCIONADO ===');
-        console.log('ID del Cliente:', clienteId);
+      .subscribe((clienteId: string | null) => {                
 
         this.form.patchValue({ ventaId: null }, { emitEvent: false });
         this.ventaSeleccionada = null;
@@ -318,9 +293,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
     this.form
       .get('ventaId')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe((ventaId: string | null) => {
-        console.log('=== [DEBUG] VENTA SELECCIONADA ===');
-        console.log('ID de Venta:', ventaId);
+      .subscribe((ventaId: string | null) => {                
 
         if (!ventaId) {
           this.ventaSeleccionada = null;
@@ -330,8 +303,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
         }
 
         const opcion = this.ventasOpciones.find((v) => v.ventaId === ventaId);
-        this.ventaSeleccionada = opcion?.venta ?? null;
-        console.log('Venta completa encontrada:', this.ventaSeleccionada);
+        this.ventaSeleccionada = opcion?.venta ?? null;        
 
         if (this.ventaSeleccionada?.moneda) {
           this.form.patchValue(
@@ -347,8 +319,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
           .obtenerVentaPorId(ventaId)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
-            next: (detalle) => {
-              console.log('Detalles adicionales de la venta:', detalle);
+            next: (detalle) => {              
               this.ventaDetalleCompleto = detalle;
               this.cdr.markForCheck();
             },
@@ -392,8 +363,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   }
 
   private cargarVentasPorCliente(clienteId: string): void {
-    this.loadingVentas = true;
-    console.log(`[DEBUG] Llamando API: listarVentasPagoPorCliente(${clienteId})`);
+    this.loadingVentas = true;    
 
     this.ventaService
       .listarVentasPagoPorCliente(clienteId)
@@ -404,10 +374,8 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe({
-        next: (ventas) => {
-          console.log('[DEBUG] Respuesta de Ventas recibida:', ventas);
-          this.ventasOpciones = ventas.map((v) => this.mapVentaOpcion(v));
-          console.log('[DEBUG] Opciones Mapeadas para el Select:', this.ventasOpciones);
+        next: (ventas) => {          
+          this.ventasOpciones = ventas.map((v) => this.mapVentaOpcion(v));    
 
           if (this.ventasOpciones.length === 1) {
             const unica = this.ventasOpciones[0];

@@ -47,9 +47,7 @@ export class SelectManzanasComponent implements OnInit, OnDestroy {
     // 🚀 Carga inicial automática y reactiva ante cambios del proyecto global
     this.projectId$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((projectId) => {
-        console.log('🔄 [SelectManzanas] Proyecto global activo:', projectId);
-        
+      .subscribe((projectId) => {              
         if (!projectId) {
           this.manzanaList = [];
           return;

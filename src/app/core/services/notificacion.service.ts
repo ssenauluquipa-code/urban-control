@@ -30,9 +30,10 @@ export class NotificacionService {
 
   /**
    * Obtiene el contador resumido para el Badge dinámico de alertas.
+   * Retorna el stream compartido del repositorio (un solo polling para toda la app).
    */
   getContadorAlertas(): Observable<INotificacionResumen> {
-    return this.notiRepo.getResumen();
+    return this.notiRepo.getResumenStream();
   }
 
   /**

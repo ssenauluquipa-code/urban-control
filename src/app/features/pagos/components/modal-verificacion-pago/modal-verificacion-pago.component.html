@@ -1,0 +1,49 @@
+<app-modal-container
+  mainTitleModal="Confirmar Registro de Pago"
+  saveButtonName="Confirmar Registro"
+  saveButtonIcon="check-circle"
+  cancelButtonName="Cancelar"
+  (SaveAction)="confirmar()"
+  (CancelAction)="cancelar()"
+>
+  <div class="modal-verificacion">
+
+    <!-- Tarjeta principal -->
+    <div class="mv-card">
+
+      <!-- Propiedad -->
+      <div class="mv-row">
+        <span class="mv-label">Propiedad</span>
+        <span class="mv-value">{{ loteInfo }}</span>
+      </div>
+
+      <!-- Cliente -->
+      <div class="mv-row">
+        <span class="mv-label">Cliente</span>
+        <span class="mv-value">{{ ventaSeleccionada?.nombreCompletoCliente || 'N/A' }}</span>
+      </div>
+
+      <hr class="mv-divider">
+
+      <!-- Detalle de cuotas -->
+      <div class="mv-cuotas-box">
+        <span class="mv-cuotas-title">Detalle de Cuotas a Pagar</span>
+        <div class="mv-cuotas-content" [innerHTML]="cuotasTexto"></div>
+      </div>
+
+      <!-- Total -->
+      <div class="mv-total-row">
+        <span class="mv-total-label">TOTAL A PAGAR</span>
+        <span class="mv-total-amount">{{ totalTexto }}</span>
+      </div>
+
+    </div>
+
+    <!-- Aviso de verificación -->
+    <!-- <div class="mv-alert">
+      <span class="mv-alert-icon">ℹ️</span>
+      <span>Verifique que el monto y el comprobante coincidan con la transacción bancaria.</span>
+    </div> -->
+
+  </div>
+</app-modal-container>

@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { Router } from '@angular/router';
-import { Subject, interval } from 'rxjs';
-import { switchMap, takeUntil, startWith } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { NotificacionService } from 'src/app/core/services/notificacion.service';
 import { INotificacion, INotificacionResumen, TipoNotificacion } from 'src/app/core/models/notificacion.model';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
@@ -19,10 +19,8 @@ import { toObservable } from '@angular/core/rxjs-interop';
 })
 export class NotificacionBellComponent implements OnInit, OnDestroy {
   private notiService = inject(NotificacionService);
-  private globalProjectService = inject(ProjectStatusGlobalService);
   private router = inject(Router);
   private destroy$ = new Subject<void>();
-  private readonly projectId$ = toObservable(this.globalProjectService.currentProjectId);
 
   // Estados reactivos expuestos a la vista
   public resumen: INotificacionResumen = { totalNoLeidas: 0, cuotasPorVencer: 0, cuotasVencidas: 0, lotesLiberados: 0 };
@@ -30,20 +28,14 @@ export class NotificacionBellComponent implements OnInit, OnDestroy {
   public cargando = false;
 
   ngOnInit(): void {
-    this.projectId$
-      .pipe(
-        switchMap(() => 
-          // Reinicia el temporizador de 60 segundos cada vez que el ID del proyecto cambia
-          interval(60000).pipe(
-            startWith(0),
-            switchMap(() => this.notiService.getContadorAlertas())
-          )
-        ),
-        takeUntil(this.destroy$)
-      )
+    // Solo se suscribe al stream compartido del repositorio (singleton)
+    // El polling real vive en NotificacionRepository, no aquí
+    this.notiService.getContadorAlertas()
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (resumenData) => this.resumen = resumenData,
-        error: (err) => console.error('Error sincronizando contador de alertas:', err)
+        next: (resumenData) => {
+          if (resumenData) this.resumen = resumenData;
+        }
       });
   }
 

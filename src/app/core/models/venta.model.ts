@@ -172,4 +172,6 @@ export interface IClientePagoById {
   saldoPendiente: number;
   nroCuotas: number;
   montoCuota: number;
+  /** Campo enriquecido desde /activas (ej: "Lote A-13"). Opcional porque /pagos no lo devuelve. */
+  lote?: string;
 }

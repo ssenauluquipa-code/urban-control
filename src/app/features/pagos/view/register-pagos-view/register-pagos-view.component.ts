@@ -7,12 +7,12 @@ import { PlanCuotasCronogramaComponent } from '../../components/plan-cuotas-cron
 import { ImageDisplayMultipleComponent } from 'src/app/shared/components/atoms/image-display-multiple/image-display-multiple.component';
 import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
-import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
 import { InputTextareaComponent } from 'src/app/shared/components/atoms/input-textarea/input-textarea.component';
 import { InputNumberComponent } from 'src/app/shared/components/atoms/input-number/input-number.component';
 import { MetodoPagoSelectorComponent } from 'src/app/shared/components/molecules/metodo-pago-selector.component';
 import { SelectMonedaComponent } from 'src/app/shared/components/atoms/select-moneda.component';
 import { SelectClientesComponent } from 'src/app/shared/components/atoms/select-clientes.component';
+import { SelectVentaGridComponent } from '../../components/select-venta-grid/select-venta-grid.component';
 
 export interface VentaPagoOption {
   ventaId: string;
@@ -30,12 +30,12 @@ export interface VentaPagoOption {
     ImageDisplayMultipleComponent,
     PlanCuotasCronogramaComponent,
     FormFieldComponent,
-    SelectDataComponent,
     InputTextareaComponent,
     InputNumberComponent,
     MetodoPagoSelectorComponent,
     SelectMonedaComponent,
     SelectClientesComponent,
+    SelectVentaGridComponent
   ],
   templateUrl: './register-pagos-view.component.html',
   styleUrl: './register-pagos-view.component.scss',
@@ -137,5 +137,8 @@ export class RegisterPagosViewComponent {
     this.monto.setValue(Number(montoConvertido.toFixed(2)));
   }
 
-
+ // Agrega este método para manejar el evento del hijo
+  onVentaSeleccionadaDesdeGrid(ventaId: string): void {
+    this.ventaId.setValue(ventaId);
+  }
 }

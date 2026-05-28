@@ -48,8 +48,8 @@ export class MassLoadViewComponent implements OnInit {
 
   public columnDefs: ColDef<RowGridStructure>[] = [];
 
-  public defaultColDef: ColDef = { 
-    resizable: true, 
+  public defaultColDef: ColDef = {
+    resizable: true,
     sortable: false,
     wrapHeaderText: true,
     autoHeaderHeight: true,
@@ -84,31 +84,31 @@ export class MassLoadViewComponent implements OnInit {
           }
         }
       },
-      { 
-        field: 'codigo', 
-        headerName: 'Manzana (Cod)', 
-        width: 130, 
+      {
+        field: 'codigo',
+        headerName: 'Manzana (Cod)',
+        width: 130,
         editable: (params) => params.data ? !params.data.isExcepcion : false,
         cellStyle: (params) => params.data?.isExcepcion ? { backgroundColor: '#f8f9fa', color: 'transparent' } : null
       },
-      { 
-        field: 'descripcion', 
-        headerName: 'Descripción', 
-        width: 180, 
+      {
+        field: 'descripcion',
+        headerName: 'Descripción',
+        width: 180,
         editable: (params) => params.data ? !params.data.isExcepcion : false,
         cellStyle: (params) => params.data?.isExcepcion ? { backgroundColor: '#f8f9fa', color: 'transparent' } : null
       },
-      { 
-        field: 'cantidadLotes', 
-        headerName: 'Lotes (Total)', 
-        width: 120, 
+      {
+        field: 'cantidadLotes',
+        headerName: 'Lotes (Total)',
+        width: 120,
         editable: (params) => params.data ? !params.data.isExcepcion : false,
         cellStyle: (params) => params.data?.isExcepcion ? { backgroundColor: '#f8f9fa', color: 'transparent' } : null
       },
-      { 
-        field: 'numero', 
-        headerName: 'Lote Nro (Excepción)', 
-        width: 130, 
+      {
+        field: 'numero',
+        headerName: 'Lote Nro (Excepción)',
+        width: 130,
         editable: (params) => params.data ? params.data.isExcepcion : false,
         cellStyle: (params) => (params.data && !params.data.isExcepcion) ? { backgroundColor: '#f8f9fa', fontWeight: 'normal' } : { backgroundColor: '#e6f7ff', fontWeight: 'bold' }
       },
@@ -207,7 +207,7 @@ export class MassLoadViewComponent implements OnInit {
       // Fallback por si acaso
       this.gridRowData = [...this.gridRowData, nuevaExcepcion];
     }
-    
+
     this.refreshGrid();
   }
 
@@ -230,11 +230,11 @@ export class MassLoadViewComponent implements OnInit {
   private updateParentFormGroup(): void {
     const manzanasPayload: any[] = [];
     const manzanasRows = this.gridRowData.filter(r => !r.isExcepcion);
-    
+
     manzanasRows.forEach(mz => {
       // Obtenemos las excepciones que pertenecen a este código de manzana
       const excepcionesRows = this.gridRowData.filter(r => r.isExcepcion && r.parentCodigo === mz.codigo);
-      
+
       const excepcionesPayload = excepcionesRows.map(exc => {
         const payload: any = {
           numero: Number(exc.numero) || 0,
@@ -251,7 +251,7 @@ export class MassLoadViewComponent implements OnInit {
         }
         return payload;
       });
-        
+
       const manzanaPayload: any = {
         codigo: mz.codigo || '',
         descripcion: mz.descripcion || '',
@@ -265,11 +265,11 @@ export class MassLoadViewComponent implements OnInit {
         comision: Number(mz.comision) || 0,
         excepciones: excepcionesPayload
       };
-      
+
       if (mz.observaciones && mz.observaciones.trim() !== '') {
         manzanaPayload.observaciones = mz.observaciones;
       }
-      
+
       manzanasPayload.push(manzanaPayload);
     });
 
@@ -281,7 +281,7 @@ export class MassLoadViewComponent implements OnInit {
     });
   }
 
-  // BOTÓN GUARDAR ESTRUCTURA (Llamada final al endpoint)
+  // BOTÓN GUARDAR ESTRUCTURA (Método completamente mejorado y sanitizado)
   public guardarEstructuraMasiva(): void {
     if (this.gridRowData.filter(r => r.isExcepcion && !r.numero).length > 0) {
       this.notification.warning('Tienes excepciones agregadas sin su respectivo Número de Lote asignado.');
@@ -290,27 +290,131 @@ export class MassLoadViewComponent implements OnInit {
 
     this.loading = true;
 
-    // Obtenemos el payload JSON limpio generado desde la tabla
-    const payload = this.form.value;
+    // =========================================================================
+    // 1. CONSTRUCCIÓN Y SANITIZACIÓN DEL PAYLOAD (Evita enviar nulls al Backend)
+    // =========================================================================
+    const manzanas: any[] = [];
 
-    // Ejecutamos la petición HTTP mandando el ID dinámico obtenido de la lista
-    this.proyectoService.createEstructuraProyecto(this.proyectoId, payload).subscribe({
+    // Filtramos únicamente las filas que son Manzanas Base
+    const manzanasBase = this.gridRowData.filter(r => !r.isExcepcion);
+
+    manzanasBase.forEach(m => {
+      // Buscamos las excepciones (Lotes) asociadas exclusivamente a esta manzana
+      const excepcionesRows = this.gridRowData.filter(r => r.isExcepcion && r.parentCodigo === m.codigo);
+
+      const excepcionesPayload = excepcionesRows.map(e => ({
+        numero: e.numero ? Number(e.numero) : 0,
+        areaM2: e.areaM2 ? Number(e.areaM2) : 0,
+        // Si el precio de la excepción viene nulo o vacío, enviamos el mínimo aceptable (0.01) para no tumbar la validación del backend
+        precioReferencial: (e.precioReferencial !== null && e.precioReferencial !== undefined && Number(e.precioReferencial) >= 0.01)
+          ? Number(e.precioReferencial)
+          : 0.01,
+        dimensionNorte: e.dimensionNorte ? Number(e.dimensionNorte) : 0,
+        dimensionSur: e.dimensionSur ? Number(e.dimensionSur) : 0,
+        dimensionEste: e.dimensionEste ? Number(e.dimensionEste) : 0,
+        dimensionOeste: e.dimensionOeste ? Number(e.dimensionOeste) : 0,
+        comision: e.comision ? Number(e.comision) : 0,
+        observaciones: e.observaciones || ""
+      }));
+
+      manzanas.push({
+        codigo: m.codigo || "SIN_CODIGO",
+        descripcion: m.descripcion || "",
+        cantidadLotes: m.cantidadLotes ? Number(m.cantidadLotes) : 0,
+        areaM2: m.areaM2 ? Number(m.areaM2) : 0,
+        // Al igual que en la excepción, aseguramos un precio mínimo base de manzana válido para el DTO
+        precioReferencial: (m.precioReferencial !== null && m.precioReferencial !== undefined && Number(m.precioReferencial) >= 0.01)
+          ? Number(m.precioReferencial)
+          : 0.01,
+        dimensionNorte: m.dimensionNorte ? Number(m.dimensionNorte) : 0,
+        dimensionSur: m.dimensionSur ? Number(m.dimensionSur) : 0,
+        dimensionEste: m.dimensionEste ? Number(m.dimensionEste) : 0,
+        dimensionOeste: m.dimensionOeste ? Number(m.dimensionOeste) : 0,
+        comision: m.comision ? Number(m.comision) : 0,
+        observaciones: m.observaciones || "",
+        excepciones: excepcionesPayload
+      });
+    });
+
+    const payloadFinal = { manzanas };
+
+    // =========================================================================
+    // 2. ENVÍO DE DATOS Y TRADUCCIÓN DINÁMICA DE ERRORES
+    // =========================================================================
+    this.proyectoService.createEstructuraProyecto(this.proyectoId, payloadFinal).subscribe({
       next: (res: any) => {
         const msg = res?.message || '¡Estructura masiva de manzanas y lotes creada con éxito!';
         this.notification.success(msg);
-        this.router.navigate(['/gestion-inmobiliaria/proyecto']); // Redirigimos de vuelta al listado
+        this.router.navigate(['/gestion-inmobiliaria/proyecto']);
       },
       error: (err: any) => {
-        let errorMsg = 'Ocurrió un error al procesar la carga masiva en el servidor.';
-        if (err.error && err.error.message) {
-          errorMsg = Array.isArray(err.error.message) ? err.error.message.join(', ') : err.error.message;
-        } else if (err.message) {
-          errorMsg = err.message;
-        }
-        this.notification.error(errorMsg);
         this.loading = false;
-      },
-      complete: () => this.loading = false
+        let errorMsg = 'Ocurrió un error al procesar la carga masiva en el servidor.';
+
+        if (err.error && err.error.message) {
+          // Si el backend devuelve múltiples errores en un arreglo (comportamiento por defecto de class-validator)
+          if (Array.isArray(err.error.message)) {
+            const erroresTraducidos = err.error.message.map((msgInIngles: string) =>
+              this.traducirMensajeErrorBackend(msgInIngles, payloadFinal)
+            );
+            // Unimos los errores formateados con un salto de línea HTML
+            errorMsg = erroresTraducidos.join('<br>');
+          } else {
+            errorMsg = this.traducirMensajeErrorBackend(err.error.message, payloadFinal);
+          }
+        }
+
+        // Lanzamos la notificación. NOTA: Asegúrate de que tu componente de notificación acepte saltos de línea o HTML.
+        this.notification.error(errorMsg);
+      }
     });
+  }
+
+  /**
+   * Intercepta y traduce las propiedades y mensajes técnicos del backend (NestJS/class-validator)
+   * mapeando los índices de arreglos (manzanas.0...) a los nombres reales ingresados en la tabla.
+   */
+  private traducirMensajeErrorBackend(mensaje: string, payload: any): string {
+    // Expresión regular para capturar patrones como "manzanas.0.precioReferencial" o "manzanas.1.excepciones.4.precioReferencial"
+    const regexRuta = /manzanas\.(\d+)(?:\.excepciones\.(\d+))?\.(\w+)/;
+    const match = mensaje.match(regexRuta);
+
+    let contextoLocacion = "En el formulario";
+
+    if (match) {
+      const indexManzana = parseInt(match[1], 10);
+      const indexExcepcion = match[2] ? parseInt(match[2], 10) : null;
+      const campoOriginal = match[3];
+
+      // Buscamos el objeto exacto enviado en el payload para extraer su información legible
+      const manzanaObj = payload.manzanas[indexManzana];
+
+      if (manzanaObj) {
+        if (indexExcepcion !== null) {
+          const excepcionObj = manzanaObj.excepciones[indexExcepcion];
+          const nroLote = excepcionObj ? excepcionObj.numero : (indexExcepcion + 1);
+          contextoLocacion = `En la <b>Manzana "${manzanaObj.codigo}"</b>, en la excepción del <b>Lote #${nroLote}</b>`;
+        } else {
+          contextoLocacion = `En la <b>Manzana "${manzanaObj.codigo}"</b>`;
+        }
+      }
+    }
+
+    // --- DICCIONARIO DE TRADUCCIONES DE REGLAS DE CLASS-VALIDATOR ---
+    if (mensaje.includes('must not be less than')) {
+      const valorMinimo = mensaje.split('less than')[1]?.trim() || '0.01';
+      return `❌ ${contextoLocacion}: El precio o dimensión ingresada no puede ser menor a <b>${valorMinimo}</b>.`;
+    }
+
+    if (mensaje.includes('should not be empty') || mensaje.includes('must be a string')) {
+      return `❌ ${contextoLocacion}: Hay un campo obligatorio que se encuentra vacío.`;
+    }
+
+    if (mensaje.includes('must be an integer number') || mensaje.includes('must be a number')) {
+      return `❌ ${contextoLocacion}: El valor ingresado debe ser un número válido.`;
+    }
+
+    // En caso de que sea otro error de restricción único del backend, devolvemos el texto original con la ubicación
+    return `⚠️ ${contextoLocacion}: ${mensaje}`;
   }
 }

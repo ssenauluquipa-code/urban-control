@@ -10,11 +10,12 @@ import { SelectMonedaComponent } from "src/app/shared/components/atoms/select-mo
 import { InputDateComponent } from "src/app/shared/components/atoms/input-date/input-date.component";
 import { InputTextareaComponent } from "src/app/shared/components/atoms/input-textarea/input-textarea.component";
 import { InputNumberComponent } from "src/app/shared/components/atoms/input-number/input-number.component";
+import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
 
 @Component({
   selector: 'app-register-reserva-view',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, SelectClientesComponent, SelectManzanasComponent, SelectLotesComponent, SelectMonedaComponent, InputDateComponent, InputTextareaComponent, InputNumberComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, SelectClientesComponent, SelectManzanasComponent, SelectLotesComponent, SelectMonedaComponent, InputDateComponent, InputTextareaComponent, InputNumberComponent, CardContainerComponent],
   templateUrl: './register-reserva-view.component.html',
   styleUrl: './register-reserva-view.component.scss'
 })

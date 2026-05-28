@@ -29,8 +29,8 @@
             <div class="d-flex flex-column">
 
               <app-form-field label="Cliente" [required]="true">
-                <app-select-clientes 
-                  [input_control]="clienteId" 
+                <app-select-clientes
+                  [input_control]="clienteId"
                   [preloadedClientId]="clienteId.value"
                   [preloadedClientName]="ventaSeleccionada?.nombreCompletoCliente"
                   input_placeholder="Buscar cliente...">
@@ -39,9 +39,15 @@
 
               @if (clienteId.value) {
               <app-form-field label="Contrato / Venta" [required]="true">
-                <app-select-data [proyectoId]="proyectoId" [inputControl]="ventaId" [itemList]="ventasOpciones" bindValue="ventaId"
+                <!-- <app-select-data [proyectoId]="proyectoId" [inputControl]="ventaId" [itemList]="ventasOpciones" bindValue="ventaId"
                   bindLabel="label" [loading]="loadingVentas" [searchable]="true" placeholder="Seleccionar venta...">
-                </app-select-data>                
+                </app-select-data> -->
+                <app-select-venta-grid
+                  [ventas]="ventasOpciones"
+                  [loading]="loadingVentas"
+                  [currentVentaId]="ventaId.value"
+                  (ventaIdChange)="onVentaSeleccionadaDesdeGrid($event)"
+                ></app-select-venta-grid>
               </app-form-field>
               }
 
