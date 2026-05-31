@@ -30,6 +30,11 @@ export enum TipoPago {
   CUOTAS = "CUOTAS",
 }
 
+export enum EstadoVenta{
+  ACTIVA = "ACTIVA",
+  ANULADA = "ANULADA"
+}
+
 export enum FrecuenciaPago {
   SEMANAL = "SEMANAL",
   QUINCENAL = "QUINCENAL",

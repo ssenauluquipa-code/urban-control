@@ -91,6 +91,9 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
   @Input() loading = false;
   @Input() monedaBase: Moneda = Moneda.USD;
 
+  /** Nombre completo del titular, capturado al momento de la selección. */
+  public nombreTitular: string | null = null;
+
   public currentReservedLote: ILoteByLoteDisponible | null = null;
   public reservaLabel = '';
 
@@ -170,9 +173,9 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
 
   /** Saldo a financiar: 0 en contado sin reserva; total − inicial en cuotas o con adelanto. */
   get saldoPendienteValue(): number {
-    if (this.isContado && !this.reservaId.value) {
+   /*  if (this.isContado && !this.reservaId.value) {
       return 0;
-    }
+    } */
     return this.currencyCalc.calculateRemainingBalance(
       this.montoTotalValue,
       this.cuotaInicialValue,

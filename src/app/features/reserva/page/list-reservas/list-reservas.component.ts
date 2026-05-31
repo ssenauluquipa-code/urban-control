@@ -22,15 +22,16 @@ import { ReservaService } from 'src/app/core/services/reserva.service';
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
+import { StatusReservaFloatingFilterComponent } from 'src/app/shared/components/organisms/status-reserva-floating-filter.component';
 
 @Component({
   selector: 'app-list-reservas',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    DataTableComponent, 
-    PageContainerComponent, 
+    CommonModule,
+    ReactiveFormsModule,
+    DataTableComponent,
+    PageContainerComponent,
     NzIconModule
   ],
   templateUrl: './list-reservas.component.html',
@@ -133,6 +134,7 @@ export class ListReservasComponent implements OnInit {
       case TableActionsEnum.ANULAR:
         if (event.row.id) {
           const request$ = this.reservaService.cancelReserva(event.row.id);
+          console.log("respuesta ", request$);
           this.confirmation.toggleStatus('Reserva', `#${event.row.codigoReserva}`, true, request$)
             .subscribe(success => {
               if (success) this.loadReservas();
@@ -194,7 +196,8 @@ export class ListReservasComponent implements OnInit {
         headerName: 'Cliente',
         field: 'nombreCliente',
         filter: 'agTextColumnFilter',
-        flex: 2,
+        flex: 2,        
+        floatingFilter: true,
       },
       {
         headerName: 'Manzana / Lote',
@@ -226,6 +229,9 @@ export class ListReservasComponent implements OnInit {
         field: 'estado',
         cellRenderer: BadgeEstadoComponent,
         flex: 1,
+        filter: 'agTextColumnFilter',
+        floatingFilter: true,
+        floatingFilterComponent: StatusReservaFloatingFilterComponent,
         cellClass: 'd-flex align-items-center'
       }
     ];

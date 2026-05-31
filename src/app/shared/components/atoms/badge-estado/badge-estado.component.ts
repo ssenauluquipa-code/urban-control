@@ -49,6 +49,14 @@ export class BadgeEstadoComponent implements ICellRendererAngularComp {
   }
 
   private setState(value: string | boolean | null | undefined): void {
+    if(value === 'ANULADO'){
+      this.label = 'ANULADO';
+      this.cssClass = 'anulado';
+    }if(value === 'ANULADA')//venta
+    {
+      this.label = 'ANULADA';
+      this.cssClass = 'anulada';
+    }
     if (value === true || value === 'true') {
       this.label = 'Activo';
       this.cssClass = 'activo';

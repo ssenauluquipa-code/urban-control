@@ -67,7 +67,7 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
         <span class="role-badge ms-1">
           {{ isTitular(item.id) ? 'T' : 'C' }}
         </span>
-        <span class="tag-remove ms-1 d-flex align-items-center justify-content-center" 
+        <span class="tag-remove ms-1 d-flex align-items-center justify-content-center"
               role="button"
               tabindex="0"
               style="cursor: pointer; width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,0.2);"
@@ -80,7 +80,7 @@ import { ModelMultiClientesComponent } from 'src/app/features/clientes/component
   `,
   styles: [`
     :host { display: block; }
-    
+
     :host ::ng-deep .highlight-match {
       background-color: #fff3cd;
       font-weight: bold;
@@ -130,11 +130,13 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
   @Input() multiple = false;
   @Input() maxSelection = 3;
   @Input() withRoles = false;
-  
+
   @Input() preloadedClientId?: string;
   @Input() preloadedClientName?: string;
 
   @Output() Change = new EventEmitter<SelectClienteOutput>();
+  /** Emite el nombre completo del titular (índice 0) cuando withRoles=true */
+  @Output() TitularNombre = new EventEmitter<string>();
 
   public clientList: IClienteSearchResult[] = [];
   public internal_control = new FormControl<string | string[] | null>(null);
@@ -179,7 +181,7 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
       .subscribe(externalValue => {
         const nextIds = this.extractIds(externalValue);
         const desiredInternalValue = this.multiple ? nextIds : (nextIds.length > 0 ? nextIds[0] : null);
-        
+
         if (JSON.stringify(this.internal_control.value) !== JSON.stringify(desiredInternalValue)) {
           this.internal_control.setValue(desiredInternalValue, { emitEvent: false });
           this.cdr.markForCheck();
@@ -236,10 +238,10 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
       next: (data: IClienteSearchResult[]) => {
         const yaSeleccionados = Array.from(this.poolClientesSeleccionados.values());
         const nuevosFiltrados = data.filter(d => !this.poolClientesSeleccionados.has(d.id));
-        
+
         // Unimos el pool persistente con los nuevos resultados para que ng-select no rompa los tags
         this.clientList = [...yaSeleccionados, ...nuevosFiltrados];
-        
+
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -292,6 +294,10 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
         clienteId: c.id,
         rol: index === 0 ? RolPropietario.TITULAR : RolPropietario.COTITULAR
       }));
+      // Emitimos el nombre del titular para que el padre pueda usarlo
+      if (objetosSeleccionados.length > 0) {
+        this.TitularNombre.emit(objetosSeleccionados[0].nombreCompleto);
+      }
     } else {
       // Modo simple: Enviamos el array puro de IDs
       finalValue = selectedIds;

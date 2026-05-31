@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NzModalModule, NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -12,6 +12,9 @@ import { IReserva, EstadoReserva } from 'src/app/core/models/reserva.model';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { NotificationService } from 'src/app/core/services/notification.service';
+import { ModalContainerComponent } from 'src/app/shared/components/organisms/modal-container/modal-container.component';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
 
 /** Modal con tabla de reservas activas filtrables por texto. */
 @Component({
@@ -25,9 +28,11 @@ import { NotificationService } from 'src/app/core/services/notification.service'
     NzInputModule,
     NzIconModule,
     NzTagModule,
-    FormsModule
+    FormsModule,
+    ModalContainerComponent
   ],
   template: `
+  <app-modal-container [mainTitleModal]="'Buscar Reserva Activa'" [showFooter]="false">
     <div class="p-3">
       <div class="mb-3">
         <nz-input-group [nzSuffix]="suffixIconSearch">
@@ -96,6 +101,7 @@ import { NotificationService } from 'src/app/core/services/notification.service'
         </tbody>
       </nz-table>
     </div>
+    </app-modal-container>
   `,
   styles: [`
     :host {
@@ -106,7 +112,7 @@ import { NotificationService } from 'src/app/core/services/notification.service'
 export class ModalSearchReservaComponent implements OnInit {
   private reservaService = inject(ReservaService);
   private projectStatusService = inject(ProjectStatusGlobalService);
-  private modalRef = inject(NzModalRef);
+  private activeModal = inject(NgbActiveModal);
   private notification = inject(NotificationService);
 
   loading = false;
@@ -166,6 +172,6 @@ export class ModalSearchReservaComponent implements OnInit {
 
   /** Cierra el modal devolviendo la reserva elegida. */
   selectReserva(reserva: IReserva): void {
-    this.modalRef.close(reserva);
+    this.activeModal.close(reserva);
   }
 }

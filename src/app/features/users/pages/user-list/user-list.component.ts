@@ -21,6 +21,7 @@ import { PageContainerComponent } from "src/app/shared/components/templates/page
 import { DataTableComponent } from "src/app/shared/components/organisms/data-table/data-table.component";
 import { CommonModule } from "@angular/common";
 import { UserRegisterComponent } from "../user-register.component";
+import { StatusFloatingFilterComponent } from "src/app/shared/components/organisms/status-floating-filter.component";
 
 @Component({
   selector: "app-user-list",
@@ -93,6 +94,8 @@ export class UserListComponent implements OnInit {
         headerName: "Nombre del Usuario",
         flex: 1,
         minWidth: 130,
+        filter: 'agTextColumnFilter',
+        floatingFilter: true,
       },
       {
         field: "email",
@@ -140,7 +143,14 @@ export class UserListComponent implements OnInit {
         field: "isActive",
         headerName: "Estado",
         width: 100,
+        valueGetter: (params) => params.data?.isActive ? 'true' : 'false',
         cellRenderer: BadgeEstadoComponent,
+        filter: 'agTextColumnFilter',
+        floatingFilter: true,
+        floatingFilterComponent: StatusFloatingFilterComponent,
+        suppressFloatingFilterButton: true,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
       },
     ];
   }

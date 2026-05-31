@@ -1,18 +1,18 @@
 <app-page-container
-  title="Carga Masiva de Manzanas y Lotes"
+  [title]="'Carga Masiva de Manzanas y Lotes '+ projectName"
   [loading]="loading"
   [showCustom]="true"
   customLabel="Agregar Manzana"
-  customIcon="feather icon-plus"
+  [customIcon]="'bi bi-plus-lg'"
   (CustomAction)="addManzanaRow('', '')"
   [showSave]="true"
   (Save)="guardarEstructuraMasiva()"
   [showOptions]="false"
+  [showCancel]="true"
 >
 
-  <div style="height: 500px; width: 100%" class="ag-theme-alpine mt-3">
     <ag-grid-angular
-      style="width: 100%; height: 100%"
+      style="width: 100%; height: 60vh"
       class="ag-theme-alpine"
       [rowData]="gridRowData"
       [columnDefs]="columnDefs"
@@ -22,7 +22,5 @@
       (gridReady)="onGridReady($event)"
       (cellValueChanged)="onCellValueChanged($event)"
     >
-    </ag-grid-angular>
-  </div>
-  <pre>{{ gridRowData | json }}</pre>
+    </ag-grid-angular>    
 </app-page-container>

@@ -42,7 +42,11 @@ export class ConfirmationService {
               observer.complete();
             },
             error: (err) => {
-              this.notification.error(`No se pudo ${action} el ${entityName.toLowerCase()}`);
+              const backendMessage = err?.error?.message;
+              const errroMessage = backendMessage ? backendMessage : `No se pudo ${action} la ${entityName.toLowerCase()}`;
+              //this.notification.error(backendMessage || `No se pudo ${action} el ${entityName.toLowerCase()}`);
+              this.notification.error(errroMessage);
+              console.error('Error completo del backend ', err);
               observer.error(err);
             }
           });

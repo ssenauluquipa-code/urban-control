@@ -20,7 +20,7 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
   // --- Inputs Comunes ---
   @Input() columnDefs: ColDef[] = [];
   @Input() loading = false;
-  @Input() height = '520px';
+  @Input() height = '60vh';
   @Input() showCreate = true;
   @Input() actions: TableAction[] = ['view', 'edit', 'delete'];
   @Input() module = ''; // Nuevo input para el scope de permisos

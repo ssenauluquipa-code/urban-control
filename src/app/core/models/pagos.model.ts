@@ -79,3 +79,8 @@ export interface IPagosQueryFilters {
   fechaDesde?: string;
   fechaHasta?: string;
 }
+
+export enum EstadoPago{
+  ACTIVO = "ACTIVO",
+  ANULADO = "ANULADO"
+}

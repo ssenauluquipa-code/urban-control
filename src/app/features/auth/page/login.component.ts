@@ -39,8 +39,8 @@ export class LoginComponent {
 
   private initForm(): void {
     this.loginForm = this.fb.group({
-      email: ['superadmin@gmail.com', [Validators.required, Validators.email]],
-      password: ['admin0005', [Validators.required]],
+      email: ['senauluquipas2026@gmail.com', [Validators.required, Validators.email]],
+      password: ['70883741Sa.*', [Validators.required]],
     });
   }
 

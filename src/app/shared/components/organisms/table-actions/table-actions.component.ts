@@ -191,6 +191,12 @@ export class TableActionsComponent implements ICellRendererAngularComp {
         return data?.estado === 'CANCELADA';
       }
 
+      // Regla de Negocio: En Reservas, el botón de Anular y Venta solo aparece si la reserva está ACTIVA
+      if (currentModule === EAppModule.RESERVAS && 
+        ( action === TableActionsEnum.ANULAR || action === TableActionsEnum.VENTA)) {
+        return data?.estado === 'ACTIVA';
+      }
+
       // Regla de Negocio: En Lotes, el botón de eliminar solo aparece si el lote está DISPONIBLE
       if (currentModule === EAppModule.LOTES && action === TableActionsEnum.DELETE) {
         return data?.estado === 'DISPONIBLE';

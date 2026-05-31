@@ -278,6 +278,7 @@
                   [withRoles]="true"
                   [maxSelection]="3"
                   input_placeholder="Buscar y agregar cliente..."
+                  (TitularNombre)="nombreTitular = $event"
                 ></app-select-clientes>
               </app-form-field>
             </div>

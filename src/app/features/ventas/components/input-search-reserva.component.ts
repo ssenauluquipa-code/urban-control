@@ -4,9 +4,9 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzModalService } from 'ng-zorro-antd/modal';
 import { ModalSearchReservaComponent } from './modal-search-reserva.component';
 import { IReserva } from 'src/app/core/models/reserva.model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 /** Campo de búsqueda de reserva activa con modal y botón limpiar. */
 @Component({
@@ -15,41 +15,40 @@ import { IReserva } from 'src/app/core/models/reserva.model';
   imports: [CommonModule, ReactiveFormsModule, NzInputModule, NzButtonModule, NzIconModule],
   template: `
     <div class="input-search-wrapper" [class.disabled]="disabled">
-      <div 
-        class="custom-search-container" 
-        [class.has-value]="!!input_control.value"
-        role="button"
-        tabindex="0"
-        (click)="openSearchModal()"
-        (keydown.enter)="openSearchModal()"
-        (keydown.space)="openSearchModal()"
-      >
+      <div class="custom-search-container" [class.has-value]="!!input_control.value">
+
+        <!-- Input solo lectura — NO abre modal, solo muestra valor -->
         <div class="input-area">
-          <input 
-            type="text" 
-            [value]="displayText" 
-            readonly 
-            [placeholder]="placeholder" 
+          <input
+            type="text"
+            [value]="displayText"
+            readonly
+            [placeholder]="placeholder"
             [disabled]="disabled"
           />
           @if (input_control.value) {
-            <button 
-              class="btn-clear" 
-              (click)="clearSelection($event)" 
+            <button
+              class="btn-clear"
+              type="button"
+              (click)="clearSelection($event)"
               title="Limpiar selección"
             >
               <span nz-icon nzType="close-circle" nzTheme="fill"></span>
             </button>
           }
         </div>
-        <button 
-          class="btn-search" 
+
+        <!-- Botón Buscar — único disparador del modal -->
+        <button
+          class="btn-search"
           type="button"
           [disabled]="disabled"
+          (click)="openSearchModal()"
         >
           <span nz-icon nzType="search"></span>
           <span>Buscar</span>
         </button>
+
       </div>
     </div>
   `,
@@ -57,7 +56,7 @@ import { IReserva } from 'src/app/core/models/reserva.model';
     .input-search-wrapper {
       width: 100%;
     }
-    
+
     .custom-search-container {
       display: flex;
       align-items: stretch;
@@ -67,12 +66,13 @@ import { IReserva } from 'src/app/core/models/reserva.model';
       border-radius: 8px;
       overflow: hidden;
       background-color: #fff;
-      transition: all 0.3s ease;
-      cursor: pointer;
+      transition: border-color 0.3s ease;
+
+      /* Sin cursor pointer en el contenedor — el input no es clickeable */
+      cursor: default;
 
       &:hover:not(.disabled) {
         border-color: #12223b;
-        box-shadow: 0 0 0 2px rgba(83, 74, 183, 0.1);
       }
 
       &.has-value {
@@ -83,7 +83,6 @@ import { IReserva } from 'src/app/core/models/reserva.model';
 
     .disabled .custom-search-container {
       background-color: #f5f5f5;
-      cursor: not-allowed;
       border-color: #d9d9d9;
     }
 
@@ -102,8 +101,9 @@ import { IReserva } from 'src/app/core/models/reserva.model';
         outline: none;
         color: #333;
         font-size: 14px;
-        cursor: pointer;
-        padding-right: 24px; /* Space for clear button */
+        /* cursor normal — no indica que sea clickeable */
+        cursor: default;
+        padding-right: 24px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -113,7 +113,7 @@ import { IReserva } from 'src/app/core/models/reserva.model';
         }
 
         &:disabled {
-          color: #rgba(0, 0, 0, 0.25);
+          color: rgba(0, 0, 0, 0.25);
           cursor: not-allowed;
         }
       }
@@ -131,7 +131,7 @@ import { IReserva } from 'src/app/core/models/reserva.model';
       align-items: center;
       padding: 0;
       transition: color 0.3s;
-      
+
       &:hover {
         color: #8c8c8c;
       }
@@ -149,15 +149,15 @@ import { IReserva } from 'src/app/core/models/reserva.model';
       font-weight: 500;
       font-size: 14px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background-color 0.2s ease;
 
       &:hover:not(:disabled) {
-        background-color: #12223b;
+        background-color: #1e3467;
       }
 
       &:disabled {
         background-color: #d9d9d9;
-        color: #rgba(0, 0, 0, 0.25);
+        color: rgba(0, 0, 0, 0.25);
         cursor: not-allowed;
       }
 
@@ -179,7 +179,7 @@ export class InputSearchReservaComponent {
   @Output() OnReservaSelected = new EventEmitter<IReserva>();
   @Output() OnClear = new EventEmitter<void>();
 
-  private modalService = inject(NzModalService);
+  private modalService = inject(NgbModal);
 
   public selectedReservaLabel = '';
 
@@ -187,19 +187,15 @@ export class InputSearchReservaComponent {
     return this.selectedReservaLabel || '';
   }
 
-  /** Abre el modal de reservas activas del proyecto. */
+  /** Abre el modal — solo desde el botón Buscar */
   openSearchModal(): void {
     if (this.disabled) return;
 
-    const modal = this.modalService.create({
-      nzTitle: 'Buscar Reserva Activa',
-      nzContent: ModalSearchReservaComponent,
-      nzWidth: 800,
-      nzFooter: null,
-      nzCentered: true
+    const modalRef = this.modalService.open(ModalSearchReservaComponent, {
+      size: "lg",
     });
 
-    modal.afterClose.subscribe((reserva: IReserva) => {
+    modalRef.result.then((reserva: IReserva) => {
       if (reserva) {
         this.applySelection(reserva);
       }
@@ -215,7 +211,7 @@ export class InputSearchReservaComponent {
     this.OnReservaSelected.emit(reserva);
   }
 
-  /** Borra la reserva seleccionada y notifica al padre (OnClear). */
+  /** Limpia la selección — solo desde el botón X del input */
   clearSelection(event?: Event): void {
     if (event) {
       event.stopPropagation();

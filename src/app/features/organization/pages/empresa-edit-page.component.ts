@@ -24,6 +24,7 @@ import { UpdateOrganizationDto } from 'src/app/core/models/Empresas/empresa-conf
       [loading]="loading"
       (Save)="onSubmit()"
       (Back)="goBack()"
+      [showOptions]="false"
     >
       <app-empresa-form-view [form]="form" [logoUrl]="logoUrl"
         (imageUpdated)="onLogoUpload($event)" (imageDeleted)="onLogoDelete()"></app-empresa-form-view>

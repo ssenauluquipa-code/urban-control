@@ -8,11 +8,11 @@ export class NotificationService {
   private message = inject(NzMessageService);
 
   success(text: string): void {
-    this.message.success(text, { nzDuration: 3000 });
+    this.message.success(text, { nzDuration: 4000 });
   }
 
   error(text: string): void {
-    this.message.error(text, { nzDuration: 5000 });
+    this.message.error(text, { nzDuration: 6000 });
   }
 
   info(text: string): void {
@@ -20,6 +20,6 @@ export class NotificationService {
   }
 
   warning(text: string): void {
-    this.message.warning(text);
+    this.message.warning(text,{ nzDuration: 6000});
   }
 }

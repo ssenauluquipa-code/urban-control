@@ -81,6 +81,12 @@ export class ManzanaListComponent implements OnInit {
       flex: 1,
       minWidth: 200
     },
+    {
+      field : '_count.lotes',
+      headerName: 'Lotes',      
+      minWidth: 80,
+      cellStyle: { fontWeight: 'bold' }
+    }
   ];
 
   ngOnInit(): void {

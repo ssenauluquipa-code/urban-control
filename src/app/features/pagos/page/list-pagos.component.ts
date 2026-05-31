@@ -23,6 +23,7 @@ import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-esta
 import { AnularPagoModalComponent } from "./anular-pago-modal.component";
 import { PagoIconCellComponent } from "../components/pago-icon-cell.component";
 import { UploadComprobanteMultipleComponent } from "../components/upload-comprobante-multiple/upload-comprobante-multiple.component";
+import { StatusFloatingFilterPagosComponent } from "src/app/shared/components/organisms/status-floating-filter-pagos.component";
 
 @Component({
   selector: "app-list-pagos",
@@ -113,7 +114,7 @@ export class ListPagosComponent implements OnInit {
       width: 115,
       minWidth: 110,
       filter: "agTextColumnFilter",
-      floatingFilter: true,
+      floatingFilter: false,
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,
@@ -164,7 +165,7 @@ export class ListPagosComponent implements OnInit {
       width: 155,
       minWidth: 155,
       filter: "agTextColumnFilter",
-      floatingFilter: true,
+      floatingFilter: false,
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,
@@ -198,7 +199,8 @@ export class ListPagosComponent implements OnInit {
       minWidth: 110,
       cellRenderer: BadgeEstadoComponent,
       filter: "agTextColumnFilter",
-      floatingFilter: false,
+      floatingFilter: true,
+      floatingFilterComponent : StatusFloatingFilterPagosComponent,
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,

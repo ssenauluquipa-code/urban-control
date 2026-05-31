@@ -27,6 +27,7 @@ import { AnularVentaModalComponent } from "../anular-venta-modal.component";
 import { VentaTipoPagoCellComponent } from "../../components/venta-tipo-pago-cell.component";
 import { VentaTipoPagoFloatingFilterComponent } from "src/app/shared/components/organisms/venta-tipo-pago-floating-filter.component";
 import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
+import { StatusFloatingFilterVentasComponent } from "src/app/shared/components/organisms/status-floating-filter-ventas.component";
 
 @Component({
   selector: "app-list-ventas",
@@ -278,7 +279,8 @@ export class ListVentasComponent implements OnInit {
         minWidth: 110,
         cellRenderer: BadgeEstadoComponent,
         filter: 'agTextColumnFilter',
-        floatingFilter: false,
+        floatingFilter: true,
+        floatingFilterComponent: StatusFloatingFilterVentasComponent,
         suppressFloatingFilterButton: true,
         suppressHeaderMenuButton: true,
         suppressHeaderFilterButton: true,

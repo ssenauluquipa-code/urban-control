@@ -36,7 +36,6 @@ import { ModalVerificacionPagoComponent } from '../components/modal-verificacion
         [ventasOpciones]="ventasOpciones"
         [loadingVentas]="loadingVentas"
         [ventaSeleccionada]="ventaSeleccionada"
-
         (onArchivosChanged)="onArchivosManejado($event)"
         (onCuotasSeleccionadas)="onCuotasManejadas($event)"
       ></app-register-pagos-view>
@@ -45,6 +44,9 @@ import { ModalVerificacionPagoComponent } from '../components/modal-verificacion
   styles: ``,
 })
 export class RegisterPagosComponent implements OnInit, OnDestroy {
+  // ==========================
+  // INYECCIÓN DE DEPENDENCIAS
+  // ==========================
   private fb = inject(FormBuilder);
   private pagosService = inject(PagosService);
   private ventaService = inject(VentaService);
@@ -55,10 +57,12 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   private modalService = inject(NgbModal);
   private destroy$ = new Subject<void>();
 
+  // ==========================
+  // ESTADO DEL COMPONENTE
+  // ==========================
   form!: FormGroup;
   loading = false;
   loadingVentas = false;
-  // Updated to handle multiple comprobante files
   comprobanteArchivos: File[] = [];
 
   ventasOpciones: VentaPagoOption[] = [];
@@ -74,8 +78,13 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   clienteIdContado: string | null = null;
   private currentProjectId$ = toObservable(this.globalContext.currentProjectId);
 
+  // ==========================
+  // CICLO DE VIDA
+  // ==========================
+
   constructor() {
     const navigation = this.router.getCurrentNavigation();
+    console.log("desde venta a pago ", navigation);
     const state = navigation?.extras.state as {
       ventaId: string;
       nroVenta: number;
@@ -88,10 +97,12 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       clienteId?: string;
       esContadoDirecto?: boolean;
     };
+
+    // Manejo del flujo especial: Pago Contado Directo (desde Registro de Ventas)
     if (state && state.esContadoDirecto) {
       this.esPagoContadoDirecto = true;
       this.clienteIdContado = state.clienteId || null;
-
+      console.log("desde venta directa ", this.clienteIdContado);
       this.ventaSeleccionada = {
         ventaId: state.ventaId,
         nroVenta: state.nroVenta,
@@ -101,7 +112,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
         montoTotal: state.montoTotal,
         saldoPendiente: state.saldoPendiente,
         nombreCompletoCliente: state.nombreCompletoCliente,
-        nroDocumentoCliente: '', // Vacío controlado o marcador
+        nroDocumentoCliente: '',
         frecuenciaPago: 'CONTADO',
         totalPagado: 0,
         nroCuotas: 0,
@@ -114,15 +125,14 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initForm();
 
+    // Si venimos de un flujo de Venta Directa, preparamos la UI
     if (this.esPagoContadoDirecto && this.ventaSeleccionada) {
-      // Necesitamos agregar la venta a las opciones para que el select de venta funcione correctamente
       this.ventasOpciones = [{
         ventaId: this.ventaSeleccionada.ventaId,
         label: `Venta #${this.ventaSeleccionada.nroVenta} — CONTADO — Saldo ${this.ventaSeleccionada.moneda} ${this.ventaSeleccionada.saldoPendiente}`,
         venta: this.ventaSeleccionada
       }];
 
-      // Hacemos el patch con emitEvent: false para no disparar las limpiezas automáticas
       this.form.patchValue({
         clienteId: this.clienteIdContado,
         ventaId: this.ventaSeleccionada.ventaId,
@@ -130,18 +140,16 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
         monedaRecibida: this.ventaSeleccionada.moneda
       }, { emitEvent: false });
 
-      // Bloqueamos los componentes
       this.form.get('clienteId')?.disable();
       this.form.get('ventaId')?.disable();
     }
 
-    this.currentProjectId$
-      .pipe(
-        skip(1), // Evita que la emisión inicial borre nuestros datos precargados
+    // Escuchar cambios de proyecto para limpiar contextos antiguos
+    this.currentProjectId$       .pipe(
+        skip(1),
         takeUntil(this.destroy$)
       )
       .subscribe((projectId: string | null) => {
-        // Al cambiar de proyecto, limpiamos el flujo de operación para evitar errores 400
         this.form.patchValue({ clienteId: null, ventaId: null }, { emitEvent: false });
         this.ventaSeleccionada = null;
         this.ventaDetalleCompleto = null;
@@ -159,10 +167,14 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onArchivosManejado(files: File[]): void {
-    this.comprobanteArchivos = files;
-  }
+  // ==========================
+  // ACCIONES DE USUARIO
+  // ==========================
 
+  /**
+   * Maneja el clic en el botón Guardar.
+   * Valida el formulario y abre el modal de confirmación.
+   */
   onGuardarClick(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -181,12 +193,11 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       observaciones: rawData.observaciones,
     };
 
-    // Obtener información del lote
+    // Construir textos descriptivos para el modal
     this.loteInfo = this.ventaDetalleCompleto
       ? `Manzana ${this.ventaDetalleCompleto.manzana || 'N/A'} — Lote ${this.ventaDetalleCompleto.numeroLote || 'N/A'}`
       : (this.ventaSeleccionada ? `Venta #${this.ventaSeleccionada.nroVenta}` : 'No seleccionado');
 
-    // Obtener información de las cuotas
     this.cuotasTexto = '';
     if (this.cuotasSeleccionadas.length > 0) {
       const cuotasActivas = this.cuotasSeleccionadas.filter(c => c.estado !== 'PAGADO');
@@ -196,7 +207,6 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       this.cuotasTexto = `<span style="color: #ee9d01; font-weight: 500;">⚠️ Pago a cuenta / Saldo a favor (sin cuotas específicas)</span>`;
     }
 
-    // Total
     this.totalTexto = `${pagoDto.monedaRecibida} ${Number(pagoDto.monto).toFixed(2)}`;
 
     // Abrir modal de confirmación
@@ -217,15 +227,40 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
         if (confirmed) this.ejecutarRegistroPago(pagoDto);
       })
       .catch(() => undefined);
-
-
-
   }
 
+  /**
+   * Cancela la operación y regresa al listado de pagos.
+   */
+  onCancelarClick(): void {
+    this.router.navigate(['/pagos']);
+  }
+
+  /**
+   * Recibe la lista de archivos seleccionados en el componente visual.
+   * @param files Array de objetos File.
+   */
+  onArchivosManejado(files: File[]): void {
+    this.comprobanteArchivos = files;
+  }
+
+  /**
+   * Recibe la lista de cuotas seleccionadas para el pago.
+   * @param cuotas Array de cuotas marcadas.
+   */
   onCuotasManejadas(cuotas: any[]): void {
     this.cuotasSeleccionadas = cuotas;
   }
 
+  // ==========================
+  // LÓGICA PRINCIPAL (Guardar)
+  // ==========================
+
+  /**
+   * Ejecuta la petición al backend para registrar el pago.
+   * Maneja los estados de carga y redirección.
+   * @param pagoDto Objeto con los datos del pago a registrar.
+   */
   private ejecutarRegistroPago(pagoDto: any): void {
     this.loading = true;
     this.cdr.markForCheck();
@@ -251,10 +286,13 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       });
   }
 
-  onCancelarClick(): void {
-    this.router.navigate(['/pagos']);
-  }
+  // ==========================
+  // INICIALIZACIÓN Y FORMULARIO
+  // ==========================
 
+  /**
+   * Inicializa el formulario reactivo con validaciones por defecto.
+   */
   private initForm(): void {
     this.form = this.fb.group({
       clienteId: [null, [Validators.required]],
@@ -270,12 +308,20 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ==========================
+  /* *   ESCUCHADORES DE CAMBIOS (Reactividad) */
+  // ==========================
+
+  /**
+   * Escucha cambios en el campo Cliente.
+   * Limpia ventas anteriores y carga las nuevas opciones para el cliente seleccionado.
+   */
   private escucharCambiosCliente(): void {
     this.form
       .get('clienteId')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe((clienteId: string | null) => {                
-
+      .subscribe((clienteId: string | null) => {
+        // Limpiamos selección previa de venta
         this.form.patchValue({ ventaId: null }, { emitEvent: false });
         this.ventaSeleccionada = null;
         this.ventasOpciones = [];
@@ -289,12 +335,15 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Escucha cambios en el campo Venta.
+   * Actualiza la moneda y recupera detalles del lote para mostrar contexto.
+   */
   private escucharCambiosVenta(): void {
     this.form
       .get('ventaId')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe((ventaId: string | null) => {                
-
+      .subscribe((ventaId: string | null) => {
         if (!ventaId) {
           this.ventaSeleccionada = null;
           this.ventaDetalleCompleto = null;
@@ -303,8 +352,9 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
         }
 
         const opcion = this.ventasOpciones.find((v) => v.ventaId === ventaId);
-        this.ventaSeleccionada = opcion?.venta ?? null;        
+        this.ventaSeleccionada = opcion?.venta ?? null;
 
+        // Auto-seleccionar moneda de la venta
         if (this.ventaSeleccionada?.moneda) {
           this.form.patchValue(
             { monedaRecibida: this.ventaSeleccionada.moneda },
@@ -313,13 +363,13 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
           this.lastMoneda = this.ventaSeleccionada.moneda;
         }
 
-        // Cargar detalles de venta para obtener el lote y la manzana
+        // Cargar detalles extra (Manzana/Lote)
         this.ventaDetalleCompleto = null;
         this.ventaService
           .obtenerVentaPorId(ventaId)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
-            next: (detalle) => {              
+            next: (detalle) => {
               this.ventaDetalleCompleto = detalle;
               this.cdr.markForCheck();
             },
@@ -332,6 +382,10 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Escucha cambios en la moneda de pago.
+   * Realiza conversión automática de monto (USD <-> BS) basado en el tipo de cambio de la venta.
+   */
   private escucharCambiosMonedaRecibida(): void {
     this.form
       .get('monedaRecibida')
@@ -362,8 +416,17 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       });
   }
 
+  // ==========================
+  // DATOS Y SERVICIOS
+  // ==========================
+
+  /**
+   * Obtiene del servicio las ventas disponibles para el cliente seleccionado.
+   * Mapea los resultados al formato de opciones para el select/grid.
+   * @param clienteId ID del cliente a buscar.
+   */
   private cargarVentasPorCliente(clienteId: string): void {
-    this.loadingVentas = true;    
+    this.loadingVentas = true;
 
     this.ventaService
       .listarVentasPagoPorCliente(clienteId)
@@ -374,9 +437,10 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe({
-        next: (ventas) => {          
-          this.ventasOpciones = ventas.map((v) => this.mapVentaOpcion(v));    
+        next: (ventas) => {
+          this.ventasOpciones = ventas.map((v) => this.mapVentaOpcion(v));
 
+          // Auto-seleccionar si hay solo una opción
           if (this.ventasOpciones.length === 1) {
             const unica = this.ventasOpciones[0];
             this.form.patchValue({ ventaId: unica.ventaId });
@@ -396,6 +460,11 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Transforma el objeto de venta del backend en el formato simplificado para la UI (Option).
+   * @param venta Objeto crudo del backend.
+   * @returns Objeto formateado para el componente visual.
+   */
   private mapVentaOpcion(venta: IClientePagoById): VentaPagoOption {
     return {
       ventaId: venta.ventaId,

@@ -81,7 +81,7 @@ export class RegisterManzanaComponent implements OnInit {
     } else {
       // --- CREATE ---
       const payload: CreateManzanaDto = {
-        proyectoId: formValue.proyectoId,
+        /* proyectoId: formValue.proyectoId, */
         codigo: formValue.codigo,
         descripcion: formValue.descripcion
       };

@@ -345,11 +345,10 @@ export class RegisterVentasComponent implements OnInit {
         this.notification.success("¡Venta registrada con éxito!");
         if (rawData.tipoPago === 'CONTADO' && response.data) {
           const ventaCreada = response.data;
-      
-          // Buscamos el nombre del titular real en el array de propietarios locales para no perderlo
-          const titularLocal = rawData.propietarios?.find((p: any) => p.rol === 'TITULAR');
-          const nombreTitular = titularLocal ? `${titularLocal.nombres} ${titularLocal.apellidos}` : "Titular de la Venta";
-          
+
+          // Obtenemos el nombre del titular desde la vista (que lo capturó al seleccionar)
+          const nombreTitular = this.ventaView?.nombreTitular ?? 'Titular de la Venta';
+          console.log("nombre cliente venta - pago ", nombreTitular);
           this.router.navigate(["/pagos/register"], {
             state: {
               ventaId: ventaCreada.id,
@@ -358,7 +357,7 @@ export class RegisterVentasComponent implements OnInit {
               tipoCambio: ventaCreada.tipoCambio,
               saldoPendiente: ventaCreada.saldoPendiente,
               nombreCompletoCliente: nombreTitular,
-              clienteId: titularLocal?.clienteId,
+              clienteId: rawData.propietarios?.find((p: any) => p.rol === 'TITULAR')?.clienteId ?? null,
               esContadoDirecto: true
             }
           })
