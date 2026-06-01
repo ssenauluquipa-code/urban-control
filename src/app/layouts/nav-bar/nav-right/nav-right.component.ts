@@ -100,8 +100,8 @@ export class NavRightComponent implements OnInit {
       backdrop: 'static'
     });
 
-    // Pasar datos al componente
-    modalRef.componentInstance.userData = this.currentUser;
+    // Pasar datos al componente (extraemos el valor del signal con ())
+    modalRef.componentInstance.userData = this.currentUser();
 
     // Escuchar eventos del formulario
     modalRef.componentInstance.Save.subscribe((data: IUpdateProfileDto) => {
