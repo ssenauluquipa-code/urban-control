@@ -102,7 +102,9 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.VENTA]: 'shopping-cart',
       [TableActionsEnum.MASS_LOAD]: 'appstore-add',
       [TableActionsEnum.COMPROBANTE]: 'file-pdf',
-      [TableActionsEnum.PAGO]: 'credit-card'
+      [TableActionsEnum.PAGO]: 'credit-card',
+      [TableActionsEnum.PLAN_CUENTAS]: 'file-text',
+      [TableActionsEnum.DEVOLUCION]: 'file-word'
     };
     return icons[action] || 'question';
   }
@@ -124,6 +126,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.MASS_LOAD]: 'Carga Masiva',
       [TableActionsEnum.COMPROBANTE]: 'Comprob',
       [TableActionsEnum.PAGO]: 'Pago',
+      [TableActionsEnum.PLAN_CUENTAS]: 'Plan cuentas',
+      [TableActionsEnum.DEVOLUCION]: 'Devolución'
     };
     return labels[action] || action;
   }
@@ -205,6 +209,16 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       // Regla de Negocio: En Ventas, el botón de eliminar solo aparece si la venta está ANULADA
       if (currentModule === EAppModule.VENTAS && action === TableActionsEnum.DELETE) {
         return data?.estado === 'ANULADA';
+      }
+
+      // Regla de Negocio: En Ventas, Devolución solo sale si está ANULADA
+      if (currentModule === EAppModule.VENTAS && action === TableActionsEnum.DEVOLUCION) {
+        return data?.estado === 'ANULADA';
+      }
+
+      // Regla de Negocio: En Ventas, Plan de Cuentas solo sale si está ACTIVA y es a CUOTAS
+      if (currentModule === EAppModule.VENTAS && action === TableActionsEnum.PLAN_CUENTAS) {
+        return data?.estado === 'ACTIVA' && data?.tipoPago === 'CUOTAS';
       }
 
       // Regla de Negocio: En Ventas, el botón "Pago" solo aparece si es CONTADO y está ACTIVA (y preferible si tiene saldo pendiente)

@@ -28,6 +28,7 @@ import { VentaTipoPagoCellComponent } from "../../components/venta-tipo-pago-cel
 import { VentaTipoPagoFloatingFilterComponent } from "src/app/shared/components/organisms/venta-tipo-pago-floating-filter.component";
 import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
 import { StatusFloatingFilterVentasComponent } from "src/app/shared/components/organisms/status-floating-filter-ventas.component";
+import { PdfViewerUtil } from "src/app/core/utils/pdf-viewer.util";
 
 @Component({
   selector: "app-list-ventas",
@@ -113,6 +114,10 @@ export class ListVentasComponent implements OnInit {
   public onTableAction(event: ITableActionEvent<IVenta>): void {
     if (!event.row) return;
 
+    const venta = event.row;
+
+    const clienteIds = venta.clientes[0].id  || '';
+
     switch (event.action) {
       case TableActionsEnum.ANULAR:
         if (event.row.ventaId) {
@@ -176,6 +181,22 @@ export class ListVentasComponent implements OnInit {
         }
       });
       break;
+      // 🚀 IMPLEMENTACIÓN NUEVA: PLAN DE CUENTAS
+      case TableActionsEnum.PLAN_CUENTAS:
+        if (!clienteIds) {
+          this.notification.warning('No se pudo identificar un cliente asociado a esta venta.');
+          return;
+        }
+        this.verPlanCuentasPdf(venta.ventaId, clienteIds);
+        break;
+
+      // 🚀 IMPLEMENTACIÓN NUEVA: INFORME DE DEVOLUCIÓN
+      case TableActionsEnum.DEVOLUCION:
+        if (!clienteIds) {
+          this.notification.warning('No se pudo identificar un cliente asociado a esta venta.');
+          return;
+        }
+        this.verDevolucionPdf(venta.ventaId, clienteIds);
         break;
 
       default:
@@ -206,6 +227,58 @@ export class ListVentasComponent implements OnInit {
    */
   public onAddNew(): void {
     this.router.navigate(["/ventas/register"]);
+  }
+
+  /**
+   * Llama al servicio core y abre la vista previa del Plan de Cuentas
+   */
+  private verPlanCuentasPdf(ventaId: string, clienteId: string): void {
+    this.loading = true;
+    this.ventaService.descargarPlanCuentas(ventaId, clienteId)
+      .pipe(finalize(() => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: (blob: Blob) => {
+          PdfViewerUtil.preview(blob);
+          this.notification.success('Plan de cuentas generado correctamente.');
+        },
+        error: (err) => {
+          // Captura el error 409 o 404 del Swagger de manera semántica
+          if (err.status === 409) {
+            this.notification.warning('La venta se encuentra anulada o no tiene organización asociada.');
+          } else {
+            this.notification.error('No se pudo generar el reporte del plan de cuentas.');
+          }
+        }
+      });
+  }
+
+  /**
+   * Llama al servicio core y abre la vista previa del Informe de Devolución
+   */
+  private verDevolucionPdf(ventaId: string, clienteId: string): void {
+    this.loading = true;
+    this.ventaService.descargarInformeDevolucion(ventaId, clienteId)
+      .pipe(finalize(() => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: (blob: Blob) => {
+          PdfViewerUtil.preview(blob);
+          this.notification.success('Informe de devolución generado correctamente.');
+        },
+        error: (err) => {
+          // Captura la restricción del back: la venta DEBE estar anulada
+          if (err.status === 409) {
+            this.notification.warning('No se puede generar este informe porque la venta NO está anulada.');
+          } else {
+            this.notification.error('No se pudo generar el informe de devolución.');
+          }
+        }
+      });
   }
 
   /**

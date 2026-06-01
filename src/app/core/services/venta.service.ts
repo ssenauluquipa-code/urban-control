@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import { IVentaRepository } from "../interfaces/repository/venta.repository.interface";
 import { CreateVentaDto } from "../models/venta.model";
+import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -50,9 +51,19 @@ export class VentaService {
     return this.repo.getSaldoByVenta(id);
   }
 
-  
+  /**
+   * Solicita el PDF de Plan de Cuentas para verificar cuotas pagadas, pendientes o vencidas.
+   */
+  public descargarPlanCuentas(ventaId: string, clienteId: string): Observable<Blob> {
+    // Aquí puedes meter reglas de negocio adicionales si tu arquitectura lo requiere antes de ir al repo
+    return this.repo.getPlanCuentasPdf(ventaId, clienteId);
+  }
 
-  
-
+  /**
+   * Solicita el PDF de informe de devolución total de dinero para ventas anuladas.
+   */
+  public descargarInformeDevolucion(ventaId: string, clienteId: string): Observable<Blob> {
+    return this.repo.getInformeDevolucionPdf(ventaId, clienteId);
+  }
   
 }

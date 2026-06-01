@@ -65,4 +65,16 @@ export class VentaRepository implements IVentaRepository {
       `${this.apiUrl}/cliente/${clienteId}/pagos`,
     );
   }
+
+  getPlanCuentasPdf(ventaId: string, clienteId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${ventaId}/clientes/${clienteId}/plan-cuentas/pdf`, {
+      responseType: 'blob' // Obligatorio para archivos adjuntos/binarios
+    });
+  }
+
+  getInformeDevolucionPdf(ventaId: string, clienteId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${ventaId}/clientes/${clienteId}/devolucion/pdf`, {
+      responseType: 'blob'
+    });
+  }
 }

@@ -21,4 +21,10 @@ export interface IVentaRepository {
   anular(id: string): Observable<void>;
   eliminar(id: string): Observable<void>;
   getVentasPagoPorCliente(clienteId: string): Observable<IClientePagoById[]>;
+
+  /** Obtiene el binario Blob del PDF del plan de cuentas */
+  getPlanCuentasPdf(ventaId: string, clienteId: string): Observable<Blob>;
+
+  /** Obtiene el binario Blob del PDF del informe de devolución */
+  getInformeDevolucionPdf(ventaId: string, clienteId: string): Observable<Blob>;
 }
