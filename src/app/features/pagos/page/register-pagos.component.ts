@@ -15,6 +15,8 @@ import { RegisterPagosViewComponent, VentaPagoOption } from '../view/register-pa
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { ModalVerificacionPagoComponent } from '../components/modal-verificacion-pago/modal-verificacion-pago.component';
+import { CurrencyCalculationService } from 'src/app/core/services/finance/currency-calculation.service';
+import { IReciboPagoData, ModalComprobantePagoComponent } from '../components/modal-comprobante-pago/modal-comprobante-pago.component';
 
 @Component({
   selector: 'app-register-pagos',
@@ -36,8 +38,10 @@ import { ModalVerificacionPagoComponent } from '../components/modal-verificacion
         [ventasOpciones]="ventasOpciones"
         [loadingVentas]="loadingVentas"
         [ventaSeleccionada]="ventaSeleccionada"
+        [montoConvertido]="montoConvertidoParaCronograma"
         (onArchivosChanged)="onArchivosManejado($event)"
         (onCuotasSeleccionadas)="onCuotasManejadas($event)"
+        (onMontoDesdeCronograma)="onMontoDesdeCronogramaHandler($event)"
       ></app-register-pagos-view>
     </app-page-container>
   `,
@@ -56,6 +60,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private modalService = inject(NgbModal);
   private destroy$ = new Subject<void>();
+  private currencyService = inject(CurrencyCalculationService);
 
   // ==========================
   // ESTADO DEL COMPONENTE
@@ -84,7 +89,6 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
 
   constructor() {
     const navigation = this.router.getCurrentNavigation();
-    console.log("desde venta a pago ", navigation);
     const state = navigation?.extras.state as {
       ventaId: string;
       nroVenta: number;
@@ -102,7 +106,6 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
     if (state && state.esContadoDirecto) {
       this.esPagoContadoDirecto = true;
       this.clienteIdContado = state.clienteId || null;
-      console.log("desde venta directa ", this.clienteIdContado);
       this.ventaSeleccionada = {
         ventaId: state.ventaId,
         nroVenta: state.nroVenta,
@@ -264,6 +267,21 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   private ejecutarRegistroPago(pagoDto: any): void {
     this.loading = true;
     this.cdr.markForCheck();
+    // Control de cierre/moneda (El ajuste que revisará David)
+    if (this.ventaSeleccionada && this.ventaSeleccionada.moneda === 'BS' && pagoDto.monedaRecibida === 'USD') {
+      const tipoCambio = this.ventaSeleccionada.tipoCambio || 1;
+      const saldoPendienteBs = this.ventaSeleccionada.saldoPendiente;
+      const simulacionBackendBs = Number((pagoDto.monto * tipoCambio).toFixed(2));
+      const diferenciaCentavos = Math.abs(saldoPendienteBs - simulacionBackendBs);
+
+     /*  if (diferenciaCentavos <= 0.10) {
+        pagoDto.observaciones = pagoDto.observaciones 
+          ? `${pagoDto.observaciones}` 
+          : '[CIERRE AJUSTE MONEDA]';
+      } */
+    }
+
+    /* console.log('=== [PAGOS] Enviando payload definitivo ===', pagoDto); */
 
     this.pagosService
       .registrarPagoConArchivo(pagoDto, this.comprobanteArchivos)
@@ -274,9 +292,34 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe({
-        next: () => {
-          this.notification.success('¡Pago registrado con éxito!');
-          this.router.navigate(['/pagos']);
+        next: (response: any) => {
+          this.notification.success('¡Pago registrado con éxito!');          
+          //this.router.navigate(['/pagos']);
+          // 🎯 VERIFICACIÓN Y APERTURA DEL MODAL DEL RECIBO
+          if (response && response.success && response.data) {
+            const pagoData = response.data;
+
+            // 1. Estructuramos el payload fuertemente tipado para el recibo
+            const reciboPayload: IReciboPagoData = {
+              codigoRecibo: String(pagoData.codigoPago).padStart(6, '0'), // Ej: 001039
+              moneda: pagoData.monedaRecibida,
+              montoNumerico: pagoData.montoRecibido,
+              montoEnLetras: this.convertirMontoALetras(pagoData.montoRecibido, pagoData.monedaRecibida),
+              fechaPago: new Date(pagoData.fechaPago),
+              cliente: this.ventaSeleccionada?.nombreCompletoCliente || 'Cliente General',
+              concepto: `Pago de lote por concepto de: ${this.ventaSeleccionada?.montoTotal || 'Adquisición de Inmueble'}. ${pagoData.observaciones || ''}`,
+              aCuenta: pagoData.montoRecibido,
+              saldo: (this.ventaSeleccionada?.saldoPendiente || 0) - pagoData.montoRecibido,
+              total: this.ventaSeleccionada?.montoTotal || 0,
+              metodoPago: pagoData.metodo
+            };
+
+            // 2. Ejecutamos el modal pasándole los datos
+            this.abrirModalRecibo(reciboPayload);
+          } else {
+            // Si por alguna razón no viene data del recibo, redirige directo
+            this.router.navigate(['/ventas']);
+          }
         },
         error: (err) => {
           const errorMessage =
@@ -386,29 +429,41 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
    * Escucha cambios en la moneda de pago.
    * Realiza conversión automática de monto (USD <-> BS) basado en el tipo de cambio de la venta.
    */
-  private escucharCambiosMonedaRecibida(): void {
+    private escucharCambiosMonedaRecibida(): void {
     this.form
       .get('monedaRecibida')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((nuevaMoneda: string) => {
         const montoCtrl = this.form.get('monto');
-        const montoActual = montoCtrl?.value || 0;
 
-        if (!this.ventaSeleccionada || montoActual <= 0) {
+        if (!this.ventaSeleccionada) {
           this.lastMoneda = nuevaMoneda;
           return;
         }
 
-        const tipoCambio = this.ventaSeleccionada.tipoCambio || 1;
+        // DATO ORIGINAL (La verdad absoluta de la deuda)
+        const saldoPendiente = this.ventaSeleccionada.saldoPendiente; // 137,950
+        const monedaDeLaDeuda = this.ventaSeleccionada.moneda;      // 'BS'
+        const tipoCambio = this.ventaSeleccionada.tipoCambio || 1;  // 6.96
 
-        if (this.lastMoneda === 'USD' && nuevaMoneda === 'BS') {
-          // De USD a BS: multiplicar
-          const nuevoMonto = Number((montoActual * tipoCambio).toFixed(2));
-          montoCtrl?.setValue(nuevoMonto, { emitEvent: false });
-        } else if (this.lastMoneda === 'BS' && nuevaMoneda === 'USD') {
-          // De BS a USD: dividir
-          const nuevoMonto = Number((montoActual / tipoCambio).toFixed(2));
-          montoCtrl?.setValue(nuevoMonto, { emitEvent: false });
+        // ============================================================
+        // CONSERVAR EL MONTO ORIGINAL
+        // Si seleccionas la moneda original, RESTAURAMOS el dato exacto.
+        // NO hacemos multiplicaciones ni conversiones inversas.
+        // ============================================================
+        if (nuevaMoneda === monedaDeLaDeuda) {
+          montoCtrl?.setValue(saldoPendiente, { emitEvent: false });
+        } 
+        else {
+          // Solo convertimos si es una moneda DISTINTA
+          const montoConvertido = this.currencyService.convertirMonto(
+            saldoPendiente,
+            monedaDeLaDeuda as Moneda,
+            nuevaMoneda as Moneda,
+            tipoCambio
+          );
+
+          montoCtrl?.setValue(montoConvertido, { emitEvent: false });
         }
 
         this.lastMoneda = nuevaMoneda;
@@ -471,5 +526,87 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       label: `Venta #${venta.nroVenta} — ${venta.frecuenciaPago} — Saldo ${venta.moneda} ${venta.saldoPendiente}`,
       venta,
     };
+  }
+
+   /**
+   * Calcula cuánto vale el pago en la moneda del CONTRATO para el cronograma.
+   * Usa el servicio oficial para coincidir con el Backend.
+   */
+  get montoConvertidoParaCronograma(): number {
+    const montoRaw = this.form.get('monto')?.value || 0;
+    
+    // Si no hay venta seleccionada, devolvemos el monto tal cual
+    if (!this.ventaSeleccionada) return montoRaw;
+
+    const monedaContrato = this.ventaSeleccionada.moneda;
+    const monedaPago = this.form.get('monedaRecibida')?.value;
+    const tipoCambio = this.ventaSeleccionada.tipoCambio || 1;
+
+    // Si monedas son iguales, no hay conversión
+    if (monedaContrato === monedaPago) {
+      return montoRaw;
+    }
+
+
+    return this.currencyService.convertirMonto(
+      montoRaw,
+      monedaPago as Moneda,       // Desde lo que pagas
+      monedaContrato as Moneda,   // A lo que vale el lote
+      tipoCambio
+    );
+  }
+
+    /**
+   * Maneja el monto calculado por el cronograma.
+   * Convierte la moneda del CONTRATO a la moneda de PAGO usando el servicio oficial.
+   */
+  public onMontoDesdeCronogramaHandler(montoEnContrato: number): void {
+    if (!this.ventaSeleccionada) {
+      this.form.get('monto')?.setValue(montoEnContrato);
+      return;
+    }
+
+    const monedaContrato = this.ventaSeleccionada.moneda;
+    const monedaPago = this.form.get('monedaRecibida')?.value;
+    const tipoCambio = this.ventaSeleccionada.tipoCambio || 1;
+
+    let montoFinal = montoEnContrato;
+
+    // Solo convertimos si las monedas son diferentes
+    if (monedaContrato !== monedaPago) {
+      montoFinal = this.currencyService.convertirMonto(
+        montoEnContrato,
+        monedaContrato as Moneda, // Desde moneda del contrato
+        monedaPago as Moneda,     // A moneda que el usuario paga
+        tipoCambio
+      );
+    }
+
+    this.form.get('monto')?.setValue(montoFinal);
+  }
+  
+  private abrirModalRecibo(datos: IReciboPagoData):void {
+    const modalRef = this.modalService.open(ModalComprobantePagoComponent,{
+      size:'lg',
+      backdrop: 'static'
+    });
+    modalRef.componentInstance.datosRecibo = datos;
+    modalRef.result.then(
+      (result) => {
+        this.router.navigate(['/pagos']);
+      },
+      () => {
+        this.router.navigate(['/pagos']);
+      }
+    );
+  }
+
+  private convertirMontoALetras(monto: number, moneda: string): string {
+    // Aquí puedes invocar un helper existente de tu sistema o una función simple.
+    // Como ejemplo de formateo base:
+    const sufijoMoneda = moneda === 'BS' ? 'BOLIVIANOS' : 'DÓLARES AMERICANOS';
+    
+    // Si tienes una librería de conversión de texto la usas aquí, si no, puedes dejar un formato descriptivo temporal:
+    return `${monto.toLocaleString('es-BO')} ${sufijoMoneda}`;
   }
 }

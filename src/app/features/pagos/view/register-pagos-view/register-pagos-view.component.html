@@ -5,7 +5,7 @@
       <!-- CRONOGRAMA: izquierda en desktop, abajo en móvil -->
       <div class="col-12 col-lg-8 col-xxl-9 order-2 order-lg-1">
         @if (ventaIdValue) {
-        <app-plan-cuotas-cronograma [ventaId]="ventaIdValue" [montoFormulario]="montoConvertidoParaCronograma"
+        <app-plan-cuotas-cronograma [ventaId]="ventaIdValue" [montoFormulario]="montoConvertido"
           [moneda]="ventaSeleccionada?.moneda || 'USD'" (onMontoCalculado)="onMontoCalculadoHandler($event)"
           (onCuotasSeleccionadas)="onCuotasSeleccionadas.emit($event)">
         </app-plan-cuotas-cronograma>
@@ -56,7 +56,7 @@
               </app-form-field>
 
               <!-- Moneda + Monto en la misma fila -->
-              <div class="row">
+              <div class="row mb-1">
                 <div class="col-12 col-lg-5">
                   <app-form-field label="Moneda" [required]="true">
                     <app-select-moneda [input_control]="monedaRecibida" placeholder="Moneda">
@@ -70,6 +70,18 @@
                   </app-form-field>
                 </div>
               </div>
+
+              @if (ventaSeleccionada && ventaSeleccionada.tipoCambio) {
+              <div class="d-flex justify-content-between align-items-center bg-light border rounded px-3 py-2 mb-3">
+                <span class="text-secondary fw-semibold" style="font-size: 0.85rem;">
+                  T.C. del Contrato
+                </span>
+                <span class="fw-bold text-primary">
+                  {{ ventaSeleccionada.tipoCambio }}
+                </span>
+              </div>
+              }
+
 
               <app-form-field label="Notas / Observaciones">
                 <app-input-textarea [input_control]="observaciones"

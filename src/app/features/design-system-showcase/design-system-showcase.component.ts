@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TipoPago, FrecuenciaPago, DiaSemanaPago } from 'src/app/core/models/venta.model';
@@ -32,6 +32,8 @@ import {
   PlanCuotasCronogramaComponent,
   ICuotaCronogramaVisual,
 } from 'src/app/features/pagos/components/plan-cuotas-cronograma/plan-cuotas-cronograma.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalComprobantePagoComponent, IReciboPagoData } from 'src/app/features/pagos/components/modal-comprobante-pago/modal-comprobante-pago.component';
 
 @Component({
   selector: 'app-design-system-showcase',
@@ -69,6 +71,8 @@ import {
   styleUrls: ['./design-system-showcase.component.scss'],
 })
 export class DesignSystemShowcaseComponent implements OnInit {
+  private modalService = inject(NgbModal);
+
   // Form Controls para los inputs
   textControl = new FormControl('', [
     Validators.required,
@@ -207,5 +211,30 @@ export class DesignSystemShowcaseComponent implements OnInit {
   onCuotaSelected(cuota: ICuotaCronogramaVisual | null): void {
     this.cuotaSeleccionada = cuota;
     console.log('Cuota seleccionada:', cuota);
+  }
+
+  abrirModalComprobanteDemo(): void {
+    const modalRef = this.modalService.open(ModalComprobantePagoComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      centered: true,
+      windowClass: 'modal-print-preview' // opcional
+    });
+    
+    const mockDatos: IReciboPagoData = {
+      codigoRecibo: '001046',
+      moneda: 'BS',
+      montoNumerico: 11500,
+      montoEnLetras: 'ONCE MIL QUINIENTOS 00/100',
+      fechaPago: new Date(),
+      cliente: 'Jose Ricardo Peralt',
+      concepto: 'Pago de lote por concepto de: 139200. se cancela la cuota 6 en su totalidad',
+      aCuenta: 11500,
+      saldo: 69000,
+      total: 139200,
+      metodoPago: 'EFECTIVO'
+    };
+
+    modalRef.componentInstance.datosRecibo = mockDatos;
   }
 }

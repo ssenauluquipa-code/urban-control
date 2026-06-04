@@ -1,0 +1,139 @@
+<app-modal-container 
+  [mainTitleModal]="'Comprobante de Pago'"
+  [saveButtonName]="'Imprimir / Guardar PDF'"
+  [saveButtonIcon]="'printer'"
+  [cancelButtonName]="'Cerrar'"
+  (SaveAction)="imprimirRecibo()"
+  (CancelAction)="cerrarModal()"
+>
+  
+  <div class="modal-body bg-preview-sistema no-print-bg">
+    <div id="vista-recibo" class="recibo-talonario-box">
+      <div class="recibo-borde-interno">
+        
+        <div class="header-triple-row">
+          
+          <div class="col-empresa">
+            @if (empresaLogo) {
+              <div class="contenedor-logo-top">
+                <img [src]="empresaLogo" alt="Logo" class="logo-talonario">
+              </div>
+            }
+            <div class="empresa-datos-abajo">
+                @if(empresaLogo === null){
+                    <strong class="text-uppercase">{{ empresaNombre }}</strong>
+                    <span class="rubro-sub">BIENES & RAÍCES</span>
+                }
+              <span class="direccion-text">Av. Circunvalación entre Luis Campero y Timoto Raña Edificio rojo</span>
+              <span class="telefono-text">Cel/Tel: 68598919</span>
+            </div>
+          </div>
+
+          <div class="col-titulo-recibo">
+            <h2 class="txt-recibo">RECIBO</h2>
+            <h3 class="txt-subtipo">DE EGRESO</h3>
+          </div>
+
+          <div class="col-valores-control">
+            <div class="caja-monto-num">
+              <span class="lbl-moneda">{{ datosRecibo.moneda }}.</span>
+              <div class="recuadro-interno-monto">
+                {{ datosRecibo.montoNumerico | number:'1.2-2' }}
+              </div>
+            </div>
+            <div class="caja-num-correlativo">
+              <span>Nº</span>
+              <span class="num-rojo">{{ datosRecibo.codigoRecibo }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fila-fecha-superior">
+          <div class="linea-fecha-punteada">
+            <span class="fecha-estática">Tarija,</span>
+            <span class="dato-fecha">{{ datosRecibo.fechaPago | date:'dd' }}</span>
+            <span class="fecha-estática">de</span>
+            <span class="dato-fecha text-capitalize">{{ datosRecibo.fechaPago | date:'MMMM' }}</span>
+            <span class="fecha-estática">de</span>
+            <span class="dato-fecha">{{ datosRecibo.fechaPago | date:'yyyy' }}</span>
+          </div>
+        </div>
+
+        <div class="cuerpo-renglones">
+          <div class="renglon-escritura">
+            <span class="lbl-renglon">Pagamos a:</span>
+            <div class="puntos-relleno">
+              <span class="txt-dinamico text-uppercase">{{ datosRecibo.cliente }}</span>
+            </div>
+          </div>
+
+          <div class="renglon-escritura">
+            <span class="lbl-renglon">La suma de:</span>
+            <div class="puntos-relleno">
+              <span class="txt-dinamico text-capitalize">{{ datosRecibo.montoEnLetras }}</span>
+            </div>
+          </div>
+
+          <div class="renglon-escritura justify-end">
+            <div class="puntos-relleno line-vacia"></div>
+            <span class="lbl-sufijo-moneda">Bolivianos</span>
+          </div>
+
+          <div class="renglon-escritura alineacion-top">
+            <span class="lbl-renglon">Por concepto de:</span>
+            <div class="puntos-relleno multi-linea">
+              <span class="txt-dinamico-concepto">{{ datosRecibo.concepto }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fila-totales-cajas">
+          <div class="caja-total-individual">
+            <span class="lbl-cajita">A cuenta:</span>
+            <div class="recuadro-monto-interno">
+              {{ datosRecibo.moneda }} {{ datosRecibo.aCuenta | number:'1.2-2' }}
+            </div>
+          </div>
+
+          <div class="caja-total-individual">
+            <span class="lbl-cajita">Saldo:</span>
+            <div class="recuadro-monto-interno">
+              {{ datosRecibo.moneda }} {{ datosRecibo.saldo | number:'1.2-2' }}
+            </div>
+          </div>
+
+          <div class="caja-total-individual">
+            <span class="lbl-cajita">Total:</span>
+            <div class="recuadro-monto-interno bg-total-bold">
+              {{ datosRecibo.moneda }} {{ datosRecibo.total | number:'1.2-2' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-firmas-talonario">
+          <div class="bloque-firma-original">            
+            <div class="linea-punteada-firma"></div>
+            <span class="rol-firma">RECIBÍ CONFORME</span>
+            <div class="nombre-cajero-linea">
+              <span class="lbl-nombre-fijo">Nombre:</span>
+              <div class="sublinea-puntos"></div>
+            </div>
+          </div>
+          
+          <div class="bloque-firma-original">            
+            <div class="linea-punteada-firma"></div>
+            <span class="rol-firma">ENTREGUÉ CONFORME</span>
+            <div class="nombre-cajero-linea">
+              <span class="lbl-nombre-fijo">Nombre:</span>
+              <div class="sublinea-puntos values-prefilled">
+                <span class="nombre-cajero-db">Fidel Cayhuara</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</app-modal-container>

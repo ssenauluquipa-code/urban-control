@@ -1,0 +1,407 @@
+// Contenedor gris de previsualización en el ERP
+.bg-preview-sistema {
+  background-color: #cbd5e1;
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+// ── CAJA DEL TALONARIO TRADICIONAL ─────────────────────────
+.recibo-talonario-box {
+  width: 100%;
+  max-width: 760px;
+  background-color: #ffffff;
+  border: 2px solid #334155;
+  border-radius: 8px;
+  padding: 10px;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+  color: #0f172a;
+
+  .recibo-borde-interno {
+    border: 1px dashed #64748b;
+    border-radius: 4px;
+    padding: 25px 30px;
+  }
+
+  // ── CABECERA DE 3 COLUMNAS MODIFICADA ────────────────────
+  .header-triple-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; // Alineación arriba para balancear las alturas
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    // Ajuste clave: Flujo vertical para el Logo arriba e Info abajo
+    .col-empresa {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column; 
+      align-items: center;    // Centra el logo con respecto a su texto de abajo
+      text-align: center;     // Centra las líneas de la dirección
+      gap: 8px;
+
+      .contenedor-logo-top {
+        width: 100%;
+        display: flex;
+        
+        margin-bottom: 2px;
+      }
+
+      .logo-talonario {
+        width: 150px;  // Un tamaño óptimo y estilizado
+        height: auto;
+        object-fit: contain;
+      }
+
+      .empresa-datos-abajo {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 11px;
+        color: #334155;
+        line-height: 1.25;
+
+        strong {
+          font-size: 13.5px;
+          color: #0f172a;
+          letter-spacing: 0.5px;
+        }
+
+        .rubro-sub {
+          font-size: 10.5px;
+          font-weight: 700;
+          color: #475569;
+          margin-bottom: 2px;
+        }
+
+        .direccion-text {
+          max-width: 240px; 
+          font-size: 10.5px;
+        }
+
+        .telefono-text {
+          font-weight: 600;
+        }
+      }
+    }
+
+    .col-titulo-recibo {
+      flex: 0.8;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-self: center; // Mantiene el título central perfectamente equilibrado
+
+      .txt-recibo {
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: 2px;
+        margin: 0;
+        color: #000000;
+      }
+
+      .txt-subtipo {
+        font-size: 15px;
+        font-weight: 800;
+        color: #16a34a; 
+        margin: -2px 0 0 0;
+        letter-spacing: 1px;
+      }
+    }
+
+    .col-valores-control {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+
+      .caja-monto-num {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: bold;
+        font-size: 14px;
+
+        .recuadro-interno-monto {
+          border: 2px solid #0f172a;
+          border-radius: 4px;
+          padding: 4px 14px;
+          min-width: 110px;
+          text-align: right;
+          background-color: #f8fafc;
+          font-size: 15px;
+        }
+      }
+
+      .caja-num-correlativo {
+        font-size: 13px;
+        font-weight: bold;
+        padding-right: 4px;
+
+        .num-rojo {
+          color: #dc2626;
+          font-size: 15px;
+          padding-left: 5px;
+        }
+      }
+    }
+  }
+
+  // ── SECCIÓN DE FECHA ARRIBA ──────────────────────────────
+  .fila-fecha-superior {
+    width: 100%;
+    margin-bottom: 2rem;
+
+    .linea-fecha-punteada {
+      width: 100%;
+      border-bottom: 1px dotted #475569;
+      padding-bottom: 4px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      font-size: 13px;
+
+      .fecha-estática {
+        color: #475569;
+      }
+
+      .dato-fecha {
+        font-weight: bold;
+        color: #000000;
+        border-bottom: 1px solid #0f172a;
+        padding: 0 8px;
+        margin-top: -2px;
+      }
+    }
+  }
+
+  // ── RENGLONES CONTINUOS DE ESCRITURA ─────────────────────
+  .cuerpo-renglones {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+
+    .renglon-escritura {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+
+      &.justify-end {
+        justify-content: flex-end;
+      }
+
+      &.alineacion-top {
+        align-items: flex-start;
+      }
+
+      .lbl-renglon {
+        font-weight: bold;
+        font-size: 13px;
+        color: #1e293b;
+        white-space: nowrap;
+        padding-right: 8px;
+        min-width: 110px;
+      }
+
+      .lbl-sufijo-moneda {
+        font-weight: bold;
+        font-size: 13px;
+        padding-left: 8px;
+      }
+
+      .puntos-relleno {
+        flex: 1;
+        border-bottom: 1px dotted #64748b;
+        padding-bottom: 2px;
+        display: flex;
+
+        &.line-vacia {
+          height: 15px;
+        }
+
+        &.multi-linea {
+          border-bottom: none;
+        }
+      }
+
+      .txt-dinamico {
+        font-size: 13px;
+        font-weight: 600;
+        color: #000000;
+        padding-left: 6px;
+      }
+
+      .txt-dinamico-concepto {
+        font-size: 13px;
+        font-weight: 600;
+        color: #000000;
+        line-height: 1.7;
+        width: 100%;
+        border-bottom: 1px dotted #64748b;
+        padding-bottom: 2px;
+      }
+    }
+  }
+
+  // ── RECUADROS INDEPENDIENTES DE TOTALES ──────────────────
+  .fila-totales-cajas {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+
+    .caja-total-individual {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .lbl-cajita {
+        font-weight: bold;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .recuadro-monto-interno {
+        flex: 1;
+        border: 2px solid #0f172a;
+        border-radius: 6px;
+        padding: 6px 10px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 13px;
+        background-color: #f8fafc;
+
+        &.bg-total-bold {
+          background-color: #f1f5f9;
+          border-width: 2.5px;
+        }
+      }
+    }
+  }
+
+  // ── SECCIÓN DE FIRMAS TRADICIONAL ────────────────────────
+  .footer-firmas-talonario {
+    display: flex;
+    justify-content: space-between;
+    gap: 5rem;
+
+    .bloque-firma-original {
+      flex: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .espacio-firma-vacio {
+        font-size: 11px;
+        color: #94a3b8;
+        height: 45px;
+        display: flex;
+        align-items: center;
+      }
+
+      .linea-punteada-firma {
+        width: 100%;
+        border-top: 1px dotted #0f172a;
+        margin-bottom: 6px;
+      }
+
+      .rol-firma {
+        font-size: 11px;
+        font-weight: 800;
+        color: #334155;
+        letter-spacing: 0.5px;
+      }
+
+      .nombre-cajero-linea {
+        display: flex;
+        align-items: flex-end;
+        width: 100%;
+        margin-top: 6px;
+
+        .lbl-nombre-fijo {
+          font-size: 11px;
+          color: #475569;
+          padding-right: 4px;
+        }
+
+        .sublinea-puntos {
+          flex: 1;
+          border-bottom: 1px dotted #94a3b8;
+          min-height: 14px;
+          display: flex;
+          justify-content: center;
+
+          &.values-prefilled {
+            border-bottom: none;
+          }
+
+          .nombre-cajero-db {
+            font-size: 11px;
+            font-weight: bold;
+            color: #000000;
+            border-bottom: 1px solid #000;
+            padding: 0 4px;
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ── 🖨️ MEDIA PRINT NATIVA PARA IMPRESIÓN LIMPIA ─────────
+@media print {
+  body {
+    background-color: #ffffff !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  #vista-recibo, #vista-recibo * {
+    visibility: visible !important;
+  }
+
+  .modal, .modal-dialog, .modal-content, .modal-body, app-modal-container {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    position: static !important;
+    transform: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #vista-recibo {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    border: none !important;
+    padding: 20px 30px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .col-valores-control .caja-monto-num .recuadro-interno-monto,
+  .fila-totales-cajas .caja-total-individual .recuadro-monto-interno {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+  }
+
+  /* Quitar los encabezados y pies de página automáticos del navegador (fecha, URL, número de página) */
+  @page {
+    margin: 0 !important; 
+  }
+}

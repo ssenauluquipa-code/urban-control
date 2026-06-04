@@ -110,11 +110,12 @@ export class RegisterReservaComponent implements OnInit {
       fechaVencimiento: formValue.fechaVencimiento,
       observaciones: formValue.observaciones,
     };
+
     this.loading = true;
     this.reservaService.createReserva(payload)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
-        next: () => {
+        next: (res: any) => {
           this.notification.success('Reserva creada exitosamente');
           this.router.navigate(['/reservas']);
         },

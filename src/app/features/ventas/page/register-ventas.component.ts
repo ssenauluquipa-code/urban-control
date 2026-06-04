@@ -121,7 +121,8 @@ export class RegisterVentasComponent implements OnInit {
       .getFinancialConfig()
       .pipe(take(1))
       .subscribe((config) => {
-        this.monedaBase = this.toMoneda(config.currency);
+        const monedaBase = this.toMoneda(config.currency);
+        this.monedaBase = monedaBase;
         this.form.patchValue({
           moneda: this.monedaBase,
           tipoCambio: config.exchangeRate,
@@ -140,12 +141,12 @@ export class RegisterVentasComponent implements OnInit {
   recalculateMontoTotal(precioLote: number): void {
     const monedaOperacion = this.form.get("moneda")?.value as Moneda;
     const tipoCambio = Number(this.form.get("tipoCambio")?.value || 0);
-    const montoTotal = this.currencyCalc.convertAmount(
+    const montoTotal = this.currencyCalc.convertirMonto(
       precioLote,
       this.monedaBase,
       monedaOperacion,
       tipoCambio,
-    );
+    );    
     this.form.patchValue({ montoTotal }, { emitEvent: false });
     this.form.updateValueAndValidity({ emitEvent: false });
   }
@@ -157,7 +158,7 @@ export class RegisterVentasComponent implements OnInit {
   private listenFormChanges() {
     this.form.get("loteId")?.valueChanges.subscribe((id) => {
       if (id) {
-        this.loteService.getLoteById(id).subscribe((lote) => {
+        this.loteService.getLoteById(id).subscribe((lote) => {          
           this.recalculateMontoTotal(lote.precioReferencial);
         });
       } else {
@@ -348,7 +349,6 @@ export class RegisterVentasComponent implements OnInit {
 
           // Obtenemos el nombre del titular desde la vista (que lo capturó al seleccionar)
           const nombreTitular = this.ventaView?.nombreTitular ?? 'Titular de la Venta';
-          console.log("nombre cliente venta - pago ", nombreTitular);
           this.router.navigate(["/pagos/register"], {
             state: {
               ventaId: ventaCreada.id,

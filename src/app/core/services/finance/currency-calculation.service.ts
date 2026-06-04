@@ -17,30 +17,49 @@ export interface IVentaCalculationSummary {
   providedIn: 'root',
 })
 export class CurrencyCalculationService {
+
+  // Constante para optimizar: No calcular Math.pow(10, 2) en cada llamada.
+  private readonly FACTOR_DECIMALES = 100;
+
   roundCurrency(amount: number, decimals = 2): number {
-    const factor = Math.pow(10, decimals);
-    return Math.round((amount + Number.EPSILON) * factor) / factor;
+    return Math.round((amount + Number.EPSILON) * this.FACTOR_DECIMALES) / this.FACTOR_DECIMALES;
   }
 
-  convertAmount(
-    amount: number,
-    fromCurrency: Moneda,
-    toCurrency: Moneda,
-    exchangeRate: number,
+  /**
+   * Convierte un monto monetario entre Moneda Origen (BS) y Moneda Destino (USD)
+   * aplicando el tipo de cambio oficial y redondeo ROUND_HALF_UP (igual a Excel/Prisma).
+   */
+  convertirMonto(
+    monto: number,
+    monedaOrigen: Moneda,
+    monedaDestino: Moneda,
+    tipoCambio: number,
   ): number {
-    if (amount == null || Number.isNaN(amount)) return 0;
-    if (!exchangeRate || exchangeRate <= 0) return 0;
-    if (fromCurrency === toCurrency) return this.roundCurrency(amount);
+    if (monto == null || Number.isNaN(monto)) return 0;
+    if (!tipoCambio || tipoCambio <= 0) return 0;
 
-    if (fromCurrency === Moneda.BS && toCurrency === Moneda.USD) {
-      return this.roundCurrency(amount / exchangeRate);
+    // Si la moneda es la misma, no hay conversión, solo redondeo
+    if (monedaOrigen === monedaDestino) {
+      return this.roundCurrency(monto);
     }
 
-    if (fromCurrency === Moneda.USD && toCurrency === Moneda.BS) {
-      return this.roundCurrency(amount * exchangeRate);
+    // Lógica de Conversión
+    let resultadoRaw = 0;
+    let operacion = '';
+
+    if (monedaOrigen === Moneda.BS && monedaDestino === Moneda.USD) {
+      // División (BS -> USD)
+      operacion = `${monto} / ${tipoCambio}`;
+      resultadoRaw = monto / tipoCambio;
+    } else if (monedaOrigen === Moneda.USD && monedaDestino === Moneda.BS) {
+      // Multiplicación (USD -> BS)
+      operacion = `${monto} * ${tipoCambio}`;
+      resultadoRaw = monto * tipoCambio;
     }
 
-    return this.roundCurrency(amount);
+    const resultadoFinal = this.roundCurrency(resultadoRaw);
+
+    return resultadoFinal;
   }
 
   calculateRemainingBalance(montoTotal: number, cuotaInicial: number): number {
@@ -65,19 +84,19 @@ export class CurrencyCalculationService {
       monedaOperacion,
       monedaBase,
       tipoCambio: this.roundCurrency(tipoCambio || 0, 4),
-      montoTotalMonedaBase: this.convertAmount(
+      montoTotalMonedaBase: this.convertirMonto(
         montoTotal || 0,
         monedaOperacion,
         monedaBase,
         tipoCambio,
       ),
-      cuotaInicialMonedaBase: this.convertAmount(
+      cuotaInicialMonedaBase: this.convertirMonto(
         cuotaInicial || 0,
         monedaOperacion,
         monedaBase,
         tipoCambio,
       ),
-      saldoPendienteMonedaBase: this.convertAmount(
+      saldoPendienteMonedaBase: this.convertirMonto(
         saldoPendiente,
         monedaOperacion,
         monedaBase,

@@ -323,7 +323,7 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
         codigoManzana: mza,
       };
 
-      const montoTotal = this.currencyCalc.convertAmount(
+      const montoTotal = this.currencyCalc.convertirMonto(
         precioLote,
         this.monedaBase,
         monedaOperacion,

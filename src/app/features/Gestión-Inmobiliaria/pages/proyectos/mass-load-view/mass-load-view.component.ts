@@ -94,24 +94,34 @@ export class MassLoadViewComponent implements OnInit {
           } else if (action === 'x') {
             this.removeRow(params.data?.idGrid);
           } else if (action === '🗑') {
-            this.removeManzanaCompleta(params.data?.codigo);
+            this.removeManzanaCompleta(params.data?.idGrid);
           }
         }
       }
     },
     { field: 'codigo', headerName: 'Manzana (Cod)', width: 130, editable: (params) => params.data ? !params.data.isExcepcion : false, cellStyle: (params) => params.data?.isExcepcion ? { backgroundColor: '#f8f9fa', color: 'transparent' } : null },
     { field: 'descripcion', headerName: 'Descripción', width: 180, editable: (params) => params.data ? !params.data.isExcepcion : false, cellStyle: (params) => params.data?.isExcepcion ? { backgroundColor: '#f8f9fa', color: 'transparent' } : null },
-    { field: 'cantidadLotes', headerName: 'Lotes (Total)', width: 120, editable: (params) => params.data ? !params.data.isExcepcion : false, cellStyle: (params) => params.data?.isExcepcion ? { backgroundColor: '#f8f9fa', color: 'transparent' } : null },
-    { field: 'numero', headerName: 'Lote Nro (Excepción)', width: 130, editable: (params) => params.data ? params.data.isExcepcion : false, cellStyle: (params) => (params.data && !params.data.isExcepcion) ? { backgroundColor: '#f8f9fa', fontWeight: 'normal' } : { backgroundColor: '#e6f7ff', fontWeight: 'bold' } },
-    { field: 'areaM2', headerName: 'Área (m²)', editable: true, width: 110 },
-    { field: 'precioReferencial', headerName: 'Precio Ref. ($)', editable: true, width: 130 },
-    { field: 'dimensionNorte', headerName: 'Norte (m)', editable: true, width: 100 },
-    { field: 'dimensionSur', headerName: 'Sur (m)', editable: true, width: 100 },
-    { field: 'dimensionEste', headerName: 'Este (m)', editable: true, width: 100 },
-    { field: 'dimensionOeste', headerName: 'Oeste (m)', editable: true, width: 100 },
-    { field: 'comision', headerName: 'Comisión (%)', editable: true, width: 120 },
-    { field: 'observaciones', headerName: 'Observaciones', editable: true, width: 250 }
+    { field: 'cantidadLotes', headerName: 'Lotes (Total)', width: 95, editable: (params) => params.data ? !params.data.isExcepcion : false, cellStyle: (params) => params.data?.isExcepcion ? { backgroundColor: '#f8f9fa', color: 'transparent' } : null, cellEditor: 'agNumberCellEditor', valueParser: this.numberParser },
+    { field: 'numero', headerName: 'Lote Nro (Excepción)', width: 110, editable: (params) => params.data ? params.data.isExcepcion : false, cellStyle: (params) => (params.data && !params.data.isExcepcion) ? { backgroundColor: '#f8f9fa', fontWeight: 'normal' } : { backgroundColor: '#e6f7ff', fontWeight: 'bold' }, cellEditor: 'agNumberCellEditor', valueParser: this.numberParser },
+    { field: 'areaM2', headerName: 'Área (m²)', editable: true, width: 95, cellEditor: 'agNumberCellEditor', valueParser: this.numberParser },
+    { field: 'precioReferencial', headerName: 'Precio Ref.($)', editable: true, width: 115, cellEditor: 'agNumberCellEditor', valueParser: this.numberParser },
+    { field: 'dimensionNorte', headerName: 'Norte (m)', editable: true, width: 100, cellEditor: 'agNumberCellEditor', valueParser: this.numberParser },
+    { field: 'dimensionSur', headerName: 'Sur (m)', editable: true, width: 95, cellEditor: 'agNumberCellEditor', valueParser: this.numberParser },
+    { field: 'dimensionEste', headerName: 'Este (m)', editable: true, width: 95, cellEditor: 'agNumberCellEditor', valueParser: this.numberParser },
+    { field: 'dimensionOeste', headerName: 'Oeste (m)', editable: true, width: 95, cellEditor: 'agNumberCellEditor', valueParser: this.numberParser },
+    /* { field: 'comision', headerName: 'Comisión (%)', editable: true, width: 120, cellEditor: 'agNumberCellEditor', valueParser: this.numberParser }, */
+    { field: 'observaciones', headerName: 'Observaciones', editable: true, width: 250, flex: 1 }
   ];
+
+  /** Parser para asegurar que solo se ingresen números en la grilla */
+  numberParser(params: any) {
+    if (params.newValue === null || params.newValue === undefined || params.newValue === '') {
+      return null;
+    }
+    const val = Number(params.newValue);
+    // Si no es un número válido (ej. escribieron letras), devolvemos el valor anterior para revertir el cambio
+    return isNaN(val) ? params.oldValue : val;
+  }
 
   /** Configuración por defecto de columnas */
   public readonly defaultColDef: ColDef = {
@@ -191,14 +201,35 @@ export class MassLoadViewComponent implements OnInit {
     if (lastManzanaIndex !== -1) {
       const lastManzana = this.gridRowData[this.gridRowData.length - 1 - lastManzanaIndex];
 
-      // 2. Verificamos campos requeridos por el DTO Backend
+      // 2. Verificamos campos requeridos de la manzana
       if (!lastManzana.codigo || 
           !lastManzana.descripcion || 
-          lastManzana.cantidadLotes === undefined || lastManzana.cantidadLotes < 1 ||
-          lastManzana.precioReferencial === null || lastManzana.precioReferencial < 0.01) {
+          !lastManzana.cantidadLotes ||
+          lastManzana.areaM2 === null || lastManzana.areaM2 === undefined || String(lastManzana.areaM2).trim() === '' ||
+          lastManzana.precioReferencial === null || lastManzana.precioReferencial === undefined || String(lastManzana.precioReferencial).trim() === '' ||
+          lastManzana.dimensionNorte === null || lastManzana.dimensionNorte === undefined || String(lastManzana.dimensionNorte).trim() === '' ||
+          lastManzana.dimensionSur === null || lastManzana.dimensionSur === undefined || String(lastManzana.dimensionSur).trim() === '' ||
+          lastManzana.dimensionEste === null || lastManzana.dimensionEste === undefined || String(lastManzana.dimensionEste).trim() === '' ||
+          lastManzana.dimensionOeste === null || lastManzana.dimensionOeste === undefined || String(lastManzana.dimensionOeste).trim() === '') {
         
-        this.notification.warning('Debes completar Código, Descripción, Cantidad de Lotes y Precio Referencial de la manzana actual antes de agregar otra.');
+        this.notification.warning('Debes completar todos los datos (Área, Precio, Dimensiones, etc.) de la manzana actual antes de agregar otra.');
         return;
+      }
+
+      // Verificamos que las excepciones de esa manzana también estén llenas
+      const excepcionesDeManzana = this.gridRowData.filter(r => r.isExcepcion && r.parentCodigo === lastManzana.codigo);
+      for (const exc of excepcionesDeManzana) {
+        if (!exc.numero ||
+            exc.areaM2 === null || exc.areaM2 === undefined || String(exc.areaM2).trim() === '' ||
+            exc.precioReferencial === null || exc.precioReferencial === undefined || String(exc.precioReferencial).trim() === '' ||
+            exc.dimensionNorte === null || exc.dimensionNorte === undefined || String(exc.dimensionNorte).trim() === '' ||
+            exc.dimensionSur === null || exc.dimensionSur === undefined || String(exc.dimensionSur).trim() === '' ||
+            exc.dimensionEste === null || exc.dimensionEste === undefined || String(exc.dimensionEste).trim() === '' ||
+            exc.dimensionOeste === null || exc.dimensionOeste === undefined || String(exc.dimensionOeste).trim() === '') {
+            
+            this.notification.warning(`Debes completar todos los datos del Lote Excepción #${exc.numero || ''} antes de agregar otra manzana.`);
+            return;
+        }
       }
     }
 
@@ -235,15 +266,39 @@ export class MassLoadViewComponent implements OnInit {
       return;
     }
 
-    // 1. VALIDACIÓN: Buscar la última excepción de ESTA manzana
+    // 1. VALIDACIÓN: Verificar que la manzana padre tenga todos sus datos llenos
+    const parentManzana = this.gridRowData.find(r => !r.isExcepcion && r.codigo === parentCodigo);
+    if (parentManzana) {
+      if (!parentManzana.descripcion || 
+          !parentManzana.cantidadLotes ||
+          parentManzana.areaM2 === null || parentManzana.areaM2 === undefined || String(parentManzana.areaM2).trim() === '' ||
+          parentManzana.precioReferencial === null || parentManzana.precioReferencial === undefined || String(parentManzana.precioReferencial).trim() === '' ||
+          parentManzana.dimensionNorte === null || parentManzana.dimensionNorte === undefined || String(parentManzana.dimensionNorte).trim() === '' ||
+          parentManzana.dimensionSur === null || parentManzana.dimensionSur === undefined || String(parentManzana.dimensionSur).trim() === '' ||
+          parentManzana.dimensionEste === null || parentManzana.dimensionEste === undefined || String(parentManzana.dimensionEste).trim() === '' ||
+          parentManzana.dimensionOeste === null || parentManzana.dimensionOeste === undefined || String(parentManzana.dimensionOeste).trim() === '') {
+        
+        this.notification.warning(`Debes completar todos los datos de la manzana "${parentCodigo}" antes de agregarle excepciones.`);
+        return;
+      }
+    }
+
+    // 2. VALIDACIÓN: Buscar la última excepción de ESTA manzana
     const excepcionesDeEstaManzana = this.gridRowData.filter(r => r.isExcepcion && r.parentCodigo === parentCodigo);
 
     if (excepcionesDeEstaManzana.length > 0) {
       const ultimaExcepcion = excepcionesDeEstaManzana[excepcionesDeEstaManzana.length - 1];
 
-      // Validar campo obligatorio 'numero' según DTO LoteEstructuraExcepcionDto
-      if (!ultimaExcepcion.numero || ultimaExcepcion.numero < 1) {
-        this.notification.warning('Debes ingresar el Número de Lote de la excepción anterior antes de agregar otra nueva.');
+      // Validar que la excepción anterior esté completamente llena
+      if (!ultimaExcepcion.numero ||
+          ultimaExcepcion.areaM2 === null || ultimaExcepcion.areaM2 === undefined || String(ultimaExcepcion.areaM2).trim() === '' ||
+          ultimaExcepcion.precioReferencial === null || ultimaExcepcion.precioReferencial === undefined || String(ultimaExcepcion.precioReferencial).trim() === '' ||
+          ultimaExcepcion.dimensionNorte === null || ultimaExcepcion.dimensionNorte === undefined || String(ultimaExcepcion.dimensionNorte).trim() === '' ||
+          ultimaExcepcion.dimensionSur === null || ultimaExcepcion.dimensionSur === undefined || String(ultimaExcepcion.dimensionSur).trim() === '' ||
+          ultimaExcepcion.dimensionEste === null || ultimaExcepcion.dimensionEste === undefined || String(ultimaExcepcion.dimensionEste).trim() === '' ||
+          ultimaExcepcion.dimensionOeste === null || ultimaExcepcion.dimensionOeste === undefined || String(ultimaExcepcion.dimensionOeste).trim() === '') {
+        
+        this.notification.warning('Debes completar todos los datos del Lote Excepción anterior antes de agregar uno nuevo.');
         return;
       }
     }
@@ -295,14 +350,30 @@ export class MassLoadViewComponent implements OnInit {
   }
 
   /**
-   * Elimina una Manzana y todas sus excepciones asociadas recursivamente.
-   * @param codigoManzana Código de la manzana a eliminar.
+   * Elimina una Manzana y todas sus excepciones asociadas.
+   * Se utiliza el idGrid interno para evitar borrar múltiples manzanas si el código está vacío.
+   * @param idGrid ID de la manzana a eliminar.
    */
-  removeManzanaCompleta(codigoManzana: string): void {
-    this.gridRowData = this.gridRowData.filter(row =>
-      row.codigo !== codigoManzana && row.parentCodigo !== codigoManzana
-    );
-    this.refreshGrid();
+  removeManzanaCompleta(idGrid: string): void {
+    const manzanaAEliminar = this.gridRowData.find(r => r.idGrid === idGrid && !r.isExcepcion);
+    
+    if (manzanaAEliminar) {
+      const codigoManzana = manzanaAEliminar.codigo;
+      
+      this.gridRowData = this.gridRowData.filter(row => {
+        // Eliminar la fila que coincide con el ID exacto de la manzana
+        if (row.idGrid === idGrid) return false;
+        
+        // Si la manzana tenía un código, eliminar también todos sus lotes/excepciones
+        if (codigoManzana && row.isExcepcion && row.parentCodigo === codigoManzana) {
+          return false;
+        }
+        
+        return true;
+      });
+      
+      this.refreshGrid();
+    }
   }
 
   // =========================================================================
@@ -332,15 +403,15 @@ export class MassLoadViewComponent implements OnInit {
 
       const excepcionesPayload = excepcionesRows.map(exc => {
         const payload: any = {
-          numero: Number(exc.numero) || 0,
-          areaM2: Number(exc.areaM2) || 0,
-          precioReferencial: Number(exc.precioReferencial) || 0,
-          dimensionNorte: Number(exc.dimensionNorte) || 0,
-          dimensionSur: Number(exc.dimensionSur) || 0,
-          dimensionEste: Number(exc.dimensionEste) || 0,
-          dimensionOeste: Number(exc.dimensionOeste) || 0,
-          comision: Number(exc.comision) || 0
+          numero: Number(exc.numero) || 0
         };
+        if (exc.areaM2 !== null && exc.areaM2 !== undefined && String(exc.areaM2).trim() !== '') payload.areaM2 = Number(exc.areaM2);
+        if (exc.precioReferencial !== null && exc.precioReferencial !== undefined && String(exc.precioReferencial).trim() !== '') payload.precioReferencial = Number(exc.precioReferencial);
+        if (exc.dimensionNorte !== null && exc.dimensionNorte !== undefined && String(exc.dimensionNorte).trim() !== '') payload.dimensionNorte = Number(exc.dimensionNorte);
+        if (exc.dimensionSur !== null && exc.dimensionSur !== undefined && String(exc.dimensionSur).trim() !== '') payload.dimensionSur = Number(exc.dimensionSur);
+        if (exc.dimensionEste !== null && exc.dimensionEste !== undefined && String(exc.dimensionEste).trim() !== '') payload.dimensionEste = Number(exc.dimensionEste);
+        if (exc.dimensionOeste !== null && exc.dimensionOeste !== undefined && String(exc.dimensionOeste).trim() !== '') payload.dimensionOeste = Number(exc.dimensionOeste);
+        if (exc.comision !== null && exc.comision !== undefined && String(exc.comision).trim() !== '') payload.comision = Number(exc.comision);
         if (exc.observaciones && exc.observaciones.trim() !== '') {
           payload.observaciones = exc.observaciones;
         }
@@ -351,15 +422,16 @@ export class MassLoadViewComponent implements OnInit {
         codigo: mz.codigo || '',
         descripcion: mz.descripcion || '',
         cantidadLotes: Number(mz.cantidadLotes) || 0,
-        areaM2: Number(mz.areaM2) || 0,
         precioReferencial: Number(mz.precioReferencial) || 0,
-        dimensionNorte: Number(mz.dimensionNorte) || 0,
-        dimensionSur: Number(mz.dimensionSur) || 0,
-        dimensionEste: Number(mz.dimensionEste) || 0,
-        dimensionOeste: Number(mz.dimensionOeste) || 0,
-        comision: Number(mz.comision) || 0,
         excepciones: excepcionesPayload
       };
+
+      if (mz.areaM2 !== null && mz.areaM2 !== undefined && String(mz.areaM2).trim() !== '') manzanaPayload.areaM2 = Number(mz.areaM2);
+      if (mz.dimensionNorte !== null && mz.dimensionNorte !== undefined && String(mz.dimensionNorte).trim() !== '') manzanaPayload.dimensionNorte = Number(mz.dimensionNorte);
+      if (mz.dimensionSur !== null && mz.dimensionSur !== undefined && String(mz.dimensionSur).trim() !== '') manzanaPayload.dimensionSur = Number(mz.dimensionSur);
+      if (mz.dimensionEste !== null && mz.dimensionEste !== undefined && String(mz.dimensionEste).trim() !== '') manzanaPayload.dimensionEste = Number(mz.dimensionEste);
+      if (mz.dimensionOeste !== null && mz.dimensionOeste !== undefined && String(mz.dimensionOeste).trim() !== '') manzanaPayload.dimensionOeste = Number(mz.dimensionOeste);
+      if (mz.comision !== null && mz.comision !== undefined && String(mz.comision).trim() !== '') manzanaPayload.comision = Number(mz.comision);
 
       if (mz.observaciones && mz.observaciones.trim() !== '') {
         manzanaPayload.observaciones = mz.observaciones;
@@ -397,9 +469,18 @@ export class MassLoadViewComponent implements OnInit {
    */
   guardarEstructuraMasiva(): void {
     // 1. VALIDACIÓN GLOBAL DE EXCEPCIONES
-    if (this.gridRowData.filter(r => r.isExcepcion && !r.numero).length > 0) {
-      this.notification.warning('Tienes excepciones agregadas sin su respectivo Número de Lote asignado.');
-      return;
+    const excepcionesRows = this.gridRowData.filter(r => r.isExcepcion);
+    for (const exc of excepcionesRows) {
+      if (!exc.numero ||
+          exc.areaM2 === null || exc.areaM2 === undefined || String(exc.areaM2).trim() === '' ||
+          exc.precioReferencial === null || exc.precioReferencial === undefined || String(exc.precioReferencial).trim() === '' ||
+          exc.dimensionNorte === null || exc.dimensionNorte === undefined || String(exc.dimensionNorte).trim() === '' ||
+          exc.dimensionSur === null || exc.dimensionSur === undefined || String(exc.dimensionSur).trim() === '' ||
+          exc.dimensionEste === null || exc.dimensionEste === undefined || String(exc.dimensionEste).trim() === '' ||
+          exc.dimensionOeste === null || exc.dimensionOeste === undefined || String(exc.dimensionOeste).trim() === '') {
+        this.notification.warning(`Faltan datos numéricos en el Lote Excepción #${exc.numero || 'sin número'} de la manzana "${exc.parentCodigo}".`);
+        return;
+      }
     }
 
     // 2. VALIDACIÓN GLOBAL DE MANZANAS
@@ -407,7 +488,7 @@ export class MassLoadViewComponent implements OnInit {
 
     for (const mz of manzanasRows) {
       if (!mz.codigo || mz.codigo.trim() === '') {
-        this.notification.warning(`Falta el Código en una de las manzanas.`);
+        this.notification.warning(`Falta datos en Manzana (Cod) en una de las manzanas.`);
         return;
       }
       if (!mz.descripcion || mz.descripcion.trim() === '') {
@@ -418,8 +499,13 @@ export class MassLoadViewComponent implements OnInit {
         this.notification.warning(`La cantidad de lotes en la manzana "${mz.codigo}" debe ser al menos 1.`);
         return;
       }
-      if (mz.precioReferencial === null || mz.precioReferencial < 0.01) {
-        this.notification.warning(`El precio referencial en la manzana "${mz.codigo}" debe ser mayor a 0.`);
+      if (mz.areaM2 === null || mz.areaM2 === undefined || String(mz.areaM2).trim() === '' ||
+          mz.precioReferencial === null || mz.precioReferencial === undefined || String(mz.precioReferencial).trim() === '' ||
+          mz.dimensionNorte === null || mz.dimensionNorte === undefined || String(mz.dimensionNorte).trim() === '' ||
+          mz.dimensionSur === null || mz.dimensionSur === undefined || String(mz.dimensionSur).trim() === '' ||
+          mz.dimensionEste === null || mz.dimensionEste === undefined || String(mz.dimensionEste).trim() === '' ||
+          mz.dimensionOeste === null || mz.dimensionOeste === undefined || String(mz.dimensionOeste).trim() === '') {
+        this.notification.warning(`Faltan datos numéricos (Área, Precio o Dimensiones) en la manzana "${mz.codigo}".`);
         return;
       }
     }
@@ -432,36 +518,38 @@ export class MassLoadViewComponent implements OnInit {
     manzanasRows.forEach(m => {
       const excepcionesRows = this.gridRowData.filter(r => r.isExcepcion && r.parentCodigo === m.codigo);
 
-      const excepcionesPayload = excepcionesRows.map(e => ({
-        numero: e.numero ? Number(e.numero) : 0,
-        areaM2: e.areaM2 ? Number(e.areaM2) : 0,
-        precioReferencial: (e.precioReferencial !== null && e.precioReferencial !== undefined && Number(e.precioReferencial) >= 0.01)
-          ? Number(e.precioReferencial)
-          : 0.01,
-        dimensionNorte: e.dimensionNorte ? Number(e.dimensionNorte) : 0,
-        dimensionSur: e.dimensionSur ? Number(e.dimensionSur) : 0,
-        dimensionEste: e.dimensionEste ? Number(e.dimensionEste) : 0,
-        dimensionOeste: e.dimensionOeste ? Number(e.dimensionOeste) : 0,
-        comision: e.comision ? Number(e.comision) : 0,
-        observaciones: (e.observaciones && e.observaciones.trim() !== '') ? e.observaciones : null
-      }));
+      const excepcionesPayload = excepcionesRows.map(e => {
+        const payload: any = { numero: e.numero ? Number(e.numero) : 0 };
+        if (e.areaM2 !== null && e.areaM2 !== undefined && String(e.areaM2).trim() !== '') payload.areaM2 = Number(e.areaM2);
+        if (e.precioReferencial !== null && e.precioReferencial !== undefined && String(e.precioReferencial).trim() !== '') payload.precioReferencial = Number(e.precioReferencial);
+        if (e.dimensionNorte !== null && e.dimensionNorte !== undefined && String(e.dimensionNorte).trim() !== '') payload.dimensionNorte = Number(e.dimensionNorte);
+        if (e.dimensionSur !== null && e.dimensionSur !== undefined && String(e.dimensionSur).trim() !== '') payload.dimensionSur = Number(e.dimensionSur);
+        if (e.dimensionEste !== null && e.dimensionEste !== undefined && String(e.dimensionEste).trim() !== '') payload.dimensionEste = Number(e.dimensionEste);
+        if (e.dimensionOeste !== null && e.dimensionOeste !== undefined && String(e.dimensionOeste).trim() !== '') payload.dimensionOeste = Number(e.dimensionOeste);
+        if (e.comision !== 0 && e.comision !== undefined && String(e.comision).trim() !== '') payload.comision = Number(e.comision);
+        if (e.observaciones && e.observaciones.trim() !== '') payload.observaciones = e.observaciones;
+        return payload;
+      });
 
-      manzanas.push({
+      const manzanaPayload: any = {
         codigo: m.codigo || "SIN_CODIGO",
         descripcion: m.descripcion || "",
         cantidadLotes: m.cantidadLotes ? Number(m.cantidadLotes) : 0,
-        areaM2: m.areaM2 ? Number(m.areaM2) : 0,
         precioReferencial: (m.precioReferencial !== null && m.precioReferencial !== undefined && Number(m.precioReferencial) >= 0.01)
           ? Number(m.precioReferencial)
           : 0.01,
-        dimensionNorte: m.dimensionNorte ? Number(m.dimensionNorte) : 0,
-        dimensionSur: m.dimensionSur ? Number(m.dimensionSur) : 0,
-        dimensionEste: m.dimensionEste ? Number(m.dimensionEste) : 0,
-        dimensionOeste: m.dimensionOeste ? Number(m.dimensionOeste) : 0,
-        comision: m.comision ? Number(m.comision) : 0,
-        observaciones: (m.observaciones && m.observaciones.trim() !== '') ? m.observaciones : null,
         excepciones: excepcionesPayload
-      });
+      };
+
+      if (m.areaM2 !== null && m.areaM2 !== undefined && String(m.areaM2).trim() !== '') manzanaPayload.areaM2 = Number(m.areaM2);
+      if (m.dimensionNorte !== null && m.dimensionNorte !== undefined && String(m.dimensionNorte).trim() !== '') manzanaPayload.dimensionNorte = Number(m.dimensionNorte);
+      if (m.dimensionSur !== null && m.dimensionSur !== undefined && String(m.dimensionSur).trim() !== '') manzanaPayload.dimensionSur = Number(m.dimensionSur);
+      if (m.dimensionEste !== null && m.dimensionEste !== undefined && String(m.dimensionEste).trim() !== '') manzanaPayload.dimensionEste = Number(m.dimensionEste);
+      if (m.dimensionOeste !== null && m.dimensionOeste !== undefined && String(m.dimensionOeste).trim() !== '') manzanaPayload.dimensionOeste = Number(m.dimensionOeste);
+      if (m.comision !== null && m.comision !== undefined && String(m.comision).trim() !== '') manzanaPayload.comision = Number(m.comision);
+      if (m.observaciones && m.observaciones.trim() !== '') manzanaPayload.observaciones = m.observaciones;
+
+      manzanas.push(manzanaPayload);
     });
 
     const payloadFinal = { manzanas };

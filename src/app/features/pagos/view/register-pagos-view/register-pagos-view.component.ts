@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -13,6 +13,7 @@ import { MetodoPagoSelectorComponent } from 'src/app/shared/components/molecules
 import { SelectMonedaComponent } from 'src/app/shared/components/atoms/select-moneda.component';
 import { SelectClientesComponent } from 'src/app/shared/components/atoms/select-clientes.component';
 import { SelectVentaGridComponent } from '../../components/select-venta-grid/select-venta-grid.component';
+import { CurrencyCalculationService } from 'src/app/core/services/finance/currency-calculation.service';
 
 export interface VentaPagoOption {
   ventaId: string;
@@ -46,8 +47,12 @@ export class RegisterPagosViewComponent {
   @Input() loadingVentas = false;
   @Input() ventaSeleccionada: IClientePagoById | null = null;
   @Input() proyectoId: string | null = null;
+  @Input() montoConvertido: number = 0; // Recibe el dato calculado
   @Output() onArchivosChanged = new EventEmitter<File[]>();
   @Output() onCuotasSeleccionadas = new EventEmitter<any[]>();
+  @Output() onMontoDesdeCronograma = new EventEmitter<number>();
+
+  private currencyCalc = inject(CurrencyCalculationService);
 
   get clienteId(): FormControl {
     return this.form.get('clienteId') as FormControl;
@@ -89,7 +94,7 @@ export class RegisterPagosViewComponent {
     return this.monedaRecibida?.value || 'USD';
   }
 
-  get montoConvertidoParaCronograma(): number {
+ /*  get montoConvertidoParaCronograma(): number {
     const montoRaw = this.montoValue;
     if (!this.ventaSeleccionada) return montoRaw;
 
@@ -110,31 +115,22 @@ export class RegisterPagosViewComponent {
     }
 
     return montoRaw;
-  }
+  } */
 
+  /**
+   * Recibe el monto del cronograma y lo pasa al Contenedor.
+   * La VISTA NO hace cálculos ni conversiones aquí.
+   */
   onMontoCalculadoHandler(montoCalculadoEnContrato: number): void {
+    // Si no hay venta, emitimos tal cual (o 0)
     if (!this.ventaSeleccionada) {
-      this.monto.setValue(montoCalculadoEnContrato);
+      this.monto.setValue(this.currencyCalc.roundCurrency(montoCalculadoEnContrato));
       return;
     }
 
-    const monedaContrato = this.ventaSeleccionada.moneda;
-    const monedaPago = this.monedaValue;
-    const tipoCambio = this.ventaSeleccionada.tipoCambio || 1;
-
-    if (monedaContrato === monedaPago) {
-      this.monto.setValue(Number(montoCalculadoEnContrato.toFixed(2)));
-      return;
-    }
-
-    let montoConvertido = montoCalculadoEnContrato;
-    if (monedaContrato === 'USD' && monedaPago === 'BS') {
-      montoConvertido = montoCalculadoEnContrato * tipoCambio;
-    } else if (monedaContrato === 'BS' && monedaPago === 'USD') {
-      montoConvertido = montoCalculadoEnContrato / tipoCambio;
-    }
-
-    this.monto.setValue(Number(montoConvertido.toFixed(2)));
+    // ¡IMPORTANTE! No multiplicamos ni dividimos aquí.
+    // Simplemente le pasamos el dato al Padre (Contenedor) para que él use el Servicio.
+    this.onMontoDesdeCronograma.emit(montoCalculadoEnContrato);
   }
 
  // Agrega este método para manejar el evento del hijo
