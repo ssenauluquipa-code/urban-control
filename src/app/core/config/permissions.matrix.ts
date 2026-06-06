@@ -9,13 +9,15 @@ export const APP_PERMISSIONS_MATRIX: PermissionMap = {
         [EAppModule.USUARIOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT],
         [EAppModule.EMPRESA]: [EAppAction.VIEW, EAppAction.EDIT],
         // Nuevo módulo PAGOS con permisos completos
-        [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ANULAR]
+        [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ANULAR],
+        [EAppModule.RESERVAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ANULAR, EAppAction.DELETE, EAppAction.VENTA]
     },
     [EAppRole.EDITOR]: {
         [EAppModule.CLIENTES]: [EAppAction.VIEW], // Solo lectura
         [EAppModule.VENTAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR], // Operación total
         [EAppModule.EMPRESA]: [EAppAction.VIEW], // Solo ver
         // Permiso de anular en PAGOS para editores
-        [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.EDIT, EAppAction.ANULAR]
+        [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.EDIT, EAppAction.ANULAR],
+        [EAppModule.RESERVAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ANULAR, EAppAction.VENTA]
     }
 };

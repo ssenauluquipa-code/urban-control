@@ -6,14 +6,13 @@ import { IReserva } from 'src/app/core/models/reserva.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ReservaService } from 'src/app/core/services/reserva.service';
 import { ViewDetailReservaComponent } from "../../views/view-detail-reserva/view-detail-reserva.component";
-import { NzSpinComponent } from "ng-zorro-antd/spin";
 import { CommonModule } from '@angular/common';
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 
 @Component({
   selector: 'app-detail-reserva',
   standalone: true,
-  imports: [CommonModule, ViewDetailReservaComponent, NzSpinComponent, RouterModule, PageContainerComponent],
+  imports: [CommonModule, ViewDetailReservaComponent, RouterModule, PageContainerComponent],
   template: `
   <app-page-container title="Detalle de Reserva" [showBack]="true" [showOptions]="false">
       <app-view-detail-reserva [reserva]="reserva" [loading]="loading"></app-view-detail-reserva>

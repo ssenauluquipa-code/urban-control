@@ -133,8 +133,7 @@ export class ListReservasComponent implements OnInit {
     switch (event.action) {
       case TableActionsEnum.ANULAR:
         if (event.row.id) {
-          const request$ = this.reservaService.cancelReserva(event.row.id);
-          console.log("respuesta ", request$);
+          const request$ = this.reservaService.cancelReserva(event.row.id);          
           this.confirmation.toggleStatus('Reserva', `#${event.row.codigoReserva}`, true, request$)
             .subscribe(success => {
               if (success) this.loadReservas();
@@ -165,6 +164,11 @@ export class ListReservasComponent implements OnInit {
             });
         } else {
           this.notification.warning('Solo se pueden eliminar físicamente reservas que se encuentren CANCELADAS.');
+        }
+        break;
+      case TableActionsEnum.EDIT:
+        if(event.row.id){
+          this.router.navigate(['/reservas/edit', event.row.id]);
         }
         break;
 
@@ -236,4 +240,6 @@ export class ListReservasComponent implements OnInit {
       }
     ];
   }
+
+  
 }

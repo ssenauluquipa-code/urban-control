@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { CreateReservaDto, ICancelReservaResponse, ICreateReservaResponse, IReserva } from "../../models/reserva.model";
+import { CreateReservaDto, ICancelReservaResponse, ICreateReservaResponse, IReserva, IUpdateReserva } from "../../models/reserva.model";
 
 export interface IReservaRepository {
     create(dto: CreateReservaDto): Observable<ICreateReservaResponse>;
@@ -7,4 +7,5 @@ export interface IReservaRepository {
     getById(id: string): Observable<IReserva>;
     cancel(id: string): Observable<ICancelReservaResponse>;
     eliminar(id: string): Observable<any>;
+    editar(id: string, dto: IUpdateReserva): Observable<IUpdateReserva>;
 }

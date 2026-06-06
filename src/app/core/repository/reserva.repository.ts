@@ -2,8 +2,9 @@ import { inject, Injectable } from "@angular/core";
 import { IReservaRepository } from "../interfaces/repository/reserva.repository.interface";
 import { environment } from "src/environments/environment";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { CreateReservaDto, ICancelReservaResponse, ICreateReservaResponse, IReserva } from "../models/reserva.model";
+import { CreateReservaDto, ICancelReservaResponse, ICreateReservaResponse, IReserva, IUpdateReserva } from "../models/reserva.model";
 import { Observable } from "rxjs";
+import { IPermisoUpdate } from "../models/permiso.model";
 
 @Injectable({ providedIn: 'root' })
 export class ReservaRepository implements IReservaRepository {
@@ -35,6 +36,10 @@ export class ReservaRepository implements IReservaRepository {
 
     eliminar(id: string): Observable<any> {
         return this.http.delete<any>(`${this.Api_Url}/${id}`);
+    }
+
+    editar(id: string, dto: IUpdateReserva): Observable<IUpdateReserva> {
+        return this.http.patch<IUpdateReserva>(`${this.Api_Url}/${id}`, dto);
     }
 
 }

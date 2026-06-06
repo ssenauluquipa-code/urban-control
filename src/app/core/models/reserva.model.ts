@@ -77,3 +77,11 @@ export interface ICancelReservaResponse {
         id: string;
     };
 }
+
+export interface IUpdateReserva{
+    montoReserva: number
+    tipoCambio: number
+    moneda: string
+    fechaVencimiento: string
+    observaciones: string
+}

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { ReservaRepository } from '../repository/reserva.repository';
-import { CreateReservaDto, ICancelReservaResponse, ICreateReservaResponse, IReserva } from '../models/reserva.model';
+import { CreateReservaDto, ICancelReservaResponse, ICreateReservaResponse, IReserva, IUpdateReserva } from '../models/reserva.model';
 import { map, Observable } from 'rxjs';
 export const RESERVA_REPOSITORY_TOKEN = 'IReservaRepository';
 @Injectable({
@@ -37,5 +37,9 @@ export class ReservaService {
 
   eliminar(id: string): Observable<any> {
     return this.repo.eliminar(id);
+  }
+
+  editar(id: string, dto: IUpdateReserva): Observable<IUpdateReserva>{
+    return this.repo.editar(id, dto);
   }
 }
