@@ -163,6 +163,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
     this.escucharCambiosCliente();
     this.escucharCambiosVenta();
     this.escucharCambiosMonedaRecibida();
+    this.escucharCambiosMonto();
   }
 
   ngOnDestroy(): void {
@@ -435,40 +436,37 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((nuevaMoneda: string) => {
         const montoCtrl = this.form.get('monto');
+        const montoActual = montoCtrl?.value || 0;
 
         if (!this.ventaSeleccionada) {
           this.lastMoneda = nuevaMoneda;
           return;
         }
 
-        // DATO ORIGINAL (La verdad absoluta de la deuda)
-        const saldoPendiente = this.ventaSeleccionada.saldoPendiente; // 137,950
-        const monedaDeLaDeuda = this.ventaSeleccionada.moneda;      // 'BS'
-        const tipoCambio = this.ventaSeleccionada.tipoCambio || 1;  // 6.96
+        const tipoCambio = this.ventaSeleccionada.tipoCambio || 1;
 
-        // ============================================================
-        // CONSERVAR EL MONTO ORIGINAL
-        // Si seleccionas la moneda original, RESTAURAMOS el dato exacto.
-        // NO hacemos multiplicaciones ni conversiones inversas.
-        // ============================================================
-        if (nuevaMoneda === monedaDeLaDeuda) {
-          montoCtrl?.setValue(saldoPendiente, { emitEvent: false });
-        } 
-        else {
-          // Solo convertimos si es una moneda DISTINTA
+        if (this.lastMoneda !== nuevaMoneda && montoActual > 0) {
           const montoConvertido = this.currencyService.convertirMonto(
-            saldoPendiente,
-            monedaDeLaDeuda as Moneda,
+            montoActual,
+            this.lastMoneda as Moneda,
             nuevaMoneda as Moneda,
             tipoCambio
           );
-
           montoCtrl?.setValue(montoConvertido, { emitEvent: false });
         }
 
         this.lastMoneda = nuevaMoneda;
         this.cdr.markForCheck();
       });
+  }
+
+  /**
+   * Escucha cambios en el monto ingresado manualmente para actualizar el cronograma visual
+   */
+  private escucharCambiosMonto(): void {
+    this.form.get('monto')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.cdr.markForCheck();
+    });
   }
 
   // ==========================

@@ -1,0 +1,23 @@
+<app-page-container
+  title="Centro de Reportes"
+  permissionScope="reportes"
+  [showOptions]="false"
+>
+
+  <p class="uc-reportes-subtitle text-slate-500 mb-4 animate-fade-in">
+    Consulta y exporta la información clave de tu gestión inmobiliaria
+  </p>
+
+  <!-- ====== GRID DE REPORTES USANDO EL NUEVO COMPONENTE ATÓMICO ====== -->
+  <div class="row g-4 animate-fade-in">
+    @for (tarjeta of tarjetasReporte; track tarjeta.id) {
+      <div class="col-12 col-sm-6 col-lg-3">
+        <app-panel-tarjetas 
+          [tarjeta]="tarjeta" 
+          (clickReporte)="abrirReporte($event)">
+        </app-panel-tarjetas>
+      </div>
+    }
+  </div>
+
+</app-page-container>

@@ -1,0 +1,50 @@
+<div class="dropdown-columnas-wrapper">
+  
+  <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" 
+          (click)="toggleMenu()" 
+          type="button">
+    <i class="bi bi-columns-nav"></i> 
+    <span>Columnas</span>
+    <i class="bi" [ngClass]="isOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+  </button>
+
+  <div class="ag-floating-container" *ngIf="isOpen">
+    <div class="ag-simulated-sidebar">
+      
+      <div class="ag-sidebar-header">
+        <i class="bi bi-columns-nav"></i>
+        <span>Columnas</span>
+      </div>
+
+      <div class="ag-sidebar-search-box">
+        <i class="bi bi-search search-icon"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchText" 
+          placeholder="Buscar columna..." 
+          class="ag-search-input"
+        />
+        <i *ngIf="searchText" class="bi bi-x-circle clear-icon" (click)="searchText = ''"></i>
+      </div>
+
+      <div class="ag-sidebar-columns-list">
+        @for (col of filteredColumns; track $index) {
+          <label class="ag-sidebar-item">
+            <input 
+              type="checkbox" 
+              [checked]="isColumnVisible(col)"
+              (change)="onToggleColumn(col, $event)"
+              class="ag-sidebar-checkbox"
+            />
+            <span class="ag-sidebar-label-text">{{ col.headerName }}</span>
+          </label>
+        }
+        @if (filteredColumns.length === 0) {
+          <div class="ag-sidebar-no-results">No se encontraron columnas</div>
+        }
+      </div>
+
+    </div>
+  </div>
+
+</div>

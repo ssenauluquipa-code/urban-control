@@ -16,6 +16,7 @@ export enum EAppModule {
     LOTES = 'LOTES',
     EMPRESA = 'EMPRESAS',
     PAGOS = 'PAGOS',
+    REPORTES = 'REPORTES'
 }
 
 export enum EAppAction {

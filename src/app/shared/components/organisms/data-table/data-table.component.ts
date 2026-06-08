@@ -9,6 +9,8 @@ import {
 import { AgGridAngular } from 'ag-grid-angular';
 import { TableActionsComponent } from '../table-actions/table-actions.component';
 import { DataTableBaseComponent } from '../data-table-base/data-table-base.component';
+
+import { themeBalham } from 'ag-grid-community';
 /**
  * SIMPLE: DataTable para datos client-side
  * - Filtraje local
@@ -38,16 +40,17 @@ export class DataTableComponent<T = unknown> extends DataTableBaseComponent<T> i
 
   // --- Configuración específica: client-side ---
   public override gridOptions: GridOptions = {
-    rowModelType: 'clientSide', // 👈 CLAVE: Client-side
+    theme: themeBalham,
+    rowModelType: 'clientSide', //  CLAVE: Client-side    
     pagination: true,
-    rowHeight: 52,
-    headerHeight: 56,
+    rowHeight: 38,
+    headerHeight: 38,
     defaultColDef: {
       sortable: true,
       filter: true,
       resizable: true,
       suppressMovable: true,
-      suppressHeaderMenuButton: true,
+      suppressHeaderMenuButton: false,
       suppressHeaderFilterButton: true,
       suppressFloatingFilterButton: true,
       cellStyle: { display: 'flex', 'align-items': 'center' }

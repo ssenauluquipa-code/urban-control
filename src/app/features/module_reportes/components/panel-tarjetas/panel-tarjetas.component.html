@@ -1,0 +1,27 @@
+<div class="card h-100 bg-white border-0 shadow-sm uc-card-reporte" 
+     [class.uc-card-critical]="tarjeta.id === 'MORA'"
+     (click)="onCardClick()">
+  
+  <div class="card-body p-4 d-flex flex-column align-items-start">
+    
+    <!-- Contenedor cuadrado redondeado para el Icono -->
+    <div class="uc-icon-wrapper mb-3" 
+         [ngClass]="{
+           'bg-indigo-50 text-indigo-600': tarjeta.categoria === 'comercial',
+           'bg-emerald-50 text-emerald-600': tarjeta.categoria === 'caja',
+           'bg-amber-50 text-amber-600': tarjeta.categoria === 'riesgo',
+           'bg-rose-50 text-rose-600': tarjeta.id === 'MORA',
+           'bg-purple-50 text-purple-600': tarjeta.categoria === 'auditoria'
+         }">
+      <i [class]="'bi ' + tarjeta.icono"></i>
+    </div>
+
+    <!-- Título del reporte -->
+    <h5 class="uc-card-title mb-1">{{ tarjeta.titulo }}</h5>
+    
+    <!-- Descripción corta -->
+    <p class="uc-card-description mb-0">{{ tarjeta.descripcion }}</p>
+
+  </div>
+
+</div>

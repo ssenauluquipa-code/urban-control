@@ -1,0 +1,84 @@
+/* 🌟 Eliminamos por completo el selector .filter-card antiguo que generaba la doble capa */
+
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b; // Slate-500
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      color: #1e293b;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+
+      &:focus {
+        border-color: #3b82f6; // Blue-500
+        background-color: #ffffff;
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+
+    .btn-clear {
+      width: 100%;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #64748b;
+      background-color: transparent;
+      border: 1px dashed #cbd5e1;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: #3b82f6;
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+      }
+    }
+  }
+}
+
+/* Diseño Responsivo / Desktop (Mobile First) */
+@media (min-width: 768px) {
+  .filter-form {
+    flex-direction: row;
+    align-items: flex-end;
+
+    .form-group {
+      flex: 1;
+    }
+
+    .form-actions {
+      width: auto;
+      min-width: 160px;
+    }
+  }
+}

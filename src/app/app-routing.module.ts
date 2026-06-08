@@ -91,6 +91,12 @@ export const Approutes: Routes = [
         loadChildren: () => import('./features/pagos/pagos.routes').then(m => m.PagosRoutes)
       },
       {
+        path: 'reportes',
+        canActivate: [permissionGuard],
+        data: { module: EAppModule.REPORTES, action: EAppAction.VIEW },
+        loadChildren: () => import('./features/module_reportes/module_reporte.routes').then(m => m.MODULE_REPORTE)
+      },
+      {
         path: 'profile',
         loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES)
       },

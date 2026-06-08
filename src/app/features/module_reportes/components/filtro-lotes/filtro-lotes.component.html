@@ -1,0 +1,30 @@
+
+  <form [formGroup]="filterForm" class="filter-form">
+    
+    <div class="form-group">
+      <label for="manzanaId">Filtrar por Manzana</label>
+      <select id="manzanaId" formControlName="manzanaId" class="form-control">
+        <option value="">Todas las Manzanas</option>
+        @for (mz of manzanas; track mz) {
+          <option [value]="mz">{{ mz | uppercase }}</option>
+        }
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="estado">Estado Comercial</label>
+      <select id="estado" formControlName="estado" class="form-control">
+        <option value="">Todos los Estados</option>
+        @for (est of estados; track est) {
+          <option [value]="est">{{ est }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-clear" (click)="limpiarFiltros()">
+        <i class="bi bi-arrow-counterclockwise"></i> Limpiar Filtros
+      </button>
+    </div>
+
+  </form>

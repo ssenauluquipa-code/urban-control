@@ -218,6 +218,24 @@ export const NavigationItems: INavigationItem[] = [
       }
     ]
   },
+  {
+    id: 'reportes',
+    title: 'Reportes',
+    type: 'group',
+    icon: 'bi bi-file-earmark-bar-graph',
+    children: [
+      {
+        id: 'reporte-hub',
+        title: 'Reportes',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/reportes/reporte-hub',
+        icon: 'bi bi-bar-chart',
+        breadcrumbs: false,
+        module: EAppModule.REPORTES
+      }
+    ]
+  },
   /*
     {
       id: 'ui-components',

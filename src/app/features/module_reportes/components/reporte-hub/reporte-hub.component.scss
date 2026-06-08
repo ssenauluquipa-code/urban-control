@@ -1,0 +1,112 @@
+// ==========================================================================
+// Variables de Color de UrbanControl
+// ==========================================================================
+$slate-900: #0f172a;
+$slate-500: #64748b;
+$border-color-soft: rgba(226, 232, 240, 0.7);
+
+// Colores de los contenedores de iconos de tu captura
+$indigo-bg: #e0e7ff;   $indigo-text: #4f46e5;
+$emerald-bg: #d1fae5;  $emerald-text: #059669;
+$amber-bg: #fef3c7;    $amber-text: #d97706;
+$rose-bg: #ffe4e6;     $rose-text: #e11d48;
+$purple-bg: #f3e8ff;   $purple-text: #9333ea;
+
+// ==========================================================================
+// Clases Base de Layout e Información
+// ==========================================================================
+.uc-reportes-subtitle {
+  font-size: 0.925rem;
+  font-weight: 400;
+  margin-top: -0.25rem;
+  letter-spacing: -0.01em;
+}
+
+// ==========================================================================
+// Componente de Tarjeta de Reporte
+// ==========================================================================
+.uc-card-reporte {
+  border-radius: 0.75rem !important; // Esquinas sutiles y redondeadas de la UI
+  cursor: pointer;
+  border: 1px solid transparent !important; // Evita saltos de píxel al hacer hover
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.22s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.04), 0 8px 16px -6px rgba(0, 0, 0, 0.02) !important;
+    border-color: rgba(79, 70, 229, 0.15) !important; // Feedback sutil en hover
+  }
+}
+
+// Caso Especial: Línea lateral izquierda de alerta crítica (Clientes en Mora)
+.uc-card-critical {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px; // Grosor de la franja izquierda de tu captura
+    background-color: #dc2626; // Rojo vibrante de alerta
+    border-top-left-radius: 0.75rem;
+    border-bottom-left-radius: 0.75rem;
+  }
+}
+
+// Contenedor Cuadrado de los Iconos
+.uc-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 0.5rem;
+  font-size: 1.15rem;
+}
+
+// Clasificación de paletas dinámicas para los iconos de Bootstrap
+.bg-indigo-50   { background-color: $indigo-bg !important;   color: $indigo-text !important; }
+.bg-emerald-50  { background-color: $emerald-bg !important;  color: $emerald-text !important; }
+.bg-amber-50    { background-color: $amber-bg !important;    color: $amber-text !important; }
+.bg-rose-50     { background-color: $rose-bg !important;     color: $rose-text !important; }
+.bg-purple-50   { background-color: $purple-bg !important;   color: $purple-text !important; }
+
+// ==========================================================================
+// Tipografía Interna (Ajustada a screen.png)
+// ==========================================================================
+.uc-card-title {
+  color: $slate-900;
+  font-size: 0.95rem;
+  font-weight: 600; // Semi-bold corporativo
+  letter-spacing: -0.015em;
+}
+
+.uc-card-description {
+  color: $slate-500;
+  font-size: 0.825rem;
+  line-height: 1.35;
+  font-weight: 400;
+}
+
+// ==========================================================================
+// Animación de Entrada Suave (Fade-In)
+// ==========================================================================
+.animate-fade-in {
+  animation: ucFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes ucFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

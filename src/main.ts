@@ -49,6 +49,7 @@ import { VentaRepository } from './app/core/repository/venta.repository';
 import { PagosRepository } from './app/core/repository/pagos.repository';
 import { NotificacionRepository } from './app/core/repository/notificacion.repository';
 import { projectInterceptor } from './app/core/interceptors/project.interceptor';
+import { ReporteRepository } from './app/core/repository/reportes/reportes.reportory';
 
 ModuleRegistry.registerModules([AllCommunityModule, ClientSideRowModelModule, InfiniteRowModelModule]);
 
@@ -90,6 +91,7 @@ bootstrapApplication(AppComponent, {
     { provide: 'IVentaRepository', useClass: VentaRepository },
     { provide: 'IPagosRepository', useClass: PagosRepository },
     { provide: 'INotificacionRepository', useClass: NotificacionRepository },
+    { provide: 'IReporteRepository', useClass: ReporteRepository },
     provideAnimationsAsync(),
     importProvidersFrom(NzIconModule, NzModalModule),
     provideAnimations(),

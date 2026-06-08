@@ -4,7 +4,7 @@ import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from
 import { AuthService } from '../services/auth.service';
 import { ProjectStatusGlobalService } from '../services/project-status-global.service';
 
-// 🧊 Variables de estado global para el interceptor (fuera de la función)
+// Variables de estado global para el interceptor (fuera de la función)
 let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
@@ -56,15 +56,6 @@ function handle401Error(req: HttpRequest<unknown>, next: HttpHandlerFn, authServ
     refreshTokenSubject.next(null); // Limpiamos el sujeto para nuevas peticiones
 
     return authService.refresh().pipe(
-      switchMap((res) => {
-        isRefreshing = false;
-        refreshTokenSubject.next(res.accessToken);
-
-        // Reintentamos la petición original con el nuevo token obtenido
-        return next(req.clone({
-          setHeaders: { Authorization: `Bearer ${res.accessToken}` }
-        }));
-      }),
       catchError((refreshError) => {
         isRefreshing = false;
         refreshTokenSubject.next(null);
@@ -74,6 +65,15 @@ function handle401Error(req: HttpRequest<unknown>, next: HttpHandlerFn, authServ
         authService.logout().subscribe();
 
         return throwError(() => refreshError);
+      }),
+      switchMap((res) => {
+        isRefreshing = false;
+        refreshTokenSubject.next(res.accessToken);
+
+        // Reintentamos la petición original con el nuevo token obtenido
+        return next(req.clone({
+          setHeaders: { Authorization: `Bearer ${res.accessToken}` }
+        }));
       })
     );
   } else {
@@ -87,10 +87,6 @@ function handle401Error(req: HttpRequest<unknown>, next: HttpHandlerFn, authServ
         return next(req.clone({
           setHeaders: { Authorization: `Bearer ${newToken}` }
         }));
-      }),
-      catchError((err) => {
-        authService.logout().subscribe();
-        return throwError(() => err);
       })
     );
   }

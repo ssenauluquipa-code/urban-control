@@ -50,12 +50,12 @@ export class DataTableServerComponent<T = unknown> extends DataTableBaseComponen
   private pendingParams: IGetRowsParams | null = null;
 
   public override gridOptions: GridOptions = {
-    rowModelType: 'infinite', // 👈 CLAVE: Infinite scroll / server-side
+    rowModelType: 'infinite', // CLAVE: Infinite scroll / server-side
     cacheBlockSize: this.pageSize,
     maxBlocksInCache: 10,
     pagination: true,
-    rowHeight: 52,
-    headerHeight: 56,
+    rowHeight: 38,
+    headerHeight: 38,
     defaultColDef: {
       sortable: true,
       filter: true,
