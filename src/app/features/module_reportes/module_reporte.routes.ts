@@ -16,5 +16,15 @@ export const MODULE_REPORTE : Routes = [
         path: 'clientes',
         loadComponent: () => import('./page/reporte-clientes-page.component')
             .then(m => m.ReporteClientesPageComponent)
+    },
+    {
+        path: 'ventas',
+        loadComponent: () => import('./page/reporte-ventas-page.component')
+            .then(m => m.ReporteVentasPageComponent)
+    },
+    {
+        path: 'reservas',
+        loadComponent: () => import('./page/reporte-reservas-page.component')
+            .then(m => m.ReporteReservasPageComponent)
     }
 ];

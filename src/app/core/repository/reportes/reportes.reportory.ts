@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IReporteRepository } from '../../interfaces/repository/reportes/reportes.repository.interface';
-import { IAuditoriaReporte, IClienteReporte, IComisionReporte, IEstadoFinancieroReporte, ILoteReporte, ILoteReporteQuery, IOcupacionManzanaReporte, IPagoReporte, IPeriodoReporteQuery, IVentaReporte } from '../../models/reportes/reportes.model';
+import { 
+  IClienteMoraReporte, IClienteReporte, ICuotaPendienteReporte, ICuotasPendientesQuery, 
+  ILoteReporte, ILoteReporteQuery, IPagoReporte, IPeriodoReporteQuery, 
+  IReservaReporte, ITermPeriodoReporteQuery, IVentaReporte, IVentasAsesorReporte 
+} from '../../models/reportes/reportes.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,11 +29,21 @@ export class ReporteRepository implements IReporteRepository {
     return this.http.get<IClienteReporte[]>(`${this.URL_BASE}/clientes`);
   }
 
-  getVentas(filtros?: IPeriodoReporteQuery): Observable<IVentaReporte[]> {
+  getReservas(filtros?: IPeriodoReporteQuery): Observable<IReservaReporte[]> {
     let params = new HttpParams();
     if (filtros) {
-      if (filtros.fechaInicio) params = params.set('fechaInicio', filtros.fechaInicio);
-      if (filtros.fechaFin) params = params.set('fechaFin', filtros.fechaFin);
+      if (filtros.fechaDesde) params = params.set('fechaDesde', filtros.fechaDesde);
+      if (filtros.fechaHasta) params = params.set('fechaHasta', filtros.fechaHasta);
+    }
+    return this.http.get<IReservaReporte[]>(`${this.URL_BASE}/reservas`, { params });
+  }
+
+  getVentas(filtros?: ITermPeriodoReporteQuery): Observable<IVentaReporte[]> {
+    let params = new HttpParams();
+    if (filtros) {
+      if (filtros.term) params = params.set('term', filtros.term);
+      if (filtros.fechaDesde) params = params.set('fechaDesde', filtros.fechaDesde);
+      if (filtros.fechaHasta) params = params.set('fechaHasta', filtros.fechaHasta);
     }
     return this.http.get<IVentaReporte[]>(`${this.URL_BASE}/ventas`, { params });
   }
@@ -37,30 +51,29 @@ export class ReporteRepository implements IReporteRepository {
   getPagos(filtros?: IPeriodoReporteQuery): Observable<IPagoReporte[]> {
     let params = new HttpParams();
     if (filtros) {
-      if (filtros.fechaInicio) params = params.set('fechaInicio', filtros.fechaInicio);
-      if (filtros.fechaFin) params = params.set('fechaFin', filtros.fechaFin);
+      if (filtros.fechaDesde) params = params.set('fechaDesde', filtros.fechaDesde);
+      if (filtros.fechaHasta) params = params.set('fechaHasta', filtros.fechaHasta);
     }
     return this.http.get<IPagoReporte[]>(`${this.URL_BASE}/pagos`, { params });
   }
 
-  getEstadosFinancieros(): Observable<IEstadoFinancieroReporte[]> {
-    return this.http.get<IEstadoFinancieroReporte[]>(`${this.URL_BASE}/estados-financieros`);
-  }
-
-  getComisiones(): Observable<IComisionReporte[]> {
-    return this.http.get<IComisionReporte[]>(`${this.URL_BASE}/comisiones`);
-  }
-
-  getOcupacionManzanas(): Observable<IOcupacionManzanaReporte[]> {
-    return this.http.get<IOcupacionManzanaReporte[]>(`${this.URL_BASE}/ocupacion-manzanas`);
-  }
-
-  getAuditoriaActividad(filtros?: IPeriodoReporteQuery): Observable<IAuditoriaReporte[]> {
+  getCuotasPendientes(filtros?: ICuotasPendientesQuery): Observable<ICuotaPendienteReporte[]> {
     let params = new HttpParams();
     if (filtros) {
-      if (filtros.fechaInicio) params = params.set('fechaInicio', filtros.fechaInicio);
-      if (filtros.fechaFin) params = params.set('fechaFin', filtros.fechaFin);
+      if (filtros.vencimientoDesde) params = params.set('vencimientoDesde', filtros.vencimientoDesde);
+      if (filtros.vencimientoHasta) params = params.set('vencimientoHasta', filtros.vencimientoHasta);
+      if (filtros.term) params = params.set('term', filtros.term);
     }
-    return this.http.get<IAuditoriaReporte[]>(`${this.URL_BASE}/auditoria`, { params });
+    return this.http.get<ICuotaPendienteReporte[]>(`${this.URL_BASE}/cuotas-pendientes`, { params });
+  }
+
+  getClientesMora(term?: string): Observable<IClienteMoraReporte[]> {
+    let params = new HttpParams();
+    if (term) params = params.set('term', term);
+    return this.http.get<IClienteMoraReporte[]>(`${this.URL_BASE}/clientes-mora`, { params });
+  }
+
+  getVentasAsesor(): Observable<IVentasAsesorReporte[]> {
+    return this.http.get<IVentasAsesorReporte[]>(`${this.URL_BASE}/ventas-asesor`);
   }
 }

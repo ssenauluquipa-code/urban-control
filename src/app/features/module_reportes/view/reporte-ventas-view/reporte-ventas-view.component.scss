@@ -1,0 +1,68 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.22s ease-in-out;
+}
+
+// Estilos de la caja del filtro
+.mb-4 {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+}
+
+// Inyección de estilos CSS hacia los inputs del componente de filtros hijo
+::ng-deep {
+  .form-group-custom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+
+    .form-label-custom {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b; // Slate-500
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0;
+    }
+
+    .custom-select-input {
+      padding: 0.475rem 0.75rem;
+      font-size: 0.875rem;
+      color: #1e293b;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      height: 38px;
+      outline: none;
+      
+      &:focus {
+        border-color: #3b82f6;
+        box-shadow: none;
+        background-color: #ffffff;
+      }
+    }
+  }
+
+  .btn-limpiar-custom {
+    height: 38px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}

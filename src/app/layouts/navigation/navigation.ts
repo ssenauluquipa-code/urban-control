@@ -188,7 +188,7 @@ export const NavigationItems: INavigationItem[] = [
     children: [
       {
         id: 'proyectos',
-        title: 'Proyectos',
+        title: 'Urbanizaciónes',
         type: 'item',
         classes: 'nav-item',
         url: '/gestion-inmobiliaria/proyecto',

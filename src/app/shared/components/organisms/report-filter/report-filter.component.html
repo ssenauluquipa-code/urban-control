@@ -1,0 +1,22 @@
+<div class="filter-card">
+  <form [formGroup]="formGroup" class="filter-form">
+    
+      <ng-content></ng-content>    
+
+    <div class="form-actions">
+      <button 
+        type="button" 
+        class="btn-clear" 
+        *ngIf="mostrarBtnLimpiar" 
+        (click)="onLimpiar.emit()">
+        <i class="bi bi-arrow-counterclockwise"></i> Limpiar Filtros
+      </button>
+
+      <app-tabla-previsualizacion 
+        [columnDefs]="columnDefs"
+        (visibilityChange)="onVisibilityChange($event)">
+      </app-tabla-previsualizacion>
+    </div>
+
+  </form>
+</div>

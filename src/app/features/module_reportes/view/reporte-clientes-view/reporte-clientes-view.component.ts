@@ -1,27 +1,60 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ColDef } from 'ag-grid-community';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { IClienteReporte } from 'src/app/core/models/reportes/reportes.model';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
-import { ColumnVisibilityChange, TablaPrevisualizacionComponent } from '../../components/tabla-previsualizacion/tabla-previsualizacion.component';
-import { FiltroLotesComponent } from "../../components/filtro-lotes/filtro-lotes.component";
+import { ReportFilterComponent } from 'src/app/shared/components/organisms/report-filter/report-filter.component';
+import { ColumnVisibilityChange } from '../../components/tabla-previsualizacion/tabla-previsualizacion.component';
+import { InputTextComponent } from 'src/app/shared/components/atoms/input-text/input-text.component';
+
+export interface IFiltroClienteCriterio {
+  busqueda: string;
+}
 
 @Component({
   selector: 'app-reporte-clientes-view',
   standalone: true,
-  imports: [FiltroLotesComponent, TablaPrevisualizacionComponent, DataTableComponent],
+  imports: [ReactiveFormsModule, ReportFilterComponent, DataTableComponent, InputTextComponent],
   templateUrl: './reporte-clientes-view.component.html',
   styleUrl: './reporte-clientes-view.component.scss'
 })
-export class ReporteClientesViewComponent implements OnInit {
+export class ReporteClientesViewComponent implements OnInit, OnDestroy {
 
   @Input({required:true}) datos:IClienteReporte[] = [];
-  // Emite los criterios elegidos en la UI hacia el Padre (Page)
-  @Output() cambioFiltro = new EventEmitter<{ manzanaId: string; estado: string }>();
+  @Output() cambioFiltro = new EventEmitter<IFiltroClienteCriterio>();
   @ViewChild('tablaComponent') tablaComponent!: DataTableComponent;
   public columnas: ColDef[] = [];
+  public filterForm!: FormGroup;
+  private destroy$ = new Subject<void>();
+
+  constructor(private fb: FormBuilder) {
+    this.filterForm = this.fb.group({
+      busqueda: ['']
+    });
+  }
 
   ngOnInit(): void {
     this.configurarColumnasDeLaTabla();
+    this.filterForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((valores) => {
+        this.cambioFiltro.emit({ busqueda: valores.busqueda || '' });
+      });
+  }
+
+  public getControl(nombre: string): FormControl {
+    return this.filterForm.get(nombre) as FormControl;
+  }
+
+  public limpiarFiltros(): void {
+    this.filterForm.reset({ busqueda: '' });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private configurarColumnasDeLaTabla(): void {
@@ -66,7 +99,4 @@ export class ReporteClientesViewComponent implements OnInit {
     }
   }
 
-  public onFiltroModificado(event: { manzanaId: string; estado: string }): void {
-    this.cambioFiltro.emit(event);
-  }
 }

@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
-import { IAuditoriaReporte, IClienteReporte, IComisionReporte, IEstadoFinancieroReporte, ILoteReporte, ILoteReporteQuery, IOcupacionManzanaReporte, IPagoReporte, IPeriodoReporteQuery, IVentaReporte } from '../../models/reportes/reportes.model';
 import { Observable } from 'rxjs';
 import { IReporteRepository } from '../../interfaces/repository/reportes/reportes.repository.interface';
+import { 
+  IClienteMoraReporte, IClienteReporte, ICuotaPendienteReporte, ICuotasPendientesQuery, 
+  ILoteReporte, ILoteReporteQuery, IPagoReporte, IPeriodoReporteQuery, 
+  IReservaReporte, ITermPeriodoReporteQuery, IVentaReporte, IVentasAsesorReporte 
+} from '../../models/reportes/reportes.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,44 +16,43 @@ export class ReportesService {
     @Inject('IReporteRepository') private reporteRepo: IReporteRepository
   ) {}
 
-  // 1
+  // 1. Reporte de Lotes
   obtenerReporteLotes(filtros?: ILoteReporteQuery): Observable<ILoteReporte[]> {
     return this.reporteRepo.getLotes(filtros);
   }
 
-  // 2
+  // 2. Reporte de Clientes
   obtenerReporteClientes(): Observable<IClienteReporte[]> {
     return this.reporteRepo.getClientes();
   }
 
-  // 3
-  obtenerReporteVentas(filtros?: IPeriodoReporteQuery): Observable<IVentaReporte[]> {
+  // 3. Reporte de Reservas
+  obtenerReporteReservas(filtros?: IPeriodoReporteQuery): Observable<IReservaReporte[]> {
+    return this.reporteRepo.getReservas(filtros);
+  }
+
+  // 4. Reporte General de Ventas
+  obtenerReporteVentas(filtros?: ITermPeriodoReporteQuery): Observable<IVentaReporte[]> {
     return this.reporteRepo.getVentas(filtros);
   }
 
-  // 4
+  // 5. Reporte de Pagos
   obtenerReportePagos(filtros?: IPeriodoReporteQuery): Observable<IPagoReporte[]> {
     return this.reporteRepo.getPagos(filtros);
   }
 
-  // 5
-  obtenerEstadosFinancieros(): Observable<IEstadoFinancieroReporte[]> {
-    return this.reporteRepo.getEstadosFinancieros();
+  // 6. Reporte de Cuotas Pendientes
+  obtenerReporteCuotasPendientes(filtros?: ICuotasPendientesQuery): Observable<ICuotaPendienteReporte[]> {
+    return this.reporteRepo.getCuotasPendientes(filtros);
   }
 
-  // 6
-  obtenerReporteComisiones(): Observable<IComisionReporte[]> {
-    return this.reporteRepo.getComisiones();
+  // 7. Reporte de Clientes en Mora
+  obtenerReporteClientesMora(term?: string): Observable<IClienteMoraReporte[]> {
+    return this.reporteRepo.getClientesMora(term);
   }
 
-  // 7
-  obtenerOcupacionManzanas(): Observable<IOcupacionManzanaReporte[]> {
-    return this.reporteRepo.getOcupacionManzanas();
+  // 8. Reporte de Ventas por Asesor
+  obtenerReporteVentasAsesor(): Observable<IVentasAsesorReporte[]> {
+    return this.reporteRepo.getVentasAsesor();
   }
-
-  // 8
-  obtenerAuditoriaActividad(filtros?: IPeriodoReporteQuery): Observable<IAuditoriaReporte[]> {
-    return this.reporteRepo.getAuditoriaActividad(filtros);
-  }
-  
 }

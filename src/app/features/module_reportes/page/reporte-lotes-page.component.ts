@@ -19,19 +19,6 @@ import { ExportExcelService } from 'src/app/core/services/export-excel.service';
   (MenuExportPDF)="exportarPDF()"
   (MenuExportExcel)="exportarExcel()"
 >
-  <!-- <div header-options class="d-flex gap-2">
-    <button class="btn btn-outline-success btn-sm d-flex align-items-center gap-1" 
-            [disabled]="lotesFiltrados.length === 0 || isLoading"
-            (click)="exportarExcel()">
-      <i class="bi bi-file-earmark-excel"></i> Excel
-    </button>
-    <button class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" 
-            [disabled]="lotesFiltrados.length === 0 || isLoading"
-            (click)="exportarPDF()">
-      <i class="bi bi-file-earmark-pdf"></i> PDF
-    </button>
-  </div> -->
-
   @if (isLoading) {
     <div class="d-flex justify-content-center align-items-center my-5">
       <div class="spinner-border text-primary" role="status">

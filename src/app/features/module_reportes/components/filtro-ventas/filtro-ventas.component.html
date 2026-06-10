@@ -1,1 +1,19 @@
-<p>filtro-ventas works!</p>
+<app-report-filter
+  [formGroup]="filterForm"
+  [columnDefs]="columnDefs"
+  [mostrarBtnLimpiar]="!!(filterForm.value.fechaInicio || filterForm.value.fechaFin)"
+  (onLimpiar)="limpiarFiltros()"
+  (visibilidadColumnaChange)="onVisibilityChange($event)">
+  
+  <div class="form-group-inline date-input-wrapper">
+    <app-form-field label="Fecha Inicio">
+      <app-input-date [input_control]="getControl('fechaInicio')"></app-input-date>
+    </app-form-field>
+  </div>
+  
+  <div class="form-group-inline date-input-wrapper">
+    <app-form-field label="Fecha Fin">
+      <app-input-date [input_control]="getControl('fechaFin')"></app-input-date>
+    </app-form-field>
+  </div>
+</app-report-filter>

@@ -1,5 +1,4 @@
-export type EstadoLote = 'DISPONIBLE' | 'RESERVADO' | 'VENDIDO';
-export type EstadoPago = 'PENDIENTE' | 'PAGADO' | 'ANULADO';
+export type EstadoLote = 'DISPONIBLE' | 'RESERVADO' | 'VENDIDO' | 'BLOQUEADO';
 
 // Parámetros de consulta (Queries / Filtros)
 export interface ILoteReporteQuery {
@@ -8,8 +7,18 @@ export interface ILoteReporteQuery {
 }
 
 export interface IPeriodoReporteQuery {
-  fechaInicio?: string; // Formato YYYY-MM-DD
-  fechaFin?: string;    // Formato YYYY-MM-DD
+  fechaDesde?: string; // Formato ISO / YYYY-MM-DD
+  fechaHasta?: string;
+}
+
+export interface ITermPeriodoReporteQuery extends IPeriodoReporteQuery {
+  term?: string;
+}
+
+export interface ICuotasPendientesQuery {
+  vencimientoDesde?: string;
+  vencimientoHasta?: string;
+  term?: string;
 }
 
 // 1. DTO Lotes
@@ -19,92 +28,126 @@ export interface ILoteReporte {
   lote: number;
   loteId: string;
   estado: EstadoLote;
-  registradoPor: string | null;
+  registradoPor: string;
   areaM2: number;
+  dimensionNorte: number;
+  dimensionSur: number;
+  dimensionEste: number;
+  dimensionOeste: number;
   precioReferencial: number;
-  comision: number | null;
-  observaciones: string | null;
+  comision: number;
+  observaciones: string;
 }
 
 // 2. DTO Clientes
 export interface IClienteReporte {
-  id: string
-  nombreCompleto: string
-  tipoDocumento: string
-  nroDocumento: string
-  complemento: string
-  numeroReferencia: any
-  genero: string
-  fechaNacimiento: any
-  estadoCivil: string
-  ocupacion: string
-  telefono: string
-  email: any
-  direccion: string
-  fechaRegistro: string
-  registradoPor: string
+  id: string;
+  nombreCompleto: string;
+  tipoDocumento: string;
+  nroDocumento: string;
+  complemento: string;
+  numeroReferencia: string;
+  genero: string;
+  fechaNacimiento: string;
+  estadoCivil: string;
+  ocupacion: string;
+  telefono: string;
+  email: string;
+  direccion: string;
+  fechaRegistro: string;
+  registradoPor: string;
 }
 
-// 3. DTO Ventas / Contratos
-export interface IVentaReporte {
-  contratoId: string;
+// 3. DTO Reservas (¡Actualizado según Swagger!)
+export interface IReservaReporte {
+  id: string;
+  codigoReserva: number;
   cliente: string;
+  lote: number;
+  manzana: string;
+  monto: number;
+  moneda: string;
+  fechaReserva: string;
+  vencimiento: string;
+  estado: string;
+  registradoPor: string;
+}
+
+// 4. DTO Ventas (¡Actualizado según Swagger!)
+export interface IVentaReporte {
+  id: string;
+  nroVenta: number;
+  fecha: string;
+  clienteTitular: string;
+  lote: number;
+  manzana: string;
+  tipoPago: string;
+  frecuenciaPago: string;
+  nroCuotas: number;
+  montoTotal: number;
+  cuotaInicial: number;
+  saldoPendiente: number;
+  moneda: string;
+  estado: string;
+  observaciones: string;
+  registradoPor: string;
+}
+
+// 5. DTO Pagos (¡Actualizado según Swagger!)
+export interface IPagoReporte {
+  id: string;
+  codigoPago: number;
+  fecha: string;
+  venta: number;
+  cliente: string;
+  lote: number;
+  montoAplicado: number;
+  montoRecibido: number;
+  monedaRecibida: string;
+  tipoChange: number; // Mapeado de tipoCambio si es necesario
+  metodo: string;
+  estado: string;
+  registradoPor: string;
+}
+
+// 6. DTO Cuotas Pendientes (¡Nuevo según Swagger!)
+export interface ICuotaPendienteReporte {
+  ventaId: string;
+  venta: number;
+  cliente: string;
+  lote: number;
+  nroCuota: number;
+  vencimiento: string;
+  monto: number;
+  pagado: number;
+  saldo: number;
+  estado: string;
+}
+
+// 7. DTO Clientes en Mora (¡Nuevo según Swagger!)
+export interface IClienteMoraReporte {
+  id: string;
+  cliente: string;
+  telefono: number;
+  venta: number;
   manzana: string;
   lote: number;
-  precioVenta: number;
-  cuotaInicial: number;
-  saldoFinanciado: number;
-  fechaContrato: string;
+  cuotasVencidas: number;
+  montoVencido: number;
+  diasAtraso: number;
+  saldoTotalVenta: number;
 }
 
-// 4. DTO Pagos y Recaudaciones
-export interface IPagoReporte {
-  pagoId: string;
-  cliente: string;
-  concepto: string;
-  monto: number;
-  fechaPago: string;
-  estado: EstadoPago;
-  metodoPago: string;
-}
-
-// 5. DTO Estado Financiero / Saldos de Clientes
-export interface IEstadoFinancieroReporte {
-  clienteId: string;
-  cliente: string;
-  totalContratado: number;
-  totalPagado: number;
+// 8. DTO Ventas por Asesor (¡Nuevo según Swagger!)
+export interface IVentasAsesorReporte {
+  id: string;
+  asesor: string;
+  nroDocumento: string;
+  tipo: string;
+  genero: string;
+  telefono: string;
+  cantidadVentas: number;
+  montoVendido: number;
+  cobrado: number;
   saldoPendiente: number;
-  cuotasAtrasadas: number;
-}
-
-// 6. DTO Comisiones de Asesores
-export interface IComisionReporte {
-  asesorId: string;
-  nombreAsesor: string;
-  totalVentasAsignadas: number;
-  montoTotalVendido: number;
-  comisionAcumulada: number;
-  comisionPagada: number;
-}
-
-// 7. DTO Ocupación / Disponibilidad (Métricas avanzadas de Manzanas)
-export interface IOcupacionManzanaReporte {
-  manzanaId: string;
-  nombreManzana: string;
-  totalLotes: number;
-  lotesDisponibles: number;
-  lotesReservados: number;
-  lotesVendidos: number;
-  porcentajeOcupacion: number;
-}
-
-// 8. DTO Auditoría / Logs de Movimientos Urbanos
-export interface IAuditoriaReporte {
-  logId: string;
-  usuario: string;
-  accion: string;
-  entidad: string;
-  detalles: string;
-  fechaRegistro: string;
 }

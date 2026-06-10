@@ -1,31 +1,79 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { ILoteReporte } from 'src/app/core/models/reportes/reportes.model';
-import { FiltroLotesComponent } from '../../components/filtro-lotes/filtro-lotes.component';
-import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ColDef } from 'ag-grid-community';
-import { ColumnVisibilityChange, TablaPrevisualizacionComponent } from '../../components/tabla-previsualizacion/tabla-previsualizacion.component';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { ILoteReporte } from 'src/app/core/models/reportes/reportes.model';
+import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
+import { ReportFilterComponent } from 'src/app/shared/components/organisms/report-filter/report-filter.component';
+import { ColumnVisibilityChange } from '../../components/tabla-previsualizacion/tabla-previsualizacion.component';
+import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
+import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
+
+
+export interface IFiltroLoteCriterio {
+  manzanaId: string;
+  estado: string;
+}
 
 @Component({
   selector: 'app-reporte-lotes-view',
   standalone: true,
-  imports: [CommonModule, FiltroLotesComponent, DataTableComponent, TablaPrevisualizacionComponent],
+  imports: [CommonModule, ReactiveFormsModule, ReportFilterComponent,
+     DataTableComponent, FormFieldComponent, SelectDataComponent],
   templateUrl: './reporte-lotes-view.component.html',
   styleUrl: './reporte-lotes-view.component.scss'
 })
-export class ReporteLotesViewComponent implements OnInit {
+export class ReporteLotesViewComponent implements OnInit, OnDestroy {
 
   // Recibe la información procesada desde el componente Padre (Page)
   @Input({ required: true }) datos: ILoteReporte[] = [];
 
   // Emite los criterios elegidos en la UI hacia el Padre (Page)
-  @Output() cambioFiltro = new EventEmitter<{ manzanaId: string; estado: string }>();
+  @Output() cambioFiltro = new EventEmitter<IFiltroLoteCriterio>();
   @ViewChild('tablaComponent') tablaComponent!: DataTableComponent;
-  // Definición estructural de columnas requeridas por tu tabla global
   public columnas: ColDef[] = [];
+  public filterForm!: FormGroup;
+  private destroy$ = new Subject<void>();
+
+  // Opciones para los selects (como objetos { value, label } que requiere SelectDataComponent)
+  public manzanas: string[] = ['candella', 'lotes nuevo', 'M-A', 'M-B'];
+  public estados: string[] = ['DISPONIBLE', 'RESERVADO', 'VENDIDO'];
+
+  public manzanasOptions = this.manzanas.map(m => ({ value: m, label: m.toUpperCase() }));
+  public estadosOptions = this.estados.map(e => ({ value: e, label: e }));
+
+  constructor(private fb: FormBuilder) {
+    this.filterForm = this.fb.group({
+      manzanaId: [''],
+      estado: ['']
+    });
+  }
 
   ngOnInit(): void {
     this.configurarColumnasDeLaTabla();
+    this.filterForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((valores) => {
+        this.cambioFiltro.emit({
+          manzanaId: valores.manzanaId || '',
+          estado: valores.estado || ''
+        });
+      });
+  }
+
+  public getControl(nombre: string): FormControl {
+    return this.filterForm.get(nombre) as FormControl;
+  }
+
+  public limpiarFiltros(): void {
+    this.filterForm.reset({ manzanaId: '', estado: '' });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private configurarColumnasDeLaTabla(): void {
@@ -69,13 +117,6 @@ export class ReporteLotesViewComponent implements OnInit {
       this.tablaComponent.gridApi.setColumnsVisible([event.columnId], event.visible);
       this.tablaComponent.gridApi.sizeColumnsToFit();
     }
-  }
-
-  /**
-   * Captura el evento del filtro-lotes interno y lo escala al Padre
-   */
-  public onFiltroModificado(event: { manzanaId: string; estado: string }): void {
-    this.cambioFiltro.emit(event);
   }
 
 }

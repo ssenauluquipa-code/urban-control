@@ -1,23 +1,30 @@
 <div class="container-fluid px-0 mt-3 animate-fade-in">
-  
-  <div class="mb-4">
-    <app-filtro-lotes (cambioFiltro)="onFiltroModificado($event)" [columnDefs]="columnas" 
-    (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)"></app-filtro-lotes>
-  </div>
- <!--  <div class="d-flex justify-content-end mb-2">
-  <app-tabla-previsualizacion 
-    [columnDefs]="columnas"
-    (visibilityChange)="onCambiarVisibilidadColumnas($event)">
-  </app-tabla-previsualizacion>
-  </div> -->
-    <app-data-table
-      #tablaComponent
-      [showCreate]="false"
-      [columnDefs]="columnas"
-      [rowData]="datos"
-      [actions]="[]"
-      emptyMessage="No se encontraron registros de lotes para mostrar con los filtros seleccionados."
-    >
-    </app-data-table>
+
+  <app-report-filter [formGroup]="filterForm" [columnDefs]="columnas"
+    [mostrarBtnLimpiar]="!!(filterForm.value.manzanaId || filterForm.value.estado)" (onLimpiar)="limpiarFiltros()"
+    (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)">
+    <div class="row">
+      <div class="col-md-6">
+        <app-form-field label="Manzana">
+          <app-select-data [itemList]="manzanasOptions" bindValue="value" bindLabel="label"
+            [inputControl]="getControl('manzanaId')" placeholder="Seleccionar Manzana" [searchable]="false">
+          </app-select-data>
+        </app-form-field>
+      </div>
+
+      <div class="col-md-6">
+        <app-form-field label="Estado Comercial">
+          <app-select-data [itemList]="estadosOptions" bindValue="value" bindLabel="label"
+            [inputControl]="getControl('estado')" placeholder="Todos los estados" [searchable]="false">
+          </app-select-data>
+        </app-form-field>
+      </div>
+    </div>
+
+  </app-report-filter>
+
+  <app-data-table #tablaComponent [showCreate]="false" [columnDefs]="columnas" [rowData]="datos" [actions]="[]"
+    emptyMessage="No se encontraron registros de lotes para mostrar con los filtros seleccionados.">
+  </app-data-table>
 
 </div>

@@ -1,0 +1,113 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.filter-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  align-items: stretch;
+
+  .filters-inputs-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-grow: 1;
+  }
+
+  .filters-actions-group {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+
+.date-input-wrapper {
+  width: 100%;
+}
+
+.btn-clear-link {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0 0.5rem;
+  height: 38px;
+  transition: color 0.2s;
+  
+  // Alineación óptica con el input (no con el label) en caso de que estén en vertical
+  margin-top: 0.5rem;
+
+  &:hover {
+    color: #ef4444; // Color rojo suave al limpiar filtros
+  }
+}
+
+/* 🌟 Responsive Desktop Layout idéntico a la UI de Stitch */
+@media (min-width: 768px) {
+  .filter-form-row {
+    flex-direction: row;
+    align-items: flex-end; // Alineamos al fondo para que el botón de limpieza se alinee con los inputs, no con los labels
+    justify-content: space-between;
+
+    .filters-inputs-group {
+      flex-direction: row;
+      align-items: flex-end; 
+      gap: 1rem;
+
+      .form-group-inline {
+        width: 200px; // Ancho controlado por input
+      }
+      
+      .btn-clear-link {
+        margin-top: 0;
+        margin-bottom: 2px; // Ajuste óptico
+      }
+    }
+
+    .filters-actions-group {
+      justify-content: flex-end;
+      padding-bottom: 2px; // Ajuste óptico para alinear el botón previsualizar
+    }
+  }
+}
+
+::ng-deep {
+  .form-group {
+    margin-bottom: 0 !important;
+    
+    label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.375rem;
+      display: block;
+    }
+    
+    .form-control {
+      padding: 0.45rem 0.75rem;
+      font-size: 0.875rem;
+      color: #1e293b;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      height: 38px;
+      outline: none;
+      
+      &:focus {
+        border-color: #3b82f6;
+        box-shadow: none;
+        background-color: #ffffff;
+      }
+    }
+  }
+}

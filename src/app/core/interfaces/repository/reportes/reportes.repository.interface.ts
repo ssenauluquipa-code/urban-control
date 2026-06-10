@@ -1,13 +1,14 @@
 import { Observable } from 'rxjs';
-import { IAuditoriaReporte, IClienteReporte, IComisionReporte, IEstadoFinancieroReporte, ILoteReporte, ILoteReporteQuery, IOcupacionManzanaReporte, IPagoReporte, IPeriodoReporteQuery, IVentaReporte } from 'src/app/core/models/reportes/reportes.model';
+import { IClienteMoraReporte, IClienteReporte, ICuotaPendienteReporte, ICuotasPendientesQuery, ILoteReporte, ILoteReporteQuery, IPagoReporte, IPeriodoReporteQuery, IReservaReporte, ITermPeriodoReporteQuery, IVentaReporte, IVentasAsesorReporte } from 'src/app/core/models/reportes/reportes.model';
+
 
 export interface IReporteRepository {
   getLotes(filtros?: ILoteReporteQuery): Observable<ILoteReporte[]>;
   getClientes(): Observable<IClienteReporte[]>;
-  getVentas(filtros?: IPeriodoReporteQuery): Observable<IVentaReporte[]>;
+  getReservas(filtros?: IPeriodoReporteQuery): Observable<IReservaReporte[]>;
+  getVentas(filtros?: ITermPeriodoReporteQuery): Observable<IVentaReporte[]>;
   getPagos(filtros?: IPeriodoReporteQuery): Observable<IPagoReporte[]>;
-  getEstadosFinancieros(): Observable<IEstadoFinancieroReporte[]>;
-  getComisiones(): Observable<IComisionReporte[]>;
-  getOcupacionManzanas(): Observable<IOcupacionManzanaReporte[]>;
-  getAuditoriaActividad(filtros?: IPeriodoReporteQuery): Observable<IAuditoriaReporte[]>;
+  getCuotasPendientes(filtros?: ICuotasPendientesQuery): Observable<ICuotaPendienteReporte[]>;
+  getClientesMora(term?: string): Observable<IClienteMoraReporte[]>;
+  getVentasAsesor(): Observable<IVentasAsesorReporte[]>;
 }

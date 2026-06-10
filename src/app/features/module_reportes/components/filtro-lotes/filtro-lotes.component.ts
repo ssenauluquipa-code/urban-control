@@ -4,7 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ColDef } from 'ag-grid-community';
-import { TablaPrevisualizacionComponent, ColumnVisibilityChange } from '../tabla-previsualizacion/tabla-previsualizacion.component';
+import { ReportFilterComponent } from 'src/app/shared/components/organisms/report-filter/report-filter.component';
+import { ColumnVisibilityChange } from '../tabla-previsualizacion/tabla-previsualizacion.component';
 
 export interface IFiltroLoteCriterio {
   manzanaId: string;
@@ -14,8 +15,8 @@ export interface IFiltroLoteCriterio {
 @Component({
   selector: 'app-filtro-lotes',
   standalone: true,
-  // 🌟 Agregamos TablaPrevisualizacionComponent aquí
-  imports: [CommonModule, ReactiveFormsModule, TablaPrevisualizacionComponent], 
+  // 🌟 Agregamos ReportFilterComponent aquí
+  imports: [CommonModule, ReactiveFormsModule, ReportFilterComponent], 
   templateUrl: './filtro-lotes.component.html',
   styleUrl: './filtro-lotes.component.scss'
 })
