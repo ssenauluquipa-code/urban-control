@@ -1,84 +1,102 @@
-/* 🌟 Eliminamos por completo el selector .filter-card antiguo que generaba la doble capa */
-
-.filter-form {
+.filter-form-row {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
+  align-items: stretch;
 
-  .form-group {
+  .filters-inputs-group {
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
-
-    label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #64748b; // Slate-500
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.875rem;
-      color: #1e293b;
-      background-color: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 0.5rem;
-      outline: none;
-      transition: border-color 0.2s ease;
-
-      &:focus {
-        border-color: #3b82f6; // Blue-500
-        background-color: #ffffff;
-      }
-    }
+    gap: 0.75rem;
+    flex-grow: 1;
   }
 
-  .form-actions {
+  .filters-actions-group {
     display: flex;
-    align-items: flex-end;
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+
+// Estilización de inputs inline con iconos integrados
+.input-icon-wrapper {
+  position: relative;
+  width: 100%;
+
+  .pre-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8; // Slate-400
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+
+  .custom-select-inline {
     width: 100%;
+    padding: 0.45rem 1rem 0.45rem 2.2rem;
+    font-size: 0.875rem;
+    color: #334155;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    height: 38px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    appearance: none; // Quita la flecha nativa fea de windows
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 10px 10px;
 
-    .btn-clear {
-      width: 100%;
-      padding: 0.5rem 1rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #64748b;
-      background-color: transparent;
-      border: 1px dashed #cbd5e1;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      transition: all 0.2s ease;
-
-      &:hover {
-        color: #3b82f6;
-        border-color: #3b82f6;
-        background-color: #eff6ff;
-      }
+    &:focus {
+      border-color: #cbd5e1;
+      background-color: #f8fafc;
     }
   }
 }
 
-/* Diseño Responsivo / Desktop (Mobile First) */
-@media (min-width: 768px) {
-  .filter-form {
-    flex-direction: row;
-    align-items: flex-end;
+.btn-clear-link {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0 0.5rem;
+  height: 38px;
+  transition: color 0.2s;
 
-    .form-group {
-      flex: 1;
+  &:hover {
+    color: #ef4444; // Color rojo suave al limpiar filtros
+  }
+}
+
+/* 🌟 Responsive Desktop Layout idéntico a la UI de Stitch */
+@media (min-width: 768px) {
+  .filter-form-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    .filters-inputs-group {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+
+      .form-group-inline {
+        width: 220px; // Ancho controlado por input
+      }
     }
 
-    .form-actions {
-      width: auto;
-      min-width: 160px;
+    .filters-actions-group {
+      justify-content: flex-end;
     }
   }
 }

@@ -31,7 +31,21 @@ export class ExportPdfService {
     }));
 
     const cantidadColumnas = columnasVisibles.length;
-    const orientacionPagina = cantidadColumnas > 7 ? 'landscape' : 'portrait';
+    // Si hay 8 o menos columnas -> vertical (portrait)
+    // Si hay más de 8 columnas -> horizontal (landscape)
+    const orientacionPagina = cantidadColumnas > 8 ? 'landscape' : 'portrait';
+
+    // Ajustamos dinámicamente el tamaño de la fuente para que entren más columnas
+    let fontSizeHeader = 10;
+    let fontSizeBody = 9;
+
+    if (cantidadColumnas > 8 && cantidadColumnas <= 11) {
+      fontSizeHeader = 9;
+      fontSizeBody = 8;
+    } else if (cantidadColumnas > 11) {
+      fontSizeHeader = 8;
+      fontSizeBody = 7;
+    }
 
     const rowsTable = data.map(rowData => {
       return columnasVisibles.map(col => {
@@ -60,7 +74,10 @@ export class ExportPdfService {
     });
 
     const bodyTable = [headersTable, ...rowsTable];
-    const widthsTable = columnasVisibles.map(() => '*');
+    
+    // Si hay muchas columnas, permitimos que pdfmake decida automáticamente el ancho basándose en el contenido,
+    // o usamos '*' pero con fuente pequeña para que se adapte mejor sin sobrepasar la hoja.
+    const widthsTable = columnasVisibles.map(() => cantidadColumnas > 10 ? 'auto' : '*');
 
     const docDefinition: any = {
       pageSize: 'A4',
@@ -111,13 +128,13 @@ export class ExportPdfService {
         },
         // Estilo base para la cabecera (aunque sobreescribimos colores en la celda, esto mantiene alineación y fuente)
         tableHeader: {
-          fontSize: 10,
+          fontSize: fontSizeHeader,
           bold: true,
           alignment: 'center'
         }
       },
       defaultStyle: {
-        fontSize: 9,
+        fontSize: fontSizeBody,
         color: '#334155'
       }
     };

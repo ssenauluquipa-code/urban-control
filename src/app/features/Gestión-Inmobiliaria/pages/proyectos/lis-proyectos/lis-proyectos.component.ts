@@ -22,7 +22,7 @@ import { ProyectoDetailComponent } from '../proyecto-detail/proyecto-detail.comp
   imports: [CommonModule, PageContainerComponent, DataTableComponent, NzModalModule],
   template: `
     <app-page-container
-      title="Proyectos de Urbanización"
+      title="Urbanizaciónes"
       [permissionScope]="EAppModule.PROYECTOS"
       [showNew]="true"
       (AddNew)="onAddNew()">

@@ -5,7 +5,7 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { ReporteLotesViewComponent } from '../view/reporte-lotes-view/reporte-lotes-view.component';
 import { ExportPdfService } from 'src/app/core/services/export-pdf.service';
-
+import { ExportExcelService } from 'src/app/core/services/export-excel.service';
 @Component({
   selector: 'app-reporte-lotes-page',
   standalone: true,
@@ -15,7 +15,9 @@ import { ExportPdfService } from 'src/app/core/services/export-pdf.service';
   title="Reporte: Inventario de Lotes Comercial"
   permissionScope="reportes"
   [showOptions]="true"
+  [showBack]="true"
   (MenuExportPDF)="exportarPDF()"
+  (MenuExportExcel)="exportarExcel()"
 >
   <!-- <div header-options class="d-flex gap-2">
     <button class="btn btn-outline-success btn-sm d-flex align-items-center gap-1" 
@@ -54,6 +56,7 @@ export class ReporteLotesPageComponent implements OnInit {
   private readonly reportesService = inject(ReportesService);
   private readonly projectStatus = inject(ProjectStatusGlobalService);
   private exportPdfService = inject(ExportPdfService);
+  private exportExcelService = inject(ExportExcelService);
   @ViewChild('vistaReporte') vistaReporte!: ReporteLotesViewComponent;
   // Fuente de verdad de datos (Tipado Estricto)
   public lotesOriginales: ILoteReporte[] = [];
@@ -108,7 +111,11 @@ export class ReporteLotesPageComponent implements OnInit {
   // Ahora las exportaciones tienen acceso directo e inmediato a 'this.lotesFiltrados'
   public exportarExcel(): void {
     if (this.lotesFiltrados.length === 0) return;
-    console.log('Exportando a Excel desde el Padre con datos:', this.lotesFiltrados);
+    this.exportExcelService.exportAsExcel(
+      'Reporte de Inventario de Lotes Comercial',
+      this.vistaReporte.columnas,
+      this.lotesFiltrados
+    );
   }
 
   public exportarPDF(): void {
@@ -119,6 +126,5 @@ export class ReporteLotesPageComponent implements OnInit {
     this.vistaReporte.columnas,
     this.lotesFiltrados
   );
-  }
-
+  }  
 }

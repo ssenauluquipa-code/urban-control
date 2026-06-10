@@ -11,5 +11,10 @@ export const MODULE_REPORTE : Routes = [
         path: 'lotes',
         loadComponent: () => import('./page/reporte-lotes-page.component')
             .then(m => m.ReporteLotesPageComponent)
+    },
+    {
+        path: 'clientes',
+        loadComponent: () => import('./page/reporte-clientes-page.component')
+            .then(m => m.ReporteClientesPageComponent)
     }
 ];

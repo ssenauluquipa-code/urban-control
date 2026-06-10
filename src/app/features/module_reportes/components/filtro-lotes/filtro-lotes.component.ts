@@ -1,8 +1,10 @@
-import { Component, EventEmitter, OnInit, Output, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ColDef } from 'ag-grid-community';
+import { TablaPrevisualizacionComponent, ColumnVisibilityChange } from '../tabla-previsualizacion/tabla-previsualizacion.component';
 
 export interface IFiltroLoteCriterio {
   manzanaId: string;
@@ -12,17 +14,19 @@ export interface IFiltroLoteCriterio {
 @Component({
   selector: 'app-filtro-lotes',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  // 🌟 Agregamos TablaPrevisualizacionComponent aquí
+  imports: [CommonModule, ReactiveFormsModule, TablaPrevisualizacionComponent], 
   templateUrl: './filtro-lotes.component.html',
   styleUrl: './filtro-lotes.component.scss'
 })
 export class FiltroLotesComponent implements OnInit, OnDestroy {
+  @Input() columnDefs: ColDef[] = []; // Recibe la definición desde la vista
   @Output() cambioFiltro = new EventEmitter<IFiltroLoteCriterio>();
+  @Output() visibilidadColumnaChange = new EventEmitter<ColumnVisibilityChange>(); // Escala el cambio a la vista
 
   public filterForm!: FormGroup;
   private destroy$ = new Subject<void>();
 
-  // Listas de control locales para los selectores (Hardcodeadas o cargadas dinámicamente)
   public manzanas: string[] = ['candella', 'lotes nuevo', 'M-A', 'M-B'];
   public estados: string[] = ['DISPONIBLE', 'RESERVADO', 'VENDIDO'];
 
@@ -31,7 +35,6 @@ export class FiltroLotesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Escucha reactiva a cualquier cambio de los inputs del formulario
     this.filterForm.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe((valores) => {
@@ -50,10 +53,11 @@ export class FiltroLotesComponent implements OnInit, OnDestroy {
   }
 
   public limpiarFiltros(): void {
-    this.filterForm.reset({
-      manzanaId: '',
-      estado: ''
-    });
+    this.filterForm.reset({ manzanaId: '', estado: '' });
+  }
+
+  public onVisibilityChange(event: ColumnVisibilityChange): void {
+    this.visibilidadColumnaChange.emit(event); // Reenviar el evento hacia arriba (View)
   }
 
   ngOnDestroy(): void {

@@ -28,13 +28,21 @@ export interface ILoteReporte {
 
 // 2. DTO Clientes
 export interface IClienteReporte {
-  clienteId: string;
-  nombreCompleto: string;
-  documento: string;
-  telefono: string | null;
-  email: string | null;
-  cantidadLotesPrecomprados: number;
-  fechaRegistro: string;
+  id: string
+  nombreCompleto: string
+  tipoDocumento: string
+  nroDocumento: string
+  complemento: string
+  numeroReferencia: any
+  genero: string
+  fechaNacimiento: any
+  estadoCivil: string
+  ocupacion: string
+  telefono: string
+  email: any
+  direccion: string
+  fechaRegistro: string
+  registradoPor: string
 }
 
 // 3. DTO Ventas / Contratos
