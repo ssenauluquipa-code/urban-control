@@ -26,5 +26,15 @@ export const MODULE_REPORTE : Routes = [
         path: 'reservas',
         loadComponent: () => import('./page/reporte-reservas-page.component')
             .then(m => m.ReporteReservasPageComponent)
+    },
+    {
+        path: 'pagos',
+        loadComponent: () => import('./page/reporte-pagos-page.component')
+            .then(m => m.ReportePagosPageComponent)
+    },
+    {
+        path: 'cuotas_pendientes',
+        loadComponent: () => import('./page/reporte-cuotas-page.component')
+            .then(m => m.ReporteCuotasPageComponent)
     }
 ];

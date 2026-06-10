@@ -1,0 +1,30 @@
+<div class="container-fluid px-0 mt-3 animate-fade-in">
+  
+    <app-report-filter
+      [formGroup]="filterForm"
+      [columnDefs]="columnas"
+      [mostrarBtnLimpiar]="!!(filterForm.value.fechaInicio || filterForm.value.fechaFin)"
+      (onLimpiar)="limpiarFiltros()"
+      (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)">
+      
+      <div class="d-flex gap-3 flex-wrap">
+        <app-form-field label="Fecha Inicio" class="flex-grow-1">
+          <app-input-date [input_control]="$any(filterForm.get('fechaInicio'))"></app-input-date>
+        </app-form-field>
+        
+        <app-form-field label="Fecha Fin" class="flex-grow-1">
+          <app-input-date [input_control]="$any(filterForm.get('fechaFin'))"></app-input-date>
+        </app-form-field>
+      </div>
+    </app-report-filter>
+  
+
+    <app-data-table
+      #tablaComponent
+      [showCreate]="false"
+      [columnDefs]="columnas"
+      [rowData]="datos"
+      [actions]="[]"
+      emptyMessage="No se encontraron registros de pagos en el rango seleccionado.">
+    </app-data-table>  
+</div>

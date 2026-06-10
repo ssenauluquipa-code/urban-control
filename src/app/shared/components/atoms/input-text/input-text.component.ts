@@ -96,7 +96,7 @@ export class InputTextComponent implements OnInit {
   @ViewChild('inputElement') inputElement!: ElementRef;
 
   @Output() BlurValue = new EventEmitter<string>();
-  @Input() input_control = new FormControl<string | number | null>(null);
+  @Input() input_control: FormControl | any = new FormControl<string | number | null>(null);
   @Input() input_size: 'large' | 'default' | 'small' = 'default';
   @Input() input_type: 'text' | 'password' | 'email' = 'text';
   @Input() inputId = 'input-' + Math.random().toString(36).substring(2, 9);

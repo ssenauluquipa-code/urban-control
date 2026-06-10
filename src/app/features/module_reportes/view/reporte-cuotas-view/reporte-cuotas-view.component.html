@@ -1,0 +1,28 @@
+<div class="container-fluid px-0 mt-3 animate-fade-in">
+  
+    <app-report-filter
+      [formGroup]="filterForm"
+      [columnDefs]="columnas"
+      [mostrarBtnLimpiar]="!!filterForm.value.buscar"
+      (onLimpiar)="filterForm.reset()"
+      (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)">
+      
+      <div class="form-group-inline">
+        <div class="input-icon-wrapper">
+          <app-input-text [input_control]="filterForm.get('buscar')"
+          placeholder="Buscar por cliente o manzana"
+          ></app-input-text>
+        </div>
+      </div>
+    </app-report-filter>
+  
+
+    <app-data-table
+      #tablaComponent
+      [showCreate]="false"
+      [columnDefs]="columnas"
+      [rowData]="datos"
+      [actions]="[]"
+      emptyMessage="No existen cuotas pendientes registradas en el sistema.">
+    </app-data-table>  
+</div>
