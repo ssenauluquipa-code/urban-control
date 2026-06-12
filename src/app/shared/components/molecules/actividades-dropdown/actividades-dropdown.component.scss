@@ -1,0 +1,59 @@
+// src/app/shared/components/molecules/actividades-dropdown/actividades-dropdown.component.scss
+
+.actividades-toggle {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: transparent !important;
+  border-radius: 50% !important;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #eef2f6;
+
+  span[nz-icon] {
+    color: #64748b !important;
+    transition: all 0.25s ease;
+    font-size: 16px;
+  }
+
+  &:hover, &:focus, &.show {
+    background-color: #f8fafc !important;
+    transform: scale(1.04);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+
+    span[nz-icon] {
+      color: #00d26a !important; // Verde UrbanControl al interactuar
+    }
+  }
+}
+
+.pc-h-dropdown {
+  width: 340px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+
+  .list-group-item {
+    border-left: 3px solid transparent;
+    
+    &:hover {
+      background-color: #f8fafc;
+      border-left-color: #00d26a; // Resalta la fila con el verde del sistema
+    }
+  }
+}
+
+// Clases auxiliares para fondos pastel limpios
+.bg-light-success { background-color: #e6f9f0 !important; }
+.bg-light-primary { background-color: #e6f0fa !important; }
+.bg-light-warning { background-color: #fff9e6 !important; }
+.bg-light-info    { background-color: #e6f7ff !important; }
+.bg-light-secondary { background-color: #f1f5f9 !important; }
+
+.text-gray-500 { color: #64748b !important; }
+.text-gray-400 { color: #94a3b8 !important; }
+
+.transition-all {
+  transition: all 0.2s ease-in-out;
+}

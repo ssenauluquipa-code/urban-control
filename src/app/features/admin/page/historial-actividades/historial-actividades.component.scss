@@ -1,0 +1,102 @@
+// src/app/features/admin/pages/historial-actividades/historial-actividades.component.scss
+
+// Bloque izquierdo de fecha flotante elegante
+.sticky-date-block {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 100px; // Evita solaparse con el topbar fijo del layout base
+  z-index: 10;
+  padding-right: 20px;
+
+  h5 {
+    color: #1e293b !important; // Slate 800 para alto contraste
+    letter-spacing: 0.03em;
+  }
+
+  small {
+    background-color: #f1f5f9; // Píldora suave indicadora de conteo
+    padding: 2px 10px;
+    border-radius: 12px;
+    color: #475569;
+    font-weight: 500;
+  }
+}
+
+// Columna de la Línea de Tiempo (Aprovechamos el borde existente para estilizar la línea)
+.timeline-cards-column {
+  position: relative;
+  padding-left: 28px !important; // Añade espacio perfecto para que respiren los componentes
+}
+
+// Tarjetas de actividad estilizadas con micro-interacciones corporativas
+.activity-card {
+  position: relative;
+  border: 1px solid #e2e8f0 !important; // Borde súper suave por defecto
+  border-radius: 12px !important; // Curvatura estilizada estándar de UrbanControl
+  background-color: #ffffff;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // El "Nodo" o círculo flotante que se dibuja de forma automática sobre la línea de tiempo izquierda
+  &::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: -35px; // Se posiciona perfectamente milimétrico sobre el borde izquierdo de la columna externa
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #cbd5e1; // Color base apagado
+    border: 3px solid #f8fafc; // Separador de contraste con el fondo de la pantalla
+    transition: all 0.25s ease;
+    z-index: 2;
+  }
+
+  &:hover {
+    transform: translateX(5px); // Desplazamiento horizontal fluido (Efecto feed interactivo)
+    box-shadow: 0 12px 20px -5px rgba(15, 23, 42, 0.08) !important; // Sombra premium dispersa
+    border-color: #cbd5e1 !important;
+
+    // Al hacer hover, iluminamos el nodo correspondiente en la línea con el verde institucional
+    &::before {
+      background-color: #00d26a; 
+      border-color: #ffffff;
+      transform: scale(1.25);
+      box-shadow: 0 0 0 4px rgba(0, 210, 106, 0.15);
+    }
+  }
+}
+
+// Avatares con iniciales elegantes
+.avatar-circle {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+  color: #334155 !important;
+  font-weight: 600;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+// Botón "Cargar Más" estilo cápsula de control analítico
+.load-more-btn {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px !important; // Botón estilo píldora minimalista
+  padding: 10px 32px !important;
+  color: #475569 !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #f8fafc;
+    border-color: #00d26a;
+    color: #00d26a !important;
+    box-shadow: 0 4px 12px rgba(0, 210, 106, 0.1);
+  }
+}
+
+// Unificación de opacidades y contrastes en textos secundarios
+.text-muted {
+  color: #64748b !important;
+}
+
+.text-dark {
+  color: #0f172a !important;
+}

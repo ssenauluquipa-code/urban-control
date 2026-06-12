@@ -1,0 +1,92 @@
+@if (isAdmin()) {
+  <div class="dropdown pc-h-item" ngbDropdown placement="bottom-end">
+    <a
+      href="javascript:"
+      class="pc-head-link dropdown-toggle arrow-none me-0 rounded-circle actividades-toggle"
+      ngbDropdownToggle
+      aria-haspopup="true"
+      aria-expanded="false"
+      title="Historial Comercial"
+    >
+      <span nz-icon nzType="history"></span>
+    </a>
+
+    <div class="dropdown-menu dropdown-menu-end pc-h-dropdown py-0" ngbDropdownMenu>
+      <div class="dropdown-header d-flex align-items-center justify-content-between bg-light py-3 border-bottom rounded-top">
+        <h5 class="m-0 fw-semibold text-dark">Actividades Recientes</h5>
+        <span class="badge bg-primary fs-2">Filtro: ADMIN</span>
+      </div>
+
+      <div class="actividades-body" style="max-height: 360px; overflow-y: auto;">
+        
+        @if (loading()) {
+          <div class="d-flex align-items-center justify-content-center p-4">
+            <div class="spinner-border text-primary spinner-border-sm" role="status"></div>
+            <span class="ms-2 fs-3 text-muted">Cargando auditoría...</span>
+          </div>
+        } @else if (error()) {
+          <div class="p-3 text-center text-danger fs-3">
+            <span nz-icon nzType="warning" class="me-1"></span> {{ error() }}
+          </div>
+        } @else if (actividades().length === 0) {
+          <div class="p-4 text-center text-muted fs-3">
+            <span nz-icon nzType="info-circle" class="d-block fs-6 mb-2 text-gray-400"></span>
+            No hay transacciones registradas en este proyecto.
+          </div>
+        } @else {
+          <div class="list-group list-group-flush">
+            @for (item of actividades(); track item.id) {
+              <div class="list-group-item list-group-item-action p-3 transition-all">
+                <div class="d-flex align-items-start">
+                  
+                  <div 
+                    class="avatar-circle d-flex align-items-center justify-content-center rounded-circle me-3 fw-bold fs-2 shadow-sm"
+                    [ngClass]="getBadgeConfig(item.tipo).class"
+                    style="width: 38px; height: 38px; min-width: 38px;"
+                  >
+                    {{ getInitials(item.usuario.nombre) }}
+                  </div>
+
+                  <div class="flex-grow-1 min-width-0">
+                    <div class="d-flex justify-content-between align-items-baseline mb-1">
+                      <h6 class="text-truncate text-dark fw-semibold mb-0 pe-2 fs-3">
+                        {{ item.titulo }}
+                      </h6>
+                      <small class="text-muted text-nowrap fs-2 ms-auto">
+                        {{ item.fecha | date:'shortTime' }}
+                      </small>
+                    </div>
+                    
+                    <p class="text-muted mb-1 text-wrap text-break fs-2 lh-base">
+                      {{ item.descripcion }}
+                    </p>
+                    
+                    <div class="d-flex align-items-center justify-content-between mt-1">
+                      <span class="fs-1 text-gray-500 fw-medium">
+                        <span nz-icon nzType="user" class="me-1"></span>{{ item.usuario.nombre }}
+                      </span>
+                      <span class="badge rounded-pill px-2 py-1 fs-1" [ngClass]="getBadgeConfig(item.tipo).class">
+                        <span nz-icon [nzType]="getBadgeConfig(item.tipo).icon" class="me-1"></span>{{ item.tipo }}
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+
+      <div class="p-2 text-center border-top bg-light rounded-bottom">
+        <a 
+          [routerLink]="['/admin/historial-actividades']" 
+          class="btn btn-sm btn-link text-primary fw-semibold w-100 py-2 fs-3 text-decoration-none d-flex align-items-center justify-content-center"
+        >
+          Ver historial completo <span nz-icon nzType="arrow-right" class="ms-1"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+}

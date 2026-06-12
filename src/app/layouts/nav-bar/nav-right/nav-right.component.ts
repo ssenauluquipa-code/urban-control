@@ -12,11 +12,12 @@ import { SelectProjectsComponent } from "src/app/shared/components/atoms/select-
 import { NotificacionBellComponent } from 'src/app/shared/components/molecules/notificacion-bell/notificacion-bell.component';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { CommonModule } from '@angular/common';
+import { ActividadesDropdownComponent } from "src/app/shared/components/molecules/actividades-dropdown/actividades-dropdown.component";
 
 @Component({
   selector: 'app-nav-right',
   standalone: true,
-  imports: [CommonModule,RouterModule, ReactiveFormsModule ,NgbNavModule, NgbDropdownModule, NzIconModule, SelectProjectsComponent, NotificacionBellComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbNavModule, NgbDropdownModule, NzIconModule, SelectProjectsComponent, NotificacionBellComponent, ActividadesDropdownComponent],
   templateUrl: './nav-right.component.html',
   styleUrl: './nav-right.component.scss'
 })
