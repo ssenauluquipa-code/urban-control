@@ -1,0 +1,70 @@
+@if (esGraficoVacio) {
+  <div class="card w-100 border-0 shadow-sm rounded-lg py-5 animate-fade-in text-center">
+    <div class="card-body">
+      <div class="mb-3">
+        <i class="bi bi-graph-down text-muted" style="font-size: 3rem;"></i>
+      </div>
+      <h5 class="fw-bold text-secondary">Sin transacciones en este período</h5>
+      <p class="text-muted mx-auto" style="max-width: 420px; font-size: 0.9rem;">
+        No se registraron transacciones comerciales en el rango de fechas seleccionado para el proyecto activo.
+      </p>
+    </div>
+  </div>
+} @else {
+  <div class="row w-100 m-0 animate-fade-in">
+    
+    <div class="col-12 col-xl-6 ps-0 pe-xl-3 mb-4 mb-xl-0">
+      <app-card-container class="h-100 d-block">
+          <div class="d-flex align-items-center mb-3">
+            <span class="p-2 bg-light-primary text-primary rounded-circle me-2 d-flex align-items-center">
+              <i class="bi bi-box-seam fs-5"></i>
+            </span>
+            <div>
+              <h5 class="card-title mb-0 fw-bold text-dark">Evolución del Volumen (Ventas)</h5>
+              <small class="text-muted">Cantidad total de contratos cerrados por mes</small>
+            </div>
+          </div>
+          <div class="w-100 mt-2" *ngIf="areaChartOptions">
+            <apx-chart 
+              [series]="areaChartOptions.series!" 
+              [chart]="areaChartOptions.chart!"
+              [xaxis]="areaChartOptions.xaxis!" 
+              [yaxis]="areaChartOptions.yaxis!"
+              [grid]="areaChartOptions.grid!" 
+              [stroke]="areaChartOptions.stroke!"
+              [tooltip]="areaChartOptions.tooltip!" 
+              [dataLabels]="areaChartOptions.dataLabels!"
+              [colors]="areaChartOptions.colors!">
+            </apx-chart>
+          </div>
+      </app-card-container>
+    </div>
+
+    <div class="col-12 col-xl-6 pe-0 ps-xl-3">
+      <app-card-container class="h-100 d-block">
+          <div class="d-flex align-items-center mb-3">
+            <span class="p-2 bg-light-success text-success rounded-circle me-2 d-flex align-items-center">
+              <i class="bi bi-currency-exchange fs-5"></i>
+            </span>
+            <div>
+              <h5 class="card-title mb-0 fw-bold text-dark">Rendimiento Comercial (Ingresos)</h5>
+              <small class="text-muted">Monto total facturado normalizado en {{ divisaSeleccionada }}</small>
+            </div>
+          </div>
+          <div class="w-100 mt-2" *ngIf="barChartOptions">
+            <apx-chart 
+              [series]="barChartOptions.series!" 
+              [chart]="barChartOptions.chart!"
+              [xaxis]="barChartOptions.xaxis!" 
+              [yaxis]="barChartOptions.yaxis!"
+              [grid]="barChartOptions.grid!"
+              [tooltip]="barChartOptions.tooltip!" 
+              [dataLabels]="barChartOptions.dataLabels!"
+              [colors]="barChartOptions.colors!">
+            </apx-chart>
+          </div>
+      </app-card-container>
+    </div>
+
+  </div>
+}
