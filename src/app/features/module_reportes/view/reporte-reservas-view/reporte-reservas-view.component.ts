@@ -119,6 +119,13 @@ export class ReporteReservasViewComponent implements OnInit, OnDestroy {
     filter: 'agNumberColumnFilter', 
     sortable: true 
   },
+  {
+    field: 'moneda',
+    headerName: 'Moneda',
+    width: 90,
+    filter: true,
+    hide: true
+  },
   { 
     field: 'monto', 
     headerName: 'Monto Reserva', 

@@ -32,17 +32,33 @@ export class ReporteCuotasViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.columnas = [
-  { field: 'ventaId', headerName: 'ID Cuota', hide: true }, 
-  { field: 'cliente', headerName: 'Cliente Deudor', filter: true, flex: 1, sortable: true },
-  { field: 'venta', headerName: 'Nro. Venta', filter: true, width: 120, sortable: true }, 
-  { field: 'lote', headerName: 'Lote', filter: 'agNumberColumnFilter', width: 80, sortable: true },
-  { field: 'nroCuota', headerName: 'Nro. Cuota', filter: 'agNumberColumnFilter', width: 110 },
+  // 1. Identificadores (Ocultos: Solo uso interno o avanzado)
+  { field: 'ventaId', headerName: 'ID Cuota', hide: true, filter: true }, 
+  
+  // 2. Datos de Identificación (Visibles)
+  { field: 'venta', headerName: 'Nro. Venta', filter: 'agNumberColumnFilter', minWidth: 120, sortable: true }, 
+  { field: 'cliente', headerName: 'Cliente Deudor', filter: true, flex: 1, sortable: true, minWidth: 200 },
+  { field: 'lote', headerName: 'Lote', filter: 'agNumberColumnFilter', minWidth: 80, sortable: true },
+  { field: 'nroCuota', headerName: 'Nro. Cuota', filter: 'agNumberColumnFilter', minWidth: 110, sortable: true },
+  
+  // 3. Datos Financieros de Gestión (Monto se oculta, Pagado y Saldo quedan visibles)
   { 
     field: 'monto', 
     headerName: 'Monto Obligación', 
     sortable: true, 
     filter: 'agNumberColumnFilter',
-    cellClass: 'fw-bold',
+    cellClass: 'fw-bold text-muted', // Apagado visualmente si deciden mostrarlo
+    minWidth: 140,
+    hide: true // RECOMENDADO OCULTAR: El usuario se enfoca en Saldo y Pagado
+    /* valueFormatter: params => params.value ? `${params.value.toLocaleString('es-BO')} BS` : '0 BS' */
+  },
+  { 
+    field: 'pagado', 
+    headerName: 'Monto Pagado', 
+    sortable: true, 
+    filter: 'agNumberColumnFilter',
+    cellClass: 'text-success fw-bold',
+    minWidth: 140
     /* valueFormatter: params => params.value ? `${params.value.toLocaleString('es-BO')} BS` : '0 BS' */
   },
   { 
@@ -51,19 +67,24 @@ export class ReporteCuotasViewComponent implements OnInit {
     sortable: true, 
     filter: 'agNumberColumnFilter',
     cellClass: 'text-danger fw-bold',
+    minWidth: 140
     /* valueFormatter: params => params.value ? `${params.value.toLocaleString('es-BO')} BS` : '0 BS' */
   },
+  
+  // 4. Fechas (Visible con semáforo de colores)
   { 
     field: 'vencimiento', 
     headerName: 'Vence El', 
-    width: 130, 
+    minWidth: 130, 
     sortable: true, 
     filter: true,
     cellClass: params => {
-      if (params.data?.estado === 'VENCIDO') return 'text-danger fw-bold';
+      const estado = params.data?.estado;
+      if (estado === 'VENCIDO') return 'text-danger fw-bold';
+      if (estado === 'PAGADO') return 'text-success fw-bold';
+      if (estado === 'PARCIAL') return 'text-info fw-bold'; 
       return 'text-warning fw-bold'; 
     },
-    // Formatea la fecha a formato local de Bolivia (día/mes/año) de forma limpia
     valueFormatter: params => {
       if (!params.value) return '';
       const fecha = new Date(params.value);
@@ -71,11 +92,30 @@ export class ReporteCuotasViewComponent implements OnInit {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-        timeZone: 'UTC' // Evita desfases por la zona horaria del navegador
+        timeZone: 'UTC' 
       });
+    }
+  },
+
+  // 5. Estado del Enum (Oculto porque la fecha ya te avisa con colores)
+  { 
+    field: 'estado', 
+    headerName: 'Estado', 
+    minWidth: 120, 
+    filter: true,
+    hide: true, // RECOMENDADO OCULTAR: Evita redundancia visual
+    cellClass: params => {
+      switch (params.value) {
+        case 'VENCIDO': return 'text-danger fw-bold';
+        case 'PAGADO': return 'text-success fw-bold';
+        case 'PARCIAL': return 'text-info fw-bold'; 
+        default: return 'text-warning fw-bold';
+      }
     }
   }
 ];
+
+
 
     this.filterForm.get('buscar')?.valueChanges.subscribe(val => {
       this.cambioFiltro.emit({ term: val || undefined });

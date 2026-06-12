@@ -64,13 +64,51 @@ export class ReportePagosPageComponent implements OnInit {
   }
 
   public filtrarPagos(criterios: IPeriodoReporteQuery): void {
+    const inicioTs = this.getTimestamp(criterios.fechaDesde);
+    const finTs = this.getTimestamp(criterios.fechaHasta);
+
     this.pagosFiltrados = this.pagosOriginales.filter(pago => {
-      if (!pago.fecha) return false;
-      const fechaBase = pago.fecha.split('T')[0];
-      const cumpleInicio = !criterios.fechaDesde || fechaBase >= criterios.fechaDesde;
-      const cumpleFin = !criterios.fechaHasta || fechaBase <= criterios.fechaHasta;
+      const fechaDato = pago.fecha;
+      if (!fechaDato) {
+        return !inicioTs && !finTs;
+      }
+      
+      const itemTs = this.getTimestamp(fechaDato);
+      if (!itemTs) return true;
+      
+      const cumpleInicio = !inicioTs || itemTs >= inicioTs;
+      const cumpleFin = !finTs || itemTs <= finTs;
+      
       return cumpleInicio && cumpleFin;
     });
+  }
+
+  private getTimestamp(dateInput: any): number {
+    if (!dateInput) return 0;
+    
+    if (dateInput instanceof Date) {
+      const d = new Date(dateInput);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime();
+    }
+    
+    let str = String(dateInput).split('T')[0];
+    
+    const isLatamFormat = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/.exec(str);
+    if (isLatamFormat) {
+       const d = new Date(Number(isLatamFormat[3]), Number(isLatamFormat[2]) - 1, Number(isLatamFormat[1]));
+       return d.getTime();
+    }
+    
+    const isIsoFormat = /^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/.exec(str);
+    if (isIsoFormat) {
+       const d = new Date(Number(isIsoFormat[1]), Number(isIsoFormat[2]) - 1, Number(isIsoFormat[3]));
+       return d.getTime();
+    }
+    
+    const fallback = new Date(dateInput);
+    fallback.setHours(0, 0, 0, 0);
+    return isNaN(fallback.getTime()) ? 0 : fallback.getTime();
   }
 
   public exportarPdf(): void {

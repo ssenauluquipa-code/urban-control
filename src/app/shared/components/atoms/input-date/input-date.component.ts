@@ -52,7 +52,7 @@ export class InputDateComponent {
   @Input() input_size: 'large' | 'default' | 'small' = 'default';
   @Input() inputId = 'date-' + Math.random().toString(36).substring(2, 9);
   @Input() input_placeholder = 'Seleccionar fecha';
-  @Input() input_format = 'yyyy-MM-dd';
+  @Input() input_format = 'dd/MM/yyyy';
   @Input() show_error_messages = true;
   @Input() disabled_date?: (current: Date) => boolean;
 

@@ -41,50 +41,71 @@ export class ReportePagosViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.columnas = [
-      { field: 'id', headerName: 'ID Pago', width: 120, filter: true, hide: true },
-      {
-        field: 'fecha',
-        headerName: 'Fecha Pago',
-        width: 140,
-        sortable: true,
-        filter: true,
-        valueFormatter: params => params.value ? new Date(params.value).toLocaleDateString('es-BO') : ''
-      },
-      { field: 'cliente', headerName: 'Cliente / Propietario', filter: true, flex: 1, sortable: true },
-      {
-        headerName: 'Concepto de Pago',
-        filter: true,
-        flex: 0.8,
-        valueGetter: params => {
-          if (!params.data) return '';
-          return `Mza. ${params.data.manzana} - Lote ${params.data.lote} (Venta ${params.data.venta})`;
-        }
-      },
-      { field: 'metodo', headerName: 'Método Pago', width: 140, filter: true },
-      {
-        field: 'montoRecibido',
-        headerName: 'Monto Recibido',
-        sortable: true,
-        filter: 'agNumberColumnFilter',
-        cellClass: 'fw-bold text-success',
-        valueFormatter: params => {
-          const valor = params.value ?? 0;
-          const moneda = params.data?.monedaRecibida || 'BS';
-          return `${valor.toLocaleString('es-BO')} ${moneda}`;
-        }
-      },
-      {
-        field: 'estado',
-        headerName: 'Estado',
-        width: 120,
-        filter: true,
-        cellClass: params => {
-          if (params.value === 'ANULADO') return 'text-danger fw-bold';
-          if (params.value === 'PAGADO') return 'text-success fw-bold';
-          return 'text-warning fw-bold';
-        }
-      }
-    ];
+  // 1. Identificadores (Ocultos)
+  /* { field: 'id', headerName: 'ID Transacción', minWidth: 120, filter: true, hide: true }, */
+  
+  // 2. Información del Recibo (Visibles)
+  { field: 'codigoPago', headerName: 'Código Pago', minWidth: 120, filter: 'agNumberColumnFilter', sortable: true, cellClass: 'fw-bold' },
+  { field: 'venta', headerName: 'Nro. Venta', minWidth: 100, filter: 'agNumberColumnFilter', hide: true },
+  {
+    field: 'fecha',
+    headerName: 'Fecha Pago',
+    minWidth: 120,
+    sortable: true,
+    filter: true,
+    valueFormatter: params => {
+      if (!params.value) return '';
+      const fecha = new Date(params.value);
+      return fecha.toLocaleDateString('es-BO', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        timeZone: 'UTC'
+      });
+    }
+  },
+  { field: 'cliente', headerName: 'Cliente / Propietario', filter: true, flex: 1, sortable: true, minWidth: 200 },
+  
+  // 3. Ubicación (Visibles por separado)
+  { field: 'manzana', headerName: 'Manzana', minWidth: 100, filter: true, sortable: true },
+  { field: 'lote', headerName: 'Lote', minWidth: 90, filter: 'agNumberColumnFilter', sortable: true },
+  
+  // 4. Datos del Pago (Visibles)
+  { field: 'montoAplicado', headerName: 'Monto Aplicado', minWidth: 140, filter: 'agNumberColumnFilter', hide: true },
+  {
+    field: 'montoRecibido',
+    headerName: 'Monto Recibido',
+    sortable: true,
+    filter: 'agNumberColumnFilter',
+    cellClass: 'fw-bold text-success',
+    minWidth: 140,
+    valueFormatter: params => {
+      const valor = params.value ?? 0;
+      const moneda = params.data?.monedaRecibida || 'BS';
+      return `${valor.toLocaleString('es-BO')} ${moneda}`;
+    }
+  },
+  
+  // 5. Detalles Financieros y Auditoría (Ocultos)
+  { field: 'monedaRecibida', headerName: 'Moneda Recibida', minWidth: 130, filter: true, hide: true },
+  { field: 'tipoCambio', headerName: 'Tipo Cambio', minWidth: 110, filter: 'agNumberColumnFilter', hide: true },
+  { field: 'metodo', headerName: 'Método Pago', minWidth: 130, filter: true },
+  { field: 'registradoPor', headerName: 'Registrado Por', minWidth: 150, filter: true, hide: true },
+  
+  // 6. Estado (Visible)
+  {
+    field: 'estado',
+    headerName: 'Estado',
+    minWidth: 110,
+    filter: true,
+    cellClass: params => {
+      if (params.value === 'ANULADO') return 'text-danger fw-bold';
+      if (params.value === 'ACTIVO' || params.value === 'PAGADO') return 'text-success fw-bold';
+      return 'text-warning fw-bold';
+    }
+  }
+];
+
 
 
     // Escucha reactiva para emitir filtros al Page (Backend u óptimo local)

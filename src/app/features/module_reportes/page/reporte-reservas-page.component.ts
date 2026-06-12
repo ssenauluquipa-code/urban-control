@@ -73,17 +73,51 @@ export class ReporteReservasPageComponent implements OnInit {
    * 🔒 FILTRADO LOCAL EN MEMORIA CLIENTE
    */
   public filtrarReservasEnMemoriaLocal(criterios: IFiltroReservaCriterio): void {
+    const inicioTs = this.getTimestamp(criterios.fechaInicio);
+    const finTs = this.getTimestamp(criterios.fechaFin);
+
     this.reservasFiltradas = this.reservasOriginales.filter(item => {
-      if (!item.fechaReserva) return false;
+      const fechaDato = item.fechaReserva;
+      if (!fechaDato) {
+        return !inicioTs && !finTs;
+      }
       
-      // Extraemos solo la porción YYYY-MM-DD
-      const fechaItem = item.fechaReserva.split('T')[0];
+      const itemTs = this.getTimestamp(fechaDato);
+      if (!itemTs) return true;
       
-      const cumpleInicio = !criterios.fechaInicio || fechaItem >= criterios.fechaInicio;
-      const cumpleFin = !criterios.fechaFin || fechaItem <= criterios.fechaFin;
+      const cumpleInicio = !inicioTs || itemTs >= inicioTs;
+      const cumpleFin = !finTs || itemTs <= finTs;
       
       return cumpleInicio && cumpleFin;
     });
+  }
+
+  private getTimestamp(dateInput: any): number {
+    if (!dateInput) return 0;
+    
+    if (dateInput instanceof Date) {
+      const d = new Date(dateInput);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime();
+    }
+    
+    let str = String(dateInput).split('T')[0];
+    
+    const isLatamFormat = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/.exec(str);
+    if (isLatamFormat) {
+       const d = new Date(Number(isLatamFormat[3]), Number(isLatamFormat[2]) - 1, Number(isLatamFormat[1]));
+       return d.getTime();
+    }
+    
+    const isIsoFormat = /^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/.exec(str);
+    if (isIsoFormat) {
+       const d = new Date(Number(isIsoFormat[1]), Number(isIsoFormat[2]) - 1, Number(isIsoFormat[3]));
+       return d.getTime();
+    }
+    
+    const fallback = new Date(dateInput);
+    fallback.setHours(0, 0, 0, 0);
+    return isNaN(fallback.getTime()) ? 0 : fallback.getTime();
   }
 
   public exportarPdf(): void {

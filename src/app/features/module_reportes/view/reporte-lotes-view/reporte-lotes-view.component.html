@@ -3,8 +3,8 @@
   <app-report-filter [formGroup]="filterForm" [columnDefs]="columnas"
     [mostrarBtnLimpiar]="!!(filterForm.value.manzanaId || filterForm.value.estado)" (onLimpiar)="limpiarFiltros()"
     (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)">
-    <div class="row">
-      <div class="col-md-6">
+    <div class="row w-100">
+      <div class="col-12 col-sm-6 col-md-5 col-xl-4 mb-2 mb-sm-0">
         <app-form-field label="Manzana">
           <app-select-data [itemList]="manzanasOptions" bindValue="value" bindLabel="label"
             [inputControl]="getControl('manzanaId')" placeholder="Seleccionar Manzana" [searchable]="false">
@@ -12,7 +12,7 @@
         </app-form-field>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-12 col-sm-6 col-md-5 col-xl-4">
         <app-form-field label="Estado Comercial">
           <app-select-data [itemList]="estadosOptions" bindValue="value" bindLabel="label"
             [inputControl]="getControl('estado')" placeholder="Todos los estados" [searchable]="false">

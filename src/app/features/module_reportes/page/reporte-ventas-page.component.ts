@@ -81,7 +81,7 @@ export class ReporteVentasPageComponent implements OnInit {
 
     this.ventasFiltradas = this.ventasOriginales.filter(item => {
       // Verificamos cuál propiedad trae la fecha
-      const fechaDato = (item as any).fechaVenta;
+      const fechaDato = (item as any).fecha || (item as any).fechaVenta;
       
       // Si no hay fecha, lo mostramos solo si no hay filtro activo
       if (!fechaDato) {

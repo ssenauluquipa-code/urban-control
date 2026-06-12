@@ -1,0 +1,26 @@
+<div class="container-fluid px-0 mt-3 animate-fade-in">  
+    <app-report-filter
+      [formGroup]="filterForm"
+      [columnDefs]="columnas"
+      [mostrarBtnLimpiar]="!!filterForm.value.buscar"
+      (onLimpiar)="filterForm.reset()"
+      (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)">
+      
+      <div class="form-group-inline">
+        <div class="input-icon-wrapper">
+          <app-input-text [input_control]="$any(filterForm.get('buscar'))" placeholder="Buscar por asesor o documento...">
+            
+          </app-input-text>          
+        </div>
+      </div>
+    </app-report-filter>
+
+    <app-data-table
+      #tablaComponent
+      [showCreate]="false"
+      [columnDefs]="columnas"
+      [rowData]="datos"
+      [actions]="[]"
+      emptyMessage="No se registran métricas de rendimiento para los asesores del proyecto activo.">
+    </app-data-table>  
+</div>

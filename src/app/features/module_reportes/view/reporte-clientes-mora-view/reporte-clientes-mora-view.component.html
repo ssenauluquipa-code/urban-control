@@ -1,0 +1,28 @@
+<div class="container-fluid px-0 mt-3 animate-fade-in">
+  
+    <app-report-filter
+      [formGroup]="filterForm"
+      [columnDefs]="columnas"
+      [mostrarBtnLimpiar]="!!filterForm.value.term"
+      (onLimpiar)="filterForm.reset()"
+      (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)">
+      
+      <div class="form-group-inline">
+        <div class="input-icon-wrapper">
+          <app-input-text [input_control]="$any(filterForm.get('term'))" placeholder="Buscar cliente en mora o documento...">          
+          </app-input-text>            
+        </div>
+      </div>
+    </app-report-filter>
+
+  
+    <app-data-table
+      #tablaComponent
+      [showCreate]="false"
+      [columnDefs]="columnas"
+      [rowData]="datos"
+      [actions]="[]"
+      emptyMessage="¡Excelente! No se registran clientes en estado de mora para el proyecto activo.">
+    </app-data-table>
+  
+</div>

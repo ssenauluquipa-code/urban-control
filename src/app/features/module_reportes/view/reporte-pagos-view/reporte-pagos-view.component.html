@@ -7,14 +7,18 @@
       (onLimpiar)="limpiarFiltros()"
       (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)">
       
-      <div class="d-flex gap-3 flex-wrap">
-        <app-form-field label="Fecha Inicio" class="flex-grow-1">
-          <app-input-date [input_control]="$any(filterForm.get('fechaInicio'))"></app-input-date>
-        </app-form-field>
+      <div class="row w-100">
+        <div class="col-12 col-sm-6 col-md-5 col-xl-4 mb-2 mb-sm-0">
+          <app-form-field label="Fecha Inicio">
+            <app-input-date [input_control]="$any(filterForm.get('fechaInicio'))"></app-input-date>
+          </app-form-field>
+        </div>
         
-        <app-form-field label="Fecha Fin" class="flex-grow-1">
-          <app-input-date [input_control]="$any(filterForm.get('fechaFin'))"></app-input-date>
-        </app-form-field>
+        <div class="col-12 col-sm-6 col-md-5 col-xl-4">
+          <app-form-field label="Fecha Fin">
+            <app-input-date [input_control]="$any(filterForm.get('fechaFin'))"></app-input-date>
+          </app-form-field>
+        </div>
       </div>
     </app-report-filter>
   

@@ -36,5 +36,15 @@ export const MODULE_REPORTE : Routes = [
         path: 'cuotas_pendientes',
         loadComponent: () => import('./page/reporte-cuotas-page.component')
             .then(m => m.ReporteCuotasPageComponent)
+    },
+    {
+        path: 'asesores',
+        loadComponent: () => import('./page/reporte-ventas-asesor-page.component')
+            .then(m => m.ReporteVentasAsesorPageComponent)
+    },
+    {
+        path: 'mora',
+        loadComponent: () => import('./page/reporte-clientes-mora-page.component')
+            .then(m => m.ReporteClientesMoraPageComponent)
     }
 ];

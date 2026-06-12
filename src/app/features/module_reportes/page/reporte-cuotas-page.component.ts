@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, effect, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReportesService } from 'src/app/core/services/reportes/reportes.service';
 import { ExportPdfService } from 'src/app/core/services/export-pdf.service';
 import { ExportExcelService } from 'src/app/core/services/export-excel.service';
 import { ICuotaPendienteReporte, ICuotasPendientesQuery } from 'src/app/core/models/reportes/reportes.model';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
+import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { ReporteCuotasViewComponent } from '../view/reporte-cuotas-view/reporte-cuotas-view.component';
 
 @Component({
@@ -38,14 +39,26 @@ export class ReporteCuotasPageComponent implements OnInit {
 
   public cuotasOriginales: ICuotaPendienteReporte[] = [];
   public cuotasFiltradas: ICuotaPendienteReporte[] = [];
-  public isLoading = true;
+  public isLoading = false;
 
   private reportesService = inject(ReportesService);
+  private projectStatus = inject(ProjectStatusGlobalService);
   private exportPdfService = inject(ExportPdfService);
   private exportExcelService = inject(ExportExcelService);
 
+  constructor() {
+    effect(() => {
+      const projectId = this.projectStatus.currentProjectId();
+      if (projectId) {
+        this.cargarReporteCuotas();
+      } else {
+        this.cuotasOriginales = [];
+        this.cuotasFiltradas = [];
+      }
+    });
+  }
+
   ngOnInit(): void {
-    this.cargarReporteCuotas();
   }
 
   private cargarReporteCuotas(): void {

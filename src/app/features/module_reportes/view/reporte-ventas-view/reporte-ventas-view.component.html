@@ -6,18 +6,18 @@
       [mostrarBtnLimpiar]="!!(filterForm.value.fechaInicio || filterForm.value.fechaFin)"
       (onLimpiar)="limpiarFiltros()"
       (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)">
-      <div class="row">
-      <div class="col-md-6">
-        <app-form-field label="Fecha Inicio">
-          <app-input-date [input_control]="getControl('fechaInicio')"></app-input-date>
-        </app-form-field>
-      </div>
+      <div class="row w-100">
+        <div class="col-12 col-sm-6 col-md-5 col-xl-4 mb-2 mb-sm-0">
+          <app-form-field label="Fecha Inicio">
+            <app-input-date [input_control]="getControl('fechaInicio')"></app-input-date>
+          </app-form-field>
+        </div>
 
-      <div class="col-md-6">
-        <app-form-field label="Fecha Fin">
-          <app-input-date [input_control]="getControl('fechaFin')"></app-input-date>
-        </app-form-field>
-      </div>
+        <div class="col-12 col-sm-6 col-md-5 col-xl-4">
+          <app-form-field label="Fecha Fin">
+            <app-input-date [input_control]="getControl('fechaFin')"></app-input-date>
+          </app-form-field>
+        </div>
       </div>
     </app-report-filter>
 

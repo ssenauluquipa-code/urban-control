@@ -80,8 +80,9 @@ export class ReporteVentasViewComponent implements OnInit, OnDestroy {
       { field: 'clienteTitular', headerName: 'Cliente / Propietario', minWidth: 220, filter: true, flex: 2 },
       { field: 'manzana', headerName: 'Mz.', minWidth: 80, filter: true, sortable: true, flex: 1 },
       { field: 'lote', headerName: 'Lote', minWidth: 80, filter: 'agNumberColumnFilter', sortable: true, flex: 1 },
-      { field: 'estado', headerName: 'Estado', minWidth: 110, filter: true, flex: 1 },
-      { field: 'moneda', headerName: 'Moneda', minWidth: 90, filter: true, hide: true, flex: 1 },
+      { field: 'tipoPago', headerName: 'Tipo Pago', minWidth: 90, filter: true, hide: true, flex: 1 },
+      { field: 'frecuenciaPago', headerName: 'Frecuencia', minWidth: 120, filter: true, hide: true, flex: 1 },
+      { field: 'nroCuotas', headerName: 'Cuotas', minWidth: 90, filter: 'agNumberColumnFilter', hide: true, flex: 1 },
       { 
         field: 'montoTotal', 
         headerName: 'Precio Venta', 
@@ -122,10 +123,10 @@ export class ReporteVentasViewComponent implements OnInit, OnDestroy {
         },
         flex: 1
       },
-      { field: 'frecuenciaPago', headerName: 'Frecuencia', minWidth: 120, filter: true, hide: true, flex: 1 },
-      { field: 'nroCuotas', headerName: 'Cuotas', minWidth: 90, filter: 'agNumberColumnFilter', hide: true, flex: 1 },
+      { field: 'moneda', headerName: 'Moneda', minWidth: 90, filter: true, hide: true, flex: 1 },
       { field: 'registradoPor', headerName: 'Registrado Por', minWidth: 140, filter: true, hide: true, flex: 1 },
-      { field: 'observaciones', headerName: 'Observaciones', minWidth: 180, filter: true, hide: true, flex: 1 }
+      { field: 'observaciones', headerName: 'Observaciones', minWidth: 180, filter: true, hide: true, flex: 1 },
+      { field: 'estado', headerName: 'Estado', minWidth: 110, filter: true, flex: 1 }
     ];
   }
 
