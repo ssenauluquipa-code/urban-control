@@ -20,16 +20,12 @@ import { ReporteVentasAsesorViewComponent } from '../view/reporte-ventas-asesor-
       (MenuExportPDF)="exportarPdf()"
       (MenuExportExcel)="exportarExcel()">      
       
-      @if (isLoading) {
-        <div class="d-flex justify-content-center my-5">
-          <div class="spinner-border text-primary" role="status"></div>
-        </div>
-      } @else {
-        <app-reporte-ventas-asesor-view 
-          [datos]="asesoresFiltrados"
-          (cambioFiltro)="filtrarAsesoresLocal($event)">
-        </app-reporte-ventas-asesor-view>
-      }
+      <app-reporte-ventas-asesor-view 
+        [datos]="asesoresFiltrados"
+        [isLoading]="isLoading"
+        (cambioFiltro)="filtrarAsesoresLocal($event)"
+        (cambioMoneda)="onMonedaChange($event)">
+      </app-reporte-ventas-asesor-view>
     </app-page-container>
   `
 })
@@ -39,6 +35,7 @@ export class ReporteVentasAsesorPageComponent implements OnInit {
   public asesoresOriginales: any[] = [];
   public asesoresFiltrados: any[] = [];
   public isLoading = false;
+  public monedaActual = 'USD';
 
   private reportesService = inject(ReportesService);
   private projectStatus = inject(ProjectStatusGlobalService);
@@ -51,7 +48,7 @@ export class ReporteVentasAsesorPageComponent implements OnInit {
       const projectId = this.projectStatus.currentProjectId();
       if (projectId) {
         // Al detectar un cambio (o al cargar la página por primera vez), volvemos a solicitar la data
-        this.cargarReporteAsesores();
+        this.cargarReporteAsesores(this.monedaActual);
       } else {
         // Si no hay proyecto seleccionado, blanqueamos la tabla
         this.asesoresOriginales = [];
@@ -64,10 +61,15 @@ export class ReporteVentasAsesorPageComponent implements OnInit {
     // Ya no llamamos cargarDatosDelServicio() manualmente, el effect() se encarga.
   }
 
-  private cargarReporteAsesores(): void {
+  public onMonedaChange(moneda: string): void {
+    this.monedaActual = moneda;
+    this.cargarReporteAsesores(this.monedaActual);
+  }
+
+  private cargarReporteAsesores(moneda: string): void {
     this.isLoading = true;
     // Llama al método real de tu ReportesService mapeado a tu endpoint
-    this.reportesService.obtenerReporteVentasAsesor().subscribe({
+    this.reportesService.obtenerReporteVentasAsesor(moneda).subscribe({
       next: (data) => {
         this.asesoresOriginales = data;
         this.asesoresFiltrados = [...data];

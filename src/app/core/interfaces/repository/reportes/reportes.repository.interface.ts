@@ -10,5 +10,5 @@ export interface IReporteRepository {
   getPagos(filtros?: IPeriodoReporteQuery): Observable<IPagoReporte[]>;
   getCuotasPendientes(filtros?: ICuotasPendientesQuery): Observable<ICuotaPendienteReporte[]>;
   getClientesMora(term?: string): Observable<IClienteMoraReporte[]>;
-  getVentasAsesor(): Observable<IVentasAsesorReporte[]>;
+  getVentasAsesor(moneda: string): Observable<IVentasAsesorReporte[]>;
 }

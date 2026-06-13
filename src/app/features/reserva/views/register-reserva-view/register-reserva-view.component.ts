@@ -40,4 +40,8 @@ export class RegisterReservaViewComponent {
       this.manzanaId.setValue(manzanaId);
     }
   }
+
+  onMonedaChange(moneda: Moneda | null): void {
+    // Lógica para cuando cambie la moneda (ej. recalcular tipo de cambio o totales)
+  }
 }

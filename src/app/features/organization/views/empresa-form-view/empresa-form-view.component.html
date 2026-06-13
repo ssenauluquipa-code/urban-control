@@ -95,6 +95,7 @@
               <app-form-field label="Moneda" forId="currency" [required]="true">
                 <app-select-moneda
                   [input_control]="currencyControl"
+                  (Change)="onMonedaChange($event)"
                   placeholder="Seleccionar moneda"
                 >
                 </app-select-moneda>

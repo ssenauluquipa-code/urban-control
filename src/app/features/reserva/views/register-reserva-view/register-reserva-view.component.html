@@ -47,7 +47,7 @@
       </div>
       <div class="col-6">
         <app-form-field label="Moneda">
-          <app-select-moneda [input_control]="moneda"></app-select-moneda>
+          <app-select-moneda [input_control]="moneda" (Change)="onMonedaChange($event)"></app-select-moneda>
         </app-form-field>
       </div>
     </div>

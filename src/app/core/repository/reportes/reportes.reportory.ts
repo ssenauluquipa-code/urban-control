@@ -73,7 +73,8 @@ export class ReporteRepository implements IReporteRepository {
     return this.http.get<IClienteMoraReporte[]>(`${this.URL_BASE}/clientes-mora`, { params });
   }
 
-  getVentasAsesor(): Observable<IVentasAsesorReporte[]> {
-    return this.http.get<IVentasAsesorReporte[]>(`${this.URL_BASE}/ventas-asesor`);
+  getVentasAsesor(moneda: string): Observable<IVentasAsesorReporte[]> {
+    let params = new HttpParams().set('moneda', moneda);
+    return this.http.get<IVentasAsesorReporte[]>(`${this.URL_BASE}/ventas-asesor`, { params });
   }
 }

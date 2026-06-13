@@ -79,7 +79,8 @@ export class ReporteClientesMoraViewComponent implements OnInit {
     sortable: true, 
     filter: 'agNumberColumnFilter',
     /* valueFormatter: params => params.value ? `$${params.value.toLocaleString('es-BO')}` : '$0' */
-  }
+  },
+  { field: 'moneda', headerName: 'Moneda', minWidth: 80, filter: true }
 ];
 
 

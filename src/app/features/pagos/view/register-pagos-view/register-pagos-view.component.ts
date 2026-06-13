@@ -137,4 +137,8 @@ export class RegisterPagosViewComponent {
   onVentaSeleccionadaDesdeGrid(ventaId: string): void {
     this.ventaId.setValue(ventaId);
   }
+
+  onMonedaChange(moneda: any): void {
+    // Lógica para cuando cambie la moneda
+  }
 }

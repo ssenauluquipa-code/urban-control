@@ -68,4 +68,8 @@ export class EmpresaFormViewComponent {
   get tipoDeCambioControl() {
     return this.form.get('tipoDeCambio') as FormControl;
   }
+
+  onMonedaChange(moneda: any): void {
+    // Lógica para manejar el cambio de moneda en la configuración de la empresa
+  }
 }

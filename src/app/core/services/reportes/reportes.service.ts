@@ -52,7 +52,7 @@ export class ReportesService {
   }
 
   // 8. Reporte de Ventas por Asesor
-  obtenerReporteVentasAsesor(): Observable<IVentasAsesorReporte[]> {
-    return this.reporteRepo.getVentasAsesor();
+  obtenerReporteVentasAsesor(moneda: string): Observable<IVentasAsesorReporte[]> {
+    return this.reporteRepo.getVentasAsesor(moneda);
   }
 }

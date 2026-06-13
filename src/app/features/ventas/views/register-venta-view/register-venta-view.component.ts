@@ -386,4 +386,8 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       });
   }
+
+  onMonedaChange(moneda: Moneda | null): void {
+    // Lógica adicional cuando cambie la moneda, por ejemplo, ajustar o validar el tipo de cambio
+  }
 }

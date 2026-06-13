@@ -6,17 +6,22 @@ import { DataTableComponent } from 'src/app/shared/components/organisms/data-tab
 import { ReportFilterComponent } from 'src/app/shared/components/organisms/report-filter/report-filter.component';
 import { ColumnVisibilityChange } from '../../components/tabla-previsualizacion/tabla-previsualizacion.component';
 import { InputTextComponent } from "src/app/shared/components/atoms/input-text/input-text.component";
+import { SelectMonedaComponent } from 'src/app/shared/components/atoms/select-moneda.component';
+import { Moneda } from 'src/app/core/models/reserva.model';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-reporte-ventas-asesor-view',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ReportFilterComponent, DataTableComponent, InputTextComponent],
+  imports: [CommonModule, ReactiveFormsModule, ReportFilterComponent, DataTableComponent, InputTextComponent, SelectMonedaComponent],
   templateUrl: './reporte-ventas-asesor-view.component.html',
   styleUrl: './reporte-ventas-asesor-view.component.scss'
 })
 export class ReporteVentasAsesorViewComponent implements OnInit {
   @Input({ required: true }) datos: any[] = []; // O la interfaz correspondiente si existe
+  @Input() isLoading: boolean = false;
   @Output() cambioFiltro = new EventEmitter<string>();
+  @Output() cambioMoneda = new EventEmitter<string>();
 
   @ViewChild('tablaComponent') tablaComponent!: DataTableComponent;
 
@@ -25,8 +30,17 @@ export class ReporteVentasAsesorViewComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {
     this.filterForm = this.fb.group({
-      buscar: ['']
+      buscar: [''],
+      moneda: [Moneda.USD]
     });
+  }
+
+  get monedaControl(): FormControl {
+    return this.filterForm.get('moneda') as FormControl;
+  }
+
+  get buscarControl(): FormControl {
+    return this.filterForm.get('buscar') as FormControl;
   }
 
   ngOnInit(): void {
@@ -68,11 +82,16 @@ export class ReporteVentasAsesorViewComponent implements OnInit {
         sortable: true, 
         filter: 'agNumberColumnFilter',
         cellClass: params => params.value > 0 ? 'text-danger fw-bold' : 'text-secondary'
-      }
+      },
+      { field: 'moneda', headerName: 'Moneda', minWidth: 80, filter: true }
     ];
 
     this.filterForm.get('buscar')?.valueChanges.subscribe(val => {
       this.cambioFiltro.emit(val || '');
+    });
+
+    this.filterForm.get('moneda')?.valueChanges.subscribe(val => {
+      this.cambioMoneda.emit(val || 'USD');
     });
   }
 

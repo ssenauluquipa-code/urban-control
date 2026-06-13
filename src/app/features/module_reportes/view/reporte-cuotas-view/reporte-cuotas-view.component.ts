@@ -33,7 +33,7 @@ export class ReporteCuotasViewComponent implements OnInit {
   ngOnInit(): void {
     this.columnas = [
   // 1. Identificadores (Ocultos: Solo uso interno o avanzado)
-  { field: 'ventaId', headerName: 'ID Cuota', hide: true, filter: true }, 
+  /* { field: 'ventaId', headerName: 'ID Cuota', hide: true, filter: true },  */
   
   // 2. Datos de Identificación (Visibles)
   { field: 'venta', headerName: 'Nro. Venta', filter: 'agNumberColumnFilter', minWidth: 120, sortable: true }, 
@@ -96,7 +96,9 @@ export class ReporteCuotasViewComponent implements OnInit {
       });
     }
   },
-
+  {
+    field: 'moneda', headerName: 'Moneda', minWidth: 80, filter: true
+  },
   // 5. Estado del Enum (Oculto porque la fecha ya te avisa con colores)
   { 
     field: 'estado', 

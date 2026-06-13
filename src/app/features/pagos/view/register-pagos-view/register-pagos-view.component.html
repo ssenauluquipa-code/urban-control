@@ -59,7 +59,7 @@
               <div class="row mb-1">
                 <div class="col-12 col-lg-5">
                   <app-form-field label="Moneda" [required]="true">
-                    <app-select-moneda [input_control]="monedaRecibida" placeholder="Moneda">
+                    <app-select-moneda [input_control]="monedaRecibida" (Change)="onMonedaChange($event)" placeholder="Moneda">
                     </app-select-moneda>
                   </app-form-field>
                 </div>

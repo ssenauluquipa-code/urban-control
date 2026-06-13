@@ -1,3 +1,5 @@
+import { EMetodoPago, EstadoPago } from "../pagos.model";
+
 export type EstadoLote = 'DISPONIBLE' | 'RESERVADO' | 'VENDIDO' | 'BLOQUEADO';
 
 // Parámetros de consulta (Queries / Filtros)
@@ -101,12 +103,14 @@ export interface IPagoReporte {
   venta: number;
   cliente: string;
   lote: number;
+  manzana: string;
   montoAplicado: number;
+  monedaVenta: string;
   montoRecibido: number;
   monedaRecibida: string;
-  tipoChange: number; // Mapeado de tipoCambio si es necesario
-  metodo: string;
-  estado: string;
+  tipoCambio: number; // Mapeado de tipoCambio si es necesario
+  metodo: EMetodoPago;
+  estado: EstadoPago;
   registradoPor: string;
 }
 
@@ -121,6 +125,7 @@ export interface ICuotaPendienteReporte {
   monto: number;
   pagado: number;
   saldo: number;
+  moneda: string;
   estado: string;
 }
 
@@ -136,6 +141,7 @@ export interface IClienteMoraReporte {
   montoVencido: number;
   diasAtraso: number;
   saldoTotalVenta: number;
+  moneda: string;
 }
 
 // 8. DTO Ventas por Asesor (¡Nuevo según Swagger!)

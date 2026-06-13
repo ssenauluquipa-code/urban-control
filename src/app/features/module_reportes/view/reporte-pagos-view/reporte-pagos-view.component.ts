@@ -50,7 +50,7 @@ export class ReportePagosViewComponent implements OnInit {
   {
     field: 'fecha',
     headerName: 'Fecha Pago',
-    minWidth: 120,
+    minWidth: 90,
     sortable: true,
     filter: true,
     valueFormatter: params => {
@@ -67,11 +67,12 @@ export class ReportePagosViewComponent implements OnInit {
   { field: 'cliente', headerName: 'Cliente / Propietario', filter: true, flex: 1, sortable: true, minWidth: 200 },
   
   // 3. Ubicación (Visibles por separado)
-  { field: 'manzana', headerName: 'Manzana', minWidth: 100, filter: true, sortable: true },
-  { field: 'lote', headerName: 'Lote', minWidth: 90, filter: 'agNumberColumnFilter', sortable: true },
+  { field: 'manzana', headerName: 'Manzana', width: 110, filter: true, sortable: true },
+  { field: 'lote', headerName: 'Lote', width: 90, filter: 'agNumberColumnFilter', sortable: true },
   
   // 4. Datos del Pago (Visibles)
   { field: 'montoAplicado', headerName: 'Monto Aplicado', minWidth: 140, filter: 'agNumberColumnFilter', hide: true },
+  { field: 'monedaVenta', headerName: 'Moneda Venta', minWidth: 100, filter: true, hide: true },
   {
     field: 'montoRecibido',
     headerName: 'Monto Recibido',
@@ -88,8 +89,8 @@ export class ReportePagosViewComponent implements OnInit {
   
   // 5. Detalles Financieros y Auditoría (Ocultos)
   { field: 'monedaRecibida', headerName: 'Moneda Recibida', minWidth: 130, filter: true, hide: true },
-  { field: 'tipoCambio', headerName: 'Tipo Cambio', minWidth: 110, filter: 'agNumberColumnFilter', hide: true },
-  { field: 'metodo', headerName: 'Método Pago', minWidth: 130, filter: true },
+  { field: 'tipoCambio', headerName: 'Tipo Cambio', minWidth: 90, filter: 'agNumberColumnFilter', hide: true },
+  { field: 'metodo', headerName: 'Método Pago', minWidth: 110, filter: true },
   { field: 'registradoPor', headerName: 'Registrado Por', minWidth: 150, filter: true, hide: true },
   
   // 6. Estado (Visible)
