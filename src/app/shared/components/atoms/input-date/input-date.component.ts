@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -18,10 +18,18 @@ import { InputErrorMessagesComponent } from '../input-error-messages/input-error
         [nzFormat]="input_format"
         [nzStatus]="input_control.invalid && input_control.touched ? 'error' : ''"
         [nzDisabledDate]="disabled_date!"
+        [nzDateRender]="dateRenderFn ? cellTpl : undefined"
         style="width: 100%"
         (ngModelChange)="onDateChange($event)"
       >
       </nz-date-picker>
+
+      <!-- Template interno: aplica la clase CSS devuelta por dateRenderFn a cada celda -->
+      <ng-template #cellTpl let-current>
+        <div [class]="'ant-picker-cell-inner ' + dateRenderFn!(current)">
+          {{ current | date: 'd' }}
+        </div>
+      </ng-template>
 
       @if (show_error_messages) {
         <app-input-error-messages [input_control]="input_control">
@@ -56,8 +64,12 @@ export class InputDateComponent {
   @Input() show_error_messages = true;
   @Input() disabled_date?: (current: Date) => boolean;
 
+  /** Función que recibe una fecha y retorna una clase CSS extra para esa celda, o '' si ninguna. */
+  @Input() dateRenderFn?: (current: Date) => string;
+
   @Output() DateValue = new EventEmitter<Date | null>();
 
+  @ViewChild('cellTpl') cellTpl!: TemplateRef<any>;
 
   onDateChange(date: Date | null): void {
     this.DateValue.emit(date);

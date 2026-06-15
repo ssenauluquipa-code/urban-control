@@ -131,8 +131,20 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
   @Input() maxSelection = 3;
   @Input() withRoles = false;
 
-  @Input() preloadedClientId?: string;
-  @Input() preloadedClientName?: string;
+  @Input() set preloadedClient(cliente: { id: string; nombreCompleto: string } | null | undefined) {
+    if (cliente && cliente.id) {
+      const mockClient: IClienteSearchResult = {
+        id: cliente.id,
+        nombreCompleto: cliente.nombreCompleto,
+        nroDocumento: 'N/A'
+      };
+      this.poolClientesSeleccionados.set(cliente.id, mockClient);
+      if (!this.clientList.find(c => c.id === cliente.id)) {
+        this.clientList = [mockClient, ...this.clientList];
+        this.cdr.markForCheck();
+      }
+    }
+  }
 
   @Output() Change = new EventEmitter<SelectClienteOutput>();
   /** Emite el nombre completo del titular (índice 0) cuando withRoles=true */
@@ -149,16 +161,6 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    if (this.preloadedClientId && this.preloadedClientName) {
-      const mockClient: IClienteSearchResult = {
-        id: this.preloadedClientId,
-        nombreCompleto: this.preloadedClientName,
-        nroDocumento: 'N/A'
-      };
-      this.poolClientesSeleccionados.set(this.preloadedClientId, mockClient);
-      this.clientList = [mockClient];
-    }
-
     this.inicializarValorExterno();
 
     // Búsqueda con debounce para protección de la API

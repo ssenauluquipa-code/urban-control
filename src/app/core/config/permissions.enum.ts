@@ -33,5 +33,15 @@ export enum EAppAction {
     PRINT = 'PRINT',
     VENTA = 'VENTA', // Esta es real de tus tablas
     MASS_LOAD = 'MASS_LOAD',
-    COMPROBANTE = 'COMPROBANTE'
+    COMPROBANTE = 'COMPROBANTE',
+    // Acciones extraídas de TableActionsEnum
+    INFO = 'INFO',
+    NUEVO = 'NUEVO',
+    REMOVE_IMAGE = 'REMOVE_IMAGE',
+    UPLOAD_PHOTO = 'UPLOAD_PHOTO',
+    BLOQUEADO = 'BLOQUEADO',
+    SET_AVAILABLE = 'SET_AVAILABLE',
+    PAGO = 'PAGO',
+    PLAN_CUENTAS = 'PLAN_CUENTAS',
+    DEVOLUCION = 'DEVOLUCION'
 }

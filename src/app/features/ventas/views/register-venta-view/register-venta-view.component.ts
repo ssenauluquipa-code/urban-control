@@ -19,7 +19,7 @@ import { IReserva, Moneda } from "src/app/core/models/reserva.model";
 import { CurrencyCalculationService } from "src/app/core/services/finance/currency-calculation.service";
 import { OrganizationFinancialConfigService } from "src/app/core/services/configuracion/organization-financial-config.service";
 import { Subject } from "rxjs";
-import { filter, take, takeUntil } from "rxjs/operators";
+import { distinctUntilChanged, filter, take, takeUntil } from "rxjs/operators";
 import { ILoteByLoteDisponible } from "src/app/core/models/lote/lote.model";
 
 // Componentes locales del feature
@@ -47,6 +47,7 @@ import { CardContainerComponent } from "src/app/shared/components/atoms/card-con
 import { InputSearchReservaComponent } from "../../components/input-search-reserva.component";
 import { ReservaService } from "src/app/core/services/reserva.service";
 import { ActivatedRoute } from "@angular/router";
+import { InputNroCuotasComponent } from "src/app/shared/components/atoms/input-nro-cuotas/input-nro-cuotas.component";
 
 
 /** Vista del formulario de registro de venta (lote, reserva, financiamiento, propietarios). */
@@ -74,7 +75,8 @@ import { ActivatedRoute } from "@angular/router";
     InputCurrencyComponent,
     CardContainerComponent,
     InputSearchReservaComponent,
-    InputNumberComponent
+    InputNumberComponent,
+    InputNroCuotasComponent
   ],
   templateUrl: "./register-venta-view.component.html",
   styleUrl: "./register-venta-view.component.scss",
@@ -96,6 +98,7 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
 
   public currentReservedLote: ILoteByLoteDisponible | null = null;
   public reservaLabel = '';
+  public clienteDeReserva: any = null;
 
   readonly TipoPago = TipoPago;
   readonly FrecuenciaPago = FrecuenciaPago;
@@ -245,6 +248,7 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.checkUrlParams();
     this.listenLoteClearedWhenReservaLinked();
+    this.listenDiaSemanaPagoChanges();
   }
 
   ngOnDestroy(): void {
@@ -261,6 +265,24 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
       )
       .subscribe(() => this.onReservaCleared());
+  }
+
+  /**
+   * Cuando el usuario cambia el día de pago semanal, la fecha inicial ya seleccionada
+   * puede no corresponder al nuevo día. Se resetea para forzar una nueva selección válida.
+   */
+  private listenDiaSemanaPagoChanges(): void {
+    this.diaSemanaPago.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(() => {
+        if (this.fechaPagoInicial.value) {
+          this.fechaPagoInicial.setValue(null, { emitEvent: false });
+          this.fechaPagoInicial.markAsUntouched();
+        }
+      });
   }
 
   /** Precarga reserva desde query param ?reservaId=. */
@@ -344,6 +366,11 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
     }
 
     if (cliente?.id) {
+      this.clienteDeReserva = {
+        id: cliente.id,
+        nombreCompleto: (reserva as any).nombreCliente || (cliente as any).nombreCompleto || 'Cliente de Reserva'
+      };
+
       const propietarioTitular: CreateVentaPropietarioDto = {
         clienteId: cliente.id,
         rol: RolPropietario.TITULAR,
@@ -361,6 +388,7 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
   onReservaCleared(): void {
     this.currentReservedLote = null;
     this.reservaLabel = "";
+    this.clienteDeReserva = null;
     this.reservaId.setValue(null);
     this.loteId.setValue(null);
 
@@ -390,4 +418,78 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
   onMonedaChange(moneda: Moneda | null): void {
     // Lógica adicional cuando cambie la moneda, por ejemplo, ajustar o validar el tipo de cambio
   }
+
+  private readonly mapaDiasSemana : Record<DiaSemanaPago, number> = {
+    [DiaSemanaPago.DOMINGO]: 0,
+    [DiaSemanaPago.LUNES]: 1,
+    [DiaSemanaPago.MARTES]: 2,
+    [DiaSemanaPago.MIERCOLES]: 3,
+    [DiaSemanaPago.JUEVES]: 4,
+    [DiaSemanaPago.VIERNES]: 5,
+    [DiaSemanaPago.SABADO]: 6,
+  }
+
+  disabledDateLogic = (current: Date): boolean => {
+    // Regla base: siempre bloquear fechas anteriores a hoy
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    if (current < hoy) return true;
+
+    // Regla adicional solo para frecuencia SEMANAL: bloquear los días de la semana que no corresponden
+    if (this.frecuenciaPago.value === FrecuenciaPago.SEMANAL) {
+      const diaSeleccionadoEnum = this.diaSemanaPago.value;
+      if (diaSeleccionadoEnum) {
+        const diaJsPermitido = this.mapaDiasSemana[diaSeleccionadoEnum];
+        return current.getDay() !== diaJsPermitido;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * 2. Lógica de PINTADO (Resaltado visual)
+   * Retorna el nombre de una clase CSS si aplica, o un string vacío.
+   */
+  dateRenderLogic = (current: Date): string => {
+    const freq = this.frecuenciaPago.value;
+    
+    // Caso A: SEMANAL (Pintar el día seleccionado)
+    if (freq === FrecuenciaPago.SEMANAL) {
+      const diaSeleccionadoEnum = this.diaSemanaPago.value;
+      if (diaSeleccionadoEnum && current.getDay() === this.mapaDiasSemana[diaSeleccionadoEnum]) {
+        return 'highlight-weekly';
+      }
+    }
+
+    // Caso B: QUINCENAL - DÍAS FIJOS (Pintar ej. 10 y 25)
+    if (freq === FrecuenciaPago.QUINCENAL && this.modalidadCalendarioPago.value === "DIAS_FIJOS_MES") {
+      const dia1 = Number(this.diaPagoMes1.value);
+      const dia2 = Number(this.diaPagoMes2.value);
+      const diaActual = current.getDate();
+
+      if ((dia1 && diaActual === dia1) || (dia2 && diaActual === dia2)) {
+        return 'highlight-fixed';
+      }
+    }
+
+    // Caso C: QUINCENAL - INTERVALO 15 DÍAS (Pintar hoy+15, hoy+30, hoy+45...)
+    if (freq === FrecuenciaPago.QUINCENAL && this.modalidadCalendarioPago.value === "INTERVALO_15_DIAS") {
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      const fechaComparar = new Date(current);
+      fechaComparar.setHours(0, 0, 0, 0);
+
+      // Math.round es más robusto que Math.ceil ante cambios de horario de verano (DST)
+      const diffTime = fechaComparar.getTime() - hoy.getTime();
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+      // Solo resaltar fechas FUTURAS que sean múltiplos de 15 (excluyendo hoy = 0)
+      if (diffDays > 0 && diffDays % 15 === 0) {
+        return 'highlight-interval';
+      }
+    }
+
+    return '';
+  };
 }

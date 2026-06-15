@@ -149,12 +149,11 @@
                   @if (isCuotas) {
                     <div class="col-md-6">
                       <app-form-field label="Nro. Cuotas" [required]="true">
-                        <app-input-number
+                        <app-input-nro-cuotas
                           [input_control]="nroCuotas"
-                          [input_maxvalue]="600"
-                          input_placeholder="Ej: 12"
+                          [infoMessageDuration]="3000"                   
                         >
-                        </app-input-number>
+                        </app-input-nro-cuotas>
                       </app-form-field>
                     </div>
 
@@ -170,6 +169,8 @@
                       <app-form-field label="Fecha Inicial" [required]="true">
                         <app-input-date
                           [input_control]="fechaPagoInicial"
+                          [disabled_date]="disabledDateLogic"
+                          [dateRenderFn]="dateRenderLogic"
                         ></app-input-date>
                       </app-form-field>
                     </div>
@@ -275,13 +276,14 @@
               <app-form-field label="Clientes" [required]="true">
                 <app-select-clientes
                   [input_control]="propietarios"
+                  [preloadedClient]="clienteDeReserva"
                   [multiple]="true"
                   [withRoles]="true"
                   [maxSelection]="3"
                   input_placeholder="Buscar y agregar cliente..."
                   (TitularNombre)="nombreTitular = $event"
                 ></app-select-clientes>
-              </app-form-field>
+              </app-form-field>              
             </div>
 
             <div class="col-lg-4 col-12">

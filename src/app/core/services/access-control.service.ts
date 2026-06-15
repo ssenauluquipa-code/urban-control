@@ -2,36 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { AuthService } from './auth.service';
 import { EAppRole, EAppModule, EAppAction } from '../config/permissions.enum';
 
-// Definimos la Matriz directamente aquí por ahora para simplificar
-type PermissionMap = Partial<Record<EAppRole, Partial<Record<EAppModule, EAppAction[]>>>>;
-
-export const APP_PERMISSIONS_MATRIX: PermissionMap = {
-  [EAppRole.ADMIN]: {
-    [EAppModule.CLIENTES]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ACTIVATE, EAppAction.DEACTIVATE, EAppAction.DELETE, EAppAction.UPLOAD],
-    [EAppModule.ASESORES]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ACTIVATE, EAppAction.DEACTIVATE],
-    [EAppModule.PROYECTOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE, EAppAction.MASS_LOAD],
-    [EAppModule.MANZANAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE],
-    [EAppModule.LOTES]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE],
-    [EAppModule.RESERVAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ANULAR, EAppAction.VENTA, EAppAction.DELETE],
-    [EAppModule.VENTAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.DELETE],
-    [EAppModule.USUARIOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ACTIVATE, EAppAction.DEACTIVATE, EAppAction.DELETE, EAppAction.UPLOAD],
-    [EAppModule.EMPRESA]: [EAppAction.VIEW, EAppAction.EDIT, EAppAction.CREATE],
-    [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE, EAppAction.ANULAR, EAppAction.COMPROBANTE],
-    [EAppModule.REPORTES]: [EAppAction.VIEW, EAppAction.EXPORT],
-  },
-  [EAppRole.EDITOR]: {
-    [EAppModule.CLIENTES]: [EAppAction.VIEW],
-    [EAppModule.ASESORES]: [EAppAction.VIEW],
-    [EAppModule.PROYECTOS]: [EAppAction.VIEW],
-    [EAppModule.MANZANAS]: [EAppAction.VIEW],
-    [EAppModule.LOTES]: [EAppAction.VIEW],
-    [EAppModule.RESERVAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ANULAR, EAppAction.VENTA, EAppAction.DELETE],
-    [EAppModule.VENTAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.DELETE],
-    [EAppModule.EMPRESA]: [EAppAction.VIEW],
-    [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.COMPROBANTE],
-    [EAppModule.REPORTES]: [EAppAction.VIEW],
-  }
-};
+import { APP_PERMISSIONS_MATRIX } from '../config/permissions.matrix';
 
 @Injectable({ providedIn: 'root' })
 export class AccessControlService {

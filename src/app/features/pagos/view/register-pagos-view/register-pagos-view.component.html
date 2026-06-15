@@ -31,8 +31,7 @@
               <app-form-field label="Cliente" [required]="true">
                 <app-select-clientes
                   [input_control]="clienteId"
-                  [preloadedClientId]="clienteId.value"
-                  [preloadedClientName]="ventaSeleccionada?.nombreCompletoCliente"
+                  [preloadedClient]="clientePreCargado"
                   input_placeholder="Buscar cliente...">
                 </app-select-clientes>
               </app-form-field>

@@ -58,6 +58,16 @@ export class RegisterPagosViewComponent {
     return this.form.get('clienteId') as FormControl;
   }
 
+  get clientePreCargado(): any {
+    if (this.clienteId?.value && this.ventaSeleccionada?.nombreCompletoCliente) {
+      return {
+        id: this.clienteId.value,
+        nombreCompleto: this.ventaSeleccionada.nombreCompletoCliente
+      };
+    }
+    return null;
+  }
+
   get ventaId(): FormControl {
     return this.form.get('ventaId') as FormControl;
   }

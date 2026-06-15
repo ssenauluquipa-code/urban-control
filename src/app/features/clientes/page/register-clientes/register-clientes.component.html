@@ -8,5 +8,9 @@
   (Save)="onSubmit()"
   [loading]="loading"
 >
-  <app-form-clientes-view [formInput]="form"></app-form-clientes-view>
+  <app-form-clientes-view 
+    [formInput]="form"
+    (imageSelected)="onImageSelected($event)"
+    (imageDeleted)="onImageDeleted()"
+  ></app-form-clientes-view>
 </app-page-container>

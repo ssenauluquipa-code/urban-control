@@ -250,21 +250,24 @@ export class TableActionsComponent implements ICellRendererAngularComp {
 
   private mapToAppAction(action: string): EAppAction {
     switch (action) {
-      case TableActionsEnum.VIEW:
-      case TableActionsEnum.INFO: return EAppAction.VIEW;
-      case TableActionsEnum.EDIT:
-      case TableActionsEnum.BLOQUEADO:
-      case TableActionsEnum.SET_AVAILABLE: return EAppAction.EDIT;
-      case TableActionsEnum.DELETE:
-      case TableActionsEnum.REMOVE_IMAGE: return EAppAction.DELETE;
+      case TableActionsEnum.VIEW: return EAppAction.VIEW;
+      case TableActionsEnum.INFO: return EAppAction.INFO;
+      case TableActionsEnum.EDIT: return EAppAction.EDIT;
+      case TableActionsEnum.BLOQUEADO: return EAppAction.BLOQUEADO;
+      case TableActionsEnum.SET_AVAILABLE: return EAppAction.SET_AVAILABLE;
+      case TableActionsEnum.DELETE: return EAppAction.DELETE;
+      case TableActionsEnum.REMOVE_IMAGE: return EAppAction.REMOVE_IMAGE;
       case TableActionsEnum.ANULAR: return EAppAction.ANULAR;
       case TableActionsEnum.ACTIVATE: return EAppAction.ACTIVATE;
       case TableActionsEnum.DEACTIVATE: return EAppAction.DEACTIVATE;
-      case TableActionsEnum.UPLOAD_PHOTO: return EAppAction.UPLOAD;
+      case TableActionsEnum.UPLOAD_PHOTO: return EAppAction.UPLOAD_PHOTO;
       case TableActionsEnum.VENTA: return EAppAction.VENTA;
-      case TableActionsEnum.NUEVO: return EAppAction.CREATE;
+      case TableActionsEnum.NUEVO: return EAppAction.NUEVO;
       case TableActionsEnum.MASS_LOAD: return EAppAction.MASS_LOAD;
       case TableActionsEnum.COMPROBANTE: return EAppAction.COMPROBANTE;
+      case TableActionsEnum.PAGO: return EAppAction.PAGO;
+      case TableActionsEnum.PLAN_CUENTAS: return EAppAction.PLAN_CUENTAS;
+      case TableActionsEnum.DEVOLUCION: return EAppAction.DEVOLUCION;
       default: return EAppAction.VIEW;
     }
   }

@@ -29,6 +29,8 @@ export class RegisterClientesComponent implements OnInit {
   public isEditMode = false;
   public loading = false;
   private clienteId: string | null = null;
+  private selectedImage: File | null = null;
+  private imageWasDeleted: boolean = false;
 
   ngOnInit(): void {
     this.buildForm();
@@ -59,6 +61,16 @@ export class RegisterClientesComponent implements OnInit {
       this.isEditMode = true;
       this.loadData();
     }
+  }
+
+  onImageSelected(file: File): void {
+    this.selectedImage = file;
+    this.imageWasDeleted = false;
+  }
+
+  onImageDeleted(): void {
+    this.selectedImage = null;
+    this.imageWasDeleted = true;
   }
 
   private loadData(): void {
@@ -105,9 +117,36 @@ export class RegisterClientesComponent implements OnInit {
       : this.clienteService.createClient(payload);
 
     request$.pipe(finalize(() => this.loading = false)).subscribe({
-      next: () => {
-        this.notification.success(this.isEditMode ? 'Cliente actualizado' : 'Cliente creado');
-        this.goBack();
+      next: (clientData) => {
+        const id = this.isEditMode ? this.clienteId! : clientData.id;
+        
+        // Manejar subida o eliminación de foto
+        if (this.selectedImage) {
+          this.loading = true; // reactivamos loading para la foto
+          this.clienteService.uploadFoto(id, this.selectedImage).pipe(
+            finalize(() => {
+              this.loading = false;
+              this.notification.success(this.isEditMode ? 'Cliente actualizado' : 'Cliente creado');
+              this.goBack();
+            })
+          ).subscribe({
+            error: () => this.notification.error('El cliente se guardó, pero hubo un error al subir la foto')
+          });
+        } else if (this.isEditMode && this.imageWasDeleted) {
+          this.loading = true;
+          this.clienteService.deleteFoto(id).pipe(
+            finalize(() => {
+              this.loading = false;
+              this.notification.success('Cliente actualizado y foto eliminada');
+              this.goBack();
+            })
+          ).subscribe({
+            error: () => this.notification.error('El cliente se guardó, pero hubo un error al eliminar la foto')
+          });
+        } else {
+          this.notification.success(this.isEditMode ? 'Cliente actualizado' : 'Cliente creado');
+          this.goBack();
+        }
       },
       error: (err) => {
         if (err.status === 409) this.notification.error('El documento ya existe');

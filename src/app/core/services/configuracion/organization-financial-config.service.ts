@@ -7,6 +7,7 @@ export interface IOrganizationFinancialConfig {
   currency: string;
   exchangeRate: number;
   reservationDueDays: number;
+  plazoMaximoMeses: number;
 }
 
 @Injectable({
@@ -21,6 +22,7 @@ export class OrganizationFinancialConfigService {
         currency: empresa.currency,
         exchangeRate: empresa.tipoDeCambio,
         reservationDueDays: empresa.diasVencimientoReserva,
+        plazoMaximoMeses: empresa.plazoMaximoMeses,
       })),
     );
   }

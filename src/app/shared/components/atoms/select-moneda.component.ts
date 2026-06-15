@@ -76,19 +76,24 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
       background-color: transparent !important;
     }
 
-    ::ng-deep .moneda-container .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+    ::ng-deep .moneda-container .ant-radio-button-wrapper-checked {
       background: #12223b !important;
       border-color: #12223b !important;
       color: #ffffff !important;
       box-shadow: -1px 0 0 0 #12223b !important;
     }
 
-    ::ng-deep .moneda-container .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover,
-    ::ng-deep .moneda-container .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):focus {
+    ::ng-deep .moneda-container .ant-radio-button-wrapper-checked:hover,
+    ::ng-deep .moneda-container .ant-radio-button-wrapper-checked:focus {
       background: #12223b !important;
       border-color: #12223b !important;
       color: #ffffff !important;
       box-shadow: -1px 0 0 0 #12223b !important;
+    }
+
+    ::ng-deep .moneda-container .ant-radio-button-wrapper-disabled {
+      opacity: 0.75;
+      cursor: not-allowed !important;
     }
 
     ::ng-deep .moneda-container .ant-radio-button-wrapper:first-child {

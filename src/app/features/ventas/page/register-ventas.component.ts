@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, OnInit, OnDestroy } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -21,7 +21,7 @@ import { LoteService } from "src/app/core/services/proyectos/lote.service";
 import { OrganizationFinancialConfigService } from "src/app/core/services/configuracion/organization-financial-config.service";
 import { CurrencyCalculationService } from "src/app/core/services/finance/currency-calculation.service";
 import { Moneda } from "src/app/core/models/reserva.model";
-import { merge } from "rxjs";
+import { merge, Subject } from "rxjs";
 import { take } from "rxjs/operators";
 
 
@@ -49,7 +49,7 @@ import { take } from "rxjs/operators";
   `,
   styles: ``,
 })
-export class RegisterVentasComponent implements OnInit {
+export class RegisterVentasComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private ventaService = inject(VentaService);
   private notification = inject(NotificationService);
@@ -60,6 +60,8 @@ export class RegisterVentasComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private financialConfig = inject(OrganizationFinancialConfigService);
   private currencyCalc = inject(CurrencyCalculationService);
+  private destroy$ = new Subject<void>();
+  private plazoMaximo = 600;
 
   /** Moneda base de la organización (precio de lote en catálogo). */
   monedaBase: Moneda = Moneda.USD;
@@ -108,6 +110,11 @@ export class RegisterVentasComponent implements OnInit {
     this.loadOrganizationFinancialDefaults();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   constructor() {
     this.listenFormChanges();
     this.updateFinancingValidators(this.form.get("tipoPago")?.value);
@@ -123,6 +130,7 @@ export class RegisterVentasComponent implements OnInit {
       .subscribe((config) => {
         const monedaBase = this.toMoneda(config.currency);
         this.monedaBase = monedaBase;
+        this.plazoMaximo = config.plazoMaximoMeses ?? 600;
         this.form.patchValue({
           moneda: this.monedaBase,
           tipoCambio: config.exchangeRate,
@@ -232,9 +240,9 @@ export class RegisterVentasComponent implements OnInit {
       });
     } else {
       // CONFIGURACIÓN PARA VENTA A CUOTAS (FINANCIADA)
-      this.form.get("cuotaInicial")?.setValidators([Validators.required, Validators.min(0)]);
+      this.form.get("cuotaInicial")?.setValidators([Validators.required, Validators.min(0.01)]);
       this.form.get("frecuenciaPago")?.setValidators([Validators.required]);
-      this.form.get("nroCuotas")?.setValidators([Validators.required, Validators.min(1), Validators.max(600)]);
+      this.form.get("nroCuotas")?.setValidators([Validators.required, Validators.min(1), Validators.max(this.plazoMaximo)]);
       this.form.get("fechaPagoInicial")?.setValidators([Validators.required]);
 
       const frecuencia = this.form.get("frecuenciaPago")?.value;

@@ -192,3 +192,45 @@
     }
   }
 }
+
+// Estilos para fechas resaltadas en el calendario
+::ng-deep {
+  .ant-picker-cell-inner {
+    
+    // 1. Resaltado para Semanal (Ej: Todos los Lunes)
+    &.highlight-weekly {
+      background-color: #e0f2fe !important; // Azul muy suave
+      border: 1px solid #38bdf8 !important; // Borde azul claro
+      color: #0369a1 !important;
+      font-weight: bold !important;
+      border-radius: 4px !important;
+    }
+
+    // 2. Resaltado para Días Fijos (Ej: Día 10 y 25)
+    &.highlight-fixed {
+      background-color: #dcfce7 !important; // Verde muy suave
+      border: 1px solid #4ade80 !important;
+      color: #15803d !important;
+      font-weight: bold !important;
+      border-radius: 4px !important;
+    }
+
+    // 3. Resaltado para Intervalos (Múltiplos de 15)
+    &.highlight-interval {
+      background-color: #f3e8ff !important; // Morado muy suave
+      color: #7e22ce !important;
+      border-radius: 4px !important;
+      position: relative;
+      
+      // Pequeño indicador visual
+      &::after {
+        content: '•' !important;
+        position: absolute !important;
+        bottom: 2px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        font-size: 10px !important;
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FrecuenciaPago } from 'src/app/core/models/venta.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SelectDataComponent } from '../atoms/select-data.component';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, DestroyRef, inject } from '@angular/core';
 
 @Component({
   selector: 'app-select-frecuencia-pago',
@@ -31,6 +31,8 @@ export class SelectFrecuenciaPagoComponent implements OnInit {
   // Output tipado para emitir el valor seleccionado al padre
   @Output() SelectionChange = new EventEmitter<FrecuenciaPago>();
 
+  private destroyRef = inject(DestroyRef);
+
   public frecuenciaOptions = Object.values(FrecuenciaPago).map(val => ({
     value: val,
     label: val
@@ -39,7 +41,7 @@ export class SelectFrecuenciaPagoComponent implements OnInit {
   ngOnInit(): void {
     // Escuchamos cambios internos del control por si se setea programáticamente
     this.input_control.valueChanges
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(value => {
         if (value) this.SelectionChange.emit(value);
       });
