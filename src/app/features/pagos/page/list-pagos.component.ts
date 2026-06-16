@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, effect, inject, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, effect, inject } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ColDef, CellClassParams } from "ag-grid-community";
 import { Router } from "@angular/router";
@@ -8,9 +8,12 @@ import { finalize } from "rxjs";
 
 import { IPagos } from "src/app/core/models/pagos.model";
 import { PagosService } from "src/app/core/services/pagos.service";
+import { VentaService } from "src/app/core/services/venta.service";
+import { AuthService } from "src/app/core/services/auth.service";
 import { NotificationService } from "src/app/core/services/notification.service";
 import { ConfirmationService } from "src/app/core/services/confirmation.service";
 import { ProjectStatusGlobalService } from "src/app/core/services/project-status-global.service";
+import { convertirNumeroALetras } from "src/app/core/utils/numero-a-letras.util";
 import { EAppModule } from "src/app/core/config/permissions.enum";
 import {
   ITableActionEvent,
@@ -24,6 +27,11 @@ import { AnularPagoModalComponent } from "./anular-pago-modal.component";
 import { PagoIconCellComponent } from "../components/pago-icon-cell.component";
 import { UploadComprobanteMultipleComponent } from "../components/upload-comprobante-multiple/upload-comprobante-multiple.component";
 import { StatusFloatingFilterPagosComponent } from "src/app/shared/components/organisms/status-floating-filter-pagos.component";
+import {
+  ModalComprobantePagoComponent,
+  IReciboPagoData,
+} from "../components/modal-comprobante-pago/modal-comprobante-pago.component";
+import { forkJoin } from "rxjs";
 
 @Component({
   selector: "app-list-pagos",
@@ -49,8 +57,9 @@ import { StatusFloatingFilterPagosComponent } from "src/app/shared/components/or
         [showCreate]="false"
         [actions]="[
           tableActionEnum.VIEW,
+          tableActionEnum.IMPRIMIR_RECIBO,
           tableActionEnum.ANULAR,
-          tableActionEnum.COMPROBANTE
+          tableActionEnum.COMPROBANTE,
         ]"
         (actionClicked)="onTableAction($event)"
       >
@@ -59,8 +68,10 @@ import { StatusFloatingFilterPagosComponent } from "src/app/shared/components/or
   `,
   styles: ``,
 })
-export class ListPagosComponent implements OnInit {
+export class ListPagosComponent {
   private pagosService = inject(PagosService);
+  private ventaService = inject(VentaService);
+  private authService = inject(AuthService);
   private globalContext = inject(ProjectStatusGlobalService);
   private notification = inject(NotificationService);
   private confirmation = inject(ConfirmationService);
@@ -75,7 +86,6 @@ export class ListPagosComponent implements OnInit {
   public proyectoId: string | null = null;
 
   columnDefs: ColDef[] = [
-
     {
       field: "fechaPago",
       headerName: "Fecha Pago",
@@ -119,14 +129,22 @@ export class ListPagosComponent implements OnInit {
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,
       cellRenderer: PagoIconCellComponent,
-      cellStyle: { display: "flex", justifyContent: "center", alignItems: "center" },
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
     },
     {
       field: "monto",
       headerName: "Monto",
       width: 130,
       minWidth: 110,
-      cellStyle: { display: "flex", "justify-content": "flex-end", "align-items": "center" },
+      cellStyle: {
+        display: "flex",
+        "justify-content": "flex-end",
+        "align-items": "center",
+      },
       filter: "agNumberColumnFilter",
       floatingFilter: true,
       suppressFloatingFilterButton: false,
@@ -141,7 +159,11 @@ export class ListPagosComponent implements OnInit {
       valueFormatter: (p) =>
         p.data ? `${p.data.monedaRecibida} ${p.value.toLocaleString()}` : "",
       cellStyle: (params: CellClassParams<IPagos>) => {
-        const style: Record<string, string> = { display: "flex", "justify-content": "flex-end", "align-items": "center" };
+        const style: Record<string, string> = {
+          display: "flex",
+          "justify-content": "flex-end",
+          "align-items": "center",
+        };
         if (params.data) {
           if (params.data.montoRecibido < params.data.monto) {
             style["color"] = "#e67e22"; // Naranja / Alerta de Pago parcial
@@ -160,7 +182,7 @@ export class ListPagosComponent implements OnInit {
       suppressHeaderFilterButton: false,
     },
     {
-      field: 'monedaRecibida',
+      field: "monedaRecibida",
       headerName: "Moneda recibida",
       width: 155,
       minWidth: 155,
@@ -182,8 +204,8 @@ export class ListPagosComponent implements OnInit {
       suppressHeaderFilterButton: true,
     },
     {
-      field: 'observaciones',
-      headerName: 'Observaciones',
+      field: "observaciones",
+      headerName: "Observaciones",
       minWidth: 200,
       flex: 1,
       filter: "agTextColumnFilter",
@@ -200,7 +222,7 @@ export class ListPagosComponent implements OnInit {
       cellRenderer: BadgeEstadoComponent,
       filter: "agTextColumnFilter",
       floatingFilter: true,
-      floatingFilterComponent : StatusFloatingFilterPagosComponent,
+      floatingFilterComponent: StatusFloatingFilterPagosComponent,
       suppressFloatingFilterButton: true,
       suppressHeaderMenuButton: true,
       suppressHeaderFilterButton: true,
@@ -223,7 +245,7 @@ export class ListPagosComponent implements OnInit {
     }, */
   ];
 
-  constructor(){
+  constructor() {
     /**
      * 🚀 EFECTO REACTIVO DE ANGULAR:
      * Escucha el Signal global del proyecto seleccionado de forma automática.
@@ -234,7 +256,7 @@ export class ListPagosComponent implements OnInit {
       this.proyectoId = currentId;
 
       if (currentId) {
-        this.loadPagos(currentId);
+        this.loadPagos();
       } else {
         this.pagos = [];
         this.cdr.detectChanges();
@@ -242,33 +264,30 @@ export class ListPagosComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    // Escuchar Proyecto Global para recargar pagos
-/*     this.globalContext.selectedProjectId$.subscribe((projectId) => {
-      this.proyectoId = projectId || null;
-      this.loadPagos();
-    }); */
-  }
-
   /**
    * Abre el modal para cargar/comprobar comprobantes de un pago.
    */
   abrirCargaComprobantes(pago: IPagos): void {
-    const modalRef = this.modalService.open(UploadComprobanteMultipleComponent, {
-      size: 'lg',
-      backdrop: 'static',
-      keyboard: false,
-    });
+    const modalRef = this.modalService.open(
+      UploadComprobanteMultipleComponent,
+      {
+        size: "lg",
+        backdrop: "static",
+        keyboard: false,
+      },
+    );
     modalRef.componentInstance.pagoId = pago.pagoId;
     modalRef.componentInstance.codigoPago = pago.codigoPago;
     modalRef.result
-    .then(() => {
-      if (this.proyectoId) this.loadPagos(this.proyectoId);
-    })
-    .catch(() => {});
+      .then(() => {
+        if (this.proyectoId) this.loadPagos();
+      })
+      .catch(() => {
+        // Modal cerrado sin acción
+      });
   }
 
-  loadPagos(proyectoId: string | null): void {
+  loadPagos(): void {
     this.loading = true;
 
     this.pagosService
@@ -277,7 +296,7 @@ export class ListPagosComponent implements OnInit {
         finalize(() => {
           this.loading = false;
           this.cdr.detectChanges();
-        })
+        }),
       )
       .subscribe({
         next: (data) => {
@@ -290,8 +309,6 @@ export class ListPagosComponent implements OnInit {
 
   onTableAction(event: ITableActionEvent<IPagos>): void {
     if (event.action === TableActionsEnum.ANULAR && event.row?.pagoId) {
-
-
       const modalRef = this.modalService.open(AnularPagoModalComponent, {
         size: "md",
         backdrop: "static",
@@ -304,7 +321,7 @@ export class ListPagosComponent implements OnInit {
       modalRef.result
         .then((result) => {
           if (result && this.proyectoId) {
-            this.loadPagos(this.proyectoId);
+            this.loadPagos();
           }
         })
         .catch(() => undefined);
@@ -314,12 +331,161 @@ export class ListPagosComponent implements OnInit {
     if (event.action === TableActionsEnum.VIEW && event.row?.pagoId) {
       this.router.navigate(["/pagos/detail", event.row.pagoId]);
     }
-    if(event.action === TableActionsEnum.COMPROBANTE && event.row?.pagoId){
+    if (event.action === TableActionsEnum.COMPROBANTE && event.row?.pagoId) {
       this.abrirCargaComprobantes(event.row);
+    }
+
+    if (
+      event.action === TableActionsEnum.IMPRIMIR_RECIBO &&
+      event.row?.pagoId
+    ) {
+      this.imprimirReciboPago(event.row.pagoId, event.row.ventaId);
     }
   }
 
   onAddNew(): void {
     this.router.navigate(["/pagos/register"]);
+  }
+
+  /**
+   * Imprime el recibo de un pago existente.
+   * Combina datos del pago, venta y saldo para generar el recibo completo.
+   * Calcula los montos históricos (a cuenta y saldo) tal como estaban en el momento del pago.
+   */
+  private imprimirReciboPago(pagoId: string, ventaId: string): void {
+    this.loading = true;
+
+    forkJoin({
+      pago: this.pagosService.obtenerPagoPorId(pagoId),
+      venta: this.ventaService.obtenerVentaPorId(ventaId),
+      todosLosPagos: this.pagosService.listarPagos({
+        ventaId,
+        estado: "ACTIVO",
+      }),
+    })
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: ({ pago, venta, todosLosPagos }) => {
+          const montoPagoActual = Number(pago.montoRecibido ?? pago.monto);
+          const montoTotalVenta = Number(venta.montoTotal);
+
+          // 1. El recibo original muestra el cliente principal, no todos los clientes de la venta.
+          const nombreCliente = this.limpiarNombreCliente(
+            venta.clientes?.[0]?.nombre || "Cliente General",
+          );
+
+          // 2. Mantener el mismo concepto que se genera al registrar el pago.
+          const concepto =
+            `Pago de lote por concepto de: ${montoTotalVenta}. ${pago.observaciones || ""}`.trim();
+
+          // 3. Calcular saldo histórico del momento del pago.
+          // A cuenta en el recibo original es el pago actual, no el acumulado.
+          const pagosDeLaVenta = this.obtenerPagosUnicosPorVenta(
+            [...this.pagos, ...todosLosPagos, pago],
+            ventaId,
+          );
+
+          const pagosOrdenados = pagosDeLaVenta.sort((a, b) => {
+            const fechaDiff =
+              new Date(a.fechaPago).getTime() - new Date(b.fechaPago).getTime();
+            if (fechaDiff !== 0) return fechaDiff;
+            return Number(a.codigoPago) - Number(b.codigoPago);
+          });
+
+          const indicePagoActual = pagosOrdenados.findIndex(
+            (p) => p.pagoId === pagoId,
+          );
+          const pagosAnteriores =
+            indicePagoActual > 0
+              ? pagosOrdenados.slice(0, indicePagoActual)
+              : [];
+          const totalPagadoAntes = pagosAnteriores.reduce(
+            (sum: number, p: IPagos) =>
+              sum + Number(p.montoRecibido ?? p.monto),
+            0,
+          );
+          const saldoDespuesDelPago = Math.max(
+            montoTotalVenta - totalPagadoAntes - montoPagoActual,
+            0,
+          );
+
+          // 4. Convertir monto a letras
+          const montoEnLetras = convertirNumeroALetras(
+            montoPagoActual,
+            pago.monedaRecibida,
+          );
+
+          // 5. Obtener nombre del emisor (usuario actual)
+          const nombreEmisor = this.authService.currentUser()?.name || "";
+
+          // 6. Estructurar datos para el modal de recibo
+          const reciboData: IReciboPagoData = {
+            codigoRecibo: String(pago.codigoPago).padStart(6, "0"),
+            moneda: pago.monedaRecibida,
+            montoNumerico: montoPagoActual,
+            montoEnLetras: montoEnLetras,
+            fechaPago: new Date(pago.fechaPago),
+            cliente: nombreCliente,
+            concepto: concepto,
+            aCuenta: montoPagoActual,
+            saldo: saldoDespuesDelPago,
+            total: montoTotalVenta,
+            metodoPago: pago.metodo,
+            nombreEmisor: nombreEmisor,
+          };
+
+          // Abrir modal de recibo
+          this.abrirModalRecibo(reciboData);
+        },
+        error: (err) => {
+          console.error("Error al cargar datos del recibo:", err);
+          this.notification.error(
+            "No se pudo cargar la información del recibo",
+          );
+        },
+      });
+  }
+
+  private limpiarNombreCliente(nombre: string): string {
+    return nombre
+      .split(" - ")[0]
+      .replace(/\([^)]*\)/g, "")
+      .replace(/CI[:\s]*\d+/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  private obtenerPagosUnicosPorVenta(
+    pagos: IPagos[],
+    ventaId: string,
+  ): IPagos[] {
+    const pagosMap = new Map<string, IPagos>();
+
+    pagos
+      .filter(
+        (p) =>
+          p.ventaId === ventaId &&
+          p.estado !== "ANULADO" &&
+          p.estado !== "ANULADA",
+      )
+      .forEach((p) => pagosMap.set(p.pagoId, p));
+
+    return [...pagosMap.values()];
+  }
+
+  /**
+   * Abre el modal para visualizar e imprimir el recibo de pago.
+   */
+  private abrirModalRecibo(datos: IReciboPagoData): void {
+    const modalRef = this.modalService.open(ModalComprobantePagoComponent, {
+      size: "lg",
+      backdrop: "static",
+    });
+    modalRef.componentInstance.datosRecibo = datos;
   }
 }

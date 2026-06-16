@@ -1,17 +1,30 @@
 <div class="row">
-    <div class="col-md-6 col-lg-3" *ngFor='let topcard of topcards'>
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="btn btn-lg rounded-circle round round-lg fs-6 d-flex align-items-center justify-content-center bg-light-{{topcard.bgcolor}} text-{{topcard.bgcolor}}">
-                        <i class={{topcard.icon}}></i>
-                    </div>
-                    <div class="ms-3">
-                        <h3 class="mb-0 font-weight-bold">{{topcard.title}}</h3>
-                        <small class="text-muted fs-3">{{topcard.subtitle}}</small>
+    @if (loading) {
+        <div class="col-12 text-center my-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando resumen...</span>
+            </div>
+        </div>
+    } @else {
+        <div class="col-md-6 col-lg-3 mb-3" *ngFor="let topcard of topcards">
+            <div
+                class="card card-hover-effect"
+                (click)="redirigirALista(topcard)"
+                [style.cursor]="'pointer'"
+                role="button"
+            >
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="btn btn-lg rounded-circle round round-lg fs-5 d-flex align-items-center justify-content-center bg-light-{{topcard.bgcolor}} text-{{topcard.bgcolor}}">
+                            <i [class]="topcard.icon"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h3 class="mb-0 font-weight-bold">{{ topcard.currentValue }}</h3>
+                            <small class="text-muted fs-3">{{ topcard.title }}</small>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 </div>

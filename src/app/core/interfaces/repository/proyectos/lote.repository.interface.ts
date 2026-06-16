@@ -1,5 +1,13 @@
 import { Observable } from "rxjs";
-import { CreateLoteDto, ILote, ILoteByLoteDisponible, ILoteSearchResult, UpdateEstadoLoteDto, UpdateLoteDto } from "src/app/core/models/lote/lote.model";
+import {
+  CreateLoteDto,
+  ILote,
+  ILoteByLoteDisponible,
+  ILoteSearchResult,
+  IResumenLotes,
+  UpdateEstadoLoteDto,
+  UpdateLoteDto,
+} from "src/app/core/models/lote/lote.model";
 
 export interface ILoteRepository {
   getAll(manzanaId: string | null): Observable<ILote[]>;
@@ -12,4 +20,6 @@ export interface ILoteRepository {
   deleteImages(id: string, imageIds: string[]): Observable<void>;
   search(manzanaId: string, term: string): Observable<ILoteSearchResult[]>;
   disponibles(manzanaId: string | null): Observable<ILoteByLoteDisponible[]>;
+
+  getResumenLotes(): Observable<IResumenLotes>;
 }

@@ -2,29 +2,44 @@ import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { CreateLoteDto, ILote, ILoteByLoteDisponible, ILoteSearchResult, UpdateEstadoLoteDto, UpdateLoteDto } from "../../models/lote/lote.model";
+import {
+  CreateLoteDto,
+  ILote,
+  ILoteByLoteDisponible,
+  ILoteSearchResult,
+  IResumenLotes,
+  UpdateEstadoLoteDto,
+  UpdateLoteDto,
+} from "../../models/lote/lote.model";
 import { ILoteRepository } from "../../interfaces/repository/proyectos/lote.repository.interface";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class LoteRepository implements ILoteRepository {
-
   private readonly API_URL = `${environment.apiUrl}/lotes`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getAll(manzanaId: string | null): Observable<ILote[]> {
     let params = new HttpParams();
-    if (manzanaId) params = params.set('manzanaId', manzanaId);
+    if (manzanaId) params = params.set("manzanaId", manzanaId);
     return this.http.get<ILote[]>(this.API_URL, { params });
   }
 
-  getById(id: string): Observable<ILote> { return this.http.get<ILote>(`${this.API_URL}/${id}`); }
+  getById(id: string): Observable<ILote> {
+    return this.http.get<ILote>(`${this.API_URL}/${id}`);
+  }
 
-  create(dto: CreateLoteDto): Observable<ILote> { return this.http.post<ILote>(this.API_URL, dto); }
+  create(dto: CreateLoteDto): Observable<ILote> {
+    return this.http.post<ILote>(this.API_URL, dto);
+  }
 
-  update(id: string, dto: UpdateLoteDto): Observable<ILote> { return this.http.patch<ILote>(`${this.API_URL}/${id}`, dto); }
+  update(id: string, dto: UpdateLoteDto): Observable<ILote> {
+    return this.http.patch<ILote>(`${this.API_URL}/${id}`, dto);
+  }
 
-  delete(id: string): Observable<void> { return this.http.delete<void>(`${this.API_URL}/${id}`); }
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/${id}`);
+  }
 
   updateEstado(id: string, dto: UpdateEstadoLoteDto): Observable<ILote> {
     return this.http.patch<ILote>(`${this.API_URL}/${id}/estado`, dto);
@@ -33,26 +48,39 @@ export class LoteRepository implements ILoteRepository {
   // Manejo de imágenes con FormData
   uploadImages(id: string, files: File[]): Observable<ILote> {
     const formData = new FormData();
-    files.forEach(file => formData.append('imagenes', file)); // 'imagenes' es el nombre del campo según Swagger
+    files.forEach((file) => formData.append("imagenes", file)); // 'imagenes' es el nombre del campo según Swagger
     return this.http.post<ILote>(`${this.API_URL}/${id}/imagenes`, formData);
   }
 
   deleteImages(id: string, imageIds: string[]): Observable<void> {
     // El swagger indica un body con { imagenIds: [...] }
-    return this.http.request<void>('DELETE', `${this.API_URL}/${id}/imagenes`, { body: { imagenIds: imageIds } });
+    return this.http.request<void>("DELETE", `${this.API_URL}/${id}/imagenes`, {
+      body: { imagenIds: imageIds },
+    });
   }
 
   /**ya no se usa este se reemplazo por active */
   search(manzanaId: string, term: string): Observable<ILoteSearchResult[]> {
-    const params = new HttpParams().set('manzanaId', manzanaId).set('term', term);
-    return this.http.get<ILoteSearchResult[]>(`${this.API_URL}/search`, { params });
+    const params = new HttpParams()
+      .set("manzanaId", manzanaId)
+      .set("term", term);
+    return this.http.get<ILoteSearchResult[]>(`${this.API_URL}/search`, {
+      params,
+    });
   }
 
   disponibles(manzanaId: string | null): Observable<ILoteByLoteDisponible[]> {
     let params = new HttpParams();
-    if (manzanaId && manzanaId.trim() !== '') {
-      params = params.set('manzanaId', manzanaId);
+    if (manzanaId && manzanaId.trim() !== "") {
+      params = params.set("manzanaId", manzanaId);
     }
-    return this.http.get<ILoteByLoteDisponible[]>(`${this.API_URL}/disponibles`, { params });
+    return this.http.get<ILoteByLoteDisponible[]>(
+      `${this.API_URL}/disponibles`,
+      { params },
+    );
+  }
+
+  getResumenLotes(): Observable<IResumenLotes> {
+    return this.http.get<IResumenLotes>(`${this.API_URL}/resumen`);
   }
 }

@@ -80,7 +80,7 @@ export class ExportPdfService {
     const widthsTable = columnasVisibles.map(() => cantidadColumnas > 10 ? 'auto' : '*');
 
     const docDefinition: any = {
-      pageSize: 'A4',
+      pageSize: 'LETTER',
       pageOrientation: orientacionPagina,
       pageMargins: [20, 40, 20, 40],
       content: [

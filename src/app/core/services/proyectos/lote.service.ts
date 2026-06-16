@@ -1,29 +1,60 @@
-import { Inject, Injectable } from '@angular/core';
-import { CreateLoteDto, UpdateLoteDto, ILote, ILoteSearchResult, ILoteByLoteDisponible } from '../../models/lote/lote.model';
-import { ILoteRepository } from '../../interfaces/repository/proyectos/lote.repository.interface';
-import { Observable } from 'rxjs';
+import { Inject, Injectable } from "@angular/core";
+import {
+  CreateLoteDto,
+  UpdateLoteDto,
+  ILote,
+  ILoteSearchResult,
+  ILoteByLoteDisponible,
+  IResumenLotes,
+} from "../../models/lote/lote.model";
+import { ILoteRepository } from "../../interfaces/repository/proyectos/lote.repository.interface";
+import { Observable } from "rxjs";
 
-export const LOTE_REPOSITORY_TOKEN = 'ILoteRepository';
+export const LOTE_REPOSITORY_TOKEN = "ILoteRepository";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class LoteService {
-
-  constructor(@Inject(LOTE_REPOSITORY_TOKEN) private repo: ILoteRepository) { }
+  constructor(@Inject(LOTE_REPOSITORY_TOKEN) private repo: ILoteRepository) {}
 
   getLotes(manzanaId: string | null): Observable<ILote[]> {
     return this.repo.getAll(manzanaId);
   }
 
-  getLoteById(id: string): Observable<ILote> { return this.repo.getById(id); }
-  createLote(dto: CreateLoteDto): Observable<ILote> { return this.repo.create(dto); }
-  updateLote(id: string, dto: UpdateLoteDto): Observable<ILote> { return this.repo.update(id, dto); }
-  deleteLote(id: string): Observable<void> { return this.repo.delete(id); }
+  getLoteById(id: string): Observable<ILote> {
+    return this.repo.getById(id);
+  }
+  createLote(dto: CreateLoteDto): Observable<ILote> {
+    return this.repo.create(dto);
+  }
+  updateLote(id: string, dto: UpdateLoteDto): Observable<ILote> {
+    return this.repo.update(id, dto);
+  }
+  deleteLote(id: string): Observable<void> {
+    return this.repo.delete(id);
+  }
   //updateEstadoLote(id: string, dto: UpdateEstadoLoteDto): Observable<ILote> { return this.repo.updateEstado(id, dto); }
-  uploadLoteImages(id: string, files: File[]): Observable<ILote> { return this.repo.uploadImages(id, files); }
-  deleteLoteImages(id: string, imageIds: string[]): Observable<void> { return this.repo.deleteImages(id, imageIds); }
-  searchLotes(manzanaId: string, term: string): Observable<ILoteSearchResult[]> { return this.repo.search(manzanaId, term); }
+  uploadLoteImages(id: string, files: File[]): Observable<ILote> {
+    return this.repo.uploadImages(id, files);
+  }
+  deleteLoteImages(id: string, imageIds: string[]): Observable<void> {
+    return this.repo.deleteImages(id, imageIds);
+  }
+  searchLotes(
+    manzanaId: string,
+    term: string,
+  ): Observable<ILoteSearchResult[]> {
+    return this.repo.search(manzanaId, term);
+  }
 
-  getLotesDisponibles(manzanaId: string | null): Observable<ILoteByLoteDisponible[]> { return this.repo.disponibles(manzanaId); }
+  getLotesDisponibles(
+    manzanaId: string | null,
+  ): Observable<ILoteByLoteDisponible[]> {
+    return this.repo.disponibles(manzanaId);
+  }
+
+  getResumenLotes(): Observable<IResumenLotes> {
+    return this.repo.getResumenLotes();
+  }
 }

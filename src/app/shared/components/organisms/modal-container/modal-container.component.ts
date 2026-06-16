@@ -25,8 +25,17 @@ export class ModalContainerComponent {
   @Input() saveButtonDanger = false;
   @Input() cancelButtonName = "Cancelar";
 
+  // --- NUEVO: Configuración del Botón Personalizado ---
+  @Input() showCustomButton = false;       // ¿Mostrar el tercer botón?
+  @Input() customButtonText = "Acción";    // Texto del botón
+  @Input() customButtonIcon = "setting";   // Icono de NgZorro
+  // Tipo: 'default' | 'primary' | 'dashed' | 'link' | 'text'
+  @Input() customButtonType: 'default' | 'primary' | 'dashed' | 'link' | 'text' = 'default'; 
+  @Input() customButtonDanger = false;      // ¿Es rojo (peligroso)?
+
   @Output() SaveAction = new EventEmitter<void>();
   @Output() CancelAction = new EventEmitter<void>();
+  @Output() CustomAction = new EventEmitter<void>();  
 
   constructor(public activeModal: NgbActiveModal) { }
 }
