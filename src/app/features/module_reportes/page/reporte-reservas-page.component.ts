@@ -73,22 +73,28 @@ export class ReporteReservasPageComponent implements OnInit {
    * 🔒 FILTRADO LOCAL EN MEMORIA CLIENTE
    */
   public filtrarReservasEnMemoriaLocal(criterios: IFiltroReservaCriterio): void {
-    const inicioTs = this.getTimestamp(criterios.fechaInicio);
-    const finTs = this.getTimestamp(criterios.fechaFin);
+    const registroTs = this.getTimestamp(criterios.fechaRegistro);
+    const vencimientoTs = this.getTimestamp(criterios.fechaVencimiento);
 
     this.reservasFiltradas = this.reservasOriginales.filter(item => {
-      const fechaDato = item.fechaReserva;
-      if (!fechaDato) {
-        return !inicioTs && !finTs;
+      // 1. Filtrar por fecha de registro (como fecha mínima)
+      let cumpleRegistro = true;
+      if (registroTs) {
+        const itemRegistroTs = this.getTimestamp(item.fechaReserva);
+        if (itemRegistroTs && itemRegistroTs < registroTs) cumpleRegistro = false;
       }
+
+      // 2. Filtrar por fecha de vencimiento (como fecha máxima)
+      let cumpleVencimiento = true;
+      if (vencimientoTs) {
+        const itemVencimientoTs = this.getTimestamp(item.vencimiento);
+        if (itemVencimientoTs && itemVencimientoTs > vencimientoTs) cumpleVencimiento = false;
+      }
+
+      // 3. Filtrar por estado
+      const cumpleEstado = !criterios.estado || item.estado === criterios.estado;
       
-      const itemTs = this.getTimestamp(fechaDato);
-      if (!itemTs) return true;
-      
-      const cumpleInicio = !inicioTs || itemTs >= inicioTs;
-      const cumpleFin = !finTs || itemTs <= finTs;
-      
-      return cumpleInicio && cumpleFin;
+      return cumpleRegistro && cumpleVencimiento && cumpleEstado;
     });
   }
 

@@ -135,6 +135,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.PLAN_CUENTAS]: "file-text",
       [TableActionsEnum.DEVOLUCION]: "file-word",
       [TableActionsEnum.IMPRIMIR_RECIBO]: "printer",
+      [TableActionsEnum.MANZANAS]: "area-chart",
+      [TableActionsEnum.LOTES]: "folder",
     };
     return icons[action] || "question";
   }
@@ -159,6 +161,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.PLAN_CUENTAS]: "Plan cuentas",
       [TableActionsEnum.DEVOLUCION]: "Devolución",
       [TableActionsEnum.IMPRIMIR_RECIBO]: "Imprimir Recibo",
+      [TableActionsEnum.MANZANAS]: "Manzanas",
+      [TableActionsEnum.LOTES]: "Lotes"
     };
     return labels[action] || action;
   }

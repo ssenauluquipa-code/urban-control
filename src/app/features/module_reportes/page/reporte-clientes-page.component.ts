@@ -23,6 +23,7 @@ import { ExportExcelService } from 'src/app/core/services/export-excel.service';
       <app-reporte-clientes-view
       #vistaReporte
       [datos]="clienteFiltrado"
+      (cambioFiltro)="filtrarClientesLocales($event)"
       ></app-reporte-clientes-view>
     </app-page-container>
 
@@ -70,8 +71,17 @@ export class ReporteClientesPageComponent implements OnInit {
     });
   }
 
-  public filtrarClientesLocales(): void{
-
+  public filtrarClientesLocales(criterios: { busqueda: string; genero: string }): void {
+    const term = criterios.busqueda.toLowerCase().trim();
+    this.clienteFiltrado = this.clienteOriginal.filter(cliente => {
+      const cumpleBusqueda = !term || 
+        cliente.nombreCompleto.toLowerCase().includes(term) || 
+        cliente.nroDocumento.toLowerCase().includes(term);
+        
+      const cumpleGenero = !criterios.genero || cliente.genero === criterios.genero;
+      
+      return cumpleBusqueda && cumpleGenero;
+    });
   }
 
   public exportarPDF(): void {

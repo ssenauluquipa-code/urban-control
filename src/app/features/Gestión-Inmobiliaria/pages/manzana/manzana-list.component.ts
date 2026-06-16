@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ColDef } from 'ag-grid-community';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { finalize, Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
 import { IManzana } from 'src/app/core/models/manzana/manzana.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ManzanaService } from 'src/app/core/services/proyectos/manzana.service';
@@ -35,7 +36,8 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
         [columnDefs]="columnDefs"
         [loading]="isLoading"
         [showCreate]="false"
-        [actions]="[tableActionEnum.EDIT, tableActionEnum.DELETE]"
+        [actions]="[tableActionEnum.EDIT, tableActionEnum.DELETE, 
+          tableActionEnum.LOTES]"
         (actionClicked)="onTableAction($event)">
       </app-data-table>
 
@@ -55,7 +57,8 @@ export class ManzanaListComponent implements OnInit {
     private modalService: NgbModal,
     private notification: NotificationService,
     private nzModal: NzModalService,
-    private globalContext: ProjectStatusGlobalService
+    private globalContext: ProjectStatusGlobalService,
+    private router: Router
   ) { 
     effect(() => {
       const projectId = this.globalContext.currentProjectId();
@@ -118,6 +121,13 @@ export class ManzanaListComponent implements OnInit {
 
     if (event.action === TableActionsEnum.DELETE) {
       this.confirmDelete(event.row as IManzana);
+    }
+
+    if (event.action === TableActionsEnum.LOTES) {
+      // Navegamos a la lista de lotes pre-filtrando por la manzana seleccionada
+      this.router.navigate(['/gestion-inmobiliaria/lotes'], {
+        queryParams: { manzanaId: event.row!.id }
+      });
     }
   }
 

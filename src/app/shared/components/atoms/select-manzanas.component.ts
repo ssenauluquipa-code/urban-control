@@ -16,7 +16,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
       [itemList]="manzanaList"
       [inputControl]="inputControl"
       [placeholder]="placeholder"
-      [bindValue]="'id'"
+      [bindValue]="bindValue"
       [bindLabel]="'codigo'"
       [loading]="isLoading"
       (ChangeValue)="onSelect($event)"
@@ -31,6 +31,7 @@ export class SelectManzanasComponent implements OnInit, OnDestroy {
   // Inputs y Outputs estrictos sin rastro de proyectoId redundantes
   @Input() inputControl = new FormControl<string | null>(null);
   @Input() placeholder: string = 'Seleccione manzana';
+  @Input() bindValue: string = 'id';
   @Output() Change = new EventEmitter<string | null>();
 
   // Estado local alineado a tu Swagger
@@ -103,7 +104,7 @@ export class SelectManzanasComponent implements OnInit, OnDestroy {
   }
 
   public onSelect(event: string | IManzanaSearchResult | null): void {
-    const selectedId = typeof event === 'object' && event !== null ? event.id : (event as string | null);
-    this.Change.emit(selectedId);
+    const selectedValue = typeof event === 'object' && event !== null ? (event as any)[this.bindValue] : (event as string | null);
+    this.Change.emit(selectedValue);
   }
 }

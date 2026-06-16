@@ -8,15 +8,18 @@ import { DataTableComponent } from 'src/app/shared/components/organisms/data-tab
 import { ReportFilterComponent } from 'src/app/shared/components/organisms/report-filter/report-filter.component';
 import { ColumnVisibilityChange } from '../../components/tabla-previsualizacion/tabla-previsualizacion.component';
 import { InputTextComponent } from 'src/app/shared/components/atoms/input-text/input-text.component';
+import { SelectGenderComponent } from 'src/app/shared/components/atoms/select-gender.component';
+import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 
 export interface IFiltroClienteCriterio {
   busqueda: string;
+  genero: string;
 }
 
 @Component({
   selector: 'app-reporte-clientes-view',
   standalone: true,
-  imports: [ReactiveFormsModule, ReportFilterComponent, DataTableComponent, InputTextComponent],
+  imports: [ReactiveFormsModule, ReportFilterComponent, DataTableComponent, InputTextComponent, SelectGenderComponent, FormFieldComponent],
   templateUrl: './reporte-clientes-view.component.html',
   styleUrl: './reporte-clientes-view.component.scss'
 })
@@ -31,7 +34,8 @@ export class ReporteClientesViewComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder) {
     this.filterForm = this.fb.group({
-      busqueda: ['']
+      busqueda: [''],
+      genero: ['']
     });
   }
 
@@ -40,7 +44,10 @@ export class ReporteClientesViewComponent implements OnInit, OnDestroy {
     this.filterForm.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe((valores) => {
-        this.cambioFiltro.emit({ busqueda: valores.busqueda || '' });
+        this.cambioFiltro.emit({ 
+          busqueda: valores.busqueda || '',
+          genero: valores.genero || ''
+        });
       });
   }
 
@@ -49,7 +56,7 @@ export class ReporteClientesViewComponent implements OnInit, OnDestroy {
   }
 
   public limpiarFiltros(): void {
-    this.filterForm.reset({ busqueda: '' });
+    this.filterForm.reset({ busqueda: '', genero: '' });
   }
 
   ngOnDestroy(): void {

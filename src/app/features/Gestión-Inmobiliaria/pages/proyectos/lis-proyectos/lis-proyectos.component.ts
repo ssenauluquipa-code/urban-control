@@ -15,6 +15,7 @@ import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.servic
 import { IProyecto } from 'src/app/core/models/proyectos/proyecto.model';
 import { RegisterProyectoComponent } from '../register-proyecto/register-proyecto.component';
 import { ProyectoDetailComponent } from '../proyecto-detail/proyecto-detail.component';
+import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 
 @Component({
   selector: 'app-lis-proyectos',
@@ -32,7 +33,10 @@ import { ProyectoDetailComponent } from '../proyecto-detail/proyecto-detail.comp
         [columnDefs]="columnDefs"
         [loading]="loading"
         [showCreate]="false"
-        [actions]="[tableActionEnum.VIEW, tableActionEnum.EDIT, tableActionEnum.DELETE, tableActionEnum.MASS_LOAD]"
+        [actions]="[tableActionEnum.VIEW, tableActionEnum.EDIT, 
+          tableActionEnum.DELETE, tableActionEnum.MASS_LOAD,
+          tableActionEnum.MANZANAS
+        ]"
         (actionClicked)="onTableAction($event)">
       </app-data-table>
     </app-page-container>
@@ -64,7 +68,8 @@ export class LisProyectosComponent implements OnInit {
     private modalService: NgbModal,
     private notification: NotificationService,
     private nzModal: NzModalService,
-    private router: Router
+    private router: Router,
+    private globalContext: ProjectStatusGlobalService
   ) { }
 
   ngOnInit(): void {
@@ -105,6 +110,10 @@ export class LisProyectosComponent implements OnInit {
           });
         })
       });
+    } else if (event.action === TableActionsEnum.MANZANAS) {
+      // Sincronizamos el selector global del navbar con el proyecto seleccionado
+      this.globalContext.setSelectedProjectId(event.row!.id);
+      this.router.navigate(['/gestion-inmobiliaria/manzanas']);
     }
   }
 

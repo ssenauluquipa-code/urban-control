@@ -53,6 +53,8 @@ export class ListLotesComponent implements OnInit {
   public proyectoId: string | null = null;
   private estadoFiltroDesdeQuery: TEstadoLote | null = null;
   private debeAplicarEstadoDesdeQuery = false;
+  // manzanaId que viene desde el queryParam al navegar desde manzana-list
+  private manzanaIdDesdeQuery: string | null = null;
   // Controles
   //public proyectoIdControl = new FormControl<string>('');
   public manzanaIdControl = new FormControl<string | null>({
@@ -121,9 +123,13 @@ export class ListLotesComponent implements OnInit {
       this.proyectoId = projectId;
       if (projectId) {
         this.manzanaIdControl.enable({ emitEvent: false });
-        this.manzanaIdControl.setValue(null, { emitEvent: false });
-        // Cargamos todos los lotes de la base de datos para el proyecto seleccionado
-        this.loadLotes(null);
+        // Si venimos navegando desde manzana-list, pre-seleccionamos esa manzana
+        // Si no, reseteamos el filtro de manzana
+        const manzanaAplicar = this.manzanaIdDesdeQuery;
+        this.manzanaIdDesdeQuery = null; // Consumimos el valor una sola vez
+        this.manzanaIdControl.setValue(manzanaAplicar, { emitEvent: false });
+        // Cargamos lotes: si hay manzana pre-seleccionada filtra por ella, si no trae todos
+        this.loadLotes(manzanaAplicar);
       } else {
         this.manzanaIdControl.disable({ emitEvent: false });
         this.manzanaIdControl.setValue(null, { emitEvent: false });
@@ -134,7 +140,21 @@ export class ListLotesComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
-      const estado = params.get("estado");
+      // Leemos el manzanaId ANTES de que el effect reactive el control,
+      // para que el effect lo use al inicializar
+      const manzanaId = params.get('manzanaId');
+      if (manzanaId) {
+        this.manzanaIdDesdeQuery = manzanaId;
+        // Si el proyecto ya está cargado (ej. F5 desde localStorage),
+        // aplicamos el filtro directamente ya que el effect ya corrió
+        if (this.proyectoId && this.manzanaIdControl.enabled) {
+          this.manzanaIdControl.setValue(manzanaId, { emitEvent: false });
+          this.loadLotes(manzanaId);
+          this.manzanaIdDesdeQuery = null;
+        }
+      }
+
+      const estado = params.get('estado');
       this.estadoFiltroDesdeQuery = this.esEstadoLoteValido(estado)
         ? estado
         : null;

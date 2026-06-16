@@ -12,8 +12,8 @@ export const APP_PERMISSIONS_MATRIX: PermissionMap = {
         // Nuevo módulo PAGOS con permisos completos
         [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.COMPROBANTE],
         [EAppModule.RESERVAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.ANULAR, EAppAction.DELETE, EAppAction.VENTA],
-        [EAppModule.PROYECTOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE, EAppAction.MASS_LOAD],
-        [EAppModule.MANZANAS]:[EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE, EAppAction.EDIT],
+        [EAppModule.PROYECTOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE, EAppAction.MASS_LOAD, EAppAction.MANZANAS],
+        [EAppModule.MANZANAS]:[EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE, EAppAction.EDIT, EAppAction.LOTES],
         [EAppModule.LOTES]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DELETE],
         [EAppModule.REPORTES]: [EAppAction.VIEW,],
     },

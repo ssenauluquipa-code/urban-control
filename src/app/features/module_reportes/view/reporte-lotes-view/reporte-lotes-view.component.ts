@@ -10,10 +10,10 @@ import { ReportFilterComponent } from 'src/app/shared/components/organisms/repor
 import { ColumnVisibilityChange } from '../../components/tabla-previsualizacion/tabla-previsualizacion.component';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
-
+import { SelectManzanasComponent } from 'src/app/shared/components/atoms/select-manzanas.component';
 
 export interface IFiltroLoteCriterio {
-  manzanaId: string;
+  manzanaCodigo: string;
   estado: string;
 }
 
@@ -21,7 +21,7 @@ export interface IFiltroLoteCriterio {
   selector: 'app-reporte-lotes-view',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ReportFilterComponent,
-     DataTableComponent, FormFieldComponent, SelectDataComponent],
+     DataTableComponent, FormFieldComponent, SelectDataComponent, SelectManzanasComponent],
   templateUrl: './reporte-lotes-view.component.html',
   styleUrl: './reporte-lotes-view.component.scss'
 })
@@ -37,16 +37,13 @@ export class ReporteLotesViewComponent implements OnInit, OnDestroy {
   public filterForm!: FormGroup;
   private destroy$ = new Subject<void>();
 
-  // Opciones para los selects (como objetos { value, label } que requiere SelectDataComponent)
-  public manzanas: string[] = ['candella', 'lotes nuevo', 'M-A', 'M-B'];
-  public estados: string[] = ['DISPONIBLE', 'RESERVADO', 'VENDIDO'];
+  public estados: string[] = ['DISPONIBLE', 'RESERVADO', 'VENDIDO', 'BLOQUEADO'];
 
-  public manzanasOptions = this.manzanas.map(m => ({ value: m, label: m.toUpperCase() }));
   public estadosOptions = this.estados.map(e => ({ value: e, label: e }));
 
   constructor(private fb: FormBuilder) {
     this.filterForm = this.fb.group({
-      manzanaId: [''],
+      manzanaCodigo: [''],
       estado: ['']
     });
   }
@@ -57,7 +54,7 @@ export class ReporteLotesViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((valores) => {
         this.cambioFiltro.emit({
-          manzanaId: valores.manzanaId || '',
+          manzanaCodigo: valores.manzanaCodigo || '',
           estado: valores.estado || ''
         });
       });
@@ -68,7 +65,7 @@ export class ReporteLotesViewComponent implements OnInit, OnDestroy {
   }
 
   public limpiarFiltros(): void {
-    this.filterForm.reset({ manzanaId: '', estado: '' });
+    this.filterForm.reset({ manzanaCodigo: '', estado: '' });
   }
 
   ngOnDestroy(): void {

@@ -2,17 +2,26 @@
     <app-report-filter
       [formGroup]="filterForm"
       [columnDefs]="columnas"
-      [mostrarBtnLimpiar]="!!(filterForm.value.busqueda)"
+      [mostrarBtnLimpiar]="!!(filterForm.value.busqueda || filterForm.value.genero)"
       (onLimpiar)="limpiarFiltros()"
       (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)">
 
-      <div class="form-group-inline">
-        <div class="input-icon-wrapper">
-          <app-input-text
-            [input_control]="getControl('busqueda')"
-            icon="bi-search"
-            placeholder="Buscar cliente..."            
-          ></app-input-text>                    
+      <div class="row w-100">
+        <div class="col-12 col-sm-6 col-md-5 col-xl-4 mb-2 mb-sm-0">
+          <app-form-field label="Búsqueda de Cliente">
+            <app-input-text
+              [input_control]="getControl('busqueda')"
+              icon="bi-search"
+              placeholder="Nombre o documento..."            
+            ></app-input-text>
+          </app-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-5 col-xl-4">
+          <app-form-field label="Género">
+            <app-select-gender
+              [inputControl]="getControl('genero')"
+            ></app-select-gender>
+          </app-form-field>
         </div>
       </div>
     </app-report-filter>  

@@ -5,7 +5,7 @@ import { ExportPdfService } from 'src/app/core/services/export-pdf.service';
 import { ExportExcelService } from 'src/app/core/services/export-excel.service';
 import { IPagoReporte, IPeriodoReporteQuery } from 'src/app/core/models/reportes/reportes.model';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
-import { ReportePagosViewComponent } from '../view/reporte-pagos-view/reporte-pagos-view.component';
+import { ReportePagosViewComponent, IFiltroPagoCriterio } from '../view/reporte-pagos-view/reporte-pagos-view.component';
 
 @Component({
   selector: 'app-reporte-pagos-page',
@@ -63,23 +63,32 @@ export class ReportePagosPageComponent implements OnInit {
     });
   }
 
-  public filtrarPagos(criterios: IPeriodoReporteQuery): void {
+  public filtrarPagos(criterios: IFiltroPagoCriterio): void {
     const inicioTs = this.getTimestamp(criterios.fechaDesde);
     const finTs = this.getTimestamp(criterios.fechaHasta);
 
     this.pagosFiltrados = this.pagosOriginales.filter(pago => {
+      // Filtrar por fechas
+      let cumpleFechas = true;
       const fechaDato = pago.fecha;
       if (!fechaDato) {
-        return !inicioTs && !finTs;
+        cumpleFechas = !inicioTs && !finTs;
+      } else {
+        const itemTs = this.getTimestamp(fechaDato);
+        if (itemTs) {
+          const cumpleInicio = !inicioTs || itemTs >= inicioTs;
+          const cumpleFin = !finTs || itemTs <= finTs;
+          cumpleFechas = cumpleInicio && cumpleFin;
+        }
       }
+
+      // Filtrar por estado
+      const cumpleEstado = !criterios.estado || pago.estado === criterios.estado;
+
+      // Filtrar por metodo
+      const cumpleMetodo = !criterios.metodo || pago.metodo === criterios.metodo;
       
-      const itemTs = this.getTimestamp(fechaDato);
-      if (!itemTs) return true;
-      
-      const cumpleInicio = !inicioTs || itemTs >= inicioTs;
-      const cumpleFin = !finTs || itemTs <= finTs;
-      
-      return cumpleInicio && cumpleFin;
+      return cumpleFechas && cumpleEstado && cumpleMetodo;
     });
   }
 

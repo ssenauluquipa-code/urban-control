@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbDropdownModule, NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -40,6 +40,15 @@ export class NavRightComponent implements OnInit {
   public globalProjectControl = new FormControl<string>('');
   constructor() {
     this.windowWidth = window.innerWidth;
+    // Sincronizamos el FormControl del selector con el Signal global.
+    // Esto actualiza el dropdown del navbar cuando otro componente (ej. lis-proyectos)
+    // cambia el proyecto activo vía globalContext.setSelectedProjectId()
+    effect(() => {
+      const projectId = this.globalContext.currentProjectId();
+      if (projectId && this.globalProjectControl.value !== projectId) {
+        this.globalProjectControl.setValue(projectId, { emitEvent: false });
+      }
+    });
   }
   ngOnInit(): void {
     // Si la RAM del usuario está limpia en F5 pero hay token, lo cargamos

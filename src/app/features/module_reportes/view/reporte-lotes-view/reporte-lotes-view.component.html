@@ -1,14 +1,16 @@
 <div class="container-fluid px-0 mt-3 animate-fade-in">
 
   <app-report-filter [formGroup]="filterForm" [columnDefs]="columnas"
-    [mostrarBtnLimpiar]="!!(filterForm.value.manzanaId || filterForm.value.estado)" (onLimpiar)="limpiarFiltros()"
+    [mostrarBtnLimpiar]="!!(filterForm.value.manzanaCodigo || filterForm.value.estado)" (onLimpiar)="limpiarFiltros()"
     (visibilidadColumnaChange)="onCambiarVisibilidadColumnas($event)">
     <div class="row w-100">
       <div class="col-12 col-sm-6 col-md-5 col-xl-4 mb-2 mb-sm-0">
         <app-form-field label="Manzana">
-          <app-select-data [itemList]="manzanasOptions" bindValue="value" bindLabel="label"
-            [inputControl]="getControl('manzanaId')" placeholder="Seleccionar Manzana" [searchable]="false">
-          </app-select-data>
+          <app-select-manzanas
+            [inputControl]="getControl('manzanaCodigo')"
+            [bindValue]="'codigo'"
+            placeholder="Seleccionar Manzana">
+          </app-select-manzanas>
         </app-form-field>
       </div>
 

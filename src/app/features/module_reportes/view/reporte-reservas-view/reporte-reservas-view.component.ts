@@ -11,9 +11,12 @@ import { FormFieldComponent } from 'src/app/shared/components/molecules/form-fie
 import { InputDateComponent } from 'src/app/shared/components/atoms/input-date/input-date.component';
 import { ColumnVisibilityChange } from 'src/app/features/module_reportes/components/tabla-previsualizacion/tabla-previsualizacion.component';
 
+import { SelectEstadoReservaComponent } from 'src/app/shared/components/atoms/select-estado-reserva.component';
+
 export interface IFiltroReservaCriterio {
-  fechaInicio: string;
-  fechaFin: string;
+  fechaRegistro: string;
+  fechaVencimiento: string;
+  estado: string;
 }
 
 @Component({
@@ -25,7 +28,8 @@ export interface IFiltroReservaCriterio {
     ReportFilterComponent, 
     DataTableComponent,
     FormFieldComponent,
-    InputDateComponent
+    InputDateComponent,
+    SelectEstadoReservaComponent
   ],
   templateUrl: './reporte-reservas-view.component.html',
   styleUrl: './reporte-reservas-view.component.scss' // Reutiliza el SCSS elástico del módulo
@@ -53,16 +57,18 @@ export class ReporteReservasViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((valores) => {
         this.cambioFiltro.emit({
-          fechaInicio: valores.fechaInicio || '',
-          fechaFin: valores.fechaFin || ''
+          fechaRegistro: valores.fechaRegistro || '',
+          fechaVencimiento: valores.fechaVencimiento || '',
+          estado: valores.estado || ''
         });
       });
   }
 
   private initForm(): void {
     this.filterForm = this.fb.group({
-      fechaInicio: [''],
-      fechaFin: ['']
+      fechaRegistro: [''],
+      fechaVencimiento: [''],
+      estado: ['']
     });
   }
 
@@ -71,7 +77,7 @@ export class ReporteReservasViewComponent implements OnInit, OnDestroy {
   }
 
   public limpiarFiltros(): void {
-    this.filterForm.reset({ fechaInicio: '', fechaFin: '' });
+    this.filterForm.reset({ fechaRegistro: '', fechaVencimiento: '', estado: '' });
   }
 
   private configurarColumnas(): void {

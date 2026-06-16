@@ -7,7 +7,13 @@ import { DataTableComponent } from 'src/app/shared/components/organisms/data-tab
 import { ReportFilterComponent } from 'src/app/shared/components/organisms/report-filter/report-filter.component';
 import { InputDateComponent } from 'src/app/shared/components/atoms/input-date/input-date.component';
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
+import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
 import { ColumnVisibilityChange } from '../../components/tabla-previsualizacion/tabla-previsualizacion.component';
+
+export interface IFiltroPagoCriterio extends IPeriodoReporteQuery {
+  estado?: string;
+  metodo?: string;
+}
 
 @Component({
   selector: 'app-reporte-pagos-view',
@@ -18,24 +24,41 @@ import { ColumnVisibilityChange } from '../../components/tabla-previsualizacion/
     ReportFilterComponent,
     DataTableComponent,
     InputDateComponent,
-    FormFieldComponent
+    FormFieldComponent,
+    SelectDataComponent
   ],
   templateUrl: './reporte-pagos-view.component.html',
   styleUrl: './reporte-pagos-view.component.scss'
 })
 export class ReportePagosViewComponent implements OnInit {
   @Input({ required: true }) datos: IPagoReporte[] = [];
-  @Output() cambioFiltro = new EventEmitter<IPeriodoReporteQuery>();
+  @Output() cambioFiltro = new EventEmitter<IFiltroPagoCriterio>();
 
   @ViewChild('tablaComponent') tablaComponent!: DataTableComponent;
 
   public filterForm!: FormGroup;
   public columnas: ColDef[] = [];
 
+  public estadosPagoOptions = [
+    { value: 'ACTIVO', label: 'Activo' },
+    { value: 'PAGADO', label: 'Pagado' },
+    { value: 'ANULADO', label: 'Anulado' }
+  ];
+
+  public metodosPagoOptions = [
+    { value: 'EFECTIVO', label: 'Efectivo' },
+    { value: 'TRANSFERENCIA', label: 'Transferencia' },
+    { value: 'CHEQUE', label: 'Cheque' },
+    { value: 'TARJETA', label: 'Tarjeta' },
+    { value: 'DEPOSITO', label: 'Depósito' }
+  ];
+
   constructor(private fb: FormBuilder) {
     this.filterForm = this.fb.group({
       fechaInicio: [''],
-      fechaFin: ['']
+      fechaFin: [''],
+      estado: [''],
+      metodo: ['']
     });
   }
 
@@ -113,13 +136,15 @@ export class ReportePagosViewComponent implements OnInit {
     this.filterForm.valueChanges.subscribe(valores => {
       this.cambioFiltro.emit({
         fechaDesde: valores.fechaInicio || undefined,
-        fechaHasta: valores.fechaFin || undefined
+        fechaHasta: valores.fechaFin || undefined,
+        estado: valores.estado || undefined,
+        metodo: valores.metodo || undefined
       });
     });
   }
 
   public limpiarFiltros(): void {
-    this.filterForm.reset({ fechaInicio: '', fechaFin: '' });
+    this.filterForm.reset({ fechaInicio: '', fechaFin: '', estado: '', metodo: '' });
   }
 
   public onCambiarVisibilidadColumnas(event: ColumnVisibilityChange): void {

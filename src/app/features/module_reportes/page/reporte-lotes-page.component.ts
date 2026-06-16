@@ -87,9 +87,9 @@ export class ReporteLotesPageComponent implements OnInit {
   /**
    * Responde al evento @Output() emitido desde el View (Hijo)
    */
-  public filtrarLotesLocales(criterios: { manzanaId: string; estado: string }): void {
+  public filtrarLotesLocales(criterios: { manzanaCodigo: string; estado: string }): void {
     this.lotesFiltrados = this.lotesOriginales.filter(lote => {
-      const cumpleManzana = !criterios.manzanaId || lote.manzana === criterios.manzanaId;
+      const cumpleManzana = !criterios.manzanaCodigo || lote.manzana === criterios.manzanaCodigo;
       const cumpleEstado = !criterios.estado || lote.estado === criterios.estado;
       return cumpleManzana && cumpleEstado;
     });

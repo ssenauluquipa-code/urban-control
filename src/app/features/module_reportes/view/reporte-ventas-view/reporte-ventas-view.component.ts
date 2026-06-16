@@ -9,17 +9,19 @@ import { InputDateComponent } from 'src/app/shared/components/atoms/input-date/i
 import { FormFieldComponent } from 'src/app/shared/components/molecules/form-field/form-field.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
 import { ReportFilterComponent } from 'src/app/shared/components/organisms/report-filter/report-filter.component';
+import { SelectDataComponent } from 'src/app/shared/components/atoms/select-data.component';
 import { ColumnVisibilityChange } from '../../components/tabla-previsualizacion/tabla-previsualizacion.component';
 
 export interface IFiltroVentaCriterio {
   fechaInicio: string;
   fechaFin: string;
+  estado: string;
 }
 
 @Component({
   selector: 'app-reporte-ventas-view',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ReportFilterComponent, DataTableComponent, InputDateComponent, FormFieldComponent],
+  imports: [CommonModule, ReactiveFormsModule, ReportFilterComponent, DataTableComponent, InputDateComponent, FormFieldComponent, SelectDataComponent],
   templateUrl: './reporte-ventas-view.component.html',
   styleUrl: './reporte-ventas-view.component.scss' // Mantiene los estilos de inyección ::ng-deep y hosts de lotes
 })
@@ -33,10 +35,18 @@ export class ReporteVentasViewComponent implements OnInit, OnDestroy {
   public filterForm!: FormGroup;
   private destroy$ = new Subject<void>();
 
+  public estadosVentaOptions = [
+    { value: 'ACTIVA', label: 'Activa' },
+    { value: 'COMPLETADA', label: 'Completada' },
+    { value: 'ANULADA', label: 'Anulada' },
+    { value: 'PENDIENTE', label: 'Pendiente' }
+  ];
+
   constructor(private fb: FormBuilder) {
     this.filterForm = this.fb.group({
       fechaInicio: [''],
-      fechaFin: ['']
+      fechaFin: [''],
+      estado: ['']
     });
   }
 
@@ -47,7 +57,8 @@ export class ReporteVentasViewComponent implements OnInit, OnDestroy {
       .subscribe((valores) => {
         this.cambioFiltro.emit({
           fechaInicio: valores.fechaInicio || '',
-          fechaFin: valores.fechaFin || ''
+          fechaFin: valores.fechaFin || '',
+          estado: valores.estado || ''
         });
       });
   }
@@ -57,7 +68,7 @@ export class ReporteVentasViewComponent implements OnInit, OnDestroy {
   }
 
   public limpiarFiltros(): void {
-    this.filterForm.reset({ fechaInicio: '', fechaFin: '' });
+    this.filterForm.reset({ fechaInicio: '', fechaFin: '', estado: '' });
   }
 
   ngOnDestroy(): void {

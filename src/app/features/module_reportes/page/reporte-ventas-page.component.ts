@@ -5,8 +5,7 @@ import { ExportPdfService } from 'src/app/core/services/export-pdf.service';
 import { ExportExcelService } from 'src/app/core/services/export-excel.service';
 import { IVentaReporte } from 'src/app/core/models/reportes/reportes.model';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
-import { ReporteVentasViewComponent } from '../view/reporte-ventas-view/reporte-ventas-view.component';
-import { IFiltroVentaCriterio } from '../components/filtro-ventas/filtro-ventas.component';
+import { ReporteVentasViewComponent, IFiltroVentaCriterio } from '../view/reporte-ventas-view/reporte-ventas-view.component';
 
 
 @Component({
@@ -80,21 +79,25 @@ export class ReporteVentasPageComponent implements OnInit {
     const finTs = this.getTimestamp(criterios.fechaFin);
 
     this.ventasFiltradas = this.ventasOriginales.filter(item => {
-      // Verificamos cuál propiedad trae la fecha
+      // Filtrar por fechas
+      let cumpleFechas = true;
       const fechaDato = (item as any).fecha || (item as any).fechaVenta;
       
-      // Si no hay fecha, lo mostramos solo si no hay filtro activo
       if (!fechaDato) {
-        return !inicioTs && !finTs;
+        cumpleFechas = !inicioTs && !finTs;
+      } else {
+        const itemTs = this.getTimestamp(fechaDato);
+        if (itemTs) {
+          const cumpleInicio = !inicioTs || itemTs >= inicioTs;
+          const cumpleFin = !finTs || itemTs <= finTs;
+          cumpleFechas = cumpleInicio && cumpleFin;
+        }
       }
+
+      // Filtrar por estado
+      const cumpleEstado = !criterios.estado || item.estado === criterios.estado;
       
-      const itemTs = this.getTimestamp(fechaDato);
-      if (!itemTs) return true; // Si por alguna razón la fecha es irreconocible, no lo ocultamos
-      
-      const cumpleInicio = !inicioTs || itemTs >= inicioTs;
-      const cumpleFin = !finTs || itemTs <= finTs;
-      
-      return cumpleInicio && cumpleFin;
+      return cumpleFechas && cumpleEstado;
     });
   }
 
