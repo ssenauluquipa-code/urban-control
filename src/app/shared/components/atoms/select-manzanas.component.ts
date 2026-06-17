@@ -41,6 +41,8 @@ export class SelectManzanasComponent implements OnInit, OnDestroy {
   private readonly searchSubject$ = new Subject<string>();
   private readonly destroy$ = new Subject<void>();
 
+  private previousProjectId: string | null = null;
+
   // Convertimos el signal a observable en el contexto de inyección válido
   private readonly projectId$ = toObservable(this.globalContext.currentProjectId);
 
@@ -51,12 +53,17 @@ export class SelectManzanasComponent implements OnInit, OnDestroy {
       .subscribe((projectId) => {              
         if (!projectId) {
           this.manzanaList = [];
+          this.previousProjectId = null;
           return;
         }
 
-        // Limpiamos el control si el proyecto cambia para evitar inconsistencias
-        this.inputControl.setValue(null);
-        this.Change.emit(null);
+        // Limpiamos el control solo si el proyecto realmente cambió y había un proyecto previo
+        if (this.previousProjectId && this.previousProjectId !== projectId) {
+          this.inputControl.setValue(null);
+          this.Change.emit(null);
+        }
+        
+        this.previousProjectId = projectId;
         this.searchManzanas('');
       });
 

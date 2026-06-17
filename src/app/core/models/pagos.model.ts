@@ -40,6 +40,8 @@ export interface IPagos {
   motivoAnulacion?: string | null;
   anuladoPorUser?: AnuladoPorUser | null;
   cantidadComprobantes: number;
+  asesorId: string;
+  nombreAsesor?: string;
 }
 
 export interface IPagoComprobante {

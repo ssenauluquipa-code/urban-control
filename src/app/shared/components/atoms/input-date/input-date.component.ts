@@ -17,7 +17,7 @@ import { InputErrorMessagesComponent } from '../input-error-messages/input-error
         [formControl]="input_control"
         [nzFormat]="input_format"
         [nzStatus]="input_control.invalid && input_control.touched ? 'error' : ''"
-        [nzDisabledDate]="disabled_date!"
+        [nzDisabledDate]="combinedDisabledDate"
         [nzDateRender]="dateRenderFn ? cellTpl : undefined"
         style="width: 100%"
         (ngModelChange)="onDateChange($event)"
@@ -63,6 +63,7 @@ export class InputDateComponent {
   @Input() input_format = 'dd/MM/yyyy';
   @Input() show_error_messages = true;
   @Input() disabled_date?: (current: Date) => boolean;
+  @Input() disablePastDates = false;
 
   /** Función que recibe una fecha y retorna una clase CSS extra para esa celda, o '' si ninguna. */
   @Input() dateRenderFn?: (current: Date) => string;
@@ -70,6 +71,28 @@ export class InputDateComponent {
   @Output() DateValue = new EventEmitter<Date | null>();
 
   @ViewChild('cellTpl') cellTpl!: TemplateRef<any>;
+
+  combinedDisabledDate = (current: Date): boolean => {
+    if (!current) {
+      return false;
+    }
+
+    // Si se requiere bloquear fechas pasadas, inhabilitamos todo lo menor a "hoy a las 00:00:00"
+    if (this.disablePastDates) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (current < today) {
+        return true;
+      }
+    }
+
+    // Si existe una función de bloqueo externa provista, también la evaluamos
+    if (this.disabled_date) {
+      return this.disabled_date(current);
+    }
+
+    return false;
+  };
 
   onDateChange(date: Date | null): void {
     this.DateValue.emit(date);

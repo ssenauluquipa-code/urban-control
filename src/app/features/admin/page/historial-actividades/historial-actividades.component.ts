@@ -6,6 +6,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ActividadTipo, IActividad } from 'src/app/core/models/actividades.model';
 import { ActividadesService } from 'src/app/core/services/actividades.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { PageContainerComponent } from "src/app/shared/components/templates/page-container/page-container.component";
 import { InputDateComponent } from "src/app/shared/components/atoms/input-date/input-date.component";
 import { SelectDataComponent } from "src/app/shared/components/atoms/select-data.component";
@@ -28,6 +29,7 @@ interface IActividadesAgrupadas {
 export class HistorialActividadesComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly actividadesService = inject(ActividadesService);
+  private readonly authService = inject(AuthService);
 
   public readonly tiposOpciones = [
     { id: '', name: '📂 Todos' },
@@ -51,6 +53,11 @@ export class HistorialActividadesComponent implements OnInit {
 
   // Formulario reactivo unificado en una sola barra horizontal
   public filterForm!: FormGroup;
+
+  public readonly isAdmin = computed(() => {
+    const role = this.authService.currentUser()?.role;
+    return role === 'SUPER_ADMIN' || role === 'ADMIN';
+  });
 
   // Selectores de estado del Core
   public readonly loading = this.actividadesService.loading;
@@ -82,6 +89,10 @@ export class HistorialActividadesComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (!this.isAdmin()) {
+      return;
+    }
+
     this.initForm();
     this.escucharCambiosFiltros();
     this.buscarHistorial();

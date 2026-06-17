@@ -40,6 +40,8 @@ export interface IReserva {
     // Objetos anidados (Detalle)
     cliente?: ICliente;
     lote?: ILote;
+    asesorId: string;
+    nombreAsesor?: string;
 }
 
 export interface CreateReservaDto {

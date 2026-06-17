@@ -23,8 +23,11 @@ export class ActividadesDropdownComponent implements OnInit {
   public readonly loading = this.actividadesService.loading;
   public readonly error = this.actividadesService.error;
 
-  // Verificación estricta de seguridad basada en el Signal de tu usuario autenticado
-  public readonly isAdmin = computed(() => this.authService.currentUser()?.role === 'ADMIN');
+  // Verificación estricta de seguridad basada en el Signal de tu usuario autenticado (ADMIN o SUPER_ADMIN)
+  public readonly isAdmin = computed(() => {
+    const role = this.authService.currentUser()?.role;
+    return role === 'SUPER_ADMIN' || role === 'ADMIN';
+  });
 
   ngOnInit(): void {
     // Solo golpeamos el backend si el usuario que navega es un Administrador

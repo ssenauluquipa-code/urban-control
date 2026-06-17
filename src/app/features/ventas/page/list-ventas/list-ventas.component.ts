@@ -311,6 +311,16 @@ export class ListVentasComponent implements OnInit {
         headerName: "Clientes / Propietarios",
         field: "propietarios",
         cellRenderer: VentaPropietariosCellComponent,
+        valueGetter: (params) => {
+          const clientes = params.data?.clientes || [];
+          if (clientes.length === 0) return "";
+          const titular = clientes.find((c: any) => c.rol === 'TITULAR') || clientes[0];
+          const cotitulares = clientes.filter((c: any) => c.id !== titular.id);
+          if (cotitulares.length === 0) {
+            return titular.nombre;
+          }
+          return `${titular.nombre} (+${cotitulares.length}: ${cotitulares.map((c: any) => c.nombre).join(', ')})`;
+        },
         flex: 2.5,
         minWidth: 220,
       },

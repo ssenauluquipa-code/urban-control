@@ -22,7 +22,7 @@ export class ExportExcelService {
     const worksheet = workbook.addWorksheet(sheetName);
 
     // --- 1. ENCABEZADOS DIRECTAMENTE EN LA FILA 1 (Sin filas previas) ---
-    const columnasVisibles = columns.filter(col => col.field && !col.hide);
+    const columnasVisibles = columns.filter(col => (col.field || col.valueGetter) && !col.hide);
     const headers = columnasVisibles.map(col => col.headerName || col.field || '');
     const headerRow = worksheet.addRow(headers);
 
@@ -49,7 +49,28 @@ export class ExportExcelService {
     // --- 2. DATOS (Inician en Fila 2) ---
     data.forEach((rowData, index) => {
       const rowValues = columnasVisibles.map(col => {
-        const rawValue = this.getDeepValue(rowData, col.field!);
+        let rawValue = undefined;
+
+        if (col.valueGetter && typeof col.valueGetter === 'function') {
+          try {
+            rawValue = col.valueGetter({
+              data: rowData,
+              node: null,
+              colDef: col,
+              column: null,
+              api: null,
+              columnApi: null,
+              context: null,
+              getValue: (field: string) => this.getDeepValue(rowData, field)
+            } as any);
+          } catch (e) {
+            console.warn('Error en valueGetter', e);
+          }
+        }
+
+        if ((rawValue === undefined || rawValue === null) && col.field) {
+          rawValue = this.getDeepValue(rowData, col.field);
+        }
         
         if (col.valueFormatter && typeof col.valueFormatter === 'function') {
           try {

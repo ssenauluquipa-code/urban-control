@@ -5,6 +5,7 @@ import { finalize } from 'rxjs';
 import { ActividadesRepository } from '../repository/actividades.repository';
 import { ProjectStatusGlobalService } from './project-status-global.service';
 import { IActividad, IActividadesFiltrosDto } from '../models/actividades.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import { IActividad, IActividadesFiltrosDto } from '../models/actividades.model'
 export class ActividadesService {
   private readonly repository = inject(ActividadesRepository);
   private readonly projectGlobalService = inject(ProjectStatusGlobalService);
+  private readonly authService = inject(AuthService);
 
   // Estados reactivos controlados por Signals
   private readonly _actividades = signal<IActividad[]>([]);
@@ -28,10 +30,13 @@ export class ActividadesService {
 
   constructor() {
     // Reacción automática: Si el usuario cambia de Proyecto Inmobiliario en el Topbar,
-    // refrescamos inmediatamente el historial comercial de actividades
+    // refrescamos inmediatamente el historial comercial de actividades si es ADMIN
     effect(() => {
-      const activeProject = this.projectGlobalService.getCurrentProjectId(); // Supongamos que así se expone en tu signal global
-      if (activeProject) {
+      const activeProject = this.projectGlobalService.getCurrentProjectId(); 
+      const currentUser = this.authService.currentUser();
+      const isAdmin = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'ADMIN';
+
+      if (activeProject && isAdmin) {
         this.cargarActividades({ limit: 20 });
       } else {
         this._actividades.set([]);
@@ -40,6 +45,13 @@ export class ActividadesService {
   }
 
   public cargarActividades(filtros: IActividadesFiltrosDto = {}): void {
+    const currentUser = this.authService.currentUser();
+    const isAdmin = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'ADMIN';
+    if (!isAdmin) {
+      this._actividades.set([]);
+      return;
+    }
+
     this._loading.set(true);
     this._error.set(null);
 

@@ -218,17 +218,13 @@ export class ListReservasComponent implements OnInit {
         floatingFilter: true,
       },
       {
-        headerName: 'Manzana / Lote',
-        field: 'lote.numero',
-        valueGetter: (params) => {
-          const lote = params.data?.numeroLote;
-          const manzana = params.data?.manzana;
-          if (lote && manzana) {
-            return `Mz. ${manzana} - Lote ${lote}`;
-          }
-          return 'No asignado';
-        },
+        headerName: 'Manzana',
+        field: 'manzana',        
         flex: 1.5,
+      },
+      {
+        headerName: 'Lote',
+        field: 'numeroLote',        
       },
       {
         headerName: 'Fecha Reserva',
@@ -241,6 +237,11 @@ export class ListReservasComponent implements OnInit {
         field: 'fechaVencimiento',
         valueFormatter: (params) => params.value ? new Date(params.value).toLocaleDateString() : '',
         flex: 1,
+      },
+      {
+        headerName: 'Vendedor',
+        field: 'nombreAsesor',
+        flex: 2
       },
       {
         headerName: 'Estado',

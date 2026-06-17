@@ -20,7 +20,7 @@ export class ExportPdfService {
     // Aseguramos que el título exista
     const tituloSeguro = title && title.trim() !== '' ? title : 'REPORTE GENERADO';
 
-    const columnasVisibles = columns.filter(col => col.field && col.headerName && !col.hide);
+    const columnasVisibles = columns.filter(col => (col.field || col.valueGetter) && col.headerName && !col.hide);
     
     // --- TRUCO CLAVE: Definimos el color de fondo DIRECTAMENTE en el objeto de la celda ---
     const headersTable = columnasVisibles.map(col => ({ 
@@ -49,7 +49,28 @@ export class ExportPdfService {
 
     const rowsTable = data.map(rowData => {
       return columnasVisibles.map(col => {
-        const rawValue = this.getDeepValue(rowData, col.field!);
+        let rawValue = undefined;
+
+        if (col.valueGetter && typeof col.valueGetter === 'function') {
+          try {
+            rawValue = col.valueGetter({
+              data: rowData,
+              node: null,
+              colDef: col,
+              column: null,
+              api: null,
+              columnApi: null,
+              context: null,
+              getValue: (field: string) => this.getDeepValue(rowData, field)
+            } as any);
+          } catch (e) {
+            console.warn('Error en valueGetter', e);
+          }
+        }
+
+        if ((rawValue === undefined || rawValue === null) && col.field) {
+          rawValue = this.getDeepValue(rowData, col.field);
+        }
         
         if (col.valueFormatter && typeof col.valueFormatter === 'function') {
           try {
@@ -75,9 +96,29 @@ export class ExportPdfService {
 
     const bodyTable = [headersTable, ...rowsTable];
     
-    // Si hay muchas columnas, permitimos que pdfmake decida automáticamente el ancho basándose en el contenido,
-    // o usamos '*' pero con fuente pequeña para que se adapte mejor sin sobrepasar la hoja.
-    const widthsTable = columnasVisibles.map(() => cantidadColumnas > 10 ? 'auto' : '*');
+    // Calculamos los anchos de las columnas dinámicamente:
+    // - Usamos 'auto' para columnas con datos cortos (fechas, códigos, montos, métodos, estados, etc.) para que se encojan.
+    // - Usamos '*' para columnas con textos largos (observaciones, clientes, etc.) o columnas con 'flex' configurado.
+    const widthsTable = columnasVisibles.map(col => {
+      if (col.flex && col.flex > 0) {
+        return '*';
+      }
+      const fieldLower = String(col.field || '').toLowerCase();
+      const headerLower = String(col.headerName || '').toLowerCase();
+      if (
+        fieldLower.includes('observacion') || 
+        fieldLower.includes('descripcion') || 
+        fieldLower.includes('cliente') || 
+        fieldLower.includes('propietario') ||
+        headerLower.includes('observacion') ||
+        headerLower.includes('descripción') ||
+        headerLower.includes('cliente') ||
+        headerLower.includes('propietario')
+      ) {
+        return '*';
+      }
+      return 'auto';
+    });
 
     const docDefinition: any = {
       pageSize: 'LETTER',

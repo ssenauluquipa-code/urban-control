@@ -246,13 +246,25 @@ export class TableActionsComponent implements ICellRendererAngularComp {
         return data?.estado === "CANCELADA";
       }
 
-      // Regla de Negocio: En Reservas, el botón de Anular y Venta solo aparece si la reserva está ACTIVA
+      // Regla de Negocio: En Reservas, el botón de Venta solo aparece si la reserva está ACTIVA
       if (
         currentModule === EAppModule.RESERVAS &&
-        (action === TableActionsEnum.ANULAR ||
-          action === TableActionsEnum.VENTA)
+        action === TableActionsEnum.VENTA
       ) {
         return data?.estado === "ACTIVA";
+      }
+
+      // Regla de Negocio: En Reservas, el botón de Anular solo aparece si la reserva está ACTIVA y el usuario es el dueño (asesor) o admin
+      if (
+        currentModule === EAppModule.RESERVAS &&
+        action === TableActionsEnum.ANULAR
+      ) {
+        const currentUser = this.authService.currentUser();
+        const isAdmin = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'ADMIN';
+        const isOwner = data?.asesorId === currentUser?.asesorId;
+        const isActiva = data?.estado === "ACTIVA";
+
+        return isActiva && (isOwner || isAdmin);
       }
 
       // Regla de Negocio: En Lotes, el botón de eliminar solo aparece si el lote está DISPONIBLE
@@ -316,6 +328,23 @@ export class TableActionsComponent implements ICellRendererAngularComp {
             ? data.saldoPendiente > 0
             : true;
         return isActiva && isContado && hasSaldo;
+      }
+
+      // Regla de Negocio: En Pagos, el botón de Anular solo aparece si el pago no está anulado, el usuario tiene permiso, y es el dueño (asesor) o admin
+      if (
+        currentModule === EAppModule.PAGOS &&
+        action === TableActionsEnum.ANULAR
+      ) {
+        const canAnular = this.access.can(
+          this.module as EAppModule,
+          EAppAction.ANULAR,
+        );
+        const currentUser = this.authService.currentUser();
+        const isAdmin = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'ADMIN';
+        const isOwner = data?.asesorId === currentUser?.asesorId;
+        const isNotAnulado = data?.estado !== "ANULADO" && data?.estado !== "ANULADA";
+
+        return isNotAnulado && canAnular && (isOwner || isAdmin);
       }
 
       if (action === TableActionsEnum.BLOQUEADO)
