@@ -4,7 +4,10 @@
   title="Gestión de Ventas"
   [permissionScope]="EAppModule.VENTAS"
   [showNew]="true"
+  [showOptions]="true"
   (AddNew)="onAddNew()"
+  (MenuExportPDF)="exportarPDF()"
+  (MenuExportExcel)="exportarExcel()"
 >
   <!-- Espaciado superior mínimo ya que los filtros están en la tabla -->
   <app-data-table

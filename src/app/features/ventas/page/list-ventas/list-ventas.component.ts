@@ -29,6 +29,8 @@ import { VentaTipoPagoFloatingFilterComponent } from "src/app/shared/components/
 import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
 import { StatusFloatingFilterVentasComponent } from "src/app/shared/components/organisms/status-floating-filter-ventas.component";
 import { PdfViewerUtil } from "src/app/core/utils/pdf-viewer.util";
+import { ExportPdfService } from "src/app/core/services/export-pdf.service";
+import { ExportExcelService } from "src/app/core/services/export-excel.service";
 
 @Component({
   selector: "app-list-ventas",
@@ -50,6 +52,8 @@ export class ListVentasComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly modalService = inject(NgbModal);
   private readonly destroyRef = inject(DestroyRef);
+  private exportPdfService = inject(ExportPdfService);
+  private exportExcelService = inject(ExportExcelService);
 
   // Enums expuestos para el template HTML
   public readonly EAppModule = EAppModule;
@@ -227,6 +231,16 @@ export class ListVentasComponent implements OnInit {
    */
   public onAddNew(): void {
     this.router.navigate(["/ventas/register"]);
+  }
+
+  public exportarPDF(): void {
+    if (this.ventas.length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Ventas', this.columnDefs, this.ventas);
+  }
+
+  public exportarExcel(): void {
+    if (this.ventas.length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Ventas', this.columnDefs, this.ventas);
   }
 
   /**

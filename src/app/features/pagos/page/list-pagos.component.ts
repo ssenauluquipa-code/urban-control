@@ -32,6 +32,8 @@ import {
   IReciboPagoData,
 } from "../components/modal-comprobante-pago/modal-comprobante-pago.component";
 import { forkJoin } from "rxjs";
+import { ExportPdfService } from "src/app/core/services/export-pdf.service";
+import { ExportExcelService } from "src/app/core/services/export-excel.service";
 
 @Component({
   selector: "app-list-pagos",
@@ -47,7 +49,10 @@ import { forkJoin } from "rxjs";
       title="Gestión de Pagos"
       [permissionScope]="EAppModule.PAGOS"
       [showNew]="true"
+      [showOptions]="true"
       (AddNew)="onAddNew()"
+      (MenuExportPDF)="exportarPDF()"
+      (MenuExportExcel)="exportarExcel()"
     >
       <app-data-table
         [module]="EAppModule.PAGOS"
@@ -78,6 +83,8 @@ export class ListPagosComponent {
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private modalService = inject(NgbModal);
+  private exportPdfService = inject(ExportPdfService);
+  private exportExcelService = inject(ExportExcelService);
 
   public tableActionEnum = TableActionsEnum;
   public readonly EAppModule = EAppModule;
@@ -345,6 +352,16 @@ export class ListPagosComponent {
 
   onAddNew(): void {
     this.router.navigate(["/pagos/register"]);
+  }
+
+  public exportarPDF(): void {
+    if (this.pagos.length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Pagos', this.columnDefs, this.pagos);
+  }
+
+  public exportarExcel(): void {
+    if (this.pagos.length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Pagos', this.columnDefs, this.pagos);
   }
 
   /**

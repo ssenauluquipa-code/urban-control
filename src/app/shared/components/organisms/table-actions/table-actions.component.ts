@@ -10,6 +10,7 @@ import {
   TableActionsEnum,
 } from "../../../interfaces/table-actions.interface";
 import { AccessControlService } from "src/app/core/services/access-control.service";
+import { AuthService } from "src/app/core/services/auth.service";
 import { EAppModule, EAppAction } from "src/app/core/config/permissions.enum";
 import { inject } from "@angular/core";
 
@@ -89,6 +90,7 @@ export class TableActionsComponent implements ICellRendererAngularComp {
   }>();
 
   private access = inject(AccessControlService);
+  private authService = inject(AuthService);
 
   actions: string[] = [];
   rowData: unknown = null;
@@ -189,6 +191,7 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       estado?: string;
       tipoPago?: string;
       saldoPendiente?: number;
+      asesorId?: string;
     };
 
     // 1. Filtramos por permisos
@@ -266,6 +269,23 @@ export class TableActionsComponent implements ICellRendererAngularComp {
         action === TableActionsEnum.DELETE
       ) {
         return data?.estado === "ANULADA";
+      }
+
+      // Regla de Negocio: En Ventas, el botón ANULAR solo aparece si la venta NO está anulada y si el asesorId coincide con el logueado
+      if (
+        currentModule === EAppModule.VENTAS &&
+        action === TableActionsEnum.ANULAR
+      ) {
+        const canAnular = this.access.can(
+          this.module as EAppModule,
+          EAppAction.ANULAR,
+        );
+        const currentUser = this.authService.currentUser();
+        const isAdmin = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'ADMIN';
+        const isOwner = data?.asesorId === currentUser?.asesorId;
+        const isNotAnulada = data?.estado !== "ANULADO" && data?.estado !== "ANULADA";
+        
+        return isNotAnulada && canAnular && (isOwner || isAdmin);
       }
 
       // Regla de Negocio: En Ventas, Devolución solo sale si está ANULADA

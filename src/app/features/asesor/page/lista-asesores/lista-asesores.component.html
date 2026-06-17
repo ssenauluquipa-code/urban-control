@@ -2,7 +2,10 @@
   title="Gestión de Asesores"
   [permissionScope]="EAppModule.ASESORES"
   [showNew]="true"
+  [showOptions]="true"
   (AddNew)="onAddNew()"
+  (MenuExportPDF)="exportarPDF()"
+  (MenuExportExcel)="exportarExcel()"
 >
   <!-- Tabla -->
   <!-- 

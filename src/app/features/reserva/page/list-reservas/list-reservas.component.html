@@ -2,7 +2,10 @@
   title="Gestión de Reservas"
   [permissionScope]="EAppModule.RESERVAS"
   [showNew]="true"
+  [showOptions]="true"
   (AddNew)="onAddNew()"
+  (MenuExportPDF)="exportarPDF()"
+  (MenuExportExcel)="exportarExcel()"
 >
   <!-- BARRA DE FILTROS -->
   <div class="row mb-3">

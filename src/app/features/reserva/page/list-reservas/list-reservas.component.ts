@@ -17,6 +17,8 @@ import { ConfirmationService } from 'src/app/core/services/confirmation.service'
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
 import { ReservaService } from 'src/app/core/services/reserva.service';
+import { ExportPdfService } from 'src/app/core/services/export-pdf.service';
+import { ExportExcelService } from 'src/app/core/services/export-excel.service';
 
 // Componentes Compartidos
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
@@ -45,6 +47,8 @@ export class ListReservasComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private exportPdfService = inject(ExportPdfService);
+  private exportExcelService = inject(ExportExcelService);
 
   // Exponer Enums al Template
   public readonly EAppModule = EAppModule;
@@ -183,6 +187,16 @@ export class ListReservasComponent implements OnInit {
    */
   public onAddNew(): void {
     this.router.navigate(['/reservas/register']);
+  }
+
+  public exportarPDF(): void {
+    if (this.reservas.length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Reservas', this.columnDefs, this.reservas);
+  }
+
+  public exportarExcel(): void {
+    if (this.reservas.length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Reservas', this.columnDefs, this.reservas);
   }
 
   /**

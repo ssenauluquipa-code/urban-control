@@ -1,7 +1,10 @@
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import { Component, OnInit } from "@angular/core";
-import { finalize, Observable } from "rxjs";
+import { finalize, Observable, take } from "rxjs";
 import { IUser } from "src/app/core/models/user.model";
+import { ExportPdfService } from "src/app/core/services/export-pdf.service";
+import { ExportExcelService } from "src/app/core/services/export-excel.service";
+import { inject } from "@angular/core";
 import {
   ITableActionEvent,
   TableActionsEnum,
@@ -39,6 +42,8 @@ import { StatusFloatingFilterComponent } from "src/app/shared/components/organis
       [showNew]="true"
       [showOptions]="true"
       (AddNew)="onAddNewUser()"
+      (MenuExportPDF)="exportarPDF()"
+      (MenuExportExcel)="exportarExcel()"
     >
       <!-- Eliminamos el selector de proyectos porque la lista de usuarios es global -->
 
@@ -66,6 +71,9 @@ export class UserListComponent implements OnInit {
   public tableActionEnum = TableActionsEnum;
   public users$!: Observable<IUser[]>;
   public isLoading = false;
+
+  private exportPdfService = inject(ExportPdfService);
+  private exportExcelService = inject(ExportExcelService);
 
   private isMobile = false;
   private isTablet = false;
@@ -272,6 +280,20 @@ export class UserListComponent implements OnInit {
 
   onAddNewUser() {
     this.openModal();
+  }
+
+  public exportarPDF(): void {
+    this.users$.pipe(take(1)).subscribe(users => {
+      if (!users || users.length === 0) return;
+      this.exportPdfService.exportAsPdf('Gestión de Usuarios', this.columnDefs, users);
+    });
+  }
+
+  public exportarExcel(): void {
+    this.users$.pipe(take(1)).subscribe(users => {
+      if (!users || users.length === 0) return;
+      this.exportExcelService.exportAsExcel('Gestión de Usuarios', this.columnDefs, users);
+    });
   }
 
   private openModal(data?: IUser | null) {

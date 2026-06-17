@@ -25,6 +25,8 @@ import { ProjectStatusGlobalService } from "src/app/core/services/project-status
 import { SelectManzanasComponent } from "src/app/shared/components/atoms/select-manzanas.component";
 import { LoteStatusFloatingFilterComponent } from "src/app/shared/components/organisms/lote-status-floating-filter.component";
 import { Router, ActivatedRoute } from "@angular/router";
+import { ExportPdfService } from "src/app/core/services/export-pdf.service";
+import { ExportExcelService } from "src/app/core/services/export-excel.service";
 
 @Component({
   selector: "app-list-lotes",
@@ -117,6 +119,8 @@ export class ListLotesComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private confirmation: ConfirmationService,
+    private exportPdfService: ExportPdfService,
+    private exportExcelService: ExportExcelService,
   ) {
     effect(() => {
       const projectId: string | null = this.globalContext.currentProjectId();
@@ -241,6 +245,16 @@ export class ListLotesComponent implements OnInit {
       relativeTo: this.route,
       queryParams: { manzanaId: manzanaId },
     });
+  }
+
+  public exportarPDF(): void {
+    if (this.lotes().length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Lotes', this.columnDefs, this.lotes());
+  }
+
+  public exportarExcel(): void {
+    if (this.lotes().length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Lotes', this.columnDefs, this.lotes());
   }
 
   private confirmarEliminar(lote: ILote): void {

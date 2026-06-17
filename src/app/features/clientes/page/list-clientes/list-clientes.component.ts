@@ -27,6 +27,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { CommonModule } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ClienteFotoUploadComponent } from '../../components/cliente-foto-upload/cliente-foto-upload.component';
+import { ExportPdfService } from 'src/app/core/services/export-pdf.service';
+import { ExportExcelService } from 'src/app/core/services/export-excel.service';
 
 @Component({
   selector: 'app-list-clientes',
@@ -60,6 +62,8 @@ export class ListClientesComponent implements OnInit, OnDestroy {
   private ngbModal = inject(NgbModal);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private exportPdfService = inject(ExportPdfService);
+  private exportExcelService = inject(ExportExcelService);
 
   // Definición de columnas SIN el icono de menú (hamburguesa)
   public columnDefs: ColDef[] = [
@@ -328,4 +332,22 @@ export class ListClientesComponent implements OnInit, OnDestroy {
   onAddNew(): void {
     this.router.navigate(['/clientes/nuevo']);
   }
+  exportarPDF(): void {
+    if (this.clientes.length === 0) return;
+    this.exportPdfService.exportAsPdf(
+      'Listado de Clientes',
+      this.columnDefs,
+      this.clientes
+    );
+  }
+
+  exportarExcel(): void {
+    if (this.clientes.length === 0) return;
+    this.exportExcelService.exportAsExcel(
+      'Listado de Clientes',
+      this.columnDefs,
+      this.clientes
+    );
+  }
+
 }

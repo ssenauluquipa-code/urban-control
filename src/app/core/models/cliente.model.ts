@@ -18,7 +18,7 @@ export interface ICliente {
     numeroReferencia?: string;
     genero: EGenero; // Uso del Enum
     fechaNacimiento?: string;
-    fotoUrl?: string;
+    fotoUrl: string;
     telefono?: string;
     email?: string;
     direccion?: string;
@@ -35,6 +35,7 @@ export interface CreateClienteDto {
     numeroReferencia?: string;
     genero: EGenero;
     fechaNacimiento?: string;
+    fotoUrl?: string;
     estadoCivil?: string;
     ocupacion?: string;
     telefono?: string;

@@ -1,9 +1,11 @@
 import { ColDef } from 'ag-grid-community';
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, finalize } from 'rxjs';
+import { Observable, finalize, take } from 'rxjs';
 import { Router } from '@angular/router';
+import { ExportPdfService } from 'src/app/core/services/export-pdf.service';
+import { ExportExcelService } from 'src/app/core/services/export-excel.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PageContainerComponent } from 'src/app/shared/components/templates/page-container/page-container.component';
 import { DataTableComponent } from 'src/app/shared/components/organisms/data-table/data-table.component';
@@ -26,7 +28,10 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
       title="Urbanizaciónes"
       [permissionScope]="EAppModule.PROYECTOS"
       [showNew]="true"
-      (AddNew)="onAddNew()">
+      [showOptions]="true"
+      (AddNew)="onAddNew()"
+      (MenuExportPDF)="exportarPDF()"
+      (MenuExportExcel)="exportarExcel()">
       <app-data-table
         [module]="EAppModule.PROYECTOS"
         [rowData]="(proyectos$ | async) || []"
@@ -48,6 +53,9 @@ export class LisProyectosComponent implements OnInit {
   public tableActionEnum = TableActionsEnum;
   public proyectos$!: Observable<IProyecto[]>;
   public loading = false;
+
+  private exportPdfService = inject(ExportPdfService);
+  private exportExcelService = inject(ExportExcelService);
 
   columnDefs: ColDef[] = [
     { field: 'nombre', headerName: 'Nombre del Proyecto', width: 180 },
@@ -119,6 +127,20 @@ export class LisProyectosComponent implements OnInit {
 
   onAddNew(): void {
     this.openModal();
+  }
+
+  public exportarPDF(): void {
+    this.proyectos$.pipe(take(1)).subscribe(data => {
+      if (!data || data.length === 0) return;
+      this.exportPdfService.exportAsPdf('Urbanizaciones', this.columnDefs, data);
+    });
+  }
+
+  public exportarExcel(): void {
+    this.proyectos$.pipe(take(1)).subscribe(data => {
+      if (!data || data.length === 0) return;
+      this.exportExcelService.exportAsExcel('Urbanizaciones', this.columnDefs, data);
+    });
   }
 
   private openModal(proyecto?: IProyecto): void {

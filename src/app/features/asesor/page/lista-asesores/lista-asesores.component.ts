@@ -18,6 +18,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { AsesorDetailComponent } from "../asesor-detail/asesor-detail.component";
 import { ITableFilterModel } from "src/app/shared/interfaces/table-filters.interface";
 import { StatusFloatingFilterComponent } from "src/app/shared/components/organisms/status-floating-filter.component";
+import { ExportPdfService } from "src/app/core/services/export-pdf.service";
+import { ExportExcelService } from "src/app/core/services/export-excel.service";
 
 @Component({
   selector: "app-lista-asesores",
@@ -129,6 +131,8 @@ export class ListaAsesoresComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
+  private exportPdfService = inject(ExportPdfService);
+  private exportExcelService = inject(ExportExcelService);
 
   ngOnInit(): void {
     this.loadAsesores();
@@ -184,6 +188,16 @@ export class ListaAsesoresComponent implements OnInit {
 
   onAddNew(): void {
     this.router.navigate(["registrar"], { relativeTo: this.route });
+  }
+
+  public exportarPDF(): void {
+    if (this.asesores.length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Asesores', this.columnDefs, this.asesores);
+  }
+
+  public exportarExcel(): void {
+    if (this.asesores.length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Asesores', this.columnDefs, this.asesores);
   }
 
   private openDetailModal(id: string): void {

@@ -24,7 +24,11 @@ import { RegisterReservaViewComponent } from "../../views/register-reserva-view/
       (Save)="onSave()"
       (Cancel)="onCancel()"
     >
-      <app-register-reserva-view [reservaForm]="formGroup" [proyectoId]="proyectoId">
+      <app-register-reserva-view 
+        [reservaForm]="formGroup" 
+        [proyectoId]="proyectoId"
+        [isEditMode]="isEditMode"
+        [reservaData]="reserva">
       </app-register-reserva-view>
     </app-page-container>
 
@@ -38,6 +42,7 @@ export class RegisterReservaComponent implements OnInit {
   public loading = false;
   public idReserva = '';
   public isEditMode : boolean = false;
+  public reserva: any = null;
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -179,7 +184,11 @@ export class RegisterReservaComponent implements OnInit {
       .pipe(finalize(()=> this.loading = false))
       .subscribe({
         next: (data) => {
-          this.formGroup.patchValue(data);
+          this.reserva = data;
+          this.formGroup.patchValue({
+            ...data,
+            manzanaId: data.lote?.manzana?.id
+          });
           this.formGroup.get('clienteId')?.disable();
           this.formGroup.get('loteId')?.disable();
           this.formGroup.get('manzanaId')?.disable();

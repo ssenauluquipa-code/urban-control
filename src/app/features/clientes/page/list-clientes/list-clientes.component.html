@@ -3,9 +3,12 @@
   [permissionScope]="EAppModule.CLIENTES"
   [showNew]="true"
   (AddNew)="onAddNew()"
+  (MenuExportPDF)="exportarPDF()"
+  (MenuExportExcel)="exportarExcel()"
 >
   <!-- Tabla con Filtro Local (Nueva) -->
   <app-data-table
+    #tablaClientes
     [module]="EAppModule.CLIENTES"
     [rowData]="clientes"
     [columnDefs]="columnDefs"

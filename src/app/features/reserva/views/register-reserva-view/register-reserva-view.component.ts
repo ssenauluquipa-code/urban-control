@@ -11,11 +11,12 @@ import { InputDateComponent } from "src/app/shared/components/atoms/input-date/i
 import { InputTextareaComponent } from "src/app/shared/components/atoms/input-textarea/input-textarea.component";
 import { InputNumberComponent } from "src/app/shared/components/atoms/input-number/input-number.component";
 import { CardContainerComponent } from 'src/app/shared/components/atoms/card-container/card-container.component';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 @Component({
   selector: 'app-register-reserva-view',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, SelectClientesComponent, SelectManzanasComponent, SelectLotesComponent, SelectMonedaComponent, InputDateComponent, InputTextareaComponent, InputNumberComponent, CardContainerComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, SelectClientesComponent, SelectManzanasComponent, SelectLotesComponent, SelectMonedaComponent, InputDateComponent, InputTextareaComponent, InputNumberComponent, CardContainerComponent, NzInputModule],
   templateUrl: './register-reserva-view.component.html',
   styleUrl: './register-reserva-view.component.scss'
 })
@@ -23,6 +24,8 @@ export class RegisterReservaViewComponent {
   // Inputs
   @Input() reservaForm!: FormGroup;
   @Input() proyectoId: string | null = null;
+  @Input() isEditMode = false;
+  @Input() reservaData: any = null;
 
   // Getters para controles
   get clienteId() { return this.reservaForm.get('clienteId') as FormControl<string>; }

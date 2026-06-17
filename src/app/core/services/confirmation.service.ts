@@ -92,7 +92,9 @@ export class ConfirmationService {
               resolve();
             },
             error: (err) => {
-              this.notification.error(`Error al eliminar ${article} ${entityName.toLowerCase()}`);
+              const backendMessage = err?.error?.message;
+              const errorMessage = backendMessage ? backendMessage : `Error al eliminar ${article} ${entityName.toLowerCase()}`;
+              this.notification.error(errorMessage);
               observer.error(err);
               reject(err);
             }

@@ -9,6 +9,9 @@ import { IManzana } from 'src/app/core/models/manzana/manzana.model';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ManzanaService } from 'src/app/core/services/proyectos/manzana.service';
 import { ProyectoService } from 'src/app/core/services/proyectos/proyecto.service';
+import { ExportPdfService } from 'src/app/core/services/export-pdf.service';
+import { ExportExcelService } from 'src/app/core/services/export-excel.service';
+import { inject } from '@angular/core';
 import { ITableActionEvent, TableActionsEnum } from 'src/app/shared/interfaces/table-actions.interface';
 import { EAppModule } from 'src/app/core/config/permissions.enum';
 import { RegisterManzanaComponent } from './register-manzana.component';
@@ -28,7 +31,9 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
       [permissionScope]="EAppModule.MANZANAS"
       [showNew]="true"
       [showOptions]="true"
-      (AddNew)="onAddNewManzana()">
+      (AddNew)="onAddNewManzana()"
+      (MenuExportPDF)="exportarPDF()"
+      (MenuExportExcel)="exportarExcel()">
 
       <app-data-table
         [module]="EAppModule.MANZANAS"
@@ -51,6 +56,9 @@ export class ManzanaListComponent implements OnInit {
   //Guardamos los datos en un Signal local en vez de usar un Observable suelto ($)
   public manzanas = signal<IManzana[]>([]);
   public isLoading = false;
+
+  private exportPdfService = inject(ExportPdfService);
+  private exportExcelService = inject(ExportExcelService);
 
   constructor(private manzanaService: ManzanaService,
     private proyectoService: ProyectoService, // Para cargar el primero por defecto
@@ -138,6 +146,16 @@ export class ManzanaListComponent implements OnInit {
       return;
     }
     this.openModal(null, proyectoId);
+  }
+
+  public exportarPDF(): void {
+    if (this.manzanas().length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Manzanas', this.columnDefs, this.manzanas());
+  }
+
+  public exportarExcel(): void {
+    if (this.manzanas().length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Manzanas', this.columnDefs, this.manzanas());
   }
 
   private openModal(data: IManzana | null, proyectoId: string): void {
