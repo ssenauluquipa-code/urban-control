@@ -353,8 +353,7 @@ export class RegisterVentasComponent implements OnInit, OnDestroy {
       next: (response: any) => {
         this.notification.success("¡Venta registrada con éxito!");
         if (rawData.tipoPago === 'CONTADO' && response.data) {
-          const ventaCreada = response.data;
-
+          const ventaCreada = response.data;          
           // Obtenemos el nombre del titular desde la vista (que lo capturó al seleccionar)
           const nombreTitular = this.ventaView?.nombreTitular ?? 'Titular de la Venta';
           this.router.navigate(["/pagos/register"], {

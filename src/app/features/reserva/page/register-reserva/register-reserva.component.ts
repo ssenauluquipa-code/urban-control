@@ -132,7 +132,7 @@ export class RegisterReservaComponent implements OnInit {
             if (err.status === 409) {
               this.notification.error(err.error?.message || 'Conflicto al actualizar la reserva');
             } else {
-              this.notification.error('Error inesperado al actualizar reserva');
+              this.notification.error(err.error?.message || 'Error inesperado al actualizar reserva');
             }
           }
         });

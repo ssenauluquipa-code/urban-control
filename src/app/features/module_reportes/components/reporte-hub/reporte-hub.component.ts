@@ -89,7 +89,6 @@ export class ReporteHubComponent implements OnInit {
    * @param idReporte Identificador único del reporte seleccionado
    */
   public abrirReporte(idReporte: TipoReporteActivo): void {
-    console.log(`[UrbanControl] Navegando al visor operativo de: ${idReporte}`);
     
     // Al hacer clic, rediriges limpiamente usando el enrutador de Angular hacia tus sub-módulos dedicados
     this.router.navigate(['/reportes', idReporte.toLowerCase()]);

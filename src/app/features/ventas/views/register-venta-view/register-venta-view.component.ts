@@ -370,6 +370,7 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
         id: cliente.id,
         nombreCompleto: (reserva as any).nombreCliente || (cliente as any).nombreCompleto || 'Cliente de Reserva'
       };
+      this.nombreTitular = this.clienteDeReserva.nombreCompleto;
 
       const propietarioTitular: CreateVentaPropietarioDto = {
         clienteId: cliente.id,
@@ -389,6 +390,7 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
     this.currentReservedLote = null;
     this.reservaLabel = "";
     this.clienteDeReserva = null;
+    this.nombreTitular = null;
     this.reservaId.setValue(null);
     this.loteId.setValue(null);
 

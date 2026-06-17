@@ -140,6 +140,7 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
       };
       this.lastMoneda = state.moneda;
     }
+    console.log("venta seleccionada ", this.ventaSeleccionada);
   }
 
   ngOnInit(): void {

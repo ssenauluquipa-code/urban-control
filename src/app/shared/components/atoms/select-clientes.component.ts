@@ -143,6 +143,12 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
         this.clientList = [mockClient, ...this.clientList];
         this.cdr.markForCheck();
       }
+
+      const currentVal = this.input_control.value;
+      const ids = this.extractIds(currentVal);
+      if (this.withRoles && ids.length > 0 && ids[0] === cliente.id) {
+        this.TitularNombre.emit(cliente.nombreCompleto);
+      }
     }
   }
 
@@ -188,6 +194,14 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
           this.internal_control.setValue(desiredInternalValue, { emitEvent: false });
           this.cdr.markForCheck();
         }
+
+        if (this.withRoles && nextIds.length > 0) {
+          const titularId = nextIds[0];
+          const client = this.poolClientesSeleccionados.get(titularId);
+          if (client) {
+            this.TitularNombre.emit(client.nombreCompleto);
+          }
+        }
       });
 
     // Escuchar el estado de validación/touched del control padre
@@ -204,6 +218,14 @@ export class SelectClientesComponent<T = string | string[] | CreateVentaPropieta
       const ids = this.extractIds(initialValue);
       const desiredInternalValue = this.multiple ? ids : (ids.length > 0 ? ids[0] : null);
       this.internal_control.setValue(desiredInternalValue, { emitEvent: false });
+
+      if (this.withRoles && ids.length > 0) {
+        const titularId = ids[0];
+        const client = this.poolClientesSeleccionados.get(titularId);
+        if (client) {
+          this.TitularNombre.emit(client.nombreCompleto);
+        }
+      }
     }
     this.syncValidationStatus();
   }
