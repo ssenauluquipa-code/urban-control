@@ -58,15 +58,16 @@ export class LisProyectosComponent implements OnInit {
   private exportExcelService = inject(ExportExcelService);
 
   columnDefs: ColDef[] = [
-    { field: 'nombre', headerName: 'Nombre del Proyecto', width: 180 },
-    { field: 'departamento', headerName: 'Departamento', width: 130 },
-    { field: 'provincia', headerName: 'Provincia', width: 150 },
-    { field: 'distrito', headerName: 'Distrito', flex: 1, width: 150 },
-    { field: 'direccion', headerName: 'Dirección', width: 250 },
+    { field: 'nombre', headerName: 'Nombre del Proyecto', flex: 1.5, minWidth: 160 },
+    { field: 'departamento', headerName: 'Departamento', width: 120, minWidth: 90 },
+    { field: 'provincia', headerName: 'Provincia', width: 130, minWidth: 100 },
+    { field: 'distrito', headerName: 'Distrito', width: 130, minWidth: 100 },
+    { field: 'direccion', headerName: 'Dirección', flex: 2, minWidth: 200 },
     {
       field: 'estado',
       headerName: 'Estado',
-      width: 110,
+      width: 100,
+      minWidth: 90,
       cellRenderer: BadgeEstadoComponent
     }
   ];

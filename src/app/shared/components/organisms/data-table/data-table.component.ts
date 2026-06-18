@@ -160,4 +160,12 @@ export class DataTableComponent<T = unknown> extends DataTableBaseComponent<T> i
       this.gridApi.setGridOption('rowData', this.rowData);
     }
   }
+
+  public override onGridSizeChanged(params: any): void {
+    super.onGridSizeChanged(params);
+  }
+
+  public override onFirstDataRendered(params: any): void {
+    super.onFirstDataRendered(params);
+  }
 }

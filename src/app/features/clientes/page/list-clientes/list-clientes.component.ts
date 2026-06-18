@@ -81,8 +81,9 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       field: 'fotoUrl',
       headerName: 'Foto',
-      width: 90,
-      minWidth: 90,
+      width: 65,
+      minWidth: 60,
+      suppressSizeToFit: true,
       cellRenderer: (params: ICellRendererParams<ICliente>) => {
         const url = params.value;
         const name = params.data?.nombreCompleto || 'U';
@@ -108,7 +109,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       field: 'nroDocumento',
       headerName: 'Documento',
       width: 160,
-      minWidth: 160,
+      minWidth: 140,
       valueFormatter: (params) => {
         if (!params.data) return '';
         const data = params.data;
@@ -127,7 +128,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       field: 'telefono',
       headerName: 'Celular',
       width: 120,
-      minWidth: 110,
+      minWidth: 105,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -144,8 +145,8 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     {
       colId: 'isActive',
       headerName: 'Estado',
-      width: 115,
-      minWidth: 115,
+      width: 105,
+      minWidth: 95,
       // Usamos valueGetter para que el valor real sea texto ('true'/'false')
       // Esto hace que el filtro funcione al 100% en local.
       valueGetter: (params) => params.data?.isActive ? 'true' : 'false',

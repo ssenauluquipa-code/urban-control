@@ -67,8 +67,8 @@ export class ListaAsesoresComponent implements OnInit {
     },
     {
       headerName: "Documento",
-      width: 170,
-      minWidth: 160,
+      width: 145,
+      minWidth: 130,
       filter: "agTextColumnFilter",
       valueGetter: (params) => {
         const data = params.data;
@@ -86,8 +86,8 @@ export class ListaAsesoresComponent implements OnInit {
     {
       field: "telefono",
       headerName: "Teléfono",
-      width: 130,
-      minWidth: 120,
+      width: 115,
+      minWidth: 100,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       suppressFloatingFilterButton: true,
@@ -104,8 +104,8 @@ export class ListaAsesoresComponent implements OnInit {
     {
       colId: 'isActive',
       headerName: "Estado",
-      width: 115,
-      minWidth: 115,
+      width: 105,
+      minWidth: 95,
       // Usamos valueGetter para que el filtro local funcione con strings
       valueGetter: (params) => params.data?.isActive ? 'true' : 'false',
       cellRenderer: BadgeEstadoComponent,

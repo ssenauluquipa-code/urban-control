@@ -82,7 +82,8 @@ export class ManzanaListComponent implements OnInit {
     {
       field: 'codigo',
       headerName: 'Código Manzana',
-      width: 150,
+      width: 130,
+      minWidth: 100,
       filter: true,
       cellStyle: { fontWeight: 'bold' }
     },
@@ -95,6 +96,7 @@ export class ManzanaListComponent implements OnInit {
     {
       field : '_count.lotes',
       headerName: 'Lotes',      
+      width: 90,
       minWidth: 80,
       cellStyle: { fontWeight: 'bold' }
     }

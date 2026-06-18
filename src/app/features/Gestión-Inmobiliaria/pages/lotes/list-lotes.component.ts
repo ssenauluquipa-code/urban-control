@@ -69,24 +69,28 @@ export class ListLotesComponent implements OnInit {
     {
       field: "numero",
       headerName: "Nro. Lote",
-      width: 100,
+      width: 90,
+      minWidth: 80,
       cellStyle: { fontWeight: "bold" },
     },
     {
       field: "manzana.codigo",
       headerName: "Manzana",
-      width: 100,
+      width: 90,
+      minWidth: 80,
     },
     {
       field: "areaM2",
       headerName: "Área (m²)",
       width: 110,
+      minWidth: 90,
       valueFormatter: (p) => (p.value ? p.value.toLocaleString("es-BO") : ""),
     },
     {
       field: "precioReferencial",
       headerName: "Precio (Bs.)",
       width: 120,
+      minWidth: 100,
     },
     {
       field: "observaciones",
@@ -97,7 +101,8 @@ export class ListLotesComponent implements OnInit {
     {
       field: "estado",
       headerName: "Estado",
-      width: 130,
+      width: 110,
+      minWidth: 90,
       cellRenderer: BadgeEstadoComponent,
       filter: "agTextColumnFilter",
       floatingFilter: true,

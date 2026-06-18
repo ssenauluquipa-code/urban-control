@@ -210,4 +210,12 @@ export class DataTableServerComponent<T = unknown> extends DataTableBaseComponen
       this.gridApi.refreshInfiniteCache();
     }
   }
+
+  public override onGridSizeChanged(params: any): void {
+    super.onGridSizeChanged(params);
+  }
+
+  public override onFirstDataRendered(params: any): void {
+    super.onFirstDataRendered(params);
+  }
 }

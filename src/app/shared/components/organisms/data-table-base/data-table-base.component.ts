@@ -82,6 +82,7 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
    */
   protected buildActionsColumn(): ColDef {
     return {
+      colId: 'actions',
       headerName: '',
       cellRenderer: 'tableActions',
       cellRendererParams: {
@@ -140,5 +141,38 @@ export abstract class DataTableBaseComponent<T = unknown> implements OnInit, OnC
   onFilterChanged(event: FilterChangedEvent<T>): void {
     const model = event.api.getFilterModel() as ITableFilterModel;
     this.filterChanged.emit(model);
+  }
+
+  public onGridSizeChanged(params: any): void {
+    this.adjustColumnsSize(params.api);
+  }
+
+  public onFirstDataRendered(params: any): void {
+    this.adjustColumnsSize(params.api);
+  }
+
+  public adjustColumnsSize(api: GridApi): void {
+    if (!api || !this.gridContainer) return;
+    
+    const gridWidth = this.gridContainer.nativeElement.offsetWidth;
+    if (gridWidth > 992) {
+      // 🖥️ Desktop: Ajustar columnas proporcionalmente para rellenar toda la pantalla y evitar huecos a la derecha
+      api.sizeColumnsToFit();
+    } else {
+      // 📱 Móviles/Tablets: Autoajustar las columnas que no sean 'flex' para reducir ancho de columnas pequeñas (Código, Estado, Lotes)
+      const columns = api.getColumns();
+      if (columns) {
+        const colIds = columns
+          .map(col => col.getColId())
+          .filter(id => {
+            const colDef = api.getColumnDef(id);
+            // Evitamos autoajustar columnas con flex, la columna de acciones o la vacía
+            return colDef && !colDef.flex && id !== 'actions' && colDef.headerName !== '';
+          });
+        if (colIds.length > 0) {
+          api.autoSizeColumns(colIds, false);
+        }
+      }
+    }
   }
 }

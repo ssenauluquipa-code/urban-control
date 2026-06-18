@@ -26,7 +26,7 @@ import { IPageConfig, DEFAULT_PAGE_CONFIG } from 'src/app/core/models/page-confi
       </app-sub-header>
       
       <!-- Contenido Principal -->
-      <div class="page-container-content py-3" style="flex: 1;">
+      <div class="page-container-content py-2" style="flex: 1;">
         <ng-content></ng-content>
       </div>
     </div>
