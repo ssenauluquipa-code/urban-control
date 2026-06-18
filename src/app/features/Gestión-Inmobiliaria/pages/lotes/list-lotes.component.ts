@@ -253,13 +253,29 @@ export class ListLotesComponent implements OnInit {
   }
 
   public exportarPDF(): void {
-    if (this.lotes().length === 0) return;
-    this.exportPdfService.exportAsPdf('Gestión de Lotes', this.columnDefs, this.lotes());
+    let dataToExport = this.lotes();
+    if (this.dataTable?.gridApi) {
+      const filtered: ILote[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Lotes', this.columnDefs, dataToExport);
   }
 
   public exportarExcel(): void {
-    if (this.lotes().length === 0) return;
-    this.exportExcelService.exportAsExcel('Gestión de Lotes', this.columnDefs, this.lotes());
+    let dataToExport = this.lotes();
+    if (this.dataTable?.gridApi) {
+      const filtered: ILote[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Lotes', this.columnDefs, dataToExport);
   }
 
   private confirmarEliminar(lote: ILote): void {

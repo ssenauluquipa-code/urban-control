@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -39,6 +39,8 @@ import { StatusReservaFloatingFilterComponent } from 'src/app/shared/components/
   templateUrl: './list-reservas.component.html',
 })
 export class ListReservasComponent implements OnInit {
+  @ViewChild(DataTableComponent) private dataTable?: DataTableComponent<IReserva>;
+
   // Inyección de servicios modernos usando inject()
   private readonly reservaService = inject(ReservaService);
   private readonly globalContext = inject(ProjectStatusGlobalService);
@@ -190,13 +192,29 @@ export class ListReservasComponent implements OnInit {
   }
 
   public exportarPDF(): void {
-    if (this.reservas.length === 0) return;
-    this.exportPdfService.exportAsPdf('Gestión de Reservas', this.columnDefs, this.reservas);
+    let dataToExport = this.reservas;
+    if (this.dataTable?.gridApi) {
+      const filtered: IReserva[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Reservas', this.columnDefs, dataToExport);
   }
 
   public exportarExcel(): void {
-    if (this.reservas.length === 0) return;
-    this.exportExcelService.exportAsExcel('Gestión de Reservas', this.columnDefs, this.reservas);
+    let dataToExport = this.reservas;
+    if (this.dataTable?.gridApi) {
+      const filtered: IReserva[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Reservas', this.columnDefs, dataToExport);
   }
 
   /**

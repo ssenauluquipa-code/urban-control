@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { finalize, Observable, take } from "rxjs";
 import { IUser } from "src/app/core/models/user.model";
 import { ExportPdfService } from "src/app/core/services/export-pdf.service";
@@ -67,6 +67,8 @@ import { StatusFloatingFilterComponent } from "src/app/shared/components/organis
   styles: ``,
 })
 export class UserListComponent implements OnInit {
+  @ViewChild(DataTableComponent) private dataTable?: DataTableComponent<IUser>;
+
   public readonly EAppModule = EAppModule;
   public tableActionEnum = TableActionsEnum;
   public users$!: Observable<IUser[]>;
@@ -152,6 +154,7 @@ export class UserListComponent implements OnInit {
         headerName: "Estado",
         width: 100,
         valueGetter: (params) => params.data?.isActive ? 'true' : 'false',
+        valueFormatter: (params) => params.value === 'true' ? 'Activo' : 'Inactivo',
         cellRenderer: BadgeEstadoComponent,
         filter: 'agTextColumnFilter',
         floatingFilter: true,
@@ -283,17 +286,39 @@ export class UserListComponent implements OnInit {
   }
 
   public exportarPDF(): void {
-    this.users$.pipe(take(1)).subscribe(users => {
-      if (!users || users.length === 0) return;
-      this.exportPdfService.exportAsPdf('Gestión de Usuarios', this.columnDefs, users);
-    });
+    let dataToExport: IUser[] = [];
+    if (this.dataTable?.gridApi) {
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) dataToExport.push(node.data);
+      });
+    }
+
+    if (dataToExport.length > 0) {
+      this.exportPdfService.exportAsPdf('Gestión de Usuarios', this.columnDefs, dataToExport);
+    } else {
+      this.users$.pipe(take(1)).subscribe(users => {
+        if (!users || users.length === 0) return;
+        this.exportPdfService.exportAsPdf('Gestión de Usuarios', this.columnDefs, users);
+      });
+    }
   }
 
   public exportarExcel(): void {
-    this.users$.pipe(take(1)).subscribe(users => {
-      if (!users || users.length === 0) return;
-      this.exportExcelService.exportAsExcel('Gestión de Usuarios', this.columnDefs, users);
-    });
+    let dataToExport: IUser[] = [];
+    if (this.dataTable?.gridApi) {
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) dataToExport.push(node.data);
+      });
+    }
+
+    if (dataToExport.length > 0) {
+      this.exportExcelService.exportAsExcel('Gestión de Usuarios', this.columnDefs, dataToExport);
+    } else {
+      this.users$.pipe(take(1)).subscribe(users => {
+        if (!users || users.length === 0) return;
+        this.exportExcelService.exportAsExcel('Gestión de Usuarios', this.columnDefs, users);
+      });
+    }
   }
 
   private openModal(data?: IUser | null) {

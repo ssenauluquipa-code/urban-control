@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, effect, inject } from "@angular/core";
+import { ChangeDetectorRef, Component, effect, inject, ViewChild } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ColDef, CellClassParams } from "ag-grid-community";
 import { Router } from "@angular/router";
@@ -74,6 +74,8 @@ import { ExportExcelService } from "src/app/core/services/export-excel.service";
   styles: ``,
 })
 export class ListPagosComponent {
+  @ViewChild(DataTableComponent) private dataTable?: DataTableComponent<IPagos>;
+
   private pagosService = inject(PagosService);
   private ventaService = inject(VentaService);
   private authService = inject(AuthService);
@@ -370,13 +372,29 @@ export class ListPagosComponent {
   }
 
   public exportarPDF(): void {
-    if (this.pagos.length === 0) return;
-    this.exportPdfService.exportAsPdf('Gestión de Pagos', this.columnDefs, this.pagos);
+    let dataToExport = this.pagos;
+    if (this.dataTable?.gridApi) {
+      const filtered: IPagos[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Pagos', this.columnDefs, dataToExport);
   }
 
   public exportarExcel(): void {
-    if (this.pagos.length === 0) return;
-    this.exportExcelService.exportAsExcel('Gestión de Pagos', this.columnDefs, this.pagos);
+    let dataToExport = this.pagos;
+    if (this.dataTable?.gridApi) {
+      const filtered: IPagos[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Pagos', this.columnDefs, dataToExport);
   }
 
   /**

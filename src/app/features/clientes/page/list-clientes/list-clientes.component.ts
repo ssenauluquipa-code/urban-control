@@ -150,6 +150,7 @@ export class ListClientesComponent implements OnInit, OnDestroy {
       // Usamos valueGetter para que el valor real sea texto ('true'/'false')
       // Esto hace que el filtro funcione al 100% en local.
       valueGetter: (params) => params.data?.isActive ? 'true' : 'false',
+      valueFormatter: (params) => params.value === 'true' ? 'Activo' : 'Inactivo',
       cellRenderer: BadgeEstadoComponent,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
@@ -334,20 +335,36 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     this.router.navigate(['/clientes/nuevo']);
   }
   exportarPDF(): void {
-    if (this.clientes.length === 0) return;
+    let dataToExport = this.clientes;
+    if (this.dataTable?.gridApi) {
+      const filtered: ICliente[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
     this.exportPdfService.exportAsPdf(
       'Listado de Clientes',
       this.columnDefs,
-      this.clientes
+      dataToExport
     );
   }
 
   exportarExcel(): void {
-    if (this.clientes.length === 0) return;
+    let dataToExport = this.clientes;
+    if (this.dataTable?.gridApi) {
+      const filtered: ICliente[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
     this.exportExcelService.exportAsExcel(
       'Listado de Clientes',
       this.columnDefs,
-      this.clientes
+      dataToExport
     );
   }
 

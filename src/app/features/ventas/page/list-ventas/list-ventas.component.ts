@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -43,6 +43,8 @@ import { ExportExcelService } from "src/app/core/services/export-excel.service";
   templateUrl: "./list-ventas.component.html",
 })
 export class ListVentasComponent implements OnInit {
+  @ViewChild(DataTableComponent) private dataTable?: DataTableComponent<IVenta>;
+
   // Inyección moderna de servicios usando inject()
   private readonly ventaService = inject(VentaService);
   private readonly globalContext = inject(ProjectStatusGlobalService);
@@ -235,13 +237,29 @@ export class ListVentasComponent implements OnInit {
   }
 
   public exportarPDF(): void {
-    if (this.ventas.length === 0) return;
-    this.exportPdfService.exportAsPdf('Gestión de Ventas', this.columnDefs, this.ventas);
+    let dataToExport = this.ventas;
+    if (this.dataTable?.gridApi) {
+      const filtered: IVenta[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Ventas', this.columnDefs, dataToExport);
   }
 
   public exportarExcel(): void {
-    if (this.ventas.length === 0) return;
-    this.exportExcelService.exportAsExcel('Gestión de Ventas', this.columnDefs, this.ventas);
+    let dataToExport = this.ventas;
+    if (this.dataTable?.gridApi) {
+      const filtered: IVenta[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Ventas', this.columnDefs, dataToExport);
   }
 
   /**

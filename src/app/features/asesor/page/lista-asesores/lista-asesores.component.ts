@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from "@angular/core";
 import { ColDef } from "ag-grid-community";
 import { BadgeEstadoComponent } from "src/app/shared/components/atoms/badge-estado/badge-estado.component";
 import { finalize } from "rxjs";
@@ -29,6 +29,8 @@ import { ExportExcelService } from "src/app/core/services/export-excel.service";
   styleUrl: "./lista-asesores.component.scss",
 })
 export class ListaAsesoresComponent implements OnInit {
+  @ViewChild(DataTableComponent) private dataTable?: DataTableComponent<IAsesor>;
+
   public readonly tableActionEnum = TableActionsEnum;
   public readonly EAppModule = EAppModule;
 
@@ -108,6 +110,7 @@ export class ListaAsesoresComponent implements OnInit {
       minWidth: 95,
       // Usamos valueGetter para que el filtro local funcione con strings
       valueGetter: (params) => params.data?.isActive ? 'true' : 'false',
+      valueFormatter: (params) => params.value === 'true' ? 'Activo' : 'Inactivo',
       cellRenderer: BadgeEstadoComponent,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
@@ -191,13 +194,29 @@ export class ListaAsesoresComponent implements OnInit {
   }
 
   public exportarPDF(): void {
-    if (this.asesores.length === 0) return;
-    this.exportPdfService.exportAsPdf('Gestión de Asesores', this.columnDefs, this.asesores);
+    let dataToExport = this.asesores;
+    if (this.dataTable?.gridApi) {
+      const filtered: IAsesor[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Asesores', this.columnDefs, dataToExport);
   }
 
   public exportarExcel(): void {
-    if (this.asesores.length === 0) return;
-    this.exportExcelService.exportAsExcel('Gestión de Asesores', this.columnDefs, this.asesores);
+    let dataToExport = this.asesores;
+    if (this.dataTable?.gridApi) {
+      const filtered: IAsesor[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Asesores', this.columnDefs, dataToExport);
   }
 
   private openDetailModal(id: string): void {
