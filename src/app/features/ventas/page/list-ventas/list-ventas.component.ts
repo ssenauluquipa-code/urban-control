@@ -178,6 +178,7 @@ export class ListVentasComponent implements OnInit {
           nroVenta: ventaData.nroVenta,
           moneda: ventaData.moneda,
           tipoCambio: ventaData.tipoCambio,
+          montoTotal: ventaData.montoTotal,
           saldoPendiente: ventaData.saldoPendiente,
           nombreCompletoCliente: nombreCliente,
           clienteId: clienteId,

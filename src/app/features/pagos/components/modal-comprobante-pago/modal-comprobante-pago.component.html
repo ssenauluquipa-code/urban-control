@@ -100,12 +100,14 @@
             </div>
           </div>
 
-          <div class="caja-total-individual">
-            <span class="lbl-cajita">Saldo:</span>
-            <div class="recuadro-monto-interno">
-              {{ datosRecibo.moneda }} {{ datosRecibo.saldo | number:'1.2-2' }}
+          @if (!datosRecibo.esReimpresion) {
+            <div class="caja-total-individual">
+              <span class="lbl-cajita">Saldo:</span>
+              <div class="recuadro-monto-interno">
+                {{ datosRecibo.moneda }} {{ datosRecibo.saldo | number:'1.2-2' }}
+              </div>
             </div>
-          </div>
+          }
 
           <div class="caja-total-individual">
             <span class="lbl-cajita">Total:</span>

@@ -16,6 +16,115 @@ export class ReciboPdfService {
     datos: IReciboPagoData,
     accion: "download" | "print" = "download",
   ): void {
+    const aCuentaBox = {
+      width: datos.esReimpresion ? "48%" : "31%",
+      table: {
+        widths: ["*"],
+        body: [
+          [
+            {
+              text: [
+                {
+                  text: "A cuenta: ",
+                  style: "lblCajitaInline",
+                },
+                {
+                  text: `${datos.moneda || "BS"} ${new Intl.NumberFormat("es-BO", { minimumFractionDigits: 2 }).format(datos.aCuenta || 0)}`,
+                  style: "valCajitaInline",
+                },
+              ],
+              style: "recuadroMontoInternoFila",
+            },
+          ],
+        ],
+      },
+      layout: {
+        defaultBorder: false,
+        vLineWidth: (i: number, node: any) =>
+          i === 0 || i === node.table.widths.length ? 1.5 : 0,
+        hLineWidth: (i: number, node: any) =>
+          i === 0 || i === node.table.body.length ? 1.5 : 0,
+        vLineColor: () => "#0f172a",
+        hLineColor: () => "#0f172a",
+      },
+    };
+
+    const saldoBox = {
+      width: "31%",
+      table: {
+        widths: ["*"],
+        body: [
+          [
+            {
+              text: [
+                {
+                  text: "Saldo: ",
+                  style: "lblCajitaInline",
+                },
+                {
+                  text: `${datos.moneda || "BS"} ${new Intl.NumberFormat("es-BO", { minimumFractionDigits: 2 }).format(datos.saldo || 0)}`,
+                  style: "valCajitaInline",
+                },
+              ],
+              style: "recuadroMontoInternoFila",
+            },
+          ],
+        ],
+      },
+      layout: {
+        defaultBorder: false,
+        vLineWidth: (i: number, node: any) =>
+          i === 0 || i === node.table.widths.length ? 1.5 : 0,
+        hLineWidth: (i: number, node: any) =>
+          i === 0 || i === node.table.body.length ? 1.5 : 0,
+        vLineColor: () => "#0f172a",
+        hLineColor: () => "#0f172a",
+      },
+    };
+
+    const totalBox = {
+      width: datos.esReimpresion ? "48%" : "31%",
+      table: {
+        widths: ["*"],
+        body: [
+          [
+            {
+              text: [
+                {
+                  text: "Total: ",
+                  style: "lblCajitaInline",
+                },
+                {
+                  text: `${datos.moneda || "BS"} ${new Intl.NumberFormat("es-BO", { minimumFractionDigits: 2 }).format(datos.total || 0)}`,
+                  style: "valCajitaInline",
+                },
+              ],
+              style: "bgTotalBoldFila",
+            },
+          ],
+        ],
+      },
+      layout: {
+        defaultBorder: false,
+        vLineWidth: (i: number, node: any) =>
+          i === 0 || i === node.table.widths.length ? 2 : 0,
+        hLineWidth: (i: number, node: any) =>
+          i === 0 || i === node.table.body.length ? 2 : 0,
+        vLineColor: () => "#0f172a",
+        hLineColor: () => "#0f172a",
+      },
+    };
+
+    const columnasTotales = datos.esReimpresion
+      ? [aCuentaBox, { width: "4%", text: "" }, totalBox]
+      : [
+          aCuentaBox,
+          { width: "3.5%", text: "" },
+          saldoBox,
+          { width: "3.5%", text: "" },
+          totalBox,
+        ];
+
     const docDefinition: any = {
       pageSize: "LETTER",
       pageMargins: [35, 35, 35, 35],
@@ -449,115 +558,7 @@ export class ReciboPdfService {
                     // === 4. FILA DE TOTALES Y CAJAS INFERIORES CORREGIDAS (Etiqueta y Monto en la misma fila) ===
                     {
                       style: "totalesSectionContainer",
-                      columns: [
-                        // Caja A Cuenta
-                        {
-                          width: "31%",
-                          table: {
-                            widths: ["*"],
-                            body: [
-                              [
-                                {
-                                  text: [
-                                    {
-                                      text: "A cuenta: ",
-                                      style: "lblCajitaInline",
-                                    },
-                                    {
-                                      text: `${datos.moneda || "BS"} ${new Intl.NumberFormat("es-BO", { minimumFractionDigits: 2 }).format(datos.aCuenta || 0)}`,
-                                      style: "valCajitaInline",
-                                    },
-                                  ],
-                                  style: "recuadroMontoInternoFila",
-                                },
-                              ],
-                            ],
-                          },
-                          layout: {
-                            defaultBorder: false,
-                            vLineWidth: (i: number, node: any) =>
-                              i === 0 || i === node.table.widths.length
-                                ? 1.5
-                                : 0,
-                            hLineWidth: (i: number, node: any) =>
-                              i === 0 || i === node.table.body.length ? 1.5 : 0,
-                            vLineColor: () => "#0f172a",
-                            hLineColor: () => "#0f172a",
-                          },
-                        },
-                        { width: "3.5%", text: "" }, // Espacio estructural
-
-                        // Caja Saldo
-                        {
-                          width: "31%",
-                          table: {
-                            widths: ["*"],
-                            body: [
-                              [
-                                {
-                                  text: [
-                                    {
-                                      text: "Saldo: ",
-                                      style: "lblCajitaInline",
-                                    },
-                                    {
-                                      text: `${datos.moneda || "BS"} ${new Intl.NumberFormat("es-BO", { minimumFractionDigits: 2 }).format(datos.saldo || 0)}`,
-                                      style: "valCajitaInline",
-                                    },
-                                  ],
-                                  style: "recuadroMontoInternoFila",
-                                },
-                              ],
-                            ],
-                          },
-                          layout: {
-                            defaultBorder: false,
-                            vLineWidth: (i: number, node: any) =>
-                              i === 0 || i === node.table.widths.length
-                                ? 1.5
-                                : 0,
-                            hLineWidth: (i: number, node: any) =>
-                              i === 0 || i === node.table.body.length ? 1.5 : 0,
-                            vLineColor: () => "#0f172a",
-                            hLineColor: () => "#0f172a",
-                          },
-                        },
-                        { width: "3.5%", text: "" }, // Espacio estructural
-
-                        // Caja Total
-                        {
-                          width: "31%",
-                          table: {
-                            widths: ["*"],
-                            body: [
-                              [
-                                {
-                                  text: [
-                                    {
-                                      text: "Total: ",
-                                      style: "lblCajitaInline",
-                                    },
-                                    {
-                                      text: `${datos.moneda || "BS"} ${new Intl.NumberFormat("es-BO", { minimumFractionDigits: 2 }).format(datos.total || 0)}`,
-                                      style: "valCajitaInline",
-                                    },
-                                  ],
-                                  style: "bgTotalBoldFila",
-                                },
-                              ],
-                            ],
-                          },
-                          layout: {
-                            defaultBorder: false,
-                            vLineWidth: (i: number, node: any) =>
-                              i === 0 || i === node.table.widths.length ? 2 : 0,
-                            hLineWidth: (i: number, node: any) =>
-                              i === 0 || i === node.table.body.length ? 2 : 0,
-                            vLineColor: () => "#0f172a",
-                            hLineColor: () => "#0f172a",
-                          },
-                        },
-                      ],
+                      columns: columnasTotales,
                     },
 
                     // === 5. SECCIÓN DE FIRMAS ===

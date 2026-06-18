@@ -362,6 +362,7 @@ export class RegisterVentasComponent implements OnInit, OnDestroy {
               nroVenta: ventaCreada.nroVenta,
               moneda: ventaCreada.moneda,
               tipoCambio: ventaCreada.tipoCambio,
+              montoTotal: ventaCreada.montoTotal || rawData.montoTotal,
               saldoPendiente: ventaCreada.saldoPendiente,
               nombreCompletoCliente: nombreTitular,
               clienteId: rawData.propietarios?.find((p: any) => p.rol === 'TITULAR')?.clienteId ?? null,

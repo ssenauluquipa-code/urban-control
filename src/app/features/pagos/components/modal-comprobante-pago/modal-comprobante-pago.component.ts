@@ -31,6 +31,7 @@ export interface IReciboPagoData {
   empresaLogo?: string;
   empresaDireccion?: string;
   empresaTelefono?: string;
+  esReimpresion?: boolean;
 }
 
 @Component({

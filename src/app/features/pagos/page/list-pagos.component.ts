@@ -469,6 +469,7 @@ export class ListPagosComponent {
             total: montoTotalVenta,
             metodoPago: pago.metodo,
             nombreEmisor: nombreEmisor,
+            esReimpresion: true,
           };
 
           // Abrir modal de recibo

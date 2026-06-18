@@ -171,7 +171,7 @@ export class RegisterVentaViewComponent implements OnInit, OnDestroy {
   }
 
   get cuotaInicialValue(): number {
-    return Number(this.cuotaInicial.value || 0);
+    return Number(this.cuotaInicial.value);
   }
 
   /** Saldo a financiar: 0 en contado sin reserva; total − inicial en cuotas o con adelanto. */
