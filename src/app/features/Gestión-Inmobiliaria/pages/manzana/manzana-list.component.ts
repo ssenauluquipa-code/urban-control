@@ -1,4 +1,4 @@
-import { Component, effect, OnInit, signal } from '@angular/core';
+import { Component, effect, OnInit, signal, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ColDef } from 'ag-grid-community';
@@ -51,6 +51,8 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
   styles: ``
 })
 export class ManzanaListComponent implements OnInit {
+  @ViewChild(DataTableComponent) private dataTable?: DataTableComponent<IManzana>;
+
   public readonly EAppModule = EAppModule;
   public tableActionEnum = TableActionsEnum;
   //Guardamos los datos en un Signal local en vez de usar un Observable suelto ($)
@@ -151,13 +153,29 @@ export class ManzanaListComponent implements OnInit {
   }
 
   public exportarPDF(): void {
-    if (this.manzanas().length === 0) return;
-    this.exportPdfService.exportAsPdf('Gestión de Manzanas', this.columnDefs, this.manzanas());
+    let dataToExport = this.manzanas();
+    if (this.dataTable?.gridApi) {
+      const filtered: IManzana[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportPdfService.exportAsPdf('Gestión de Manzanas', this.columnDefs, dataToExport);
   }
 
   public exportarExcel(): void {
-    if (this.manzanas().length === 0) return;
-    this.exportExcelService.exportAsExcel('Gestión de Manzanas', this.columnDefs, this.manzanas());
+    let dataToExport = this.manzanas();
+    if (this.dataTable?.gridApi) {
+      const filtered: IManzana[] = [];
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) filtered.push(node.data);
+      });
+      dataToExport = filtered;
+    }
+    if (dataToExport.length === 0) return;
+    this.exportExcelService.exportAsExcel('Gestión de Manzanas', this.columnDefs, dataToExport);
   }
 
   private openModal(data: IManzana | null, proyectoId: string): void {

@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { OrganizationService } from 'src/app/core/services/configuracion/organization.service';
 
 const fonts = pdfFonts as any;
 (pdfMake as any).vfs = fonts?.pdfMake?.vfs || fonts?.vfs || (globalThis as any).pdfMake?.vfs;
@@ -10,6 +11,52 @@ const fonts = pdfFonts as any;
   providedIn: 'root'
 })
 export class ExportPdfService {
+  private organizationService = inject(OrganizationService);
+
+  private empresaNombre = "TU FUTURO BIENES & RAÍCES";
+  private empresaLogoUrl = "";
+  private empresaLogoBase64 = "";
+  private empresaDireccion = "";
+  private empresaTelefono = "";
+
+  constructor() {
+    this.organizationService.getEmpresa().subscribe({
+      next: (empresa) => {
+        if (empresa) {
+          this.empresaNombre = empresa.name;
+          this.empresaLogoUrl = empresa.logoUrl;
+          this.empresaDireccion = empresa.address;
+          this.empresaTelefono = empresa.phone;
+          if (empresa.logoUrl) {
+            this.convertUrlToBase64(empresa.logoUrl).then(base64 => {
+              this.empresaLogoBase64 = base64;
+            }).catch(err => {
+              console.warn("Error al convertir logo de la empresa a base64", err);
+            });
+          }
+        }
+      },
+      error: () => {
+        this.empresaLogoUrl = "assets/images/logo-tu-futuro.png";
+        this.convertUrlToBase64(this.empresaLogoUrl).then(base64 => {
+          this.empresaLogoBase64 = base64;
+        }).catch(() => {});
+      }
+    });
+  }
+
+  private convertUrlToBase64(url: string): Promise<string> {
+    return fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      });
+  }
 
   private getDeepValue(obj: any, path: string): any {
     return path.split('.').reduce((acc, part) => acc && acc[part], obj);
@@ -120,16 +167,73 @@ export class ExportPdfService {
       return 'auto';
     });
 
+    // Construimos la cabecera con el logo, dirección, teléfono y título del reporte
+    const headerColumns = [];
+
+    // Lado Izquierdo: Datos de la Empresa
+    const companyStack = [];
+    if (this.empresaLogoBase64) {
+      companyStack.push({
+        image: this.empresaLogoBase64,
+        width: 100, // Tamaño mediano
+        margin: [0, 0, 0, 5]
+      });
+    } else {
+      companyStack.push({
+        text: this.empresaNombre,
+        fontSize: 11,
+        bold: true,
+        color: '#0f172a',
+        margin: [0, 0, 0, 2]
+      });
+    }
+
+    if (this.empresaDireccion) {
+      companyStack.push({
+        text: this.empresaDireccion,
+        fontSize: 8,
+        color: '#475569',
+        margin: [0, 0, 0, 1]
+      });
+    }
+    
+    if (this.empresaTelefono) {
+      companyStack.push({
+        text: `Cel/Tel: ${this.empresaTelefono}`,
+        fontSize: 8,
+        bold: true,
+        color: '#475569'
+      });
+    }
+
+    headerColumns.push({
+      width: '30%',
+      stack: companyStack,
+      alignment: 'left'
+    });
+
+    // Centro: Título del Reporte
+    headerColumns.push({
+      width: '40%',
+      stack: [
+        { text: tituloSeguro, fontSize: 14, bold: true, color: '#0f172a', alignment: 'center', margin: [0, 15, 0, 0] }
+      ]
+    });
+
+    // Lado Derecho: Fecha de Generación
+    headerColumns.push({
+      width: '30%',
+      stack: [
+        { text: `Fecha de generación:\n${new Date().toLocaleString()}`, fontSize: 8.5, color: '#64748b', alignment: 'right', margin: [0, 15, 0, 0] }
+      ]
+    });
+
     const docDefinition: any = {
       pageSize: 'LETTER',
       pageOrientation: orientacionPagina,
-      pageMargins: [20, 40, 20, 40],
+      pageMargins: [20, 30, 20, 40],
       content: [
-        // Título principal (Letra Oscura sobre papel blanco)
-        { text: tituloSeguro, style: 'title' },
-        
-        { text: `Fecha de generación: ${new Date().toLocaleString()}`, style: 'subtitle' },
-        
+        { columns: headerColumns, margin: [0, 0, 0, 20] },
         {
           table: {
             headerRows: 1,
@@ -154,19 +258,6 @@ export class ExportPdfService {
         }
       ],
       styles: {
-        title: {
-          fontSize: 18,
-          bold: true,
-          color: '#0f172a', // Azul oscuro para el título del documento
-          margin: [0, 0, 0, 15],
-          alignment: 'center'
-        },
-        subtitle: {
-          fontSize: 9,
-          color: '#64748b',
-          margin: [0, 0, 0, 15],
-          alignment: 'right'
-        },
         // Estilo base para la cabecera (aunque sobreescribimos colores en la celda, esto mantiene alineación y fuente)
         tableHeader: {
           fontSize: fontSizeHeader,

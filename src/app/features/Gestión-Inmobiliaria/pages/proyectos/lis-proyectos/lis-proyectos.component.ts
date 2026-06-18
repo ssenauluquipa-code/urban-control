@@ -1,6 +1,6 @@
 import { ColDef } from 'ag-grid-community';
 import { BadgeEstadoComponent } from 'src/app/shared/components/atoms/badge-estado/badge-estado.component';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, finalize, take } from 'rxjs';
 import { Router } from '@angular/router';
@@ -49,6 +49,8 @@ import { ProjectStatusGlobalService } from 'src/app/core/services/project-status
   styles: ``
 })
 export class LisProyectosComponent implements OnInit {
+  @ViewChild(DataTableComponent) private dataTable?: DataTableComponent<IProyecto>;
+
   public readonly EAppModule = EAppModule;
   public tableActionEnum = TableActionsEnum;
   public proyectos$!: Observable<IProyecto[]>;
@@ -131,17 +133,39 @@ export class LisProyectosComponent implements OnInit {
   }
 
   public exportarPDF(): void {
-    this.proyectos$.pipe(take(1)).subscribe(data => {
-      if (!data || data.length === 0) return;
-      this.exportPdfService.exportAsPdf('Urbanizaciones', this.columnDefs, data);
-    });
+    let dataToExport: IProyecto[] = [];
+    if (this.dataTable?.gridApi) {
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) dataToExport.push(node.data);
+      });
+    }
+
+    if (dataToExport.length > 0) {
+      this.exportPdfService.exportAsPdf('Urbanizaciones', this.columnDefs, dataToExport);
+    } else {
+      this.proyectos$.pipe(take(1)).subscribe(data => {
+        if (!data || data.length === 0) return;
+        this.exportPdfService.exportAsPdf('Urbanizaciones', this.columnDefs, data);
+      });
+    }
   }
 
   public exportarExcel(): void {
-    this.proyectos$.pipe(take(1)).subscribe(data => {
-      if (!data || data.length === 0) return;
-      this.exportExcelService.exportAsExcel('Urbanizaciones', this.columnDefs, data);
-    });
+    let dataToExport: IProyecto[] = [];
+    if (this.dataTable?.gridApi) {
+      this.dataTable.gridApi.forEachNodeAfterFilter((node) => {
+        if (node.data) dataToExport.push(node.data);
+      });
+    }
+
+    if (dataToExport.length > 0) {
+      this.exportExcelService.exportAsExcel('Urbanizaciones', this.columnDefs, dataToExport);
+    } else {
+      this.proyectos$.pipe(take(1)).subscribe(data => {
+        if (!data || data.length === 0) return;
+        this.exportExcelService.exportAsExcel('Urbanizaciones', this.columnDefs, data);
+      });
+    }
   }
 
   private openModal(proyecto?: IProyecto): void {
