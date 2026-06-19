@@ -18,7 +18,12 @@ export class TopCardsComponent {
   private router = inject(Router);
   private globalContext = inject(ProjectStatusGlobalService);
 
-  public topcards: ITopcard[] = [];
+  public topcards: ITopcard[] = [
+    { bgcolor: "primary", icon: "bi bi-boxes", title: "Total Lotes", value: 0, currentValue: 0 },
+    { bgcolor: "success", icon: "bi bi-check-circle-fill", title: "Lotes Disponibles", value: 0, currentValue: 0, estadoFiltro: "DISPONIBLE" },
+    { bgcolor: "warning", icon: "bi bi-bookmark-dash-fill", title: "Lotes Reservados", value: 0, currentValue: 0, estadoFiltro: "RESERVADO" },
+    { bgcolor: "danger", icon: "bi bi-cart-dash-fill", title: "Lotes Vendidos", value: 0, currentValue: 0, estadoFiltro: "VENDIDO" },
+  ];
   public loading = true;
 
   constructor() {
@@ -31,6 +36,7 @@ export class TopCardsComponent {
   }
 
   private cargarResumenLotes(): void {
+    this.loading = true;
     this.loteService.getResumenLotes().subscribe({
       next: (resumen: IResumenLotes) => {
         // Puedes usar un casteo rápido si el servicio sigue devolviendo un tipo incorrecto

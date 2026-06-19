@@ -47,6 +47,7 @@ export type InputCurrencySize = 'small' | 'default' | 'large';
       <input
         nz-input
         type="text"
+        inputmode="decimal"
         [placeholder]="placeholder"
         [disabled]="input_control.disabled"
         [value]="displayValue"

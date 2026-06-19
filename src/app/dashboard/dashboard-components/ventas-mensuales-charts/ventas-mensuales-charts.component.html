@@ -11,60 +11,51 @@
     </div>
   </div>
 } @else {
-  <div class="row w-100 m-0 animate-fade-in">
-    
-    <div class="col-12 col-xl-6 ps-0 pe-xl-3 mb-4 mb-xl-0">
-      <app-card-container class="h-100 d-block">
-          <div class="d-flex align-items-center mb-3">
-            <span class="p-2 bg-light-primary text-primary rounded-circle me-2 d-flex align-items-center">
-              <i class="bi bi-box-seam fs-5"></i>
-            </span>
-            <div>
-              <h5 class="card-title mb-0 fw-bold text-dark">Evolución del Volumen (Ventas)</h5>
-              <small class="text-muted">Cantidad total de contratos cerrados por mes</small>
-            </div>
-          </div>
-          <div class="w-100 mt-2" *ngIf="areaChartOptions">
-            <apx-chart 
-              [series]="areaChartOptions.series!" 
-              [chart]="areaChartOptions.chart!"
-              [xaxis]="areaChartOptions.xaxis!" 
-              [yaxis]="areaChartOptions.yaxis!"
-              [grid]="areaChartOptions.grid!" 
-              [stroke]="areaChartOptions.stroke!"
-              [tooltip]="areaChartOptions.tooltip!" 
-              [dataLabels]="areaChartOptions.dataLabels!"
-              [colors]="areaChartOptions.colors!">
-            </apx-chart>
-          </div>
-      </app-card-container>
+  <app-card-container class="h-100 d-block animate-fade-in">
+    <!-- Cabecera Responsiva: Centrada y vertical en móvil, alineada y horizontal en desktop -->
+    <div class="d-flex flex-column flex-sm-row align-items-center text-center text-sm-start mb-3">
+      <span class="p-2 bg-light-{{ iconColor }} text-{{ iconColor }} rounded-circle mb-2 mb-sm-0 me-0 me-sm-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; flex-shrink: 0;">
+        <i [class]="icon + ' fs-5'"></i>
+      </span>
+      <div class="w-100">
+        <h5 class="card-title mb-0 fw-bold text-dark text-height-adjust">{{ title }}</h5>
+        <small class="text-muted d-block text-height-adjust-sub">{{ subtitle }}</small>
+      </div>
     </div>
-
-    <div class="col-12 col-xl-6 pe-0 ps-xl-3">
-      <app-card-container class="h-100 d-block">
-          <div class="d-flex align-items-center mb-3">
-            <span class="p-2 bg-light-success text-success rounded-circle me-2 d-flex align-items-center">
-              <i class="bi bi-currency-exchange fs-5"></i>
-            </span>
-            <div>
-              <h5 class="card-title mb-0 fw-bold text-dark">Rendimiento Comercial (Ingresos)</h5>
-              <small class="text-muted">Monto total facturado normalizado en {{ divisaSeleccionada }}</small>
-            </div>
-          </div>
-          <div class="w-100 mt-2" *ngIf="barChartOptions">
-            <apx-chart 
-              [series]="barChartOptions.series!" 
-              [chart]="barChartOptions.chart!"
-              [xaxis]="barChartOptions.xaxis!" 
-              [yaxis]="barChartOptions.yaxis!"
-              [grid]="barChartOptions.grid!"
-              [tooltip]="barChartOptions.tooltip!" 
-              [dataLabels]="barChartOptions.dataLabels!"
-              [colors]="barChartOptions.colors!">
-            </apx-chart>
-          </div>
-      </app-card-container>
+    <div class="w-100 mt-2" *ngIf="chartOptions">
+      <apx-chart 
+        [series]="chartOptions.series!" 
+        [chart]="chartOptions.chart!"
+        [xaxis]="chartOptions.xaxis!" 
+        [yaxis]="chartOptions.yaxis!"
+        [grid]="chartOptions.grid!" 
+        [stroke]="chartOptions.stroke || {}" 
+        [tooltip]="chartOptions.tooltip!" 
+        [dataLabels]="chartOptions.dataLabels!"
+        [colors]="chartOptions.colors!">
+      </apx-chart>
     </div>
-
-  </div>
+  </app-card-container>
 }
+
+<style>
+  /* Ajustes responsivos para que el texto de la cabecera del gráfico no se desborde */
+  .text-height-adjust {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  .text-height-adjust-sub {
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 576px) {
+    .text-height-adjust {
+      font-size: 0.85rem !important;
+      font-weight: 700 !important;
+    }
+    .text-height-adjust-sub {
+      font-size: 0.7rem !important;
+    }
+  }
+</style>

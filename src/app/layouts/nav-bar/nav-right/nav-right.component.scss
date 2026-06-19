@@ -98,3 +98,60 @@
     content: none !important;
   }
 }
+
+// Estilos responsivos para que quepan todos los iconos y el perfil en móvil
+.project-select-container {
+  min-width: 190px;
+  
+  @media (max-width: 576px) {
+    min-width: 135px !important;
+    max-width: 135px !important;
+    transition: all 0.2s ease;
+
+    // Compactar ng-select para móvil
+    ::ng-deep {
+      .ng-select .ng-select-container {
+        min-height: 32px !important;
+        height: 32px !important;
+        border-radius: 8px !important;
+        padding-left: 6px !important;
+      }
+      .ng-select .ng-select-container .ng-value-container {
+        padding: 0 !important;
+      }
+      .ng-select .ng-select-container .ng-value-container .ng-placeholder {
+        font-size: 11px !important;
+        top: 6px !important;
+      }
+      .ng-select .ng-select-container .ng-value-container .ng-value {
+        font-size: 11px !important;
+        margin: 0 !important;
+        line-height: 30px !important;
+      }
+      .ng-select .ng-arrow-wrapper {
+        width: 15px !important;
+        padding-right: 2px !important;
+        bottom: 2px !important;
+      }
+      .ng-select.ng-select-single .ng-select-container .ng-clear-wrapper {
+        right: 18px !important;
+        bottom: 2px !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .list-unstyled {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 0 !important;
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+  }
+
+  .pc-h-item {
+    margin-right: 2px !important;
+    margin-left: 2px !important;
+  }
+}

@@ -241,6 +241,25 @@ Servicio: `VentaService.obtenerCuotasPorVenta(id)` → `GET /api/v1/ventas/:id/c
 | `input_placeholder` | Placeholder en inputs de texto/número |
 | `[label]` | En selectores y algunos inputs especializados |
 
+### 📱 Soporte Móvil y Teclados Virtuales (`inputmode`)
+
+Para garantizar una excelente experiencia de usuario en dispositivos móviles y tabletas, es obligatorio que los inputs nativos expongan el teclado adecuado. Dado que usamos `type="text"` combinado con máscaras de entrada (como Maskito), el navegador móvil no sabe por sí mismo qué teclado mostrar.
+
+Para solucionar esto, implementamos el atributo HTML5 `inputmode`:
+- **`inputmode="numeric"`**: Muestra el teclado numérico (0-9). Usado en `app-input-number` (cuando no admite decimales) y en el cuerpo de `app-input-documento`.
+- **`inputmode="decimal"`**: Muestra el teclado numérico con separador decimal. Usado en `app-input-currency` y `app-input-number` (cuando `allow_decimals = true`).
+- **`inputmode="tel"`**: Muestra el teclado telefónico (para números de celular).
+- **`inputmode="email"`**: Teclado optimizado para direcciones de correo (con `@` y `.`).
+
+#### Ejemplo de aplicación en átomos de entrada:
+```html
+<input
+  type="text"
+  inputmode="numeric"
+  [formControl]="input_control"
+/>
+```
+
 ### Promover componentes a `shared`
 
 Si un componente de `features/*/components/` se usa en **dos o más módulos**, moverlo a `shared/components/molecules/` u `organisms/` según corresponda.

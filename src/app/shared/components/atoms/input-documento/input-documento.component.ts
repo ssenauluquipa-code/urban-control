@@ -12,6 +12,7 @@ import { InputErrorMessagesComponent } from '../input-error-messages/input-error
     <div class="input-group custom-doc-group">
       <input
         type="text"
+        inputmode="numeric"
         nz-input
         [formControl]="tempMainControl"
         [placeholder]="placeholder"

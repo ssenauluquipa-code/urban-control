@@ -26,88 +26,105 @@ export type ChartOptionsOptions = {
 export class VentasMensualesChartsComponent implements OnChanges {
   @Input({ required: true }) dataNodos: IVentaMensualNodo[] = [];
   @Input() divisaSeleccionada: 'BS' | 'USD' = 'USD';
+  @Input() type: 'area' | 'bar' = 'area';
+  @Input() title = '';
+  @Input() subtitle = '';
+  @Input() icon = '';
+  @Input() iconColor = '';
 
   // Opciones de configuración tipadas para ApexCharts
-  public areaChartOptions!: Partial<ChartOptionsOptions>;
-  public barChartOptions!: Partial<ChartOptionsOptions>;
+  public chartOptions!: Partial<ChartOptionsOptions>;
   public esGraficoVacio = false;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['dataNodos'] && this.dataNodos) {
+    if ((changes['dataNodos'] || changes['type'] || changes['divisaSeleccionada']) && this.dataNodos) {
       this.evaluarEstadoMétricas();
     }
   }
 
   private evaluarEstadoMétricas(): void {
-    // Regla de UX del PDF: Validar si todos los nodos vienen en 0 para activar el "No Data State"
     const totalVentas = this.dataNodos.reduce((sum, n) => sum + n.cantidadVentas, 0);
     const totalMonto = this.dataNodos.reduce((sum, n) => sum + n.montoVendido, 0);
     
     this.esGraficoVacio = (totalVentas === 0 && totalMonto === 0);
 
     if (!this.esGraficoVacio) {
-      this.inicializarGraficos();
+      this.configurarValoresPorDefecto();
+      this.inicializarGrafico();
     }
   }
 
-  private inicializarGraficos(): void {
-    // Extracción de datos limpios de forma paralela para los ejes
+  private configurarValoresPorDefecto(): void {
+    if (this.type === 'area') {
+      if (!this.title) this.title = 'Evolución del Volumen (Ventas)';
+      if (!this.subtitle) this.subtitle = 'Cantidad total de contratos cerrados por mes';
+      if (!this.icon) this.icon = 'bi bi-box-seam';
+      if (!this.iconColor) this.iconColor = 'primary';
+    } else {
+      if (!this.title) this.title = 'Rendimiento Comercial (Ingresos)';
+      if (!this.subtitle) this.subtitle = `Monto total facturado normalizado en ${this.divisaSeleccionada}`;
+      if (!this.icon) this.icon = 'bi bi-currency-exchange';
+      if (!this.iconColor) this.iconColor = 'success';
+    }
+  }
+
+  private inicializarGrafico(): void {
     const categoriasX = this.dataNodos.map(n => n.label);
-    const seriesCantidad = this.dataNodos.map(n => n.cantidadVentas);
-    const seriesMonto = this.dataNodos.map(n => n.montoVendido);
 
-    // 1. Configuración del Gráfico de Área (Cantidad de Ventas)
-    this.areaChartOptions = {
-      series: [{ name: 'Unidades Vendidas', data: seriesCantidad }],
-      chart: {
-        type: 'area',
-        height: 280,
-        fontFamily: 'Nunito Sans, sans-serif',
-        toolbar: { show: false }
-      },
-      colors: ['#1e88e5'], // Azul corporativo para volumen
-      dataLabels: { enabled: false },
-      stroke: { curve: 'smooth', width: 2 },
-      grid: { borderColor: '#e0e0e0', strokeDashArray: 3 },
-      xaxis: { categories: categoriasX },
-      yaxis: {
-        labels: {
-          formatter: (val) => `${Math.floor(val)} u.`
-        }
-      },
-      tooltip: { theme: 'light', y: { formatter: (val) => `${val} propiedades` } }
-    };
-
-    // 2. Configuración del Gráfico de Barras (Monto Económico)
-    this.barChartOptions = {
-      series: [{ name: 'Volumen de Facturación', data: seriesMonto }],
-      chart: {
-        type: 'bar',
-        height: 280,
-        fontFamily: 'Nunito Sans, sans-serif',
-        toolbar: { show: false }
-      },
-      colors: ['#26de81'], // Verde esmeralda para el dinero
-      dataLabels: { enabled: false },
-      grid: { borderColor: '#e0e0e0', strokeDashArray: 3 },
-      xaxis: { categories: categoriasX },
-      yaxis: {
-        labels: {
-          formatter: (val) => {
-            const simbolo = this.divisaSeleccionada === 'USD' ? '$' : 'Bs.';
-            return val >= 1000 ? `${simbolo}${(val / 1000).toFixed(1)}k` : `${simbolo}${val}`;
+    if (this.type === 'area') {
+      const seriesCantidad = this.dataNodos.map(n => n.cantidadVentas);
+      this.chartOptions = {
+        series: [{ name: 'Unidades Vendidas', data: seriesCantidad }],
+        chart: {
+          type: 'area',
+          height: 280,
+          fontFamily: 'Nunito Sans, sans-serif',
+          toolbar: { show: false }
+        },
+        colors: ['#1e88e5'],
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 2 },
+        grid: { borderColor: '#e0e0e0', strokeDashArray: 3 },
+        xaxis: { categories: categoriasX },
+        yaxis: {
+          labels: {
+            formatter: (val) => `${Math.floor(val)} u.`
+          }
+        },
+        tooltip: { theme: 'light', y: { formatter: (val) => `${val} propiedades` } }
+      };
+    } else {
+      const seriesMonto = this.dataNodos.map(n => n.montoVendido);
+      this.chartOptions = {
+        series: [{ name: 'Volumen de Facturación', data: seriesMonto }],
+        chart: {
+          type: 'bar',
+          height: 280,
+          fontFamily: 'Nunito Sans, sans-serif',
+          toolbar: { show: false }
+        },
+        colors: ['#26de81'],
+        dataLabels: { enabled: false },
+        grid: { borderColor: '#e0e0e0', strokeDashArray: 3 },
+        xaxis: { categories: categoriasX },
+        yaxis: {
+          labels: {
+            formatter: (val) => {
+              const simbolo = this.divisaSeleccionada === 'USD' ? '$' : 'Bs.';
+              return val >= 1000 ? `${simbolo}${(val / 1000).toFixed(1)}k` : `${simbolo}${val}`;
+            }
+          }
+        },
+        tooltip: {
+          theme: 'light',
+          y: {
+            formatter: (val) => {
+              const simbolo = this.divisaSeleccionada === 'USD' ? '$' : 'Bs.';
+              return `${simbolo}${val.toLocaleString('es-BO')}`;
+            }
           }
         }
-      },
-      tooltip: {
-        theme: 'light',
-        y: {
-          formatter: (val) => {
-            const simbolo = this.divisaSeleccionada === 'USD' ? '$' : 'Bs.';
-            return `${simbolo}${val.toLocaleString('es-BO')}`;
-          }
-        }
-      }
-    };
+      };
+    }
   }
 }

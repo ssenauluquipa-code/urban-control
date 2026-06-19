@@ -20,6 +20,7 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
                     #inputElement
                     nz-input
                     type="text"
+                    [attr.inputmode]="allow_decimals ? 'decimal' : 'numeric'"
                     [placeholder]="input_placeholder"
                     [maxlength]="input_maxlength? input_maxlength + 1 : null"
                     [formControl]="input_control"
