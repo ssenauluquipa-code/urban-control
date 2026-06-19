@@ -37,6 +37,8 @@ import { ReciboPdfService } from "src/app/core/services/recibo-pdf.service";
 import { forkJoin } from "rxjs";
 import { ExportPdfService } from "src/app/core/services/export-pdf.service";
 import { ExportExcelService } from "src/app/core/services/export-excel.service";
+import { CurrencyCalculationService } from "src/app/core/services/finance/currency-calculation.service";
+import { Moneda } from "src/app/core/models/reserva.model";
 
 
 @Component({
@@ -94,6 +96,7 @@ export class ListPagosComponent {
   private breakpointObserver = inject(BreakpointObserver);
   private organizationService = inject(OrganizationService);
   private reciboPdfService = inject(ReciboPdfService);
+  private currencyService = inject(CurrencyCalculationService);
 
 
   public tableActionEnum = TableActionsEnum;
@@ -439,7 +442,7 @@ export class ListPagosComponent {
 
           // 2. Mantener el mismo concepto que se genera al registrar el pago.
           const concepto =
-            `Pago de lote por concepto de: ${montoTotalVenta}. ${pago.observaciones || ""}`.trim();
+            `Pago de lote por concepto de: ${montoTotalVenta} ${venta.moneda || ""}. ${pago.observaciones || ""}`.trim();
 
           // 3. Calcular saldo histórico del momento del pago.
           // A cuenta en el recibo original es el pago actual, no el acumulado.
@@ -464,12 +467,30 @@ export class ListPagosComponent {
               : [];
           const totalPagadoAntes = pagosAnteriores.reduce(
             (sum: number, p: IPagos) =>
-              sum + Number(p.montoRecibido ?? p.monto),
+              sum + Number(p.monto),
             0,
           );
-          const saldoDespuesDelPago = Math.max(
-            montoTotalVenta - totalPagadoAntes - montoPagoActual,
+          const saldoDespuesDelPagoContrato = Math.max(
+            montoTotalVenta - totalPagadoAntes - Number(pago.monto),
             0,
+          );
+
+          const tipoCambio = pago.tipoCambio || 1;
+          const contratoMoneda = venta.moneda as Moneda;
+          const pagoMoneda = pago.monedaRecibida as Moneda;
+
+          const totalConvertido = this.currencyService.convertirMonto(
+            montoTotalVenta,
+            contratoMoneda,
+            pagoMoneda,
+            tipoCambio,
+          );
+
+          const saldoConvertido = this.currencyService.convertirMonto(
+            saldoDespuesDelPagoContrato,
+            contratoMoneda,
+            pagoMoneda,
+            tipoCambio,
           );
 
           // 4. Convertir monto a letras
@@ -491,8 +512,8 @@ export class ListPagosComponent {
             cliente: nombreCliente,
             concepto: concepto,
             aCuenta: montoPagoActual,
-            saldo: saldoDespuesDelPago,
-            total: montoTotalVenta,
+            saldo: saldoConvertido,
+            total: totalConvertido,
             metodoPago: pago.metodo,
             nombreEmisor: nombreEmisor,
             esReimpresion: true,

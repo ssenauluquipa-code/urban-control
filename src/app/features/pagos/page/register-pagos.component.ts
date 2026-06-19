@@ -346,6 +346,29 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
           if (response && response.success && response.data) {
             const pagoData = response.data;
 
+            const tipoCambio = this.ventaSeleccionada?.tipoCambio || 1;
+            const contratoMoneda = this.ventaSeleccionada?.moneda as Moneda;
+            const pagoMoneda = pagoData.monedaRecibida as Moneda;
+
+            const totalConvertido = this.currencyService.convertirMonto(
+              this.ventaSeleccionada?.montoTotal || 0,
+              contratoMoneda,
+              pagoMoneda,
+              tipoCambio,
+            );
+
+            const saldoDespuesDelPagoEnContrato = Math.max(
+              (this.ventaSeleccionada?.saldoPendiente || 0) - pagoData.monto,
+              0,
+            );
+
+            const saldoConvertido = this.currencyService.convertirMonto(
+              saldoDespuesDelPagoEnContrato,
+              contratoMoneda,
+              pagoMoneda,
+              tipoCambio,
+            );
+
             // 1. Estructuramos el payload fuertemente tipado para el recibo
             const reciboPayload: IReciboPagoData = {
               codigoRecibo: String(pagoData.codigoPago).padStart(6, "0"), // Ej: 001039
@@ -359,12 +382,10 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
               cliente:
                 this.ventaSeleccionada?.nombreCompletoCliente ||
                 "Cliente General",
-              concepto: `Pago de lote por concepto de: ${this.ventaSeleccionada?.montoTotal || "Adquisición de Inmueble"}. ${pagoData.observaciones || ""}`,
+              concepto: `Pago de lote por concepto de: ${this.ventaSeleccionada?.montoTotal || "Adquisición de Inmueble"} ${contratoMoneda || ""}. ${pagoData.observaciones || ""}`,
               aCuenta: pagoData.montoRecibido,
-              saldo:
-                (this.ventaSeleccionada?.saldoPendiente || 0) -
-                pagoData.montoRecibido,
-              total: this.ventaSeleccionada?.montoTotal || 0,
+              saldo: saldoConvertido,
+              total: totalConvertido,
               metodoPago: pagoData.metodo,
               nombreEmisor: this.authService.currentUser()?.name || "",
             };
