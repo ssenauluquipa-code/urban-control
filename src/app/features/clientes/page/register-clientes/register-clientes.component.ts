@@ -79,7 +79,8 @@ export class RegisterClientesComponent implements OnInit {
     this.clienteService.getClientById(this.clienteId)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
-        next: (data) => {
+        next: (res) => {
+          const data = (res as any)?.data ?? res;
           const birthDate = data.fechaNacimiento ? new Date(data.fechaNacimiento) : null;
           this.form.patchValue({ ...data, fechaNacimiento: birthDate });
         },
@@ -118,7 +119,8 @@ export class RegisterClientesComponent implements OnInit {
 
     request$.pipe(finalize(() => this.loading = false)).subscribe({
       next: (clientData) => {
-        const id = this.isEditMode ? this.clienteId! : clientData.id;
+        const actualClient = (clientData as any)?.data ?? clientData;
+        const id = this.isEditMode ? this.clienteId! : actualClient.id;
         
         // Manejar subida o eliminación de foto
         if (this.selectedImage) {
