@@ -5,6 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { InputNumberComponent } from '../input-number/input-number.component';
 import { OrganizationFinancialConfigService } from 'src/app/core/services/configuracion/organization-financial-config.service';
+import { FrecuenciaPago } from 'src/app/core/models/venta.model';
 
 /**
  * Input especializado para "Número de Cuotas".
@@ -92,10 +93,21 @@ export class InputNroCuotasComponent implements OnInit, OnDestroy {
   /** Cuántos segundos se muestra el aviso de "Plazo máximo permitido" antes de ocultarse */
   @Input() infoMessageDuration = 6000; // ms
 
+  private _frecuencia: FrecuenciaPago | string | null = null;
+  @Input()
+  set frecuencia(value: FrecuenciaPago | string | null) {
+    this._frecuencia = value;
+    this.recalculateMaxCuotas();
+  }
+  get frecuencia(): FrecuenciaPago | string | null {
+    return this._frecuencia;
+  }
+
   /** Plazo máximo de cuotas según configuración de la empresa (0 = sin restricción) */
   public maxCuotas = 0;
   public loadingPlazo = true;
   public showMaxInfo = true;
+  private plazoMaximoMeses = 0;
 
   private financialConfig = inject(OrganizationFinancialConfigService);
   private destroy$ = new Subject<void>();
@@ -107,29 +119,19 @@ export class InputNroCuotasComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (config) => {
-          this.maxCuotas = config.plazoMaximoMeses ?? 0;
+          this.plazoMaximoMeses = config.plazoMaximoMeses ?? 0;
           this.loadingPlazo = false;
+          this.recalculateMaxCuotas();
 
-          if (this.maxCuotas > 0) {
-            this.input_control.addValidators([
-              Validators.min(1),
-              Validators.max(this.maxCuotas),
-            ]);
-            this.input_control.updateValueAndValidity();
-
-            // Mostrar el aviso inicial (si el valor actual es válido) y programar su ocultamiento
-            this.scheduleHideInfo();
-
-            // Cada vez que el usuario corrige el valor y vuelve a ser válido,
-            // re-mostramos el aviso brevemente.
-            this.input_control.valueChanges
-              .pipe(takeUntil(this.destroy$))
-              .subscribe(() => {
-                if (this.input_control.valid) {
-                  this.scheduleHideInfo();
-                }
-              });
-          }
+          // Cada vez que el usuario corrige el valor y vuelve a ser válido,
+          // re-mostramos el aviso brevemente.
+          this.input_control.valueChanges
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+              if (this.input_control.valid) {
+                this.scheduleHideInfo();
+              }
+            });
         },
         error: () => {
           // Si falla la consulta, no bloqueamos al usuario: simplemente no se aplica límite extra
@@ -148,6 +150,42 @@ export class InputNroCuotasComponent implements OnInit, OnDestroy {
 
   onBlur(value: string | number): void {
     this.BlurValue.emit(value);
+  }
+
+  private recalculateMaxCuotas(): void {
+    if (this.loadingPlazo || this.plazoMaximoMeses <= 0) return;
+
+    let maxVal = this.plazoMaximoMeses;
+    if (this.frecuencia) {
+      switch (this.frecuencia) {
+        case 'SEMANAL':
+          maxVal = Math.floor((this.plazoMaximoMeses / 12) * 52);
+          break;
+        case 'QUINCENAL':
+          maxVal = this.plazoMaximoMeses * 2;
+          break;
+        case 'MENSUAL':
+          maxVal = this.plazoMaximoMeses;
+          break;
+        case 'BIMESTRAL':
+          maxVal = Math.floor(this.plazoMaximoMeses / 2);
+          break;
+        case 'TRIMESTRAL':
+          maxVal = Math.floor(this.plazoMaximoMeses / 3);
+          break;
+      }
+    }
+    this.maxCuotas = maxVal;
+
+    this.input_control.setValidators([
+      Validators.required,
+      Validators.min(1),
+      Validators.max(this.maxCuotas),
+    ]);
+    this.input_control.updateValueAndValidity({ emitEvent: false });
+
+    // Mostrar el aviso inicial (si el valor actual es válido) y programar su ocultamiento
+    this.scheduleHideInfo();
   }
 
   /** Muestra el aviso de plazo máximo y lo oculta automáticamente tras infoMessageDuration ms */

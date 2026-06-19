@@ -143,6 +143,26 @@ export class RegisterVentasComponent implements OnInit, OnDestroy {
     return currency === Moneda.USD ? Moneda.USD : Moneda.BS;
   }
 
+  /** Calcula el número máximo de cuotas permitido según la frecuencia y el plazo máximo en meses. */
+  private calcularMaxCuotas(plazoMaximoMeses: number, frecuencia: FrecuenciaPago | null): number {
+    if (!plazoMaximoMeses || plazoMaximoMeses <= 0) return 600;
+    if (!frecuencia) return plazoMaximoMeses;
+    switch (frecuencia) {
+      case FrecuenciaPago.SEMANAL:
+        return Math.floor((plazoMaximoMeses / 12) * 52);
+      case FrecuenciaPago.QUINCENAL:
+        return plazoMaximoMeses * 2;
+      case FrecuenciaPago.MENSUAL:
+        return plazoMaximoMeses;
+      case FrecuenciaPago.BIMESTRAL:
+        return Math.floor(plazoMaximoMeses / 2);
+      case FrecuenciaPago.TRIMESTRAL:
+        return Math.floor(plazoMaximoMeses / 3);
+      default:
+        return plazoMaximoMeses;
+    }
+  }
+
   /**
    * Convierte el precio del lote (moneda base) al monto total en la moneda de la venta.
    */
@@ -242,10 +262,12 @@ export class RegisterVentasComponent implements OnInit, OnDestroy {
       // CONFIGURACIÓN PARA VENTA A CUOTAS (FINANCIADA)
       this.form.get("cuotaInicial")?.setValidators([Validators.required, Validators.min(0.01)]);
       this.form.get("frecuenciaPago")?.setValidators([Validators.required]);
-      this.form.get("nroCuotas")?.setValidators([Validators.required, Validators.min(1), Validators.max(this.plazoMaximo)]);
+      
+      const frecuencia = this.form.get("frecuenciaPago")?.value;
+      const maxCuotasCalculado = this.calcularMaxCuotas(this.plazoMaximo, frecuencia);
+      this.form.get("nroCuotas")?.setValidators([Validators.required, Validators.min(1), Validators.max(maxCuotasCalculado)]);
       this.form.get("fechaPagoInicial")?.setValidators([Validators.required]);
 
-      const frecuencia = this.form.get("frecuenciaPago")?.value;
       const modalidad = this.form.get("modalidadCalendarioPago")?.value;
 
       // 1. Caso SEMANAL
