@@ -31,9 +31,13 @@ import {
   ModalComprobantePagoComponent,
   IReciboPagoData,
 } from "../components/modal-comprobante-pago/modal-comprobante-pago.component";
+import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
+import { OrganizationService } from "src/app/core/services/configuracion/organization.service";
+import { ReciboPdfService } from "src/app/core/services/recibo-pdf.service";
 import { forkJoin } from "rxjs";
 import { ExportPdfService } from "src/app/core/services/export-pdf.service";
 import { ExportExcelService } from "src/app/core/services/export-excel.service";
+
 
 @Component({
   selector: "app-list-pagos",
@@ -87,6 +91,10 @@ export class ListPagosComponent {
   private modalService = inject(NgbModal);
   private exportPdfService = inject(ExportPdfService);
   private exportExcelService = inject(ExportExcelService);
+  private breakpointObserver = inject(BreakpointObserver);
+  private organizationService = inject(OrganizationService);
+  private reciboPdfService = inject(ReciboPdfService);
+
 
   public tableActionEnum = TableActionsEnum;
   public readonly EAppModule = EAppModule;
@@ -490,8 +498,13 @@ export class ListPagosComponent {
             esReimpresion: true,
           };
 
-          // Abrir modal de recibo
-          this.abrirModalRecibo(reciboData);
+          // Abrir modal de recibo o imprimir directo según pantalla
+          const isMobile = this.breakpointObserver.isMatched(Breakpoints.Handset);
+          if (isMobile) {
+            this.imprimirReciboDirecto(reciboData);
+          } else {
+            this.abrirModalRecibo(reciboData);
+          }
         },
         error: (err) => {
           console.error("Error al cargar datos del recibo:", err);
@@ -538,5 +551,72 @@ export class ListPagosComponent {
       backdrop: "static",
     });
     modalRef.componentInstance.datosRecibo = datos;
+  }
+
+  private imprimirReciboDirecto(datosRecibo: IReciboPagoData): void {
+    this.organizationService.getEmpresa().subscribe({
+      next: async (empresa) => {
+        let empresaNombre = "TU FUTURO BIENES & RAÍCES";
+        let empresaLogo = "";
+        let empresaDireccion = "";
+        let empresaTelefono = "";
+
+        if (empresa) {
+          empresaNombre = empresa.name;
+          empresaLogo = empresa.logoUrl;
+          empresaDireccion = empresa.address;
+          empresaTelefono = empresa.phone;
+        }
+
+        let logoBase64: string | undefined;
+        if (empresaLogo) {
+          try {
+            logoBase64 = await this.convertUrlToBase64(empresaLogo);
+          } catch (error) {
+            console.error("Error cargando logo para PDF (CORS o red)", error);
+          }
+        }
+
+        const datosCompletos: IReciboPagoData = {
+          ...datosRecibo,
+          empresaNombre,
+          empresaLogo: logoBase64,
+          empresaDireccion,
+          empresaTelefono,
+        };
+
+        try {
+          this.reciboPdfService.generarReciboIngreso(datosCompletos, "print");
+        } catch (e) {
+          console.error("Error abriendo el visor de impresión PDF:", e);
+        }
+      },
+      error: (err) => {
+        console.error("Error al cargar info de la organización", err);
+        const datosCompletos: IReciboPagoData = {
+          ...datosRecibo,
+          empresaNombre: "TU FUTURO BIENES & RAÍCES",
+          empresaLogo: "assets/images/logo-tu-futuro.png",
+        };
+        try {
+          this.reciboPdfService.generarReciboIngreso(datosCompletos, "print");
+        } catch (e) {
+          console.error("Error abriendo el visor de impresión PDF:", e);
+        }
+      }
+    });
+  }
+
+  private convertUrlToBase64(url: string): Promise<string> {
+    return fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      });
   }
 }

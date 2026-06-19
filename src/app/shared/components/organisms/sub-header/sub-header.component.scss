@@ -6,6 +6,20 @@
   background-color: #fff;
   border-bottom: 1px solid #e8e8e8;
   gap: 1rem;
+  position: sticky;
+  top: 60px;
+  z-index: 99;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+
+  @media (max-width: 1024px) {
+    position: fixed !important;
+    top: 60px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 999 !important;
+  }
+
+
 
   /* Centrar automáticamente el texto y el icono en todos los botones */
   /* Estilo Premium para todos los botones del sub-header */

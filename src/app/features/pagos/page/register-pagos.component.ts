@@ -33,6 +33,10 @@ import {
   IReciboPagoData,
   ModalComprobantePagoComponent,
 } from "../components/modal-comprobante-pago/modal-comprobante-pago.component";
+import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
+import { OrganizationService } from "src/app/core/services/configuracion/organization.service";
+import { ReciboPdfService } from "src/app/core/services/recibo-pdf.service";
+
 
 @Component({
   selector: "app-register-pagos",
@@ -78,6 +82,10 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private currencyService = inject(CurrencyCalculationService);
   private authService = inject(AuthService);
+  private breakpointObserver = inject(BreakpointObserver);
+  private organizationService = inject(OrganizationService);
+  private reciboPdfService = inject(ReciboPdfService);
+
 
   // ==========================
   // ESTADO DEL COMPONENTE
@@ -361,8 +369,13 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
               nombreEmisor: this.authService.currentUser()?.name || "",
             };
 
-            // 2. Ejecutamos el modal pasándole los datos
-            this.abrirModalRecibo(reciboPayload);
+            // 2. Ejecutamos el flujo híbrido según el tamaño de pantalla
+            const isMobile = this.breakpointObserver.isMatched(Breakpoints.Handset);
+            if (isMobile) {
+              this.imprimirReciboDirecto(reciboPayload);
+            } else {
+              this.abrirModalRecibo(reciboPayload);
+            }
           } else {
             // Si por alguna razón no viene data del recibo, redirige directo
             this.router.navigate(["/ventas"]);
@@ -654,5 +667,75 @@ export class RegisterPagosComponent implements OnInit, OnDestroy {
 
     // Si tienes una librería de conversión de texto la usas aquí, si no, puedes dejar un formato descriptivo temporal:
     return `${monto.toLocaleString("es-BO")} ${sufijoMoneda}`;
+  }
+
+  private imprimirReciboDirecto(datosRecibo: IReciboPagoData): void {
+    this.organizationService.getEmpresa().subscribe({
+      next: async (empresa) => {
+        let empresaNombre = "TU FUTURO BIENES & RAÍCES";
+        let empresaLogo = "";
+        let empresaDireccion = "";
+        let empresaTelefono = "";
+
+        if (empresa) {
+          empresaNombre = empresa.name;
+          empresaLogo = empresa.logoUrl;
+          empresaDireccion = empresa.address;
+          empresaTelefono = empresa.phone;
+        }
+
+        let logoBase64: string | undefined;
+        if (empresaLogo) {
+          try {
+            logoBase64 = await this.convertUrlToBase64(empresaLogo);
+          } catch (error) {
+            console.error("Error cargando logo para PDF (CORS o red)", error);
+          }
+        }
+
+        const datosCompletos: IReciboPagoData = {
+          ...datosRecibo,
+          empresaNombre,
+          empresaLogo: logoBase64,
+          empresaDireccion,
+          empresaTelefono,
+        };
+
+        try {
+          this.reciboPdfService.generarReciboIngreso(datosCompletos, "print");
+        } catch (e) {
+          console.error("Error abriendo el visor de impresión PDF:", e);
+        }
+
+        this.router.navigate(["/pagos"]);
+      },
+      error: (err) => {
+        console.error("Error al cargar info de la organización", err);
+        const datosCompletos: IReciboPagoData = {
+          ...datosRecibo,
+          empresaNombre: "TU FUTURO BIENES & RAÍCES",
+          empresaLogo: "assets/images/logo-tu-futuro.png",
+        };
+        try {
+          this.reciboPdfService.generarReciboIngreso(datosCompletos, "print");
+        } catch (e) {
+          console.error("Error abriendo el visor de impresión PDF:", e);
+        }
+        this.router.navigate(["/pagos"]);
+      }
+    });
+  }
+
+  private convertUrlToBase64(url: string): Promise<string> {
+    return fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      });
   }
 }

@@ -31,6 +31,22 @@ import { IPageConfig, DEFAULT_PAGE_CONFIG } from 'src/app/core/models/page-confi
       </div>
     </div>
   `,
+  styles: [`
+    :host {
+      display: block;
+      width: 100%;
+    }
+    @media (max-width: 599px) {
+      .page-container-content {
+        margin-top: 60px !important;
+      }
+    }
+    @media (min-width: 600px) and (max-width: 1024px) {
+      .page-container-content {
+        margin-top: 64px !important;
+      }
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [PageActionService]
 })
