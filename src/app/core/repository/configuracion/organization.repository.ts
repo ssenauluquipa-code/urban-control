@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { IOrganization, UpdateOrganizationDto, UploadLogoResponse, DeleteLogoResponse } from "../../models/Empresas/empresa-config.model";
-import { environment } from "src/environments/environment.prod";
+import { environment } from "src/environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { IOrganizationRepository } from "../../interfaces/repository/Configuracion/organization.repository.interface";
 

@@ -2,7 +2,7 @@ import { Observable, map } from "rxjs";
 import { IProyectoRepository } from "../../interfaces/repository/proyectos/proyecto.repository.interface";
 import { CreateProyectoDto, IProyecto, IProyectoActivo, UpdateProyectoDto } from "../../models/proyectos/proyecto.model";
 import { ProyectoMassLoadPayload } from "../../models/proyectos/proyecto-mass-load.interface";
-import { environment } from "src/environments/environment.prod";
+import { environment } from "src/environments/environment";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
