@@ -139,6 +139,7 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.IMPRIMIR_RECIBO]: "printer",
       [TableActionsEnum.MANZANAS]: "area-chart",
       [TableActionsEnum.LOTES]: "folder",
+      [TableActionsEnum.CONTRATOS]: "file-done",
     };
     return icons[action] || "question";
   }
@@ -164,7 +165,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
       [TableActionsEnum.DEVOLUCION]: "Devolución",
       [TableActionsEnum.IMPRIMIR_RECIBO]: "Imprimir Recibo",
       [TableActionsEnum.MANZANAS]: "Manzanas",
-      [TableActionsEnum.LOTES]: "Lotes"
+      [TableActionsEnum.LOTES]: "Lotes",
+      [TableActionsEnum.CONTRATOS]: "Contratos",
     };
     return labels[action] || action;
   }
@@ -330,6 +332,14 @@ export class TableActionsComponent implements ICellRendererAngularComp {
         return isActiva && isContado && hasSaldo;
       }
 
+      // Regla de Negocio: En Ventas, contratos solo se muestran si la venta NO está anulada
+      if (
+        currentModule === EAppModule.VENTAS &&
+        action === TableActionsEnum.CONTRATOS
+      ) {
+        return data?.estado !== "ANULADO" && data?.estado !== "ANULADA";
+      }
+
       // Regla de Negocio: En Pagos, el botón de Anular solo aparece si el pago no está anulado, el usuario tiene permiso, y es el dueño (asesor) o admin
       if (
         currentModule === EAppModule.PAGOS &&
@@ -421,6 +431,8 @@ export class TableActionsComponent implements ICellRendererAngularComp {
         return EAppAction.PLAN_CUENTAS;
       case TableActionsEnum.DEVOLUCION:
         return EAppAction.DEVOLUCION;
+      case TableActionsEnum.CONTRATOS:
+        return EAppAction.CONTRATOS;
       case TableActionsEnum.IMPRIMIR_RECIBO:
         return EAppAction.VIEW; // Usamos VIEW porque imprimir es solo lectura
       default:

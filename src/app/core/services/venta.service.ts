@@ -1,6 +1,8 @@
 import { Inject, Injectable } from "@angular/core";
-import { IVentaRepository } from "../interfaces/repository/venta.repository.interface";
-import { CreateVentaDto } from "../models/venta.model";
+import {
+  IVentaRepository,
+} from "../interfaces/repository/venta.repository.interface";
+import { CreateVentaDto, IContratoVenta } from "../models/venta.model";
 import { Observable } from "rxjs";
 
 @Injectable({
@@ -65,5 +67,16 @@ export class VentaService {
   public descargarInformeDevolucion(ventaId: string, clienteId: string): Observable<Blob> {
     return this.repo.getInformeDevolucionPdf(ventaId, clienteId);
   }
-  
+
+  subirContratos(ventaId: string, archivos: File[]): Observable<any> {
+    return this.repo.subirContratos(ventaId, archivos);
+  }
+
+  listarContratos(ventaId: string): Observable<IContratoVenta[]> {
+    return this.repo.listarContratos(ventaId);
+  }
+
+  eliminarContratos(ventaId: string, contratoIds: string[]): Observable<void> {
+    return this.repo.eliminarContratos(ventaId, contratoIds);
+  }
 }

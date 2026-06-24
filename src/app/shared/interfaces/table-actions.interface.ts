@@ -22,6 +22,7 @@ export enum TableActionsEnum {
   IMPRIMIR_RECIBO = "imprimir_recibo",
   MANZANAS = "MANZANAS",
   LOTES = "LOTES",
+  CONTRATOS = "contratos",
 }
 
 export type TableAction = TableActionsEnum | string;

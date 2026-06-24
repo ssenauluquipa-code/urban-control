@@ -31,6 +31,7 @@ import { StatusFloatingFilterVentasComponent } from "src/app/shared/components/o
 import { PdfViewerUtil } from "src/app/core/utils/pdf-viewer.util";
 import { ExportPdfService } from "src/app/core/services/export-pdf.service";
 import { ExportExcelService } from "src/app/core/services/export-excel.service";
+import { UploadContratoMultipleComponent } from "../../components/upload-contrato-multiple/upload-contrato-multiple.component";
 
 @Component({
   selector: "app-list-ventas",
@@ -38,7 +39,8 @@ import { ExportExcelService } from "src/app/core/services/export-excel.service";
   imports: [
     CommonModule,
     DataTableComponent,
-    PageContainerComponent
+    PageContainerComponent,
+    UploadContratoMultipleComponent,
   ],
   templateUrl: "./list-ventas.component.html",
 })
@@ -204,6 +206,24 @@ export class ListVentasComponent implements OnInit {
           return;
         }
         this.verDevolucionPdf(venta.ventaId, clienteIds);
+        break;
+
+      // 🚀 IMPLEMENTACIÓN NUEVA: SUBIR CONTRATOS
+      case TableActionsEnum.CONTRATOS:
+        if (event.row.ventaId) {
+          const modalRef = this.modalService.open(UploadContratoMultipleComponent, {
+            size: "lg",
+            backdrop: "static",
+            keyboard: false,
+          });
+          modalRef.componentInstance.ventaId = event.row.ventaId;
+          modalRef.componentInstance.nroVenta = event.row.nroVenta;
+          modalRef.result
+            .then((updated) => {
+              if (updated) this.loadVentas();
+            })
+            .catch(() => undefined);
+        }
         break;
 
       default:

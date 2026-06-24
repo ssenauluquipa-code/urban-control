@@ -1,0 +1,20 @@
+<app-modal-container 
+  [mainTitleModal]="'Contratos de Venta #' + (nroVenta || '')" 
+  [loading]="loading"
+  (SaveAction)="onSave()"
+  (CancelAction)="activeModal.dismiss()"
+>
+  <div class="p-3">
+    <p class="text-muted mb-3 fs-7">
+      Formatos permitidos: imágenes (jpeg, png, webp) y documentos PDF. Máx. 10 archivos de hasta 10 MB cada uno.
+    </p>
+
+    <!-- Componente de Carga y Visualización Reutilizable -->
+    <app-image-display-multiple 
+      #imageDisplay
+      [editable]="true"
+      [maxFiles]="10"
+      [maxSizeMB]="10"
+    ></app-image-display-multiple>
+  </div>
+</app-modal-container>

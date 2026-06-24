@@ -10,6 +10,7 @@ import {
   IVentaCuota,
   IVentaDetalle,
   IVentaSaldoResumen,
+  IContratoVenta,
 } from "../models/venta.model";
 import { Observable } from "rxjs";
 
@@ -75,6 +76,24 @@ export class VentaRepository implements IVentaRepository {
   getInformeDevolucionPdf(ventaId: string, clienteId: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${ventaId}/clientes/${clienteId}/devolucion/pdf`, {
       responseType: 'blob'
+    });
+  }
+
+  subirContratos(ventaId: string, archivos: File[]): Observable<any> {
+    const formData = new FormData();
+    archivos.forEach(file => {
+      formData.append('contratos', file);
+    });
+    return this.http.post<any>(`${this.apiUrl}/${ventaId}/contratos`, formData);
+  }
+
+  listarContratos(ventaId: string): Observable<IContratoVenta[]> {
+    return this.http.get<IContratoVenta[]>(`${this.apiUrl}/${ventaId}/contratos`);
+  }
+
+  eliminarContratos(ventaId: string, contratoIds: string[]): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${ventaId}/contratos`, {
+      body: { contratoIds }
     });
   }
 }

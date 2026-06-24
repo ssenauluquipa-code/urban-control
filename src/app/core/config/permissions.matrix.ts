@@ -5,7 +5,7 @@ type PermissionMap = Partial<Record<EAppRole, Partial<Record<EAppModule, EAppAct
 export const APP_PERMISSIONS_MATRIX: PermissionMap = {
     [EAppRole.ADMIN]: {
         [EAppModule.CLIENTES]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.UPLOAD_PHOTO, EAppAction.REMOVE_IMAGE, EAppAction.DEACTIVATE, EAppAction.ACTIVATE],
-        [EAppModule.VENTAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.DELETE, EAppAction.DEVOLUCION, EAppAction.PLAN_CUENTAS, EAppAction.PAGO],
+        [EAppModule.VENTAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.DELETE, EAppAction.DEVOLUCION, EAppAction.PLAN_CUENTAS, EAppAction.PAGO, EAppAction.CONTRATOS],
         [EAppModule.USUARIOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DEACTIVATE, EAppAction.ACTIVATE, EAppAction.REMOVE_IMAGE],
         [EAppModule.ASESORES]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.DEACTIVATE, EAppAction.ACTIVATE],
         [EAppModule.EMPRESA]: [EAppAction.VIEW, EAppAction.EDIT],
@@ -19,7 +19,7 @@ export const APP_PERMISSIONS_MATRIX: PermissionMap = {
     },
     [EAppRole.EDITOR]: {
         [EAppModule.CLIENTES]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.EDIT, EAppAction.UPLOAD_PHOTO, EAppAction.REMOVE_IMAGE, EAppAction.DEACTIVATE, EAppAction.ACTIVATE], // Solo lectura
-        [EAppModule.VENTAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.DELETE, EAppAction.DEVOLUCION, EAppAction.PLAN_CUENTAS, EAppAction.PAGO],
+        [EAppModule.VENTAS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.DELETE, EAppAction.DEVOLUCION, EAppAction.PLAN_CUENTAS, EAppAction.PAGO, EAppAction.CONTRATOS],
         [EAppModule.EMPRESA]: [EAppAction.VIEW], // Solo ver
         // Permiso de anular en PAGOS para editores
         [EAppModule.PAGOS]: [EAppAction.VIEW, EAppAction.CREATE, EAppAction.ANULAR, EAppAction.COMPROBANTE],

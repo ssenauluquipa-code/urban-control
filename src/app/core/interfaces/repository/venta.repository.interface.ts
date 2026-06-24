@@ -7,6 +7,7 @@ import {
   IVentaCuota,
   IVentaDetalle,
   IVentaSaldoResumen,
+  IContratoVenta,
 } from "../../models/venta.model";
 
 export interface IVentaRepository {
@@ -27,4 +28,9 @@ export interface IVentaRepository {
 
   /** Obtiene el binario Blob del PDF del informe de devolución */
   getInformeDevolucionPdf(ventaId: string, clienteId: string): Observable<Blob>;
+
+  /** Métodos para gestión de contratos */
+  subirContratos(ventaId: string, archivos: File[]): Observable<any>;
+  listarContratos(ventaId: string): Observable<IContratoVenta[]>;
+  eliminarContratos(ventaId: string, contratoIds: string[]): Observable<void>;
 }

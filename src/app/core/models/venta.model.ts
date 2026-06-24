@@ -180,3 +180,12 @@ export interface IClientePagoById {
   /** Campo enriquecido desde /activas (ej: "Lote A-13"). Opcional porque /pagos no lo devuelve. */
   lote?: string;
 }
+
+export interface IContratoVenta {
+  id: string;
+  publicUrl: string;
+  mimeType: string;
+  originalName: string;
+  sizeBytes: number;
+}
+

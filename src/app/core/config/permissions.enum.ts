@@ -46,4 +46,5 @@ export enum EAppAction {
     DEVOLUCION = 'DEVOLUCION',
     MANZANAS = 'MANZANAS',
     LOTES = 'LOTES',
+    CONTRATOS = 'CONTRATOS',
 }
