@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, effect } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { IVentaMensualNodo } from 'src/app/core/models/dashboard-ventas.model';
 import { ProjectStatusGlobalService } from 'src/app/core/services/project-status-global.service';
@@ -11,6 +11,8 @@ import { TopSellingComponent } from './dashboard-components/top-selling/top-sell
 import { BlogCardsComponent } from './dashboard-components/blog-cards/blog-cards.component';
 import { VentasMensualesChartsComponent } from './dashboard-components/ventas-mensuales-charts/ventas-mensuales-charts.component';
 import { DashboardVentasService } from '../core/services/dashboard-ventas.service';
+import { InputDateComponent } from 'src/app/shared/components/atoms/input-date/input-date.component';
+import { SelectMonedaComponent } from 'src/app/shared/components/atoms/select-moneda.component';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -22,7 +24,9 @@ import { DashboardVentasService } from '../core/services/dashboard-ventas.servic
     FeedsComponent, 
     TopSellingComponent, 
     BlogCardsComponent,
-    VentasMensualesChartsComponent
+    VentasMensualesChartsComponent,
+    InputDateComponent,
+    SelectMonedaComponent
   ]
 })
 export class DashboardComponent implements OnInit {
@@ -104,5 +108,9 @@ export class DashboardComponent implements OnInit {
     } else if (codigoPreset === 'LIMPIAR') {
       this.filtroForm.patchValue({ fechaDesde: '', fechaHasta: '' }, { emitEvent: true });
     }
+  }
+
+  public getControl(name: string): FormControl {
+    return this.filtroForm.get(name) as FormControl;
   }
 }

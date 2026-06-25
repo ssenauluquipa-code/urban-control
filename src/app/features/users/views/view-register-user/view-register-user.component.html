@@ -34,6 +34,7 @@
             <app-input-text
               [input_control]="email"
               input_placeholder="ejemplo@correo.com"
+              autocomplete="off"
             >
             </app-input-text>
           </app-form-field>
@@ -75,9 +76,41 @@
                 [input_type]="'password'"
                 input_placeholder="Mínimo 8 caracteres"
                 [enableCheckPass]="true"
+                [show_error_messages]="false"
+                autocomplete="new-password"
               >
               </app-input-text>
             </app-form-field>
+            
+            <!-- Panel Interactivo de Requisitos de Contraseña -->
+            <div class="password-requirements mt-2">
+              <div class="password-strength-bar d-flex gap-1 mb-1">
+                <div class="strength-segment flex-fill" [ngClass]="getStrengthClass(1)"></div>
+                <div class="strength-segment flex-fill" [ngClass]="getStrengthClass(2)"></div>
+                <div class="strength-segment flex-fill" [ngClass]="getStrengthClass(3)"></div>
+                <div class="strength-segment flex-fill" [ngClass]="getStrengthClass(4)"></div>
+                <div class="strength-segment flex-fill" [ngClass]="getStrengthClass(5)"></div>
+              </div>
+              
+              <small class="requirements-text d-block text-muted">
+                @if (!passValue) {
+                  Mínimo 8 caracteres con mayúscula, minúscula, un número y un carácter especial (e.g. &#64;, $, !, %, *, #)
+                } @else if (requirementsMetCount < 5) {
+                  <span class="text-danger fw-semibold">
+                    Falta:
+                    @if (!hasMinLength) { <span class="requirement-item">8+ caract.</span> }
+                    @if (!hasUpperCase) { <span class="requirement-item">Mayúscula</span> }
+                    @if (!hasLowerCase) { <span class="requirement-item">Minúscula</span> }
+                    @if (!hasNumber) { <span class="requirement-item">Número (0-9)</span> }
+                    @if (!hasSpecial) { <span class="requirement-item">Carácter especial (&#64;, $, !, %, *, #, etc.)</span> }
+                  </span>
+                } @else {
+                  <span class="text-success fw-semibold">
+                    <span nz-icon nzType="check" class="me-1"></span>Contraseña segura y válida
+                  </span>
+                }
+              </small>
+            </div>
           </div>
         }
 

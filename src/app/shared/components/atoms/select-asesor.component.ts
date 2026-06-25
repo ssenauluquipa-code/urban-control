@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { IAsesorOption } from 'src/app/core/models/asesor/asesor.model';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { AsesorService } from 'src/app/core/services/asesor.service';
-import { catchError, debounce, Observable, of, startWith, Subject, switchMap, tap, timer } from 'rxjs';
+import { catchError, debounce, map, Observable, of, startWith, Subject, switchMap, tap, timer } from 'rxjs';
 
 @Component({
   selector: 'app-select-asesor',
@@ -47,7 +47,8 @@ export class SelectAsesorComponent implements OnInit {
   isLoading = false;
 
   ngOnInit(): void {
-    this.asesores$ = this.searchSubject.pipe(
+    // 1. Crear el flujo principal de búsqueda
+    const searchFlow$ = this.searchSubject.pipe(
       startWith(''),
       debounce((term) => (!term || term.trim() === '' ? of(null) : timer(400))),
       tap(() => (this.isLoading = true)),
@@ -57,6 +58,39 @@ export class SelectAsesorComponent implements OnInit {
           tap(() => (this.isLoading = false))
         )
       )
+    );
+
+    // 2. Si el control ya tiene un valor inicial (ej. en modo edición),
+    // nos aseguramos de traer ese asesor en particular para que aparezca en el listado.
+    this.asesores$ = this.input_control.valueChanges.pipe(
+      startWith(this.input_control.value),
+      switchMap((initialId) => {
+        if (initialId) {
+          // Buscamos los datos completos del asesor seleccionado
+          return this.asesorService.getAsesorById(initialId).pipe(
+            switchMap((asesor) => {
+              const mappedAsesor: IAsesorOption = {
+                id: asesor.id,
+                nombreCompleto: asesor.nombreCompleto,
+                nroDocumento: asesor.nroDocumento || '',
+                telefono: asesor.telefono || '',
+                email: asesor.email || ''
+              };
+              return searchFlow$.pipe(
+                map((list) => {
+                  // Si no está ya en la lista, lo agregamos al principio
+                  if (!list.some((item) => item.id === mappedAsesor.id)) {
+                    return [mappedAsesor, ...list];
+                  }
+                  return list;
+                })
+              );
+            }),
+            catchError(() => searchFlow$)
+          );
+        }
+        return searchFlow$;
+      })
     );
   }
 

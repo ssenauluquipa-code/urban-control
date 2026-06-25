@@ -28,6 +28,7 @@ import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patc
                     [ngStyle]="customStyles"
                     [ngClass]="customClass"
                     [maskito]="maskitoOptions"
+                    [attr.autocomplete]="autocomplete"
                     />
                     <!-- (blur): Esto es un event binding y llamamos a un metodo onInputBlur esta abajo realizado -->
                     
@@ -113,6 +114,7 @@ export class InputTextComponent implements OnInit {
   @Input() customStyles: Record<string, string> = {}; //para poner estilos en caso de que se use disabled 
   @Input() customClass = '';
   @Input() input_maskito: RegExp | string = ''; // Patrón de máscara configurable
+  @Input() autocomplete = 'off';
   public passwordVisible = false;
 
   public maskitoOptions: MaskitoOptions = { mask: /.*/ };

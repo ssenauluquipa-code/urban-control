@@ -58,7 +58,7 @@ export const NavigationItems: INavigationItem[] = [
               breadcrumbs: false
             },
       */
-      {
+      /* {
         id: 'design-system',
         title: 'Design System',
         type: 'item',
@@ -66,7 +66,7 @@ export const NavigationItems: INavigationItem[] = [
         url: '/showcase',
         icon: 'bi bi-grid-1x2',
         breadcrumbs: false
-      }
+      } */
     ]
   },
   {

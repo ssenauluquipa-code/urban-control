@@ -50,6 +50,93 @@
           </div>
         </section>
 
+        @if (activeReserva) {
+          <section class="info-group data-card reserve-card">
+            <h4 class="group-title text-warning"><i class="bi bi-clock-history me-1"></i> DETALLES DE RESERVA</h4>
+            <div class="detail-row">
+              <span class="detail-label">Cliente:</span>
+              <span class="detail-value">{{ activeReserva.nombreCliente || activeReserva.cliente?.nombreCompleto }}</span>
+            </div>
+            @if (activeReserva.nroDocumento || activeReserva.cliente?.nroDocumento) {
+              <div class="detail-row">
+                <span class="detail-label">Documento:</span>
+                <span class="detail-value">{{ activeReserva.nroDocumento || activeReserva.cliente?.nroDocumento }}</span>
+              </div>
+            }
+            @if (activeReserva.nroContacto || activeReserva.cliente?.telefono) {
+              <div class="detail-row">
+                <span class="detail-label">Contacto:</span>
+                <span class="detail-value">{{ activeReserva.nroContacto || activeReserva.cliente?.telefono }}</span>
+              </div>
+            }
+            <div class="detail-row">
+              <span class="detail-label">Monto Reserva:</span>
+              <span class="detail-value fw-semibold text-warning">
+                <app-currency-label [input_value]="activeReserva.montoReserva"></app-currency-label>
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Expiración:</span>
+              <span class="detail-value text-danger fw-semibold">{{ activeReserva.fechaVencimiento | date: 'dd/MM/yyyy' }}</span>
+            </div>
+            @if (activeReserva.nombreAsesor) {
+              <div class="detail-row border-0 pb-0">
+                <span class="detail-label">Asesor:</span>
+                <span class="detail-value">{{ activeReserva.nombreAsesor }}</span>
+              </div>
+            }
+          </section>
+        }
+
+        @if (activeVenta) {
+          <section class="info-group data-card sale-card">
+            <h4 class="group-title text-success"><i class="bi bi-check-circle me-1"></i> DETALLES DE ADQUISICIÓN</h4>
+            <div class="detail-row">
+              <span class="detail-label">Propietario(s):</span>
+              <span class="detail-value text-wrap">
+                @for (c of activeVenta.clientes; track c.id; let last = $last) {
+                  {{ c.nombre }}{{ !last ? ', ' : '' }}
+                }
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Asesor Vendedor:</span>
+              <span class="detail-value">{{ activeVenta.nombreAsesor }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Tipo de Pago:</span>
+              <span class="detail-value badge bg-light text-dark border">{{ activeVenta.tipoPago }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Monto Total:</span>
+              <span class="detail-value fw-semibold">
+                <app-currency-label [input_value]="activeVenta.montoTotal"></app-currency-label>
+              </span>
+            </div>
+            @if (activeVentaSaldo) {
+              <div class="detail-row">
+                <span class="detail-label">Saldo Pendiente:</span>
+                <span class="detail-value text-danger fw-semibold">
+                  <app-currency-label [input_value]="+activeVentaSaldo.saldoPendiente"></app-currency-label>
+                </span>
+              </div>
+              <div class="detail-row border-0 pb-0">
+                <span class="detail-label">Cuotas Pagadas:</span>
+                <span class="detail-value text-success fw-semibold">
+                  {{ cuotasPagadas }} / {{ totalCuotas }}
+                </span>
+              </div>
+            } @else {
+              <div class="detail-row border-0 pb-0">
+                <span class="detail-label">Saldo Pendiente:</span>
+                <span class="detail-value text-danger fw-semibold">
+                  <app-currency-label [input_value]="activeVenta.saldoPendiente"></app-currency-label>
+                </span>
+              </div>
+            }
+          </section>
+        }
+
         <section class="info-group">
           <h4 class="group-title">LÍMITES TÉCNICOS / PERÍMETRO</h4>
           <div class="dim-grid">
@@ -92,11 +179,21 @@
   }
 
   <!-- Footer estable fuera del loading para evitar saltos de layout -->
+  <!--
   @if (lote || loading) {
     <footer class="blueprint-footer">
-      <button class="btn-terraform-action" [disabled]="loading">
-        {{ loading ? "SINCRONIZANDO..." : "GESTIONAR RESERVA" }}
-      </button>
+      @if (loading) {
+        <button class="btn-terraform-action" disabled>SINCRONIZANDO...</button>
+      } @else if (lote?.estado === 'DISPONIBLE') {
+        <button class="btn-terraform-action">GESTIONAR RESERVA</button>
+      } @else if (lote?.estado === 'RESERVADO') {
+        <button class="btn-terraform-action btn-warning text-dark">VER RESERVA ACTIVA</button>
+      } @else if (lote?.estado === 'VENDIDO') {
+        <button class="btn-terraform-action btn-success">VER VENTA / PAGOS</button>
+      } @else {
+        <button class="btn-terraform-action" disabled>LOTE NO DISPONIBLE</button>
+      }
     </footer>
   }
+  -->
 </div>

@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
 import { ILote, TEstadoLote } from 'src/app/core/models/lote/lote.model';
 import { LoteService } from 'src/app/core/services/proyectos/lote.service';
+import { ReservaService } from 'src/app/core/services/reserva.service';
+import { VentaService } from 'src/app/core/services/venta.service';
+import { IReserva } from 'src/app/core/models/reserva.model';
+import { IVenta, IVentaSaldoResumen } from 'src/app/core/models/venta.model';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -32,9 +36,20 @@ export class LoteDetailComponent implements OnInit, OnChanges {
   // Agrega esta variable para controlar la galería
   public selectedImage: string | null = null;
 
-  constructor(private loteService: LoteService,
+  // Datos adicionales para lotes reservados o vendidos
+  public activeReserva: IReserva | null = null;
+  public activeVenta: IVenta | null = null;
+  public activeVentaSaldo: IVentaSaldoResumen | null = null;
+  public totalCuotas = 0;
+  public cuotasPagadas = 0;
+
+  constructor(
+    private loteService: LoteService,
+    private reservaService: ReservaService,
+    private ventaService: VentaService,
     @Optional() private drawerRef: NzDrawerRef,
-    @Optional() private activeModal: NgbActiveModal) {
+    @Optional() private activeModal: NgbActiveModal
+  ) {
   }
 
   ngOnInit(): void {
@@ -46,14 +61,75 @@ export class LoteDetailComponent implements OnInit, OnChanges {
       this.loadDetail();
     }
   }
+
   private loadDetail(): void {
     if (this.loteId) {
       this.loading = true;
       this.selectedImage = null; // Resetear la imagen seleccionada al cambiar de lote
+      this.activeReserva = null;
+      this.activeVenta = null;
+      this.activeVentaSaldo = null;
+      this.totalCuotas = 0;
+      this.cuotasPagadas = 0;
+
       this.loteService.getLoteById(this.loteId)
-        .pipe(finalize(() => this.loading = false))
-        .subscribe(data => {
-          this.lote = data;
+        .subscribe({
+          next: (data) => {
+            this.lote = data;
+
+            if (data.estado === TEstadoLote.RESERVADO) {
+              this.reservaService.getReservas('ACTIVA', undefined, data.manzanaId)
+                .subscribe({
+                  next: (reservas) => {
+                    this.activeReserva = reservas.find(r => r.loteId === data.id) || null;
+                    this.loading = false;
+                  },
+                  error: () => {
+                    this.loading = false;
+                  }
+                });
+            } else if (data.estado === TEstadoLote.VENDIDO) {
+              this.ventaService.listarVentas(data.manzanaId)
+                .subscribe({
+                  next: (ventas) => {
+                    const venta = ventas.find(v => v.loteId === data.id);
+                    if (venta) {
+                      this.activeVenta = venta;
+                      
+                      // Cargar cuotas para contar pagadas
+                      this.ventaService.obtenerCuotasPorVenta(venta.ventaId)
+                        .subscribe({
+                          next: (cuotas) => {
+                            this.totalCuotas = cuotas.length;
+                            this.cuotasPagadas = cuotas.filter(c => c.estado === 'PAGADO').length;
+                          }
+                        });
+
+                      this.ventaService.obtenerSaldoPorVenta(venta.ventaId)
+                        .subscribe({
+                          next: (saldo) => {
+                            this.activeVentaSaldo = saldo;
+                            this.loading = false;
+                          },
+                          error: () => {
+                            this.loading = false;
+                          }
+                        });
+                    } else {
+                      this.loading = false;
+                    }
+                  },
+                  error: () => {
+                    this.loading = false;
+                  }
+                });
+            } else {
+              this.loading = false;
+            }
+          },
+          error: () => {
+            this.loading = false;
+          }
         });
     }
   }

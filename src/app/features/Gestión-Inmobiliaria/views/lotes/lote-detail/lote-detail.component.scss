@@ -262,3 +262,69 @@ $tf-border: rgba(116, 119, 125, 0.15);
         font-size: 1.5rem;
     }
 }
+
+// PANEL DE RESERVAS Y VENTAS (DATA CARD)
+.data-card {
+    background: white;
+    border: 1px solid $tf-border;
+    border-radius: 2px;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+
+    .group-title {
+        border-bottom: 1px solid rgba(116, 119, 125, 0.1);
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 0.5rem 0;
+        border-bottom: 1px dashed rgba(116, 119, 125, 0.08);
+
+        .detail-label {
+            font-size: 11px;
+            color: $tf-gray-meta;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            font-size: 0.85rem;
+            color: $tf-black;
+            font-weight: 600;
+            text-align: right;
+            max-width: 70%;
+        }
+    }
+}
+
+.reserve-card {
+    border-left: 3px solid #ffc107;
+}
+
+.sale-card {
+    border-left: 3px solid #198754;
+}
+
+// Botones adicionales de Footer
+.blueprint-footer {
+    .btn-warning {
+        background: #ffc107 !important;
+        color: #000 !important;
+        &:hover {
+            background: #ffca2c !important;
+        }
+    }
+    .btn-success {
+        background: #198754 !important;
+        color: #fff !important;
+        &:hover {
+            background: #157347 !important;
+        }
+    }
+}

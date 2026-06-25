@@ -47,6 +47,7 @@ import { FormsModule } from '@angular/forms';
         [class.is-invalid]="inputControl.invalid && inputControl.touched"
         [appendTo]="'body'"
         [addTag]="addTagProp"
+        [inputAttrs]="{ autocomplete: 'chrome-off', ariaAutocomplete: 'none' }"
         (blur)="Blur.emit($event)"
         (change)="onSelectChange($event)"
         (search)="Search.emit($event.term)"
