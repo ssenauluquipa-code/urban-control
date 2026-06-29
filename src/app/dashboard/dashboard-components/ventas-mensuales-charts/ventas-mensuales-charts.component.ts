@@ -77,7 +77,7 @@ export class VentasMensualesChartsComponent implements OnChanges {
         series: [{ name: 'Unidades Vendidas', data: seriesCantidad }],
         chart: {
           type: 'area',
-          height: 280,
+          height: 380,  // ← AUMENTADO de 280 a 380
           fontFamily: 'Nunito Sans, sans-serif',
           toolbar: { show: false }
         },
@@ -88,6 +88,8 @@ export class VentasMensualesChartsComponent implements OnChanges {
         xaxis: { categories: categoriasX },
         yaxis: {
           labels: {
+            minWidth: 80,
+            maxWidth: 80,
             formatter: (val) => `${Math.floor(val)} u.`
           }
         },
@@ -99,7 +101,7 @@ export class VentasMensualesChartsComponent implements OnChanges {
         series: [{ name: 'Volumen de Facturación', data: seriesMonto }],
         chart: {
           type: 'bar',
-          height: 280,
+          height: 380,  // ← AUMENTADO de 280 a 380
           fontFamily: 'Nunito Sans, sans-serif',
           toolbar: { show: false }
         },
@@ -109,6 +111,8 @@ export class VentasMensualesChartsComponent implements OnChanges {
         xaxis: { categories: categoriasX },
         yaxis: {
           labels: {
+            minWidth: 80,
+            maxWidth: 80,
             formatter: (val) => {
               const simbolo = this.divisaSeleccionada === 'USD' ? '$' : 'Bs.';
               return val >= 1000 ? `${simbolo}${(val / 1000).toFixed(1)}k` : `${simbolo}${val}`;

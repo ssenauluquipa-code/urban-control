@@ -51,16 +51,18 @@
         <p class="small mb-0">No se pudieron recuperar las métricas de venta. Verifica el Token JWT o la conectividad de red con Render.</p>
       </div>
     } @else {
-      <div class="row w-100 m-0">
-        <div class="col-12 col-xl-6 px-0 pe-xl-3 ps-xl-0 mb-4 mb-xl-0">
+      <div class="row g-4">
+        <div class="col-12 col-xl-6 d-flex">
           <app-ventas-mensuales-charts
+            class="w-100"
             type="area"
             [dataNodos]="ventasData"
             [divisaSeleccionada]="filtroForm.get('moneda')?.value">
           </app-ventas-mensuales-charts>
         </div>
-        <div class="col-12 col-xl-6 px-0 ps-xl-3 pe-xl-0">
+        <div class="col-12 col-xl-6 d-flex">
           <app-ventas-mensuales-charts
+            class="w-100"
             type="bar"
             [dataNodos]="ventasData"
             [divisaSeleccionada]="filtroForm.get('moneda')?.value">

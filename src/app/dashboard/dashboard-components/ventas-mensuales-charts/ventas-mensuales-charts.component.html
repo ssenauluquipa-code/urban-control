@@ -11,51 +11,33 @@
     </div>
   </div>
 } @else {
-  <app-card-container class="h-100 d-block animate-fade-in">
-    <!-- Cabecera Responsiva: Centrada y vertical en móvil, alineada y horizontal en desktop -->
-    <div class="d-flex flex-column flex-sm-row align-items-center text-center text-sm-start mb-3">
-      <span class="p-2 bg-light-{{ iconColor }} text-{{ iconColor }} rounded-circle mb-2 mb-sm-0 me-0 me-sm-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; flex-shrink: 0;">
-        <i [class]="icon + ' fs-5'"></i>
-      </span>
-      <div class="w-100">
-        <h5 class="card-title mb-0 fw-bold text-dark text-height-adjust">{{ title }}</h5>
-        <small class="text-muted d-block text-height-adjust-sub">{{ subtitle }}</small>
+  <app-card-container [noPadding]="true" class="h-100 animate-fade-in">
+    <div class="chart-wrapper">
+      <!-- Cabecera Responsiva: Centrada y vertical en móvil, alineada y horizontal en desktop -->
+      <div class="chart-header">
+        <span class="icon-badge bg-light-{{ iconColor }} text-{{ iconColor }}">
+          <i [class]="icon + ' fs-5'"></i>
+        </span>
+        <div class="header-content">
+          <h5 class="chart-title">{{ title }}</h5>
+          <small class="chart-subtitle">{{ subtitle }}</small>
+        </div>
       </div>
-    </div>
-    <div class="w-100 mt-2" *ngIf="chartOptions">
-      <apx-chart 
-        [series]="chartOptions.series!" 
-        [chart]="chartOptions.chart!"
-        [xaxis]="chartOptions.xaxis!" 
-        [yaxis]="chartOptions.yaxis!"
-        [grid]="chartOptions.grid!" 
-        [stroke]="chartOptions.stroke || {}" 
-        [tooltip]="chartOptions.tooltip!" 
-        [dataLabels]="chartOptions.dataLabels!"
-        [colors]="chartOptions.colors!">
-      </apx-chart>
+
+      <!-- Gráfico con altura responsive -->
+      <div class="chart-container" *ngIf="chartOptions">
+        <apx-chart 
+          [series]="chartOptions.series!" 
+          [chart]="chartOptions.chart!"
+          [xaxis]="chartOptions.xaxis!" 
+          [yaxis]="chartOptions.yaxis!"
+          [grid]="chartOptions.grid!" 
+          [stroke]="chartOptions.stroke || {}" 
+          [tooltip]="chartOptions.tooltip!" 
+          [dataLabels]="chartOptions.dataLabels!"
+          [colors]="chartOptions.colors!">
+        </apx-chart>
+      </div>
     </div>
   </app-card-container>
 }
-
-<style>
-  /* Ajustes responsivos para que el texto de la cabecera del gráfico no se desborde */
-  .text-height-adjust {
-    font-size: 1rem;
-    line-height: 1.2;
-  }
-  .text-height-adjust-sub {
-    font-size: 0.8rem;
-    line-height: 1.2;
-  }
-
-  @media (max-width: 576px) {
-    .text-height-adjust {
-      font-size: 0.85rem !important;
-      font-weight: 700 !important;
-    }
-    .text-height-adjust-sub {
-      font-size: 0.7rem !important;
-    }
-  }
-</style>

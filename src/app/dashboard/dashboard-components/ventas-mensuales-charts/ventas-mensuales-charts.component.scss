@@ -1,0 +1,274 @@
+/* ═══════════════════════════════════════════════════════════════
+   VENTAS MENSUALES CHARTS - ESTILOS MEJORADOS
+   ═══════════════════════════════════════════════════════════════ */
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Animación de entrada */
+.animate-fade-in {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card container para gráfico vacío */
+.card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+/* Estilos para el icono de estado vacío */
+.bi-graph-down {
+  opacity: 0.6;
+}
+
+/* Estilos mejorados para ApexCharts */
+::ng-deep .apexcharts-canvas {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+::ng-deep .apexcharts-toolbar {
+  display: none !important;
+}
+
+/* Tooltip personalizado */
+::ng-deep .apexcharts-tooltip {
+  background: rgba(26, 26, 26, 0.95) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+
+  .apexcharts-tooltip-title {
+    color: #fff !important;
+    font-weight: 600 !important;
+    padding: 6px 8px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .apexcharts-tooltip-series-group {
+    padding: 6px 8px !important;
+
+    .apexcharts-tooltip-y-group {
+      padding: 0 !important;
+
+      span {
+        color: #fff !important;
+        font-weight: 500 !important;
+      }
+    }
+  }
+}
+
+/* Grid lines */
+::ng-deep .apexcharts-grid {
+  stroke: #e0e0e0 !important;
+}
+
+/* Axis labels */
+::ng-deep .apexcharts-xaxistooltip,
+::ng-deep .apexcharts-yaxistooltip {
+  background: rgba(0, 0, 0, 0.7) !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+}
+
+/* Responsividad mejorada */
+@media (max-width: 1200px) {
+  ::ng-deep .apexcharts-text {
+    font-size: 12px !important;
+  }
+
+  ::ng-deep .apexcharts-xaxis-label {
+    font-size: 11px !important;
+  }
+
+  ::ng-deep .apexcharts-yaxis-label {
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .apexcharts-text {
+    font-size: 10px !important;
+  }
+
+  ::ng-deep .apexcharts-xaxis-label {
+    font-size: 9px !important;
+  }
+
+  ::ng-deep .apexcharts-yaxis-label {
+    font-size: 9px !important;
+  }
+
+  ::ng-deep .apexcharts-tooltip {
+    font-size: 10px !important;
+  }
+}
+
+/* Area chart específico */
+::ng-deep .apexcharts-area {
+  fill-opacity: 0.1 !important;
+}
+
+::ng-deep .apexcharts-fill {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+}
+
+/* Bar chart específico */
+::ng-deep .apexcharts-bar-series {
+  .apexcharts-bar-goals-marker {
+    opacity: 0.8;
+  }
+}
+
+/* Hover effects */
+::ng-deep .apexcharts-series {
+  transition: all 0.3s ease;
+
+  &:hover {
+    opacity: 1 !important;
+
+    .apexcharts-area {
+      fill-opacity: 0.15 !important;
+    }
+  }
+}
+
+/* Prevent layout shift */
+::ng-deep .apexcharts-svg {
+  display: block;
+}
+
+/* Responsive legend */
+::ng-deep .apexcharts-legend {
+  margin-top: 8px !important;
+  font-size: 12px !important;
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .apexcharts-legend {
+    font-size: 10px !important;
+    margin-top: 6px !important;
+  }
+}
+
+/* Estilos de layout del contenedor y la cabecera */
+.chart-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  padding: 1.5rem;
+  gap: 1.5rem;
+  box-sizing: border-box;
+}
+
+.chart-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.icon-badge {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chart-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+  color: #1a1a1a;
+}
+
+.chart-subtitle {
+  font-size: 0.8rem;
+  line-height: 1.2;
+  color: #666;
+  display: block;
+}
+
+.chart-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+
+  apx-chart {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+  }
+}
+
+/* Ajustes Responsivos */
+@media (max-width: 768px) {
+  .chart-wrapper {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .chart-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .chart-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .icon-badge {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-wrapper {
+    padding: 10px;
+  }
+
+  .chart-title {
+    font-size: 0.85rem;
+  }
+
+  .chart-subtitle {
+    font-size: 0.7rem;
+  }
+}
